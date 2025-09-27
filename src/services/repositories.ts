@@ -17,6 +17,11 @@ import {
 import sogaraCompanyImage from '@/assets/sogara-company.jpg';
 import isoCertificationImage from '@/assets/iso-certification.jpg';
 import safetyTrainingImage from '@/assets/safety-training.jpg';
+import raffinerieModerneImage from '@/assets/raffinerie-moderne.jpg';
+import equipeDeveloppementDurableImage from '@/assets/equipe-developpement-durable.jpg';
+import resultatsEntrepriseImage from '@/assets/resultats-entreprise.jpg';
+import formationSecuriteImage from '@/assets/formation-securite.jpg';
+import communicationEntrepriseImage from '@/assets/communication-entreprise.jpg';
 
 const STORAGE_KEYS = {
   EMPLOYEES: 'sogara_employees',
@@ -635,8 +640,8 @@ export class PostRepository {
         authorId: '6',
         category: 'event',
         status: 'published',
-        featuredImage: safetyTrainingImage,
-        images: [safetyTrainingImage],
+        featuredImage: formationSecuriteImage,
+        images: [formationSecuriteImage],
         tags: ['Sécurité', 'Formation', 'HSE'],
         publishedAt: new Date('2024-01-18'),
         createdAt: new Date('2024-01-17'),
@@ -650,8 +655,8 @@ export class PostRepository {
         authorId: '6',
         category: 'announcement',
         status: 'published',
-        featuredImage: sogaraCompanyImage,
-        images: [sogaraCompanyImage],
+        featuredImage: resultatsEntrepriseImage,
+        images: [resultatsEntrepriseImage],
         tags: ['Résultats', 'Performance', 'T4 2023'],
         publishedAt: new Date('2024-01-16'),
         createdAt: new Date('2024-01-15'),
@@ -665,6 +670,8 @@ export class PostRepository {
         authorId: '6',
         category: 'activity',
         status: 'published',
+        featuredImage: equipeDeveloppementDurableImage,
+        images: [equipeDeveloppementDurableImage],
         tags: ['Développement durable', 'Écologie', 'Innovation'],
         publishedAt: new Date('2024-01-14'),
         createdAt: new Date('2024-01-13'),
