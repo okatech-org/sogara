@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AppContext';
 import { useEmployees } from '@/hooks/useEmployees';
+import { repositories } from '@/services/repositories';
 import { HardHat, ArrowLeft, ArrowRight, Settings, Shield, Users, Package } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
@@ -106,11 +107,20 @@ export function LoginForm({ onBackToHome }: LoginFormProps) {
 
   const handleDemoLogin = (accountId: string) => {
     console.log('Demo login clicked for ID:', accountId);
-    console.log('Available employees:', employees);
-    
-    const employee = getEmployeeById(accountId);
-    console.log('Found employee:', employee);
-    
+    console.log('Available employees in state:', employees);
+
+    let employee = getEmployeeById(accountId);
+
+    if (!employee) {
+      try {
+        const all = repositories.employees.getAll();
+        console.log('Fetched employees from repository:', all);
+        employee = all.find((e) => e.id === accountId);
+      } catch (err) {
+        console.error('Error fetching employees from repository', err);
+      }
+    }
+
     if (employee) {
       login(employee);
       toast({
@@ -120,7 +130,7 @@ export function LoginForm({ onBackToHome }: LoginFormProps) {
     } else {
       toast({
         title: 'Erreur',
-        description: 'Compte démo non trouvé.',
+        description: "Compte démo non trouvé. Réessayez dans 1 seconde.",
         variant: 'destructive',
       });
     }
@@ -203,12 +213,17 @@ export function LoginForm({ onBackToHome }: LoginFormProps) {
               </p>
             </CardHeader>
             <CardContent className="space-y-4">
+              {employees.length === 0 && (
+                <div className="text-center text-xs text-muted-foreground py-2">
+                  Chargement des comptes démo...
+                </div>
+              )}
               {demoAccounts.map((account) => {
                 const Icon = account.icon;
                 return (
                   <div
                     key={account.id}
-                    className="p-4 rounded-lg border border-border bg-card hover:bg-muted/30 transition-all group cursor-pointer"
+                    className={`p-4 rounded-lg border border-border bg-card transition-all group cursor-pointer ${employees.length === 0 ? 'pointer-events-none opacity-60' : 'hover:bg-muted/30'}`}
                     onClick={() => handleDemoLogin(account.id)}
                   >
                     <div className="flex items-center gap-4">
