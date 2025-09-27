@@ -42,35 +42,41 @@ export function MediaUpload({
     setIsUploading(true);
 
     try {
-      const uploadedImages: string[] = [];
+      const selected = Array.from(files);
       
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        
-        // Vérifier le type de fichier
+      // Helper pour convertir un fichier en Data URL (persistant dans localStorage)
+      const readFileAsDataUrl = (file: File) =>
+        new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      
+      // Valider les fichiers et préparer la lecture
+      const validFiles = selected.filter((file) => {
         if (!file.type.startsWith('image/')) {
           toast({
             title: 'Format non supporté',
             description: `Le fichier ${file.name} n'est pas une image valide.`,
             variant: 'destructive',
           });
-          continue;
+          return false;
         }
-
-        // Vérifier la taille (5MB max)
         if (file.size > 5 * 1024 * 1024) {
           toast({
             title: 'Fichier trop volumineux',
             description: `${file.name} dépasse la limite de 5MB.`,
             variant: 'destructive',
           });
-          continue;
+          return false;
         }
+        return true;
+      });
 
-        // Créer une URL temporaire pour l'image
-        const imageUrl = URL.createObjectURL(file);
-        uploadedImages.push(imageUrl);
-      }
+      const uploadedImages: string[] = await Promise.all(
+        validFiles.map((file) => readFileAsDataUrl(file))
+      );
 
       if (uploadedImages.length > 0) {
         const newImages = [...images, ...uploadedImages];

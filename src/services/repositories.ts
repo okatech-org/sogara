@@ -605,6 +605,8 @@ export class PostRepository {
     this.posts = getFromStorage<Post>(STORAGE_KEYS.POSTS);
     if (this.posts.length === 0) {
       this.seedData();
+    } else {
+      this.fixLegacyMediaUrls();
     }
   }
 
@@ -672,6 +674,29 @@ export class PostRepository {
 
     this.posts = samplePosts;
     this.save();
+  }
+
+  // Nettoyage des anciennes URLs non persistantes (blob:)
+  private fixLegacyMediaUrls(): void {
+    let changed = false;
+    this.posts = this.posts.map((p) => {
+      const isValid = (src?: string) => !!src && !src.startsWith('blob:');
+      const updated = { ...p } as Post;
+      if (!isValid(updated.featuredImage)) {
+        updated.featuredImage = undefined;
+        changed = true;
+      }
+      if (updated.images) {
+        const imgs = updated.images.filter(isValid);
+        if (imgs.length !== updated.images.length) {
+          updated.images = imgs.length ? imgs : undefined;
+          if (!updated.featuredImage && imgs.length) updated.featuredImage = imgs[0];
+          changed = true;
+        }
+      }
+      return updated;
+    });
+    if (changed) this.save();
   }
 
   private save(): void {

@@ -281,6 +281,9 @@ export function SOGARAConnectPage() {
                           src={post.featuredImage} 
                           alt={post.title}
                           className="w-full h-full object-cover"
+                          loading="lazy"
+                          decoding="async"
+                          onError={(e) => { e.currentTarget.src = '/placeholder.svg'; }}
                         />
                         {post.videoUrl && (
                           <div className="absolute inset-0 flex items-center justify-center bg-black/20">
