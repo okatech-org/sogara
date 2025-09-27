@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
 import { AppProvider, useAuth } from '@/contexts/AppContext';
 import { Layout } from '@/components/Layout/Layout';
-import { LoginForm } from '@/components/auth/LoginForm';
+import { WelcomePage } from '@/components/WelcomePage';
 
 function AppContent() {
   const { isAuthenticated, currentUser } = useAuth();
 
   if (!isAuthenticated || !currentUser) {
-    return <LoginForm />;
+    return <WelcomePage />;
   }
 
   return <Layout />;
