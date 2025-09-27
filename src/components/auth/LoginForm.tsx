@@ -105,12 +105,23 @@ export function LoginForm({ onBackToHome }: LoginFormProps) {
   };
 
   const handleDemoLogin = (accountId: string) => {
+    console.log('Demo login clicked for ID:', accountId);
+    console.log('Available employees:', employees);
+    
     const employee = getEmployeeById(accountId);
+    console.log('Found employee:', employee);
+    
     if (employee) {
       login(employee);
       toast({
         title: 'Connexion démo',
         description: `Bienvenue ${employee.firstName} ${employee.lastName}`,
+      });
+    } else {
+      toast({
+        title: 'Erreur',
+        description: 'Compte démo non trouvé.',
+        variant: 'destructive',
       });
     }
   };
