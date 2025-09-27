@@ -4,6 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import techniciensImage from '@/assets/techniciens-raffinerie.jpg';
 import ingenieurImage from '@/assets/ingenieur-hse.jpg';
 import superviseurImage from '@/assets/superviseur-equipe.jpg';
+import gainTempsImage from '@/assets/gain-temps.jpg';
+import securiteImage from '@/assets/securite-renforcee.jpg';
+import suiviImage from '@/assets/suivi-simplifie.jpg';
+import communicationImage from '@/assets/communication-fluide.jpg';
+import reconnaissanceImage from '@/assets/reconnaissance.jpg';
+import efficaciteImage from '@/assets/efficacite-quotidienne.jpg';
 
 interface WelcomePageProps {
   onShowLogin: () => void;
@@ -15,37 +21,43 @@ export function WelcomePage({ onShowLogin }: WelcomePageProps) {
       icon: Clock,
       title: 'Gagnez du temps',
       description: 'Fini les démarches papier et les allers-retours. Tout se fait en quelques clics.',
-      benefice: 'Plus de temps pour vous concentrer sur votre travail'
+      benefice: 'Plus de temps pour vous concentrer sur votre travail',
+      image: gainTempsImage
     },
     {
       icon: Shield,
       title: 'Sécurité renforcée', 
       description: 'Suivi automatique des formations HSE et alertes de sécurité personnalisées.',
-      benefice: 'Votre sécurité et celle de vos collègues'
+      benefice: 'Votre sécurité et celle de vos collègues',
+      image: securiteImage
     },
     {
       icon: CheckCircle,
       title: 'Suivi simplifié',
       description: 'Visualisez vos colis, vos formations et vos équipements en temps réel.',
-      benefice: 'Plus de perte ou d\'oubli important'
+      benefice: 'Plus de perte ou d\'oubli important',
+      image: suiviImage
     },
     {
       icon: Users,
       title: 'Communication fluide',
       description: 'Recevez les visiteurs plus efficacement et coordonnez vos équipes.',
-      benefice: 'Moins de stress, plus de professionnalisme'
+      benefice: 'Moins de stress, plus de professionnalisme',
+      image: communicationImage
     },
     {
       icon: Award,
       title: 'Reconnaissance',
       description: 'Vos compétences et habilitations sont mieux valorisées et trackées.',
-      benefice: 'Évolution de carrière facilitée'
+      benefice: 'Évolution de carrière facilitée',
+      image: reconnaissanceImage
     },
     {
       icon: Zap,
       title: 'Efficacité quotidienne',
       description: 'Interface moderne et intuitive conçue pour votre usage quotidien.',
-      benefice: 'Moins de formation nécessaire'
+      benefice: 'Moins de formation nécessaire',
+      image: efficaciteImage
     }
   ];
 
@@ -138,7 +150,14 @@ export function WelcomePage({ onShowLogin }: WelcomePageProps) {
             {avantagesPersonnel.map((avantage, index) => {
               const Icon = avantage.icon;
               return (
-                <Card key={index} className="industrial-card hover:shadow-[var(--shadow-elevated)] transition-all animate-slide-up" style={{ animationDelay: `${index * 100}ms` }}>
+                <Card key={index} className="industrial-card hover:shadow-[var(--shadow-elevated)] transition-all animate-slide-up overflow-hidden" style={{ animationDelay: `${index * 100}ms` }}>
+                  <div className="aspect-[4/3] overflow-hidden">
+                    <img 
+                      src={avantage.image} 
+                      alt={avantage.title}
+                      className="w-full h-full object-cover transition-transform hover:scale-105"
+                    />
+                  </div>
                   <CardHeader>
                     <div className="w-12 h-12 gradient-primary rounded-lg flex items-center justify-center mb-4">
                       <Icon className="w-6 h-6 text-white" />
