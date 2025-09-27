@@ -1,4 +1,4 @@
-import { Home, Users, Calendar, Package, HardHat, Shield } from 'lucide-react';
+import { Home, Users, Calendar, Package, HardHat, Shield, Newspaper } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AppContext';
@@ -19,6 +19,7 @@ interface NavigationProps {
 
 const navigationItems: NavigationItem[] = [
   { id: 'dashboard', label: 'Tableau de bord', icon: Home },
+  { id: 'connect', label: 'SOGARA Connect', icon: Newspaper }, // Accessible à tous
   { id: 'personnel', label: 'Personnel', icon: Users, requiredRoles: ['ADMIN', 'HSE', 'SUPERVISEUR'] },
   { id: 'visites', label: 'Visites', icon: Calendar, requiredRoles: ['ADMIN', 'RECEP', 'SUPERVISEUR'] },
   { id: 'colis', label: 'Colis & Courriers', icon: Package, requiredRoles: ['ADMIN', 'RECEP'] },

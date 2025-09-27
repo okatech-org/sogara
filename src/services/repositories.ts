@@ -8,7 +8,10 @@ import {
   HSETraining, 
   Notification,
   DashboardStats,
-  UserRole 
+  UserRole,
+  Post,
+  PostComment,
+  EquipmentHistory
 } from '@/types';
 
 const STORAGE_KEYS = {
@@ -20,6 +23,7 @@ const STORAGE_KEYS = {
   HSE_INCIDENTS: 'sogara_hse_incidents',
   HSE_TRAININGS: 'sogara_hse_trainings',
   NOTIFICATIONS: 'sogara_notifications',
+  POSTS: 'sogara_posts',
 };
 
 function getFromStorage<T>(key: string): T[] {
@@ -132,6 +136,22 @@ export class EmployeeRepository {
         status: 'active',
         stats: { visitsReceived: 12, packagesReceived: 6, hseTrainingsCompleted: 7 },
         equipmentIds: ['eq4'],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: '6',
+        firstName: 'Aminata',
+        lastName: 'SECK',
+        matricule: 'COM001',
+        service: 'Communication',
+        roles: ['COMMUNICATION'],
+        competences: ['Communication interne', 'Rédaction', 'Réseaux sociaux', 'Relations presse'],
+        habilitations: ['Diffusion information', 'Gestion événements'],
+        email: 'aminata.seck@sogara.com',
+        status: 'active',
+        stats: { visitsReceived: 4, packagesReceived: 2, hseTrainingsCompleted: 5 },
+        equipmentIds: [],
         createdAt: new Date(),
         updatedAt: new Date(),
       }
@@ -573,6 +593,127 @@ export class NotificationRepository {
   }
 }
 
+// Post repository for SOGARA Connect
+export class PostRepository {
+  private posts: Post[] = [];
+
+  constructor() {
+    this.posts = getFromStorage<Post>(STORAGE_KEYS.POSTS);
+    if (this.posts.length === 0) {
+      this.seedData();
+    }
+  }
+
+  private seedData(): void {
+    const samplePosts: Post[] = [
+      {
+        id: '1',
+        title: 'Nouvelle certification ISO 14001 obtenue',
+        content: 'SOGARA a obtenu la certification ISO 14001 pour son système de management environnemental. Cette certification témoigne de notre engagement continu pour la protection de l\'environnement et l\'amélioration de nos performances environnementales.',
+        excerpt: 'Une nouvelle certification qui témoigne de notre engagement pour l\'environnement.',
+        authorId: '6', // Communication manager
+        category: 'news',
+        status: 'published',
+        featuredImage: '/api/placeholder/600/400',
+        tags: ['ISO', 'Environnement', 'Certification'],
+        publishedAt: new Date('2024-01-20'),
+        createdAt: new Date('2024-01-19'),
+        updatedAt: new Date('2024-01-20'),
+      },
+      {
+        id: '2',
+        title: 'Journée sécurité - 15 février 2024',
+        content: 'Participez à notre journée dédiée à la sécurité au travail. Au programme : formations, ateliers pratiques et échanges avec les experts HSE.',
+        excerpt: 'Une journée complète dédiée à la sensibilisation et formation sécurité.',
+        authorId: '6',
+        category: 'event',
+        status: 'published',
+        featuredImage: '/api/placeholder/600/400',
+        tags: ['Sécurité', 'Formation', 'HSE'],
+        publishedAt: new Date('2024-01-18'),
+        createdAt: new Date('2024-01-17'),
+        updatedAt: new Date('2024-01-18'),
+      },
+      {
+        id: '3',
+        title: 'Résultats exceptionnels du T4 2023',
+        content: 'SOGARA annonce des résultats record pour le quatrième trimestre 2023, confirmant la solidité et la croissance de notre entreprise.',
+        excerpt: 'Des performances qui confirment la solidité de notre entreprise.',
+        authorId: '6',
+        category: 'announcement',
+        status: 'published',
+        tags: ['Résultats', 'Performance', 'T4 2023'],
+        publishedAt: new Date('2024-01-16'),
+        createdAt: new Date('2024-01-15'),
+        updatedAt: new Date('2024-01-16'),
+      },
+    ];
+
+    this.posts = samplePosts;
+    this.save();
+  }
+
+  private save(): void {
+    saveToStorage(STORAGE_KEYS.POSTS, this.posts);
+  }
+
+  getAll(): Post[] {
+    return this.posts.sort((a, b) => 
+      new Date(b.publishedAt || b.createdAt).getTime() - new Date(a.publishedAt || a.createdAt).getTime()
+    );
+  }
+
+  getById(id: string): Post | undefined {
+    return this.posts.find(post => post.id === id);
+  }
+
+  create(post: Omit<Post, 'id' | 'createdAt' | 'updatedAt'>): Post {
+    const newPost: Post = {
+      ...post,
+      id: generateId(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.posts.push(newPost);
+    this.save();
+    return newPost;
+  }
+
+  update(id: string, updates: Partial<Post>): Post | null {
+    const index = this.posts.findIndex(post => post.id === id);
+    if (index === -1) return null;
+
+    this.posts[index] = {
+      ...this.posts[index],
+      ...updates,
+      updatedAt: new Date(),
+    };
+    this.save();
+    return this.posts[index];
+  }
+
+  delete(id: string): boolean {
+    const index = this.posts.findIndex(post => post.id === id);
+    if (index === -1) return false;
+
+    this.posts.splice(index, 1);
+    this.save();
+    return true;
+  }
+
+  getByCategory(category: Post['category']): Post[] {
+    return this.posts.filter(post => post.category === category);
+  }
+
+  getPublished(): Post[] {
+    return this.posts.filter(post => post.status === 'published');
+  }
+
+  getByAuthor(authorId: string): Post[] {
+    return this.posts.filter(post => post.authorId === authorId);
+  }
+}
+
 export const repositories = {
   employees: new EmployeeRepository(),
   visitors: new VisitorRepository(),
@@ -580,4 +721,5 @@ export const repositories = {
   packages: new PackageRepository(),
   equipment: new EquipmentRepository(),
   notifications: new NotificationRepository(),
+  posts: new PostRepository(),
 };

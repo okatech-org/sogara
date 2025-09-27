@@ -1,4 +1,4 @@
-export type UserRole = 'ADMIN' | 'RECEP' | 'HSE' | 'SUPERVISEUR' | 'EMPLOYE';
+export type UserRole = 'ADMIN' | 'RECEP' | 'HSE' | 'SUPERVISEUR' | 'EMPLOYE' | 'COMMUNICATION';
 
 export type VisitStatus = 'expected' | 'waiting' | 'in_progress' | 'checked_out';
 export type PackageStatus = 'received' | 'stored' | 'delivered';
@@ -158,6 +158,31 @@ export interface NotificationAction {
   label: string;
   action: string;
   style?: 'primary' | 'secondary' | 'destructive';
+}
+
+export interface Post {
+  id: string;
+  title: string;
+  content: string;
+  excerpt: string;
+  authorId: string;
+  category: 'news' | 'activity' | 'announcement' | 'event';
+  status: 'draft' | 'published' | 'archived';
+  featuredImage?: string;
+  images?: string[];
+  videoUrl?: string;
+  tags: string[];
+  publishedAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface PostComment {
+  id: string;
+  postId: string;
+  authorId: string;
+  content: string;
+  createdAt: Date;
 }
 
 export interface DashboardStats {

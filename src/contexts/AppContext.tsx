@@ -7,7 +7,8 @@ import {
   Equipment, 
   Notification, 
   DashboardStats,
-  UserRole 
+  UserRole,
+  Post
 } from '@/types';
 import { repositories } from '@/services/repositories';
 
@@ -20,6 +21,7 @@ interface AppState {
   equipment: Equipment[];
   notifications: Notification[];
   dashboardStats: DashboardStats;
+  posts: Post[];
   loading: boolean;
 }
 
@@ -43,6 +45,10 @@ type AppAction =
   | { type: 'SET_NOTIFICATIONS'; payload: Notification[] }
   | { type: 'ADD_NOTIFICATION'; payload: Notification }
   | { type: 'UPDATE_DASHBOARD_STATS'; payload: DashboardStats }
+  | { type: 'SET_POSTS'; payload: Post[] }
+  | { type: 'ADD_POST'; payload: Post }
+  | { type: 'UPDATE_POST'; payload: Post }
+  | { type: 'DELETE_POST'; payload: string }
   | { type: 'SET_LOADING'; payload: boolean };
 
 const initialState: AppState = {
@@ -53,6 +59,7 @@ const initialState: AppState = {
   packages: [],
   equipment: [],
   notifications: [],
+  posts: [],
   dashboardStats: {
     visitsToday: { total: 0, waiting: 0, inProgress: 0, completed: 0 },
     packages: { pending: 0, urgent: 0, delivered: 0 },
@@ -143,6 +150,23 @@ function appReducer(state: AppState, action: AppAction): AppState {
     
     case 'UPDATE_DASHBOARD_STATS':
       return { ...state, dashboardStats: action.payload };
+    
+    case 'SET_POSTS':
+      return { ...state, posts: action.payload };
+    
+    case 'ADD_POST':
+      return { ...state, posts: [...state.posts, action.payload] };
+    
+    case 'UPDATE_POST':
+      return { 
+        ...state, 
+        posts: state.posts.map(post => 
+          post.id === action.payload.id ? action.payload : post
+        ) 
+      };
+    
+    case 'DELETE_POST':
+      return { ...state, posts: state.posts.filter(post => post.id !== action.payload) };
     
     case 'SET_LOADING':
       return { ...state, loading: action.payload };

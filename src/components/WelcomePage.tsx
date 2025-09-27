@@ -131,6 +131,15 @@ export function WelcomePage({ onShowLogin }: WelcomePageProps) {
       color: 'bg-secondary text-secondary-foreground',
       icon: HardHat,
     },
+    {
+      id: '6',
+      matricule: 'COM001', 
+      name: 'Aminata SECK',
+      role: 'Responsable Communication',
+      description: 'Gestion SOGARA Connect et communication',
+      color: 'bg-accent text-accent-foreground',
+      icon: Settings,
+    },
   ];
 
   const { login } = useAuth();
