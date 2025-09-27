@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AppContext';
 import { useEmployees } from '@/hooks/useEmployees';
 import { repositories } from '@/services/repositories';
+import { apiService } from '@/services/api.service';
 import { HardHat, ArrowLeft, ArrowRight, Settings, Shield, Users, Package } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { convex } from '@/lib/convexClient';
@@ -83,7 +84,52 @@ export function LoginForm({ onBackToHome }: LoginFormProps) {
 
     setLoading(true);
     try {
-      // 1) Tente Convex si disponible (tolère les erreurs et continue)
+      // 1) Tentative API backend avec mot de passe par défaut
+      try {
+        const apiStats = await apiService.getApiStats();
+        if (apiStats.connected) {
+          // Utiliser les mots de passe par défaut des comptes démo
+          const defaultPasswords: Record<string, string> = {
+            'ADM001': 'Admin123!',
+            'HSE001': 'HSE123!',
+            'SUP001': 'Supervisor123!',
+            'REC001': 'Reception123!',
+            'COM001': 'Communication123!',
+            'EMP001': 'Employee123!'
+          };
+          
+          const password = defaultPasswords[matricule.toUpperCase()];
+          if (password) {
+            const response = await apiService.post('/auth/login', { matricule, password }, { skipAuth: true });
+            if (response.success && response.data?.user) {
+              const user = response.data.user;
+              login({
+                id: user.id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                matricule: user.matricule,
+                service: user.service,
+                roles: user.roles,
+                competences: user.competences || [],
+                habilitations: user.habilitations || [],
+                email: user.email,
+                phone: user.phone,
+                status: user.status,
+                stats: user.stats || { visitsReceived: 0, packagesReceived: 0, hseTrainingsCompleted: 0 },
+                equipmentIds: user.equipmentIds || [],
+                createdAt: new Date(user.createdAt || Date.now()),
+                updatedAt: new Date(user.updatedAt || Date.now()),
+              });
+              toast({ title: 'Connexion API réussie', description: `Bienvenue ${user.firstName} ${user.lastName}` });
+              return;
+            }
+          }
+        }
+      } catch (error) {
+        console.warn('⚠️ Connexion API échouée:', error);
+      }
+
+      // 2) Tente Convex si disponible (tolère les erreurs et continue)
       try {
         const convexResult = await convex.query("auth:loginByMatricule", { matricule });
         if (convexResult) {
@@ -105,14 +151,14 @@ export function LoginForm({ onBackToHome }: LoginFormProps) {
             createdAt: new Date(found.createdAt ?? Date.now()),
             updatedAt: new Date(found.updatedAt ?? Date.now()),
           });
-          toast({ title: 'Connexion réussie', description: `Bienvenue ${found.firstName} ${found.lastName}` });
+          toast({ title: 'Connexion Convex réussie', description: `Bienvenue ${found.firstName} ${found.lastName}` });
           return;
         }
       } catch (_) {
         // Ignorer et poursuivre le fallback local
       }
 
-      // 2) Fallback local: comptes démo et seed
+      // 3) Fallback local: comptes démo et seed
       const employee = employees.find(emp => 
         emp.matricule.toLowerCase() === matricule.toLowerCase()
       );

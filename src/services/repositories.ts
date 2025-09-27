@@ -767,6 +767,283 @@ export class PostRepository {
   }
 }
 
+// HSE repositories
+export class HSEIncidentRepository {
+  private incidents: HSEIncident[] = [];
+
+  constructor() {
+    this.incidents = getFromStorage<HSEIncident>('sogara_hse_incidents');
+  }
+
+  private save(): void {
+    saveToStorage('sogara_hse_incidents', this.incidents);
+  }
+
+  async getAll(): Promise<HSEIncident[]> {
+    return this.incidents.sort((a, b) => b.occurredAt.getTime() - a.occurredAt.getTime());
+  }
+
+  async getById(id: string): Promise<HSEIncident | undefined> {
+    return this.incidents.find(incident => incident.id === id);
+  }
+
+  async create(incident: Omit<HSEIncident, 'id' | 'createdAt' | 'updatedAt'>): Promise<HSEIncident> {
+    const newIncident: HSEIncident = {
+      ...incident,
+      id: generateId(),
+      status: 'reported',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.incidents.push(newIncident);
+    this.save();
+    return newIncident;
+  }
+
+  async update(id: string, updates: Partial<HSEIncident>): Promise<HSEIncident | null> {
+    const index = this.incidents.findIndex(incident => incident.id === id);
+    if (index === -1) return null;
+
+    this.incidents[index] = {
+      ...this.incidents[index],
+      ...updates,
+      updatedAt: new Date(),
+    };
+    this.save();
+    return this.incidents[index];
+  }
+
+  async delete(id: string): Promise<boolean> {
+    const index = this.incidents.findIndex(incident => incident.id === id);
+    if (index === -1) return false;
+
+    this.incidents.splice(index, 1);
+    this.save();
+    return true;
+  }
+
+  async getByEmployee(employeeId: string): Promise<HSEIncident[]> {
+    return this.incidents.filter(incident => incident.employeeId === employeeId);
+  }
+
+  async getByStatus(status: string): Promise<HSEIncident[]> {
+    return this.incidents.filter(incident => incident.status === status);
+  }
+
+  async getByDateRange(start: Date, end: Date): Promise<HSEIncident[]> {
+    return this.incidents.filter(incident => 
+      incident.occurredAt >= start && incident.occurredAt <= end
+    );
+  }
+
+  async updateStatus(id: string, status: string): Promise<HSEIncident | null> {
+    return this.update(id, { status: status as any });
+  }
+
+  async addAttachment(id: string, file: string): Promise<HSEIncident | null> {
+    const incident = await this.getById(id);
+    if (!incident) return null;
+
+    const attachments = incident.attachments || [];
+    attachments.push(file);
+    
+    return this.update(id, { attachments });
+  }
+
+  getStats() {
+    const openIncidents = this.incidents.filter(i => i.status !== 'resolved').length;
+    const highSeverity = this.incidents.filter(i => i.severity === 'high' && i.status !== 'resolved').length;
+    const thisMonth = this.incidents.filter(i => {
+      const monthAgo = new Date();
+      monthAgo.setMonth(monthAgo.getMonth() - 1);
+      return i.occurredAt >= monthAgo;
+    }).length;
+
+    return { openIncidents, highSeverity, thisMonth };
+  }
+}
+
+export class HSETrainingRepository {
+  private trainings: HSETraining[] = [];
+
+  constructor() {
+    this.trainings = getFromStorage<HSETraining>('sogara_hse_trainings');
+    if (this.trainings.length === 0) {
+      this.seedData();
+    }
+  }
+
+  private seedData(): void {
+    const sampleTrainings: HSETraining[] = [
+      {
+        id: 'train1',
+        title: 'Formation Sécurité Incendie',
+        description: 'Formation obligatoire sur les procédures d\'évacuation et l\'utilisation des extincteurs',
+        requiredForRoles: ['EMPLOYE', 'SUPERVISEUR', 'HSE'],
+        duration: 120, // 2 heures
+        validityMonths: 12,
+        sessions: [],
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: 'train2',
+        title: 'EPI et Équipements de Sécurité',
+        description: 'Formation sur l\'utilisation correcte des équipements de protection individuelle',
+        requiredForRoles: ['EMPLOYE', 'SUPERVISEUR'],
+        duration: 90,
+        validityMonths: 6,
+        sessions: [],
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    ];
+
+    this.trainings = sampleTrainings;
+    this.save();
+  }
+
+  private save(): void {
+    saveToStorage('sogara_hse_trainings', this.trainings);
+  }
+
+  async getAll(): Promise<HSETraining[]> {
+    return this.trainings;
+  }
+
+  async getById(id: string): Promise<HSETraining | undefined> {
+    return this.trainings.find(training => training.id === id);
+  }
+
+  async create(training: Omit<HSETraining, 'id' | 'createdAt' | 'updatedAt'>): Promise<HSETraining> {
+    const newTraining: HSETraining = {
+      ...training,
+      id: generateId(),
+      sessions: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.trainings.push(newTraining);
+    this.save();
+    return newTraining;
+  }
+
+  async update(id: string, updates: Partial<HSETraining>): Promise<HSETraining | null> {
+    const index = this.trainings.findIndex(training => training.id === id);
+    if (index === -1) return null;
+
+    this.trainings[index] = {
+      ...this.trainings[index],
+      ...updates,
+      updatedAt: new Date(),
+    };
+    this.save();
+    return this.trainings[index];
+  }
+
+  async delete(id: string): Promise<boolean> {
+    const index = this.trainings.findIndex(training => training.id === id);
+    if (index === -1) return false;
+
+    this.trainings.splice(index, 1);
+    this.save();
+    return true;
+  }
+
+  async getUpcoming(): Promise<HSETraining[]> {
+    const nextMonth = new Date();
+    nextMonth.setMonth(nextMonth.getMonth() + 1);
+    
+    return this.trainings.filter(training => 
+      training.sessions.some(session => 
+        session.date <= nextMonth && session.status === 'scheduled'
+      )
+    );
+  }
+
+  async createSession(trainingId: string, session: Omit<HSETrainingSession, 'id' | 'attendance'>): Promise<HSETrainingSession | null> {
+    const training = await this.getById(trainingId);
+    if (!training) return null;
+
+    const newSession: HSETrainingSession = {
+      ...session,
+      id: generateId(),
+      attendance: []
+    };
+
+    training.sessions.push(newSession);
+    await this.update(trainingId, { sessions: training.sessions });
+    
+    return newSession;
+  }
+
+  async registerEmployee(sessionId: string, employeeId: string): Promise<void> {
+    for (const training of this.trainings) {
+      const session = training.sessions.find(s => s.id === sessionId);
+      if (session) {
+        const existingAttendance = session.attendance.find(a => a.employeeId === employeeId);
+        
+        if (!existingAttendance) {
+          session.attendance.push({
+            employeeId,
+            status: 'registered'
+          });
+          await this.update(training.id, { sessions: training.sessions });
+        }
+        return;
+      }
+    }
+  }
+
+  async markAttendance(sessionId: string, employeeId: string, status: string): Promise<void> {
+    for (const training of this.trainings) {
+      const session = training.sessions.find(s => s.id === sessionId);
+      if (session) {
+        const attendance = session.attendance.find(a => a.employeeId === employeeId);
+        if (attendance) {
+          attendance.status = status as any;
+          await this.update(training.id, { sessions: training.sessions });
+        }
+        return;
+      }
+    }
+  }
+
+  async getEmployeeTrainings(employeeId: string): Promise<HSETraining[]> {
+    return this.trainings.filter(training => 
+      training.sessions.some(session =>
+        session.attendance.some(att => att.employeeId === employeeId)
+      )
+    );
+  }
+
+  async getCertificationsExpiring(days: number): Promise<any[]> {
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() + days);
+    
+    // Simuler les certifications qui expirent
+    return [];
+  }
+
+  getStats() {
+    const upcomingTrainings = this.trainings.filter(t => 
+      t.sessions.some(s => s.date > new Date() && s.status === 'scheduled')
+    ).length;
+    
+    const totalSessions = this.trainings.reduce((sum, t) => sum + t.sessions.length, 0);
+    const completedSessions = this.trainings.reduce((sum, t) => 
+      sum + t.sessions.filter(s => s.status === 'completed').length, 0
+    );
+
+    return {
+      upcomingTrainings,
+      totalSessions,
+      completedSessions,
+      completionRate: totalSessions > 0 ? Math.round((completedSessions / totalSessions) * 100) : 0
+    };
+  }
+}
+
 export const repositories = {
   employees: new EmployeeRepository(),
   visitors: new VisitorRepository(),
@@ -775,4 +1052,6 @@ export const repositories = {
   equipment: new EquipmentRepository(),
   notifications: new NotificationRepository(),
   posts: new PostRepository(),
+  hseIncidents: new HSEIncidentRepository(),
+  hseTrainings: new HSETrainingRepository(),
 };

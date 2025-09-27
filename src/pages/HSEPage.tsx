@@ -6,9 +6,11 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AppContext';
 import { StatusBadge } from '@/components/ui/status-badge';
+import { HSEDashboard } from '@/components/hse/HSEDashboard';
 
 export function HSEPage() {
   const { hasAnyRole } = useAuth();
+  const [activeView, setActiveView] = useState<'dashboard' | 'legacy'>('dashboard');
 
   const canManageHSE = hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR']);
 
@@ -84,6 +86,11 @@ export function HSEPage() {
     resolved: { label: 'Résolu', variant: 'success' as const },
   };
 
+  // Utiliser le nouveau dashboard HSE complet si possible
+  if (activeView === 'dashboard') {
+    return <HSEDashboard />;
+  }
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
@@ -93,12 +100,26 @@ export function HSEPage() {
             Hygiène, Sécurité et Environnement
           </p>
         </div>
-        {canManageHSE && (
-          <Button className="gap-2 gradient-primary">
-            <Plus className="w-4 h-4" />
-            Nouvel incident
+        <div className="flex gap-2">
+          <Button
+            variant={activeView === 'dashboard' ? 'default' : 'outline'}
+            onClick={() => setActiveView('dashboard')}
+          >
+            Dashboard complet
           </Button>
-        )}
+          <Button
+            variant={activeView === 'legacy' ? 'default' : 'outline'}
+            onClick={() => setActiveView('legacy')}
+          >
+            Vue basique
+          </Button>
+          {canManageHSE && (
+            <Button className="gap-2 gradient-primary">
+              <Plus className="w-4 h-4" />
+              Nouvel incident
+            </Button>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
