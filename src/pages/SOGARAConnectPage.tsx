@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Newspaper, Calendar, Megaphone, Video, Image, Plus, Heart, MessageCircle, Share2, Eye, Filter, Search } from 'lucide-react';
+import { Newspaper, Calendar, Megaphone, Video, Image, Plus, Heart, MessageCircle, Share2, Eye, Filter, Search, Edit } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,8 @@ import { useAuth } from '@/contexts/AppContext';
 import { usePosts } from '@/hooks/usePosts';
 import { Post } from '@/types';
 import { StatusBadge } from '@/components/ui/status-badge';
+import { PostEditor } from '@/components/PostEditor';
+import { VideoPlayer } from '@/components/VideoPlayer';
 
 export function SOGARAConnectPage() {
   const { hasAnyRole, currentUser } = useAuth();
@@ -16,6 +18,8 @@ export function SOGARAConnectPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<'all' | Post['category']>('all');
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const [showEditor, setShowEditor] = useState(false);
+  const [editingPost, setEditingPost] = useState<Post | null>(null);
 
   const canManagePosts = hasAnyRole(['ADMIN', 'COMMUNICATION']);
 
@@ -85,6 +89,47 @@ export function SOGARAConnectPage() {
     }
   };
 
+  const handleCreatePost = () => {
+    setEditingPost(null);
+    setShowEditor(true);
+  };
+
+  const handleEditPost = (post: Post) => {
+    setEditingPost(post);
+    setShowEditor(true);
+  };
+
+  const handleSavePost = async (postData: Omit<Post, 'id' | 'createdAt' | 'updatedAt'>) => {
+    try {
+      if (editingPost) {
+        await updatePost(editingPost.id, postData);
+      } else {
+        await createPost(postData);
+      }
+      setShowEditor(false);
+      setEditingPost(null);
+    } catch (error) {
+      console.error('Error saving post:', error);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setShowEditor(false);
+    setEditingPost(null);
+  };
+
+  // Si on est en mode édition, afficher l'éditeur
+  if (showEditor) {
+    return (
+      <PostEditor 
+        post={editingPost || undefined}
+        onSave={handleSavePost}
+        onCancel={handleCancelEdit}
+        isEditing={!!editingPost}
+      />
+    );
+  }
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
@@ -100,7 +145,7 @@ export function SOGARAConnectPage() {
           </p>
         </div>
         {canManagePosts && (
-          <Button className="gap-2 gradient-primary">
+          <Button className="gap-2 gradient-primary" onClick={handleCreatePost}>
             <Plus className="w-4 h-4" />
             Nouveau poste
           </Button>
@@ -209,10 +254,22 @@ export function SOGARAConnectPage() {
                         </div>
                       </div>
                       {canManagePosts && (
-                        <StatusBadge 
-                          status={post.status === 'published' ? 'Publié' : post.status === 'draft' ? 'Brouillon' : 'Archivé'}
-                          variant={post.status === 'published' ? 'success' : 'warning'}
-                        />
+                        <div className="flex gap-2">
+                          <StatusBadge 
+                            status={post.status === 'published' ? 'Publié' : post.status === 'draft' ? 'Brouillon' : 'Archivé'}
+                            variant={post.status === 'published' ? 'success' : 'warning'}
+                          />
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEditPost(post);
+                            }}
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                        </div>
                       )}
                     </div>
                   </CardHeader>
@@ -233,6 +290,10 @@ export function SOGARAConnectPage() {
                           </div>
                         )}
                       </div>
+                    )}
+                    
+                    {post.videoUrl && !post.featuredImage && (
+                      <VideoPlayer url={post.videoUrl} title={post.title} />
                     )}
                     
                     <p className="text-muted-foreground leading-relaxed">

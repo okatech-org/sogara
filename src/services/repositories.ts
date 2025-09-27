@@ -14,6 +14,10 @@ import {
   EquipmentHistory
 } from '@/types';
 
+import sogaraCompanyImage from '@/assets/sogara-company.jpg';
+import isoCertificationImage from '@/assets/iso-certification.jpg';
+import safetyTrainingImage from '@/assets/safety-training.jpg';
+
 const STORAGE_KEYS = {
   EMPLOYEES: 'sogara_employees',
   VISITORS: 'sogara_visitors',
@@ -609,12 +613,13 @@ export class PostRepository {
       {
         id: '1',
         title: 'Nouvelle certification ISO 14001 obtenue',
-        content: 'SOGARA a obtenu la certification ISO 14001 pour son système de management environnemental. Cette certification témoigne de notre engagement continu pour la protection de l\'environnement et l\'amélioration de nos performances environnementales.',
+        content: 'SOGARA a obtenu la certification ISO 14001 pour son système de management environnemental. Cette certification témoigne de notre engagement continu pour la protection de l\'environnement et l\'amélioration de nos performances environnementales. Cette reconnaissance internationale valide nos efforts constants pour minimiser notre impact environnemental tout en maintenant l\'excellence opérationnelle.',
         excerpt: 'Une nouvelle certification qui témoigne de notre engagement pour l\'environnement.',
         authorId: '6', // Communication manager
         category: 'news',
         status: 'published',
-        featuredImage: '/api/placeholder/600/400',
+        featuredImage: isoCertificationImage,
+        images: [isoCertificationImage],
         tags: ['ISO', 'Environnement', 'Certification'],
         publishedAt: new Date('2024-01-20'),
         createdAt: new Date('2024-01-19'),
@@ -623,12 +628,13 @@ export class PostRepository {
       {
         id: '2',
         title: 'Journée sécurité - 15 février 2024',
-        content: 'Participez à notre journée dédiée à la sécurité au travail. Au programme : formations, ateliers pratiques et échanges avec les experts HSE.',
+        content: 'Participez à notre journée dédiée à la sécurité au travail. Au programme : formations pratiques, ateliers de sensibilisation, démonstrations d\'équipements de protection individuelle et échanges avec nos experts HSE. Cette journée s\'adresse à tous les employés et vise à renforcer notre culture sécurité. Rendez-vous à 8h00 dans l\'auditorium principal.',
         excerpt: 'Une journée complète dédiée à la sensibilisation et formation sécurité.',
         authorId: '6',
         category: 'event',
         status: 'published',
-        featuredImage: '/api/placeholder/600/400',
+        featuredImage: safetyTrainingImage,
+        images: [safetyTrainingImage],
         tags: ['Sécurité', 'Formation', 'HSE'],
         publishedAt: new Date('2024-01-18'),
         createdAt: new Date('2024-01-17'),
@@ -637,15 +643,30 @@ export class PostRepository {
       {
         id: '3',
         title: 'Résultats exceptionnels du T4 2023',
-        content: 'SOGARA annonce des résultats record pour le quatrième trimestre 2023, confirmant la solidité et la croissance de notre entreprise.',
+        content: 'SOGARA annonce des résultats record pour le quatrième trimestre 2023, confirmant la solidité et la croissance soutenue de notre entreprise. Ces performances exceptionnelles sont le fruit de l\'engagement de tous nos collaborateurs et de notre stratégie d\'investissement dans les technologies innovantes. Nous remercions chaleureusement toutes les équipes pour leur dévouement.',
         excerpt: 'Des performances qui confirment la solidité de notre entreprise.',
         authorId: '6',
         category: 'announcement',
         status: 'published',
+        featuredImage: sogaraCompanyImage,
+        images: [sogaraCompanyImage],
         tags: ['Résultats', 'Performance', 'T4 2023'],
         publishedAt: new Date('2024-01-16'),
         createdAt: new Date('2024-01-15'),
         updatedAt: new Date('2024-01-16'),
+      },
+      {
+        id: '4',
+        title: 'Nouvelle équipe projet développement durable',
+        content: 'SOGARA constitue une équipe dédiée au développement durable pour piloter nos initiatives écologiques. Cette équipe pluridisciplinaire travaillera sur la réduction de notre empreinte carbone, l\'optimisation de nos processus industriels et le développement de nouvelles technologies vertes.',
+        excerpt: 'Une équipe dédiée pour accélérer notre transition écologique.',
+        authorId: '6',
+        category: 'activity',
+        status: 'published',
+        tags: ['Développement durable', 'Écologie', 'Innovation'],
+        publishedAt: new Date('2024-01-14'),
+        createdAt: new Date('2024-01-13'),
+        updatedAt: new Date('2024-01-14'),
       },
     ];
 
