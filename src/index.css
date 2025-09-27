@@ -8,35 +8,60 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Industrial color palette */
+    --background: 220 15% 97%;
+    --foreground: 215 25% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 215 25% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 215 25% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Industrial blue primary */
+    --primary: 210 95% 38%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 210 90% 52%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Industrial gray secondary */
+    --secondary: 215 20% 85%;
+    --secondary-foreground: 215 25% 25%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 215 20% 92%;
+    --muted-foreground: 215 15% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Industrial orange accent */
+    --accent: 25 95% 55%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 85% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --success: 145 70% 45%;
+    --success-foreground: 0 0% 100%;
 
-    --radius: 0.5rem;
+    --warning: 45 95% 55%;
+    --warning-foreground: 0 0% 100%;
+
+    --border: 215 20% 88%;
+    --input: 215 20% 92%;
+    --ring: 210 95% 38%;
+
+    --radius: 0.75rem;
+
+    /* Industrial gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(215 20% 97%));
+    --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(35 90% 65%));
+
+    /* Industrial shadows */
+    --shadow-industrial: 0 4px 20px -2px hsl(var(--primary) / 0.15);
+    --shadow-card: 0 2px 10px -1px hsl(215 25% 15% / 0.1);
+    --shadow-elevated: 0 8px 30px -4px hsl(215 25% 15% / 0.15);
+
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
     --sidebar-background: 0 0% 98%;
 
@@ -56,41 +81,53 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 215 25% 8%;
+    --foreground: 215 20% 95%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 215 25% 10%;
+    --card-foreground: 215 20% 95%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 215 25% 10%;
+    --popover-foreground: 215 20% 95%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    /* Darker industrial blue primary */
+    --primary: 210 90% 65%;
+    --primary-foreground: 215 25% 15%;
+    --primary-glow: 210 85% 75%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    /* Dark industrial gray secondary */
+    --secondary: 215 25% 20%;
+    --secondary-foreground: 215 20% 85%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 215 25% 15%;
+    --muted-foreground: 215 15% 65%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    /* Dark orange accent */
+    --accent: 25 90% 60%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 80% 65%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --success: 145 65% 55%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 45 90% 65%;
+    --warning-foreground: 0 0% 100%;
+
+    --border: 215 25% 18%;
+    --input: 215 25% 18%;
+    --ring: 210 90% 65%;
+
+    /* Dark gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-card: linear-gradient(145deg, hsl(215 25% 10%), hsl(215 25% 12%));
+    --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(35 85% 70%));
+
+    /* Dark shadows */
+    --shadow-industrial: 0 4px 20px -2px hsl(0 0% 0% / 0.3);
+    --shadow-card: 0 2px 10px -1px hsl(0 0% 0% / 0.2);
+    --shadow-elevated: 0 8px 30px -4px hsl(0 0% 0% / 0.3);
   }
 }
 
@@ -100,6 +137,56 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
+
+@layer components {
+  .industrial-card {
+    @apply bg-white border border-border rounded-xl shadow-[var(--shadow-card)] transition-[var(--transition-smooth)];
+  }
+
+  .industrial-card-elevated {
+    @apply bg-white border border-border rounded-xl shadow-[var(--shadow-elevated)] transition-[var(--transition-smooth)];
+  }
+
+  .gradient-primary {
+    background: var(--gradient-primary);
+  }
+
+  .gradient-card {
+    background: var(--gradient-card);
+  }
+
+  .gradient-accent {
+    background: var(--gradient-accent);
+  }
+
+  .status-badge {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full;
+  }
+
+  .status-operational {
+    @apply bg-success/10 text-success border border-success/20;
+  }
+
+  .status-maintenance {
+    @apply bg-warning/10 text-warning border border-warning/20;
+  }
+
+  .status-urgent {
+    @apply bg-destructive/10 text-destructive border border-destructive/20;
+  }
+
+  .animate-fade-in {
+    @apply animate-in fade-in-0 duration-300;
+  }
+
+  .animate-slide-up {
+    @apply animate-in slide-in-from-bottom-4 duration-300;
+  }
+
+  .animate-scale-in {
+    @apply animate-in zoom-in-95 duration-200;
   }
 }
