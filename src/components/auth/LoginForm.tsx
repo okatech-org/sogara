@@ -191,25 +191,26 @@ export function LoginForm({ onBackToHome }: LoginFormProps) {
                 Testez l'application avec différents niveaux d'accès
               </p>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-3">
               {demoAccounts.map((account) => {
                 const Icon = account.icon;
                 return (
-                  <div
+                  <Button
                     key={account.id}
-                    className="p-4 rounded-lg border border-border bg-card hover:bg-muted/30 transition-all group cursor-pointer"
+                    variant="outline"
+                    className="w-full h-auto p-4 justify-start hover:shadow-md hover:border-primary/50 transition-all group"
                     onClick={() => handleDemoLogin(account.id)}
                   >
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4 w-full">
                       <div className={`w-12 h-12 ${account.color} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform`}>
                         <Icon className="w-6 h-6" />
                       </div>
-                      <div className="flex-1 min-w-0">
+                      <div className="flex-1 min-w-0 text-left">
                         <div className="flex items-center gap-2 mb-1">
                           <h3 className="font-medium text-foreground">
                             {account.name}
                           </h3>
-                          <Badge variant="outline" className="text-xs">
+                          <Badge variant="secondary" className="text-xs">
                             {account.matricule}
                           </Badge>
                         </div>
@@ -220,9 +221,12 @@ export function LoginForm({ onBackToHome }: LoginFormProps) {
                           {account.description}
                         </p>
                       </div>
-                      <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                      <div className="flex flex-col items-center gap-1">
+                        <ArrowRight className="w-5 h-5 text-primary group-hover:translate-x-1 transition-all" />
+                        <span className="text-xs text-primary font-medium">Cliquez</span>
+                      </div>
                     </div>
-                  </div>
+                  </Button>
                 );
               })}
             </CardContent>
