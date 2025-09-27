@@ -23,7 +23,7 @@ export function LoginForm({ onBackToHome }: LoginFormProps) {
     {
       id: '3',
       matricule: 'ADM001',
-      name: 'Alain Obame',
+      name: 'ALAIN OBAME',
       role: 'Administrateur',
       description: 'Accès complet à tous les modules',
       color: 'bg-destructive text-destructive-foreground',
@@ -32,7 +32,7 @@ export function LoginForm({ onBackToHome }: LoginFormProps) {
     {
       id: '4', 
       matricule: 'HSE001',
-      name: 'Marie Ndong',
+      name: 'MARIE LAKIBI',
       role: 'Responsable HSE',
       description: 'Gestion sécurité, incidents et formations',
       color: 'bg-secondary text-secondary-foreground',
@@ -41,7 +41,7 @@ export function LoginForm({ onBackToHome }: LoginFormProps) {
     {
       id: '5',
       matricule: 'SUP001', 
-      name: 'Christian Ella',
+      name: 'CHRISTIAN ELLA',
       role: 'Superviseur',
       description: 'Supervision et rapports',
       color: 'bg-primary text-primary-foreground',
@@ -50,7 +50,7 @@ export function LoginForm({ onBackToHome }: LoginFormProps) {
     {
       id: '2',
       matricule: 'REC001',
-      name: 'Sylvie Mba', 
+      name: 'SYLVIE KOUMBA', 
       role: 'Réceptionniste',
       description: 'Accueil visiteurs et gestion colis',
       color: 'bg-accent text-accent-foreground',
@@ -59,7 +59,7 @@ export function LoginForm({ onBackToHome }: LoginFormProps) {
     {
       id: '1',
       matricule: 'EMP001',
-      name: 'Pierre Nze',
+      name: 'PIERRE ANTCHOUET',
       role: 'Employé',
       description: 'Accès employé standard',
       color: 'bg-secondary text-secondary-foreground',
