@@ -137,14 +137,18 @@ export function WelcomePage({ onShowLogin }: WelcomePageProps) {
   const handleDemoLogin = (accountId: string) => {
     try {
       const all = repositories.employees.getAll();
+      console.log('Repository employees:', all);
       const employee = all.find((e) => e.id === accountId);
+      console.log('Found employee for login:', employee);
+      
       if (employee) {
         login(employee);
         toast({
-          title: 'Connexion démo',
-          description: `Bienvenue ${employee.firstName} ${employee.lastName}`,
+          title: 'Connexion démo réussie',
+          description: `Bienvenue ${employee.firstName} ${employee.lastName} - ${employee.roles.join(', ')}`,
         });
       } else {
+        console.error('No employee found with ID:', accountId);
         toast({
           title: 'Erreur',
           description: 'Compte démo non trouvé.',
@@ -152,6 +156,7 @@ export function WelcomePage({ onShowLogin }: WelcomePageProps) {
         });
       }
     } catch (err) {
+      console.error('Error in demo login:', err);
       toast({
         title: 'Erreur',
         description: "Impossible de charger les comptes démo.",

@@ -19,10 +19,26 @@ interface HeaderProps {
 }
 
 export function Header({ onCreateVisit, onCreatePackage, onCreateEquipment }: HeaderProps) {
-  const { currentUser, logout } = useAuth();
+  const { currentUser, logout, hasAnyRole } = useAuth();
   const { recentNotifications } = useDashboard();
 
   const unreadCount = recentNotifications.length;
+
+  // Determine available actions based on user roles
+  const canCreateVisit = hasAnyRole(['ADMIN', 'RECEP', 'SUPERVISEUR']);
+  const canCreatePackage = hasAnyRole(['ADMIN', 'RECEP']);
+  const canCreateEquipment = hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR']);
+
+  const getRoleDisplayName = (roles: string[]) => {
+    const roleNames = {
+      'ADMIN': 'Administrateur',
+      'HSE': 'Responsable HSE',
+      'SUPERVISEUR': 'Superviseur',
+      'RECEP': 'Réceptionniste',
+      'EMPLOYE': 'Employé'
+    };
+    return roles.map(role => roleNames[role as keyof typeof roleNames] || role).join(', ');
+  };
 
   return (
     <header className="industrial-card-elevated border-b bg-white/95 backdrop-blur-sm sticky top-0 z-50">
@@ -41,30 +57,38 @@ export function Header({ onCreateVisit, onCreatePackage, onCreateEquipment }: He
 
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="gap-2">
-                  <Plus className="w-4 h-4" />
-                  Actions rapides
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuLabel>Créer</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={onCreateVisit} className="gap-2">
-                  <Users className="w-4 h-4" />
-                  Nouvelle visite
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={onCreatePackage} className="gap-2">
-                  <Package className="w-4 h-4" />
-                  Nouveau colis
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={onCreateEquipment} className="gap-2">
-                  <HardHat className="w-4 h-4" />
-                  Nouvel équipement
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {(canCreateVisit || canCreatePackage || canCreateEquipment) && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="gap-2">
+                    <Plus className="w-4 h-4" />
+                    Actions rapides
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuLabel>Créer</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {canCreateVisit && (
+                    <DropdownMenuItem onClick={onCreateVisit} className="gap-2">
+                      <Users className="w-4 h-4" />
+                      Nouvelle visite
+                    </DropdownMenuItem>
+                  )}
+                  {canCreatePackage && (
+                    <DropdownMenuItem onClick={onCreatePackage} className="gap-2">
+                      <Package className="w-4 h-4" />
+                      Nouveau colis
+                    </DropdownMenuItem>
+                  )}
+                  {canCreateEquipment && (
+                    <DropdownMenuItem onClick={onCreateEquipment} className="gap-2">
+                      <HardHat className="w-4 h-4" />
+                      Nouvel équipement
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
 
             <Button variant="ghost" size="sm" className="relative">
               <Bell className="w-4 h-4" />
@@ -89,11 +113,12 @@ export function Header({ onCreateVisit, onCreatePackage, onCreateEquipment }: He
                 </span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>
                 <div>
                   <p className="font-medium">{currentUser?.firstName} {currentUser?.lastName}</p>
                   <p className="text-xs text-muted-foreground">{currentUser?.service}</p>
+                  <p className="text-xs text-primary font-medium">{getRoleDisplayName(currentUser?.roles || [])}</p>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
