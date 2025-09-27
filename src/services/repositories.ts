@@ -47,6 +47,9 @@ export class EmployeeRepository {
     this.employees = getFromStorage<Employee>(STORAGE_KEYS.EMPLOYEES);
     if (this.employees.length === 0) {
       this.seedData();
+    } else {
+      // If storage was partially seeded in previous versions, ensure all demo accounts exist
+      this.ensureDemoEmployees();
     }
   }
 
@@ -136,6 +139,101 @@ export class EmployeeRepository {
 
     this.employees = sampleEmployees;
     this.save();
+  }
+
+  // Ensure demo employees exist even if storage was partially seeded
+  private ensureDemoEmployees(): void {
+    const sampleEmployees: Employee[] = [
+      {
+        id: '1',
+        firstName: 'Pierre',
+        lastName: 'ANTCHOUET',
+        matricule: 'EMP001',
+        service: 'Production',
+        roles: ['EMPLOYE'],
+        competences: ['Opérateur', 'Sécurité niveau 1'],
+        habilitations: ['Conduite', 'EPI obligatoire'],
+        email: 'pierre.antchouet@sogara.com',
+        status: 'active',
+        stats: { visitsReceived: 5, packagesReceived: 2, hseTrainingsCompleted: 3 },
+        equipmentIds: ['eq1', 'eq2'],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: '2',
+        firstName: 'Sylvie',
+        lastName: 'KOUMBA',
+        matricule: 'REC001',
+        service: 'Accueil',
+        roles: ['RECEP'],
+        competences: ['Accueil visiteurs', 'Gestion colis'],
+        habilitations: ['Badge visiteurs', 'Système accès'],
+        email: 'sylvie.koumba@sogara.com',
+        status: 'active',
+        stats: { visitsReceived: 15, packagesReceived: 8, hseTrainingsCompleted: 4 },
+        equipmentIds: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: '3',
+        firstName: 'Alain',
+        lastName: 'OBAME',
+        matricule: 'ADM001',
+        service: 'Direction',
+        roles: ['ADMIN'],
+        competences: ['Gestion système', 'Administration', 'Supervision'],
+        habilitations: ['Accès total', 'Configuration système'],
+        email: 'alain.obame@sogara.com',
+        status: 'active',
+        stats: { visitsReceived: 3, packagesReceived: 1, hseTrainingsCompleted: 8 },
+        equipmentIds: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: '4',
+        firstName: 'Marie',
+        lastName: 'LAKIBI',
+        matricule: 'HSE001',
+        service: 'HSE',
+        roles: ['HSE'],
+        competences: ['Sécurité industrielle', 'Formation HSE', 'Audit conformité'],
+        habilitations: ['Inspection sécurité', 'Formation obligatoire', 'Incident management'],
+        email: 'marie.lakibi@sogara.com',
+        status: 'active',
+        stats: { visitsReceived: 8, packagesReceived: 3, hseTrainingsCompleted: 12 },
+        equipmentIds: ['eq3'],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: '5',
+        firstName: 'Christian',
+        lastName: 'ELLA',
+        matricule: 'SUP001',
+        service: 'Production',
+        roles: ['SUPERVISEUR'],
+        competences: ['Management équipes', 'Planification', 'Contrôle qualité'],
+        habilitations: ['Supervision opérations', 'Validation processus'],
+        email: 'christian.ella@sogara.com',
+        status: 'active',
+        stats: { visitsReceived: 12, packagesReceived: 6, hseTrainingsCompleted: 7 },
+        equipmentIds: ['eq4'],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }
+    ];
+
+    let added = false;
+    for (const demo of sampleEmployees) {
+      if (!this.employees.find(e => e.id === demo.id)) {
+        this.employees.push(demo);
+        added = true;
+      }
+    }
+    if (added) this.save();
   }
 
   private save(): void {
