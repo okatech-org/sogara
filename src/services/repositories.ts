@@ -54,7 +54,7 @@ export class EmployeeRepository {
     const sampleEmployees: Employee[] = [
       {
         id: '1',
-        firstName: 'PIERRE',
+        firstName: 'Pierre',
         lastName: 'ANTCHOUET',
         matricule: 'EMP001',
         service: 'Production',
@@ -70,7 +70,7 @@ export class EmployeeRepository {
       },
       {
         id: '2',
-        firstName: 'SYLVIE',
+        firstName: 'Sylvie',
         lastName: 'KOUMBA',
         matricule: 'REC001',
         service: 'Accueil',
@@ -86,7 +86,7 @@ export class EmployeeRepository {
       },
       {
         id: '3',
-        firstName: 'ALAIN',
+        firstName: 'Alain',
         lastName: 'OBAME',
         matricule: 'ADM001',
         service: 'Direction',
@@ -102,7 +102,7 @@ export class EmployeeRepository {
       },
       {
         id: '4',
-        firstName: 'MARIE',
+        firstName: 'Marie',
         lastName: 'LAKIBI',
         matricule: 'HSE001',
         service: 'HSE',
@@ -118,7 +118,7 @@ export class EmployeeRepository {
       },
       {
         id: '5',
-        firstName: 'CHRISTIAN',
+        firstName: 'Christian',
         lastName: 'ELLA',
         matricule: 'SUP001',
         service: 'Production',
