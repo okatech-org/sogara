@@ -17,8 +17,11 @@ import {
   Workflow,
   Code,
   Layers,
-  Globe
+  Globe,
+  Link as LinkIcon
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { demoAccounts } from '@/data/demoAccounts';
 
 export function ProjetPage() {
   return (
@@ -121,194 +124,83 @@ export function ProjetPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-6">
-                <div className="grid gap-4 md:grid-cols-2">
-                  <Card className="border-2 border-red-200">
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center gap-2">
-                        <Badge variant="destructive">ADMIN</Badge>
-                        <span className="font-semibold">Mamadou DIALLO (ADM001)</span>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <p className="text-sm text-muted-foreground">
-                        <strong>Fonction :</strong> Directeur Administratif
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        <strong>Responsabilités :</strong>
-                      </p>
-                      <ul className="text-xs space-y-1 ml-4">
-                        <li>• Supervision générale de tous les systèmes</li>
-                        <li>• Gestion des utilisateurs et permissions</li>
-                        <li>• Configuration système et paramètres</li>
-                        <li>• Accès à la documentation technique</li>
-                        <li>• Validation des processus critiques</li>
-                        <li>• Rapports et analytics complets</li>
-                      </ul>
-                      <Badge variant="outline" className="text-xs">
-                        Accès : Tous les modules
-                      </Badge>
-                    </CardContent>
-                  </Card>
+                <div className="grid gap-6">
+                  <div className="grid gap-4 md:grid-cols-2">
+                    {demoAccounts.map((account) => {
+                      const Icon = account.icon;
+                      return (
+                        <Card key={account.id} className="border-2">
+                          <CardHeader className="pb-3">
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline">{account.matricule}</Badge>
+                              <span className="font-semibold">{account.fullName}</span>
+                            </div>
+                          </CardHeader>
+                          <CardContent className="space-y-3">
+                            <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                              <Icon className="w-4 h-4" />
+                              <span>{account.jobTitle}</span>
+                            </div>
+                            <p className="text-sm text-muted-foreground">
+                              {account.description}
+                            </p>
+                            <div className="space-y-1 text-xs text-muted-foreground">
+                              <strong>Responsabilités principales :</strong>
+                              <ul className="ml-4 space-y-1 list-disc">
+                                {account.responsibilities.slice(0, 4).map((item) => (
+                                  <li key={item}>{item}</li>
+                                ))}
+                                {account.responsibilities.length > 4 && <li>…</li>}
+                              </ul>
+                            </div>
+                            <Badge variant="outline" className="text-xs">
+                              {account.accessSummary}
+                            </Badge>
+                            <div className="flex items-center gap-2 pt-2">
+                              <Link
+                                to={`/comptes/${account.slug}`}
+                                className="inline-flex items-center gap-1 text-xs text-primary underline underline-offset-4"
+                              >
+                                Voir la fiche complète
+                                <LinkIcon className="w-3 h-3" />
+                              </Link>
+                              <Link
+                                to={`/app/accounts/${account.slug}`}
+                                className="inline-flex items-center gap-1 text-xs text-muted-foreground"
+                              >
+                                Accéder en mode connecté
+                              </Link>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
 
-                  <Card className="border-2 border-orange-200">
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center gap-2">
-                        <Badge variant="secondary">HSE</Badge>
-                        <span className="font-semibold">Fatou NDIAYE (HSE001)</span>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <p className="text-sm text-muted-foreground">
-                        <strong>Fonction :</strong> Responsable HSE
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        <strong>Responsabilités :</strong>
-                      </p>
-                      <ul className="text-xs space-y-1 ml-4">
-                        <li>• Gestion des incidents de sécurité</li>
-                        <li>• Organisation des formations HSE</li>
-                        <li>• Suivi de la conformité réglementaire</li>
-                        <li>• Inspection des équipements de sécurité</li>
-                        <li>• Validation des habilitations</li>
-                        <li>• Rapports de sécurité mensuels</li>
-                      </ul>
-                      <Badge variant="outline" className="text-xs">
-                        Accès : Personnel, Équipements, HSE
-                      </Badge>
-                    </CardContent>
-                  </Card>
+                  <Separator />
 
-                  <Card className="border-2 border-blue-200">
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline">SUPERVISEUR</Badge>
-                        <span className="font-semibold">Ousmane FALL (SUP001)</span>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <p className="text-sm text-muted-foreground">
-                        <strong>Fonction :</strong> Chef d'Équipe Production
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        <strong>Responsabilités :</strong>
-                      </p>
-                      <ul className="text-xs space-y-1 ml-4">
-                        <li>• Supervision des équipes terrain</li>
-                        <li>• Validation des visites importantes</li>
-                        <li>• Suivi des équipements critiques</li>
-                        <li>• Coordination avec les services</li>
-                        <li>• Rapports d'activité quotidiens</li>
-                        <li>• Gestion des urgences opérationnelles</li>
-                      </ul>
-                      <Badge variant="outline" className="text-xs">
-                        Accès : Personnel, Visites, Équipements
-                      </Badge>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="border-2 border-green-200">
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline">RECEP</Badge>
-                        <span className="font-semibold">Aïssa TOURE (REC001)</span>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <p className="text-sm text-muted-foreground">
-                        <strong>Fonction :</strong> Réceptionniste Principal
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        <strong>Responsabilités :</strong>
-                      </p>
-                      <ul className="text-xs space-y-1 ml-4">
-                        <li>• Accueil et enregistrement des visiteurs</li>
-                        <li>• Attribution et récupération des badges</li>
-                        <li>• Réception du courrier et des colis</li>
-                        <li>• Distribution aux destinataires</li>
-                        <li>• Gestion du registre d'entrées</li>
-                        <li>• Premier contact sécuritaire</li>
-                      </ul>
-                      <Badge variant="outline" className="text-xs">
-                        Accès : Visites, Colis & Courriers
-                      </Badge>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="border-2 border-purple-200">
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline">COMMUNICATION</Badge>
-                        <span className="font-semibold">Aminata SECK (COM001)</span>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <p className="text-sm text-muted-foreground">
-                        <strong>Fonction :</strong> Chargée de Communication
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        <strong>Responsabilités :</strong>
-                      </p>
-                      <ul className="text-xs space-y-1 ml-4">
-                        <li>• Création de contenu SOGARA Connect</li>
-                        <li>• Publication d'actualités entreprise</li>
-                        <li>• Organisation d'événements internes</li>
-                        <li>• Gestion des annonces officielles</li>
-                        <li>• Animation de la vie sociale</li>
-                        <li>• Relations publiques internes</li>
-                      </ul>
-                      <Badge variant="outline" className="text-xs">
-                        Accès : SOGARA Connect (édition complète)
-                      </Badge>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="border-2 border-gray-200">
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline">EMPLOYE</Badge>
-                        <span className="font-semibold">Ibrahima KANE (EMP001)</span>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <p className="text-sm text-muted-foreground">
-                        <strong>Fonction :</strong> Technicien Raffinage
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        <strong>Responsabilités :</strong>
-                      </p>
-                      <ul className="text-xs space-y-1 ml-4">
-                        <li>• Consultation des informations générales</li>
-                        <li>• Lecture des actualités internes</li>
-                        <li>• Suivi des indicateurs personnels</li>
-                        <li>• Participation aux événements</li>
-                        <li>• Accès aux informations de service</li>
-                        <li>• Consultation planning formations</li>
-                      </ul>
-                      <Badge variant="outline" className="text-xs">
-                        Accès : Dashboard, SOGARA Connect (lecture)
-                      </Badge>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                <Separator />
-
-                <div className="bg-muted p-4 rounded-lg">
-                  <h4 className="font-medium mb-2">Instructions de Test</h4>
-                  <p className="text-sm text-muted-foreground mb-3">
-                    Pour tester le système, utilisez les matricules suivants lors de la connexion :
-                  </p>
-                  <div className="grid gap-2 text-sm font-mono">
-                    <div><strong>ADM001</strong> - Accès administrateur complet</div>
-                    <div><strong>HSE001</strong> - Modules sécurité et personnel</div>
-                    <div><strong>SUP001</strong> - Supervision équipes et équipements</div>
-                    <div><strong>REC001</strong> - Accueil et gestion courrier</div>
-                    <div><strong>COM001</strong> - Gestion contenu et communication</div>
-                    <div><strong>EMP001</strong> - Consultation simple</div>
+                  <div className="bg-muted p-4 rounded-lg">
+                    <h4 className="font-medium mb-2">Instructions de Test</h4>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Pour tester le système, utilisez les matricules suivants lors de la connexion ou accédez directement aux fiches :
+                    </p>
+                    <div className="grid gap-2 text-sm">
+                      {demoAccounts.map((account) => (
+                        <div key={account.id} className="flex items-center justify-between flex-wrap gap-2">
+                          <span className="font-mono font-semibold">{account.matricule}</span>
+                          <div className="flex items-center gap-3 text-xs">
+                            <Link to={`/comptes/${account.slug}`} className="text-primary underline underline-offset-4">
+                              Fiche publique
+                            </Link>
+                            <Link to={`/app/accounts/${account.slug}`} className="text-muted-foreground underline underline-offset-4">
+                              Vue interne
+                            </Link>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
             </CardContent>
           </Card>
         </TabsContent>

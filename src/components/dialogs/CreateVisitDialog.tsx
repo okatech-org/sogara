@@ -24,7 +24,7 @@ interface CreateVisitDialogProps {
 export function CreateVisitDialog({ trigger, preselectedVisitor, onSuccess }: CreateVisitDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { createVisit, createVisitor } = useVisits();
+  const { createVisit, createVisitor, visitors } = useVisits();
   const { employees } = useEmployees();
 
   const handleSubmit = async (data: {
@@ -98,6 +98,7 @@ export function CreateVisitDialog({ trigger, preselectedVisitor, onSuccess }: Cr
         <VisitForm
           visitor={preselectedVisitor}
           employees={employees}
+          visitors={visitors}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
           isLoading={isLoading}

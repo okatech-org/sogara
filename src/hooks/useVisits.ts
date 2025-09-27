@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { repositories } from '@/services/repositories';
 import { Visit, Visitor, VisitStatus } from '@/types';
@@ -7,64 +7,70 @@ import { convex, convexClientAvailable } from '@/lib/convexClient';
 
 export function useVisits() {
   const { state, dispatch } = useApp();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
 
-  useEffect(() => {
-    let cancelled = false;
-    const load = async () => {
-      try {
-        if (convexClientAvailable) {
-          const [visitsRes, visitorsRes] = await Promise.all([
-            convex.query('visits:list', {}),
-            convex.query('visitors:list', {}),
-          ]);
-          if (!cancelled) {
-            if (Array.isArray(visitsRes)) {
-              const mappedVisits = visitsRes.map((v: any) => ({
-                id: String(v._id ?? v.id),
-                visitorId: String(v.visitorId),
-                hostEmployeeId: String(v.hostEmployeeId),
-                scheduledAt: new Date(v.scheduledAt ?? Date.now()),
-                checkedInAt: v.checkedInAt ? new Date(v.checkedInAt) : undefined,
-                checkedOutAt: v.checkedOutAt ? new Date(v.checkedOutAt) : undefined,
-                status: v.status as VisitStatus,
-                purpose: v.purpose,
-                badgeNumber: v.badgeNumber,
-                createdAt: new Date(v.createdAt ?? Date.now()),
-                updatedAt: new Date(v.updatedAt ?? Date.now()),
-              })) as Visit[];
-              dispatch({ type: 'SET_VISITS', payload: mappedVisits });
-            }
-            if (Array.isArray(visitorsRes)) {
-              const mappedVisitors = visitorsRes.map((r: any) => ({
-                id: String(r._id ?? r.id),
-                firstName: r.firstName,
-                lastName: r.lastName,
-                company: r.company,
-                documentType: r.documentType,
-                idDocument: r.idDocument ?? r.documentNumber,
-                phone: r.phone,
-                email: r.email,
-                photo: r.photo,
-                createdAt: new Date(r.createdAt ?? Date.now()),
-              })) as Visitor[];
-              dispatch({ type: 'SET_VISITORS', payload: mappedVisitors });
-            }
-            return;
-          }
+  const fetchVisits = useCallback(async () => {
+    setIsLoading(true);
+    setIsError(false);
+
+    try {
+      if (convexClientAvailable) {
+        const [visitsRes, visitorsRes] = await Promise.all([
+          convex.query('visits:list', {}),
+          convex.query('visitors:list', {}),
+        ]);
+
+        if (Array.isArray(visitsRes)) {
+          const mappedVisits = visitsRes.map((v: any) => ({
+            id: String(v._id ?? v.id),
+            visitorId: String(v.visitorId),
+            hostEmployeeId: String(v.hostEmployeeId),
+            scheduledAt: new Date(v.scheduledAt ?? Date.now()),
+            checkedInAt: v.checkedInAt ? new Date(v.checkedInAt) : undefined,
+            checkedOutAt: v.checkedOutAt ? new Date(v.checkedOutAt) : undefined,
+            status: v.status as VisitStatus,
+            purpose: v.purpose,
+            badgeNumber: v.badgeNumber,
+            notes: v.notes,
+            createdAt: new Date(v.createdAt ?? Date.now()),
+            updatedAt: new Date(v.updatedAt ?? Date.now()),
+          })) as Visit[];
+          dispatch({ type: 'SET_VISITS', payload: mappedVisits });
         }
-      } catch (_) {}
-      const visits = repositories.visits.getAll();
-      const visitors = repositories.visitors.getAll();
-      if (!cancelled) {
+
+        if (Array.isArray(visitorsRes)) {
+          const mappedVisitors = visitorsRes.map((r: any) => ({
+            id: String(r._id ?? r.id),
+            firstName: r.firstName,
+            lastName: r.lastName,
+            company: r.company,
+            documentType: r.documentType,
+            idDocument: r.idDocument ?? r.documentNumber,
+            phone: r.phone,
+            email: r.email,
+            photo: r.photo,
+            createdAt: new Date(r.createdAt ?? Date.now()),
+          })) as Visitor[];
+          dispatch({ type: 'SET_VISITORS', payload: mappedVisitors });
+        }
+      } else {
+        const visits = repositories.visits.getAll();
+        const visitors = repositories.visitors.getAll();
         dispatch({ type: 'SET_VISITS', payload: visits });
         dispatch({ type: 'SET_VISITORS', payload: visitors });
       }
-    };
-    load();
-    return () => {
-      cancelled = true;
-    };
+    } catch (error) {
+      console.warn('Impossible de charger les visites', error);
+      setIsError(true);
+    } finally {
+      setIsLoading(false);
+    }
   }, [dispatch]);
+
+  useEffect(() => {
+    fetchVisits();
+  }, [fetchVisits]);
 
   const createVisitor = async (visitorData: Omit<Visitor, 'id' | 'createdAt'>) => {
     try {
@@ -132,9 +138,9 @@ export function useVisits() {
     }
   };
 
-  const updateVisitStatus = async (visitId: string, status: VisitStatus) => {
+  const updateVisitStatus = async (visitId: string, status: VisitStatus, extraUpdates: Partial<Visit> = {}) => {
     try {
-      const updates: Partial<Visit> = { status };
+      const updates: Partial<Visit> = { status, ...extraUpdates };
       if (status === 'in_progress') updates.checkedInAt = new Date();
       else if (status === 'checked_out') updates.checkedOutAt = new Date();
 
@@ -151,13 +157,15 @@ export function useVisits() {
             status: updated.status as VisitStatus,
             purpose: updated.purpose,
             badgeNumber: updated.badgeNumber,
+            notes: updated.notes,
             createdAt: new Date(updated.createdAt ?? Date.now()),
             updatedAt: new Date(updated.updatedAt ?? Date.now()),
           };
-          dispatch({ type: 'UPDATE_VISIT', payload: mapped });
+          const merged = { ...mapped, ...extraUpdates };
+          dispatch({ type: 'UPDATE_VISIT', payload: merged });
           const statusMessages = { waiting: 'Le visiteur est en attente', in_progress: 'Le visiteur est arrivé', checked_out: 'Le visiteur est sorti', expected: 'Visite programmée' } as const;
           toast({ title: 'Statut mis à jour', description: statusMessages[status] });
-          return mapped;
+          return merged;
         }
       }
       const updatedVisit = repositories.visits.update(visitId, updates);
@@ -197,6 +205,14 @@ export function useVisits() {
     return state.visitors.find(visitor => visitor.id === id);
   };
 
+  const visitsByStatus = useMemo(() => {
+    return state.visits.reduce<Record<VisitStatus, Visit[]>>((acc, visit) => {
+      acc[visit.status] ||= [];
+      acc[visit.status].push(visit);
+      return acc;
+    }, { expected: [], waiting: [], in_progress: [], checked_out: [] });
+  }, [state.visits]);
+
   return {
     visits: state.visits,
     visitors: state.visitors,
@@ -207,5 +223,9 @@ export function useVisits() {
     getVisitsByEmployee,
     searchVisitors,
     getVisitorById,
+    refetchVisits: fetchVisits,
+    visitsByStatus,
+    isLoading,
+    isError,
   };
 }

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Calendar, Clock, Users, Search, Plus, CheckCircle, XCircle } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { Calendar, Clock, Users, Search, Plus, CheckCircle, XCircle, Loader2, RefreshCw, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,36 +7,51 @@ import { Badge } from '@/components/ui/badge';
 import { useVisits } from '@/hooks/useVisits';
 import { useEmployees } from '@/hooks/useEmployees';
 import { useAuth } from '@/contexts/AppContext';
-import { Visit, VisitStatus } from '@/types';
+import type { Visit, VisitStatus } from '@/types';
 import { StatusBadge } from '@/components/ui/status-badge';
+import { CreateVisitDialog } from '@/components/dialogs/CreateVisitDialog';
+import { CheckInVisitorDialog } from '@/components/dialogs/CheckInVisitorDialog';
+import { toast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 export function VisitesPage() {
-  const { visits, visitors, updateVisitStatus } = useVisits();
-  const { employees } = useEmployees();
+  const {
+    visits,
+    visitors,
+    updateVisitStatus,
+    refetchVisits,
+    isLoading: visitsLoading,
+    isError: visitsError
+  } = useVisits();
+  const { employees, isLoading: employeesLoading } = useEmployees();
   const { hasAnyRole } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [updatingVisitIds, setUpdatingVisitIds] = useState<string[]>([]);
 
   const canManageVisits = hasAnyRole(['ADMIN', 'RECEP', 'SUPERVISEUR']);
+  const isLoading = visitsLoading || employeesLoading;
 
-  const todayVisits = visits.filter(visit => {
-    const visitDate = new Date(visit.scheduledAt).toDateString();
+  const todayVisits = useMemo(() => {
     const today = new Date().toDateString();
-    return visitDate === today;
-  });
+    return visits.filter(visit => visit.scheduledAt.toDateString() === today);
+  }, [visits]);
 
-  const filteredVisits = todayVisits.filter(visit => {
-    const visitor = visitors.find(v => v.id === visit.visitorId);
-    const host = employees.find(e => e.id === visit.hostEmployeeId);
-    
+  const filteredVisits = useMemo(() => {
     const searchLower = searchTerm.toLowerCase();
-    return (
-      visitor?.firstName.toLowerCase().includes(searchLower) ||
-      visitor?.lastName.toLowerCase().includes(searchLower) ||
-      visitor?.company.toLowerCase().includes(searchLower) ||
-      host?.firstName.toLowerCase().includes(searchLower) ||
-      host?.lastName.toLowerCase().includes(searchLower)
-    );
-  });
+    return todayVisits.filter(visit => {
+      const visitor = visitors.find(v => v.id === visit.visitorId);
+      const host = employees.find(e => e.id === visit.hostEmployeeId);
+
+      return (
+        (visitor?.firstName.toLowerCase().includes(searchLower) ?? false) ||
+        (visitor?.lastName.toLowerCase().includes(searchLower) ?? false) ||
+        (visitor?.company.toLowerCase().includes(searchLower) ?? false) ||
+        (host?.firstName.toLowerCase().includes(searchLower) ?? false) ||
+        (host?.lastName.toLowerCase().includes(searchLower) ?? false)
+      );
+    });
+  }, [todayVisits, visitors, employees, searchTerm]);
 
   const statusVariants = {
     expected: { label: 'Attendu', variant: 'info' as const, icon: Clock },
@@ -45,18 +60,25 @@ export function VisitesPage() {
     checked_out: { label: 'Terminé', variant: 'operational' as const, icon: CheckCircle },
   };
 
-  const handleStatusChange = (visitId: string, newStatus: VisitStatus) => {
-    updateVisitStatus(visitId, newStatus);
-  };
+  const handleStatusChange = async (visit: Visit, newStatus: VisitStatus) => {
+    if (updatingVisitIds.includes(visit.id)) return;
 
-  const getVisitorName = (visitorId: string) => {
-    const visitor = visitors.find(v => v.id === visitorId);
-    return visitor ? `${visitor.firstName} ${visitor.lastName}` : 'Visiteur inconnu';
-  };
-
-  const getHostName = (hostId: string) => {
-    const host = employees.find(e => e.id === hostId);
-    return host ? `${host.firstName} ${host.lastName}` : 'Hôte inconnu';
+    setUpdatingVisitIds(prev => [...prev, visit.id]);
+    try {
+      await updateVisitStatus(visit.id, newStatus);
+      toast({
+        title: 'Statut mis à jour',
+        description: `La visite de ${getVisitorName(visit.visitorId)} est maintenant ${statusVariants[newStatus].label.toLowerCase()}.`
+      });
+    } catch (error) {
+      toast({
+        title: 'Erreur',
+        description: 'Impossible de mettre à jour le statut de la visite.',
+        variant: 'destructive'
+      });
+    } finally {
+      setUpdatingVisitIds(prev => prev.filter(id => id !== visit.id));
+    }
   };
 
   const statsCards = [
@@ -86,6 +108,88 @@ export function VisitesPage() {
     },
   ];
 
+  const renderActions = (visit: Visit) => {
+    if (!canManageVisits) return null;
+
+    const isUpdating = updatingVisitIds.includes(visit.id);
+    const loadingIcon = <Loader2 className="w-4 h-4 animate-spin" />;
+
+    if (visit.status === 'expected') {
+      return (
+        <Button
+          size="sm"
+          variant="outline"
+          className="gap-2"
+          disabled={isUpdating}
+          onClick={() => handleStatusChange(visit, 'waiting')}
+        >
+          {isUpdating ? loadingIcon : null}
+          Arrivé
+        </Button>
+      );
+    }
+
+    if (visit.status === 'waiting') {
+      const visitor = visitors.find(v => v.id === visit.visitorId);
+      const host = employees.find(e => e.id === visit.hostEmployeeId);
+
+      if (!visitor || !host) return null;
+
+      return (
+        <CheckInVisitorDialog
+          visit={visit}
+          visitor={visitor}
+          hostEmployee={host}
+          trigger={
+            <Button
+              size="sm"
+              variant="default"
+              className="gap-2"
+              disabled={isUpdating}
+            >
+              {isUpdating ? loadingIcon : null}
+              Enregistrer entrée
+            </Button>
+          }
+          onSuccess={() => setUpdatingVisitIds(prev => prev.filter(id => id !== visit.id))}
+        />
+      );
+    }
+
+    if (visit.status === 'in_progress') {
+      return (
+        <Button
+          size="sm"
+          variant="destructive"
+          className="gap-2"
+          disabled={isUpdating}
+          onClick={() => handleStatusChange(visit, 'checked_out')}
+        >
+          {isUpdating ? loadingIcon : null}
+          Sortir
+        </Button>
+      );
+    }
+
+    return null;
+  };
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      await refetchVisits();
+      toast({ title: 'Données actualisées', description: 'Les visites ont été rechargées avec succès.' });
+    } catch (error) {
+      toast({
+        title: 'Erreur',
+        description: 'Impossible de rafraîchir les visites.',
+        variant: 'destructive'
+      });
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
@@ -96,10 +200,20 @@ export function VisitesPage() {
           </p>
         </div>
         {canManageVisits && (
-          <Button className="gap-2 gradient-primary">
-            <Plus className="w-4 h-4" />
-            Nouvelle visite
-          </Button>
+          <CreateVisitDialog
+            onSuccess={() => {
+              toast({
+                title: 'Visite créée',
+                description: 'La visite a été enregistrée avec succès.'
+              });
+            }}
+            trigger={
+              <Button className="gap-2 gradient-primary" disabled={isLoading}>
+                {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                Nouvelle visite
+              </Button>
+            }
+          />
         )}
       </div>
 
@@ -122,8 +236,8 @@ export function VisitesPage() {
         })}
       </div>
 
-      <div className="flex gap-4 items-center">
-        <div className="relative flex-1 max-w-md">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="relative w-full lg:max-w-md">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
             placeholder="Rechercher visiteur, hôte ou société..."
@@ -131,6 +245,19 @@ export function VisitesPage() {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
           />
+        </div>
+
+        <div className="flex gap-2 justify-end">
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            onClick={handleRefresh}
+            disabled={isRefreshing || isLoading}
+          >
+            {(isRefreshing || isLoading) ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+            Actualiser
+          </Button>
         </div>
       </div>
 
@@ -142,15 +269,35 @@ export function VisitesPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
+          {visitsError && (
+            <div className="mb-4 flex items-center gap-3 rounded-lg border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+              <AlertTriangle className="h-4 w-4" />
+              <span>Impossible de charger les visites. Vérifiez la connexion au serveur.</span>
+            </div>
+          )}
+
+          {isLoading && (
+            <div className="flex items-center justify-center py-12 text-muted-foreground">
+              <Loader2 className="w-6 h-6 mr-2 animate-spin" />
+              Chargement des visites en cours...
+            </div>
+          )}
+
           <div className="space-y-3">
-            {filteredVisits.map((visit) => {
+            {!isLoading && filteredVisits.map((visit) => {
               const statusInfo = statusVariants[visit.status];
               const StatusIcon = statusInfo.icon;
+              const isUpdating = updatingVisitIds.includes(visit.id);
+              const visitor = visitors.find(v => v.id === visit.visitorId);
+              const host = employees.find(e => e.id === visit.hostEmployeeId);
               
               return (
                 <div
                   key={visit.id}
-                  className="p-4 rounded-lg border border-border bg-card hover:bg-muted/30 transition-all"
+                  className={cn(
+                    'p-4 rounded-lg border border-border bg-card transition-all',
+                    isUpdating ? 'opacity-70' : 'hover:bg-muted/30'
+                  )}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -159,11 +306,11 @@ export function VisitesPage() {
                       </div>
                       <div>
                         <h3 className="font-medium text-foreground">
-                          {getVisitorName(visit.visitorId)}
+                          {visitor ? `${visitor.firstName} ${visitor.lastName}` : 'Visiteur inconnu'}
                         </h3>
                         <div className="text-sm text-muted-foreground">
-                          <p>Hôte: {getHostName(visit.hostEmployeeId)}</p>
-                          <p>Programmé: {new Date(visit.scheduledAt).toLocaleString()}</p>
+                          <p>Hôte: {host ? `${host.firstName} ${host.lastName}` : 'Hôte inconnu'}</p>
+                          <p>Programmée: {new Date(visit.scheduledAt).toLocaleString()}</p>
                           {visit.purpose && <p>Objet: {visit.purpose}</p>}
                         </div>
                       </div>
@@ -175,37 +322,7 @@ export function VisitesPage() {
                         variant={statusInfo.variant}
                       />
                       
-                      {canManageVisits && (
-                        <div className="flex gap-2">
-                          {visit.status === 'expected' && (
-                            <Button 
-                              size="sm" 
-                              variant="outline"
-                              onClick={() => handleStatusChange(visit.id, 'waiting')}
-                            >
-                              Arrivé
-                            </Button>
-                          )}
-                          {visit.status === 'waiting' && (
-                            <Button 
-                              size="sm" 
-                              variant="default"
-                              onClick={() => handleStatusChange(visit.id, 'in_progress')}
-                            >
-                              Entrer
-                            </Button>
-                          )}
-                          {visit.status === 'in_progress' && (
-                            <Button 
-                              size="sm" 
-                              variant="destructive"
-                              onClick={() => handleStatusChange(visit.id, 'checked_out')}
-                            >
-                              Sortir
-                            </Button>
-                          )}
-                        </div>
-                      )}
+                      {renderActions(visit)}
                     </div>
                   </div>
 
@@ -228,7 +345,7 @@ export function VisitesPage() {
             })}
           </div>
 
-          {filteredVisits.length === 0 && (
+          {!isLoading && filteredVisits.length === 0 && (
             <div className="text-center py-12 text-muted-foreground">
               <Calendar className="w-12 h-12 mx-auto mb-3 opacity-50" />
               <p>Aucune visite trouvée pour aujourd'hui</p>

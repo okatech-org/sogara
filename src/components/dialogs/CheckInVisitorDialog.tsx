@@ -54,12 +54,14 @@ export function CheckInVisitorDialog({
     setIsLoading(true);
     
     try {
-      const updatedVisit = await updateVisitStatus(visit.id, 'in_progress');
-      
+      const updatedVisit = await updateVisitStatus(visit.id, 'in_progress', {
+        badgeNumber,
+        notes,
+      });
       if (updatedVisit) {
         setIsOpen(false);
         onSuccess?.(updatedVisit);
-        
+
         toast({
           title: 'Visiteur enregistré',
           description: `${visitor.firstName} ${visitor.lastName} est maintenant sur site`

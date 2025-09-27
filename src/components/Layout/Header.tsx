@@ -1,4 +1,5 @@
-import { Bell, Package, Users, HardHat, Plus } from 'lucide-react';
+import { Bell, Package, Users, HardHat, Plus, List } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AppContext';
@@ -12,15 +13,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-interface HeaderProps {
-  onCreateVisit: () => void;
-  onCreatePackage: () => void;
-  onCreateEquipment: () => void;
-}
-
-export function Header({ onCreateVisit, onCreatePackage, onCreateEquipment }: HeaderProps) {
+export function Header() {
   const { currentUser, logout, hasAnyRole } = useAuth();
   const { recentNotifications } = useDashboard();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const unreadCount = recentNotifications.length;
 
@@ -28,6 +25,12 @@ export function Header({ onCreateVisit, onCreatePackage, onCreateEquipment }: He
   const canCreateVisit = hasAnyRole(['ADMIN', 'RECEP', 'SUPERVISEUR']);
   const canCreatePackage = hasAnyRole(['ADMIN', 'RECEP']);
   const canCreateEquipment = hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR']);
+
+  const goTo = (path: string) => {
+    navigate(path);
+  };
+
+  const showAccountHubShortcut = hasAnyRole(['ADMIN']) && !location.pathname.startsWith('/app/accounts');
 
   const getRoleDisplayName = (roles: string[]) => {
     const roleNames = {
@@ -69,19 +72,19 @@ export function Header({ onCreateVisit, onCreatePackage, onCreateEquipment }: He
                   <DropdownMenuLabel>Créer</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   {canCreateVisit && (
-                    <DropdownMenuItem onClick={onCreateVisit} className="gap-2">
+                    <DropdownMenuItem onClick={() => goTo('/app/visites')} className="gap-2">
                       <Users className="w-4 h-4" />
                       Nouvelle visite
                     </DropdownMenuItem>
                   )}
                   {canCreatePackage && (
-                    <DropdownMenuItem onClick={onCreatePackage} className="gap-2">
+                    <DropdownMenuItem onClick={() => goTo('/app/colis')} className="gap-2">
                       <Package className="w-4 h-4" />
                       Nouveau colis
                     </DropdownMenuItem>
                   )}
                   {canCreateEquipment && (
-                    <DropdownMenuItem onClick={onCreateEquipment} className="gap-2">
+                    <DropdownMenuItem onClick={() => goTo('/app/equipements')} className="gap-2">
                       <HardHat className="w-4 h-4" />
                       Nouvel équipement
                     </DropdownMenuItem>
@@ -101,6 +104,13 @@ export function Header({ onCreateVisit, onCreatePackage, onCreateEquipment }: He
           </div>
 
           <div className="h-6 w-px bg-border" />
+
+          {showAccountHubShortcut && (
+            <Button variant="ghost" size="sm" className="gap-2" onClick={() => goTo('/app/accounts')}>
+              <List className="w-4 h-4" />
+              Comptes démo
+            </Button>
+          )}
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

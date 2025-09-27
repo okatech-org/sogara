@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -17,7 +17,6 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 
 import { Visit, Visitor, Employee } from '@/types';
 import { CalendarIcon, User, Save, X, Search, Plus } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
 // Schéma de validation
@@ -54,6 +53,7 @@ interface VisitFormProps {
   visit?: Visit;
   visitor?: Visitor;
   employees: Employee[];
+  visitors: Visitor[];
   onSubmit: (data: {
     visitData: Omit<Visit, 'id' | 'createdAt' | 'updatedAt'>;
     visitorData?: Omit<Visitor, 'id' | 'createdAt'>;
@@ -66,6 +66,7 @@ export function VisitForm({
   visit, 
   visitor, 
   employees, 
+  visitors,
   onSubmit, 
   onCancel, 
   isLoading = false 
@@ -106,10 +107,26 @@ export function VisitForm({
   const watchedDate = watch('scheduledAt');
 
   // Filtrer les employés qui peuvent être des hôtes
-  const availableHosts = employees.filter(emp => 
-    emp.roles.some(role => ['ADMIN', 'HSE', 'SUPERVISEUR', 'RECEP'].includes(role)) &&
-    emp.status === 'active'
-  );
+  const availableHosts = useMemo(() => (
+    employees.filter(emp => 
+      emp.roles.some(role => ['ADMIN', 'HSE', 'SUPERVISEUR', 'RECEP'].includes(role)) &&
+      emp.status === 'active'
+    )
+  ), [employees]);
+
+  const visitorResults = useMemo(() => {
+    const term = visitorSearchTerm.trim().toLowerCase();
+    const base = term
+      ? visitors.filter(v =>
+          v.firstName.toLowerCase().includes(term) ||
+          v.lastName.toLowerCase().includes(term) ||
+          v.company.toLowerCase().includes(term) ||
+          v.idDocument.toLowerCase().includes(term)
+        )
+      : visitors;
+
+    return base.slice(0, 20);
+  }, [visitorSearchTerm, visitors]);
 
   // Soumission du formulaire
   const onFormSubmit = async (data: VisitFormData) => {
@@ -175,6 +192,14 @@ export function VisitForm({
     setValue('visitor.email', '');
   };
 
+  useEffect(() => {
+    if (visitor) {
+      setSelectedVisitor(visitor);
+      setIsCreatingNewVisitor(false);
+      setShowVisitorSearch(false);
+    }
+  }, [visitor]);
+
   return (
     <Card className="w-full max-w-4xl mx-auto">
       <CardHeader>
@@ -214,6 +239,56 @@ export function VisitForm({
                 </div>
               )}
             </div>
+
+            {showVisitorSearch && !visit && (
+              <div className="rounded-lg border bg-muted/20">
+                <div className="p-3 border-b flex items-center gap-2">
+                  <Input
+                    placeholder="Rechercher par nom, société ou document..."
+                    value={visitorSearchTerm}
+                    onChange={(e) => setVisitorSearchTerm(e.target.value)}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setShowVisitorSearch(false);
+                      setVisitorSearchTerm('');
+                    }}
+                  >
+                    Fermer
+                  </Button>
+                </div>
+                <div className="max-h-64 overflow-y-auto divide-y">
+                  {visitorResults.length === 0 && (
+                    <div className="p-4 text-sm text-muted-foreground">
+                      Aucun visiteur trouvé. Créez un nouveau visiteur.
+                    </div>
+                  )}
+                  {visitorResults.map((result) => (
+                    <button
+                      key={result.id}
+                      type="button"
+                      onClick={() => selectExistingVisitor(result)}
+                      className="w-full text-left p-3 hover:bg-muted/40 transition"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-medium">
+                            {result.firstName} {result.lastName}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {result.company} • {result.idDocument}
+                          </p>
+                        </div>
+                        <Badge variant="outline">Sélectionner</Badge>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {selectedVisitor && !isCreatingNewVisitor && (
               <Card className="p-4 bg-muted/30">
