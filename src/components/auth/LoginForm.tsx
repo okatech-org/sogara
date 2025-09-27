@@ -9,6 +9,7 @@ import { useEmployees } from '@/hooks/useEmployees';
 import { repositories } from '@/services/repositories';
 import { HardHat, ArrowLeft, ArrowRight, Settings, Shield, Users, Package } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { convex } from '@/lib/convexClient';
 
 interface LoginFormProps {
   onBackToHome: () => void;
@@ -81,28 +82,57 @@ export function LoginForm({ onBackToHome }: LoginFormProps) {
     }
 
     setLoading(true);
+    try {
+      // 1) Tente Convex si disponible (tolère les erreurs et continue)
+      try {
+        const convexResult = await convex.query("auth:loginByMatricule", { matricule });
+        if (convexResult) {
+          const found = convexResult as any;
+          login({
+            id: String(found._id ?? found.id ?? found.matricule),
+            firstName: found.firstName,
+            lastName: found.lastName,
+            matricule: found.matricule,
+            service: found.service,
+            roles: found.roles,
+            competences: found.competences,
+            habilitations: found.habilitations,
+            email: found.email ?? undefined,
+            phone: found.phone ?? undefined,
+            status: found.status,
+            stats: found.stats,
+            equipmentIds: found.equipmentIds ?? [],
+            createdAt: new Date(found.createdAt ?? Date.now()),
+            updatedAt: new Date(found.updatedAt ?? Date.now()),
+          });
+          toast({ title: 'Connexion réussie', description: `Bienvenue ${found.firstName} ${found.lastName}` });
+          return;
+        }
+      } catch (_) {
+        // Ignorer et poursuivre le fallback local
+      }
 
-    // Simuler une authentification
-    setTimeout(() => {
+      // 2) Fallback local: comptes démo et seed
       const employee = employees.find(emp => 
         emp.matricule.toLowerCase() === matricule.toLowerCase()
       );
-
       if (employee) {
         login(employee);
         toast({
-          title: 'Connexion réussie',
+          title: 'Connexion (démo locale)',
           description: `Bienvenue ${employee.firstName} ${employee.lastName}`,
         });
-      } else {
-        toast({
-          title: 'Erreur de connexion',
-          description: 'Matricule non trouvé.',
-          variant: 'destructive',
-        });
+        return;
       }
+
+      toast({
+        title: 'Erreur de connexion',
+        description: 'Matricule non trouvé.',
+        variant: 'destructive',
+      });
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   const handleDemoLogin = (accountId: string) => {
