@@ -8,6 +8,7 @@ import { ColisPage } from '@/pages/ColisPage';
 import { EquipementsPage } from '@/pages/EquipementsPage';
 import { HSEPage } from '@/pages/HSEPage';
 import { SOGARAConnectPage } from '@/pages/SOGARAConnectPage';
+import { ProjetPage } from '@/pages/ProjetPage';
 
 export function Layout() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -40,6 +41,8 @@ export function Layout() {
         return <HSEPage />;
       case 'connect':
         return <SOGARAConnectPage />;
+      case 'projet':
+        return <ProjetPage />;
       default:
         return <Dashboard />;
     }

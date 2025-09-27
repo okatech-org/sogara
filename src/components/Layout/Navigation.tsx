@@ -1,4 +1,4 @@
-import { Home, Users, Calendar, Package, HardHat, Shield, Newspaper } from 'lucide-react';
+import { Home, Users, Calendar, Package, HardHat, Shield, Newspaper, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AppContext';
@@ -25,6 +25,7 @@ const navigationItems: NavigationItem[] = [
   { id: 'colis', label: 'Colis & Courriers', icon: Package, requiredRoles: ['ADMIN', 'RECEP'] },
   { id: 'equipements', label: 'Équipements', icon: HardHat, requiredRoles: ['ADMIN', 'HSE', 'SUPERVISEUR'] },
   { id: 'hse', label: 'HSE', icon: Shield, requiredRoles: ['ADMIN', 'HSE'] },
+  { id: 'projet', label: 'Documentation Projet', icon: FileText, requiredRoles: ['ADMIN'] },
 ];
 
 export function Navigation({ activeTab, onTabChange }: NavigationProps) {
