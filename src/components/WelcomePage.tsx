@@ -1,4 +1,4 @@
-import { HardHat, Users, Package, Calendar, Shield, CheckCircle, ArrowRight, Play, Clock, Award, Zap, Target } from 'lucide-react';
+import { HardHat, Users, Package, Calendar, Shield, CheckCircle, ArrowRight, Play, Clock, Award, Zap, Target, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import techniciensImage from '@/assets/techniciens-raffinerie.jpg';
@@ -10,7 +10,10 @@ import suiviImage from '@/assets/suivi-simplifie.jpg';
 import communicationImage from '@/assets/communication-fluide.jpg';
 import reconnaissanceImage from '@/assets/reconnaissance.jpg';
 import efficaciteImage from '@/assets/efficacite-quotidienne.jpg';
-
+import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/contexts/AppContext';
+import { repositories } from '@/services/repositories';
+import { toast } from '@/hooks/use-toast';
 interface WelcomePageProps {
   onShowLogin: () => void;
 }
@@ -82,6 +85,81 @@ export function WelcomePage({ onShowLogin }: WelcomePageProps) {
     }
   ];
 
+  const demoAccounts = [
+    {
+      id: '3',
+      matricule: 'ADM001',
+      name: 'Alain OBAME',
+      role: 'Administrateur',
+      description: 'Accès complet à tous les modules',
+      color: 'bg-destructive text-destructive-foreground',
+      icon: Settings,
+    },
+    {
+      id: '4',
+      matricule: 'HSE001',
+      name: 'Marie LAKIBI',
+      role: 'Responsable HSE',
+      description: 'Gestion sécurité, incidents et formations',
+      color: 'bg-secondary text-secondary-foreground',
+      icon: Shield,
+    },
+    {
+      id: '5',
+      matricule: 'SUP001',
+      name: 'Christian ELLA',
+      role: 'Superviseur',
+      description: 'Supervision et rapports',
+      color: 'bg-primary text-primary-foreground',
+      icon: Users,
+    },
+    {
+      id: '2',
+      matricule: 'REC001',
+      name: 'Sylvie KOUMBA',
+      role: 'Réceptionniste',
+      description: 'Accueil visiteurs et gestion colis',
+      color: 'bg-accent text-accent-foreground',
+      icon: Package,
+    },
+    {
+      id: '1',
+      matricule: 'EMP001',
+      name: 'Pierre ANTCHOUET',
+      role: 'Employé',
+      description: 'Accès employé standard',
+      color: 'bg-secondary text-secondary-foreground',
+      icon: HardHat,
+    },
+  ];
+
+  const { login } = useAuth();
+  const handleDemoLogin = (accountId: string) => {
+    try {
+      const all = repositories.employees.getAll();
+      const employee = all.find((e) => e.id === accountId);
+      if (employee) {
+        login(employee);
+        toast({
+          title: 'Connexion démo',
+          description: `Bienvenue ${employee.firstName} ${employee.lastName}`,
+        });
+      } else {
+        toast({
+          title: 'Erreur',
+          description: 'Compte démo non trouvé.',
+          variant: 'destructive',
+        });
+      }
+    } catch (err) {
+      toast({
+        title: 'Erreur',
+        description: "Impossible de charger les comptes démo.",
+        variant: 'destructive',
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-card">
       {/* Hero Section */}
@@ -131,6 +209,57 @@ export function WelcomePage({ onShowLogin }: WelcomePageProps) {
               </Button>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Accès Démo immédiat */}
+      <div className="py-10">
+        <div className="container mx-auto px-4">
+          <Card className="industrial-card-elevated">
+            <CardHeader>
+              <CardTitle className="text-center">Accès Démo immédiat</CardTitle>
+              <p className="text-center text-muted-foreground">
+                Cliquez sur un profil pour vous connecter instantanément
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+                {demoAccounts.map((account) => {
+                  const Icon = account.icon;
+                  return (
+                    <div
+                      key={account.id}
+                      className="p-4 rounded-lg border border-border bg-card hover:bg-muted/30 transition-all group cursor-pointer"
+                      onClick={() => handleDemoLogin(account.id)}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className={`w-12 h-12 ${account.color} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                          <Icon className="w-6 h-6" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="font-medium text-foreground">
+                              {account.name}
+                            </h3>
+                            <Badge variant="outline" className="text-xs">
+                              {account.matricule}
+                            </Badge>
+                          </div>
+                          <p className="text-sm font-medium text-primary mb-1">
+                            {account.role}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {account.description}
+                          </p>
+                        </div>
+                        <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
 
