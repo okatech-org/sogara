@@ -22,14 +22,14 @@ export function useVisits() {
         ]);
 
         if (Array.isArray(visitsRes)) {
-          const mappedVisits = visitsRes.map((v: any) => ({
+          const mappedVisits = (visitsRes as Array<Partial<Visit> & { _id?: string; id?: string; visitorId?: string; hostEmployeeId?: string; scheduledAt?: string | number | Date; checkedInAt?: string | number | Date | null; checkedOutAt?: string | number | Date | null; status?: VisitStatus; purpose?: string; badgeNumber?: string; notes?: string; createdAt?: string | number | Date; updatedAt?: string | number | Date; }>).map((v) => ({
             id: String(v._id ?? v.id),
             visitorId: String(v.visitorId),
             hostEmployeeId: String(v.hostEmployeeId),
             scheduledAt: new Date(v.scheduledAt ?? Date.now()),
             checkedInAt: v.checkedInAt ? new Date(v.checkedInAt) : undefined,
             checkedOutAt: v.checkedOutAt ? new Date(v.checkedOutAt) : undefined,
-            status: v.status as VisitStatus,
+            status: (v.status ?? 'expected') as VisitStatus,
             purpose: v.purpose,
             badgeNumber: v.badgeNumber,
             notes: v.notes,
@@ -40,13 +40,13 @@ export function useVisits() {
         }
 
         if (Array.isArray(visitorsRes)) {
-          const mappedVisitors = visitorsRes.map((r: any) => ({
+          const mappedVisitors = (visitorsRes as Array<Partial<Visitor> & { _id?: string; id?: string; idDocument?: string; documentNumber?: string }>).map((r) => ({
             id: String(r._id ?? r.id),
             firstName: r.firstName,
             lastName: r.lastName,
             company: r.company,
             documentType: r.documentType,
-            idDocument: r.idDocument ?? r.documentNumber,
+            idDocument: r.idDocument ?? r.documentNumber ?? '',
             phone: r.phone,
             email: r.email,
             photo: r.photo,
@@ -77,15 +77,26 @@ export function useVisits() {
       if (convexClientAvailable) {
         const created = await convex.mutation('visitors:create', visitorData);
         if (created) {
-          const mapped: Visitor = {
-            id: String(created._id ?? created.id),
-            firstName: created.firstName,
-            lastName: created.lastName,
-            company: created.company,
-            documentType: created.documentType,
-            documentNumber: created.documentNumber,
-            createdAt: new Date(created.createdAt ?? Date.now()),
+          type CreatedVisitorRow = {
+            _id?: string; id?: string;
+            firstName: string; lastName: string; company: string;
+            documentType?: string; idDocument?: string; documentNumber?: string;
+            createdAt?: string | number | Date;
           };
+          const cv = created as CreatedVisitorRow;
+          const docType = (cv.documentType === 'cin' || cv.documentType === 'passport' || cv.documentType === 'other')
+            ? (cv.documentType as 'cin' | 'passport' | 'other')
+            : 'other';
+
+          const mapped: Visitor = {
+            id: String(cv._id ?? cv.id),
+            firstName: cv.firstName,
+            lastName: cv.lastName,
+            company: cv.company,
+            documentType: docType,
+            idDocument: cv.idDocument ?? cv.documentNumber ?? '',
+            createdAt: new Date(cv.createdAt ?? Date.now()),
+          } as Visitor;
           dispatch({ type: 'ADD_VISITOR', payload: mapped });
           return mapped;
         }
