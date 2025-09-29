@@ -1,0 +1,143 @@
+{
+  "id": "HSE-007",
+  "code": "PERMIT-WORK",
+  "title": "Système de Permis de Travail",
+  "category": "Management",
+  "description": "Formation superviseurs sur le système de permis de travail. Analyse de risques, rédaction et supervision des travaux à risque.",
+  "objectives": [
+    "Comprendre le système de permis de travail SOGARA",
+    "Identifier les travaux nécessitant un permis",
+    "Remplir correctement chaque type de permis",
+    "Réaliser une analyse de risques",
+    "Superviser l'exécution des travaux à permis"
+  ],
+  "duration": 4,
+  "durationUnit": "heures",
+  "validityMonths": 24,
+  "requiredForRoles": ["SUPERVISEUR", "HSE", "ADMIN"],
+  "prerequisites": ["HSE-001"],
+  "certification": {
+    "examRequired": true,
+    "passingScore": 90,
+    "practicalTest": true,
+    "certificateType": "Habilitation Émetteur/Récepteur de Permis"
+  },
+  "instructor": {
+    "qualificationRequired": "Responsable HSE ou Superviseur expérimenté",
+    "minExperience": "5 ans expérience terrain + Formation permis"
+  },
+  "maxParticipants": 10,
+  "language": ["Français"],
+  "deliveryMethods": ["Présentiel obligatoire"],
+  "refresherRequired": true,
+  "refresherFrequency": 24,
+  "content": {
+    "modules": [
+      {
+        "id": "module-permit-1",
+        "title": "📋 COMPRENDRE LE SYSTÈME DE PERMIS",
+        "duration": 0.75,
+        "description": "Principe et importance du système de permis",
+        "content": [
+          {
+            "id": "permit-definition",
+            "title": "Qu'est-ce qu'un Permis de Travail ?",
+            "type": "text",
+            "content": "#### Définition\n\n**Permis de Travail = Autorisation ÉCRITE** pour effectuer un travail à risque dans une zone spécifique pendant une période définie.\n\n**C'est :**\n- ✅ Un document OFFICIEL\n- ✅ Une CHECKLIST de sécurité\n- ✅ Un CONTRAT entre émetteur et exécutant\n- ✅ Une PREUVE de conformité"
+          },
+          {
+            "id": "permit-actors",
+            "title": "Les Acteurs du Permis",
+            "type": "procedure",
+            "content": "#### Émetteur (Autorité Responsable)\n\n**Qui ?**\n- Responsable d'exploitation\n- Chef d'unité\n- Responsable HSE\n\n**Rôle :**\n- Évalue les risques\n- Définit les mesures de prévention\n- AUTORISE ou REFUSE le travail\n- Signe le permis\n\n#### Récepteur (Entreprise Exécutante)\n\n**Qui ?**\n- Chef de chantier\n- Contremaître\n- Superviseur sous-traitant\n\n**Rôle :**\n- Reçoit le permis\n- S'assure que son équipe comprend\n- Applique les mesures prescrites\n- Signe engagement"
+          }
+        ]
+      },
+      {
+        "id": "module-permit-2",
+        "title": "🔥 LES DIFFÉRENTS TYPES DE PERMIS",
+        "duration": 1,
+        "description": "Permis de feu, pénétrer, électrique, fouille",
+        "content": [
+          {
+            "id": "fire-permit",
+            "title": "Permis de Feu 🔥",
+            "type": "safety_rules",
+            "content": "#### Définition\n\n**TOUT travail générant :**\n- Flamme nue\n- Étincelle\n- Point chaud (>100°C)\n\n#### Travaux Concernés\n\n**OBLIGATOIRES :**\n- ✅ Soudage (arc, oxyacétylénique, TIG, MIG)\n- ✅ Brasage\n- ✅ Oxycoupage\n- ✅ Meulage (projection étincelles)\n- ✅ Burinage\n- ✅ Perçage sur métal\n- ✅ Utilisation décapeur thermique\n- ✅ Brûlage dirigé"
+          },
+          {
+            "id": "entry-permit",
+            "title": "Permis de Pénétrer 🚪",
+            "type": "emergency_protocol",
+            "content": "#### Définition\n\n**Autorisation d'ENTRER dans un ESPACE CONFINÉ**\n\n#### Espaces Concernés\n\n- Réservoirs, cuves\n- Canalisations >0,5m\n- Fosses, puisards\n- Égouts\n- Tranchées >1,2m\n- Tout espace répondant aux 3 critères\n\n#### Procédure STRICTE\n\n**AVANT le Permis :**\n\n**1. Préparation de l'Espace (24-48h avant)**\n```\nVidange complète\n      ↓\nRinçage/Nettoyage\n      ↓\nPurge gaz résiduels\n      ↓\nVentilation 24h minimum\n```"
+          }
+        ]
+      },
+      {
+        "id": "module-permit-3",
+        "title": "✍️ REMPLIR UN PERMIS",
+        "duration": 1,
+        "description": "Analyse de risques et rédaction",
+        "content": [
+          {
+            "id": "risk-analysis",
+            "title": "Analyse de Risques (Cœur du Permis)",
+            "type": "procedure",
+            "content": "#### Méthode Systématique\n\n**ÉTAPE 1 : DÉCOMPOSER le Travail**\n\n**Exemple : Remplacer une vanne**\n```\n1. Accéder à la vanne\n2. Isoler la ligne\n3. Vidanger résidus\n4. Démonter vanne existante\n5. Installer nouvelle vanne\n6. Tester étanchéité\n7. Remettre en service\n```\n\n**ÉTAPE 2 : IDENTIFIER les Dangers (Chaque étape)**\n\n**ÉTAPE 3 : ÉVALUER les Risques**\n\n**Grille Gravité x Probabilité :**\n\n```\n       PROBABILITÉ\n         │ Rare │ Possible │ Fréquent │\n    ─────┼──────┼──────────┼──────────┤\nGRAVITÉ │      │          │          │\nMort    │  3   │    6     │    9     │ INACCEPTABLE\nGrave   │  2   │    4     │    6     │ À RÉDUIRE\nBénin   │  1   │    2     │    3     │ ACCEPTABLE\n```"
+          }
+        ]
+      },
+      {
+        "id": "module-permit-4",
+        "title": "👁️ SUPERVISION DES TRAVAUX",
+        "duration": 0.75,
+        "description": "Briefing, surveillance et clôture",
+        "content": [
+          {
+            "id": "work-briefing",
+            "title": "Briefing Avant Démarrage",
+            "type": "checklist",
+            "content": "**OBLIGATOIRE avant de commencer**\n\n#### Contenu du Briefing (10-15 minutes)\n\n**1. Lecture du Permis**\n```\nLire À HAUTE VOIX\n      ↓\nTOUTE l'équipe écoute\n      ↓\nPas de téléphones, distractions\n```\n\n**2. Explication des Risques**\n```\nPour CHAQUE risque identifié :\n├─ Pourquoi c'est dangereux\n├─ Comment ça peut arriver\n└─ Conséquences possibles\n```\n\n**3. Démonstration des Mesures**\n```\nMONTRER physiquement :\n├─ EPI à utiliser (comment)\n├─ Localisation extincteurs\n├─ Point de rassemblement\n├─ Bouton d'arrêt d'urgence\n└─ Détecteurs de gaz\n```"
+          }
+        ]
+      }
+    ],
+    "resources": [
+      {
+        "id": "permit-templates",
+        "title": "Modèles de Permis",
+        "type": "pdf",
+        "url": "/resources/hse/permit-templates.pdf",
+        "description": "Modèles vierges de tous les types de permis",
+        "downloadable": true
+      },
+      {
+        "id": "risk-assessment-matrix",
+        "title": "Matrice d'Évaluation des Risques",
+        "type": "pdf",
+        "url": "/resources/hse/risk-assessment-matrix.pdf",
+        "description": "Grille d'analyse et d'évaluation des risques",
+        "downloadable": true
+      }
+    ],
+    "assessments": [
+      {
+        "id": "permit-qcm",
+        "title": "QCM Système de Permis",
+        "type": "qcm",
+        "passingScore": 90,
+        "duration": 30,
+        "questions": [
+          {
+            "id": "q1",
+            "text": "Combien de temps un permis de feu est-il valide ?",
+            "type": "multiple_choice",
+            "options": ["4 heures", "8 heures (1 poste)", "24 heures"],
+            "correctAnswer": "8 heures (1 poste)",
+            "explanation": "Un permis de feu est valide maximum 1 poste de travail (8h) ou jusqu'à interruption."
+          }
+        ]
+      }
+    ]
+  }
+}

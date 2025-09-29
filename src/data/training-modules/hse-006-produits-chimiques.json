@@ -1,0 +1,151 @@
+{
+  "id": "HSE-006",
+  "code": "CHEM-SAFETY",
+  "title": "Manipulation des Produits Chimiques Dangereux",
+  "category": "Obligatoire",
+  "description": "Formation sur la manipulation sécuritaire des produits chimiques. FDS, pictogrammes, stockage et procédures d'urgence.",
+  "objectives": [
+    "Lire et comprendre une Fiche de Données de Sécurité (FDS)",
+    "Identifier les pictogrammes de danger",
+    "Choisir les EPI adaptés à chaque produit",
+    "Stocker et manipuler les produits chimiques en toute sécurité",
+    "Intervenir en cas de déversement ou d'exposition"
+  ],
+  "duration": 6,
+  "durationUnit": "heures",
+  "validityMonths": 24,
+  "requiredForRoles": ["EMPLOYE", "SUPERVISEUR", "HSE"],
+  "prerequisites": ["HSE-001"],
+  "certification": {
+    "examRequired": true,
+    "passingScore": 85,
+    "practicalTest": true,
+    "certificateType": "Certificat Manipulation Produits Chimiques"
+  },
+  "instructor": {
+    "qualificationRequired": "Formateur chimie/sécurité certifié",
+    "minExperience": "3 ans manipulation produits chimiques"
+  },
+  "maxParticipants": 12,
+  "language": ["Français"],
+  "deliveryMethods": ["Présentiel obligatoire"],
+  "refresherRequired": true,
+  "refresherFrequency": 24,
+  "content": {
+    "modules": [
+      {
+        "id": "module-chem-1",
+        "title": "⚗️ COMPRENDRE LES DANGERS CHIMIQUES",
+        "duration": 1,
+        "description": "Types de produits et voies d'exposition",
+        "content": [
+          {
+            "id": "chemical-definition",
+            "title": "Qu'est-ce qu'un Produit Chimique Dangereux ?",
+            "type": "text",
+            "content": "**Tout produit** pouvant causer des dommages à :\n- 👤 La santé humaine (intoxication, brûlures, cancer)\n- 🌍 L'environnement (pollution, destruction faune/flore)\n- 🏗️ Les installations (corrosion, incendie, explosion)\n\n**En raffinerie SOGARA, BEAUCOUP de produits chimiques dangereux !**"
+          },
+          {
+            "id": "common-chemicals",
+            "title": "Produits Chimiques Courants en Raffinerie",
+            "type": "text",
+            "content": "#### Hydrocarbures\n\n| Produit | Danger Principal | Effets |\n|---------|------------------|---------|\n| **Essence** | Inflammable, toxique | Vapeurs irritantes, narcose, explosion |\n| **Diesel** | Inflammable | Irritant cutané, vapeurs nocives |\n| **Benzène** | Cancérigène | Leucémie, effets neurologiques |\n| **Toluène** | Toxique | Atteinte système nerveux |\n\n#### Produits de Traitement\n\n| Produit | Danger | Effets |\n|---------|--------|--------|\n| **Soude caustique (NaOH)** | Corrosif | Brûlures graves peau/yeux |\n| **Acide sulfurique (H₂SO₄)** | Corrosif | Brûlures profondes, vapeurs |\n| **Acide chlorhydrique (HCl)** | Corrosif, vapeurs | Irritation respiratoire |\n| **Chlore** | Toxique | Asphyxie, œdème pulmonaire |"
+          },
+          {
+            "id": "exposure-routes",
+            "title": "Voies d'Exposition",
+            "type": "emergency_protocol",
+            "content": "#### Comment un Produit Entre dans Votre Corps\n\n**1. INHALATION** 🫁 (La plus fréquente)\n- Respirer vapeurs, gaz, poussières\n- Absorption RAPIDE par poumons\n- Effet IMMÉDIAT\n\n**2. CONTACT CUTANÉ** 🖐️\n- Produit touche la peau\n- Peut traverser la peau (absorption)\n- Brûlures chimiques\n\n**3. INGESTION** 👄 (Moins fréquent mais grave)\n- Avaler produit (accident)\n- Manger avec mains contaminées\n- Boire dans mauvaise bouteille\n\n**4. INJECTION** 💉 (Rare mais grave)\n- Jet haute pression dans peau\n- Coupure avec objet contaminé"
+          }
+        ]
+      },
+      {
+        "id": "module-chem-2",
+        "title": "🔢 SYSTÈME SGH ET PICTOGRAMMES",
+        "duration": 1,
+        "description": "Décryptage des étiquettes et FDS",
+        "content": [
+          {
+            "id": "sgh-system",
+            "title": "Le Système SGH",
+            "type": "text",
+            "content": "#### SGH = Système Général Harmonisé\n\n**Système MONDIAL** de classification et d'étiquetage des produits chimiques\n\n**Créé par l'ONU** pour :\n- Même pictogrammes partout dans le monde\n- Même phrases de danger (mentions H)\n- Même conseils de prudence (mentions P)"
+          },
+          {
+            "id": "pictograms",
+            "title": "Les 9 Pictogrammes de Danger",
+            "type": "safety_rules",
+            "content": "#### Format Standard\n\n```\n┌──────────────┐\n│   ◇ SYMBOLE  │  ← Losange rouge\n│              │  ← Fond blanc\n│   [ICÔNE]    │  ← Symbole noir\n└──────────────┘\n```\n\n#### Pictogrammes Principaux\n\n- 💣 **EXPLOSIF** : Peut exploser\n- 🔥 **INFLAMMABLE** : S'enflamme facilement\n- ☠️ **TOXIQUE/MORTEL** : Toxique ou mortel\n- ⚠️ **NOCIF/IRRITANT** : Nocif, irritant\n- 🧪 **CORROSIF** : Brûle peau et métaux\n- 🔬 **DANGER SANTÉ** : Cancer, mutation\n- 🌍 **DANGER ENVIRONNEMENT** : Pollue\n- 💨 **GAZ SOUS PRESSION** : Peut exploser si chauffé\n- 🔶 **COMBURANT** : Favorise incendie"
+          }
+        ]
+      },
+      {
+        "id": "module-chem-3",
+        "title": "📋 FICHE DE DONNÉES DE SÉCURITÉ",
+        "duration": 1,
+        "description": "Lecture et utilisation des FDS",
+        "content": [
+          {
+            "id": "fds-sections",
+            "title": "Les 16 Sections de la FDS",
+            "type": "text",
+            "content": "#### Sections Essentielles\n\n**Section 2 : IDENTIFICATION DES DANGERS**\n- Classification SGH\n- Pictogrammes\n- Mentions H (dangers)\n- Mentions P (précautions)\n**⭐ SECTION LA PLUS IMPORTANTE**\n\n**Section 4 : PREMIERS SECOURS**\n- Que faire selon voie d'exposition\n- Symptômes\n- Soins médicaux nécessaires\n**⭐ SECTION VITALE EN CAS D'ACCIDENT**\n\n**Section 8 : PROTECTION INDIVIDUELLE**\n- EPI requis (détaillés)\n- Protection respiratoire\n- Gants (type, matériau)\n**⭐ SECTION POUR CHOISIR EPI**"
+          }
+        ]
+      },
+      {
+        "id": "module-chem-4",
+        "title": "📦 MANIPULATION ET STOCKAGE",
+        "duration": 1.5,
+        "description": "Règles de manipulation et stockage sécurisé",
+        "content": [
+          {
+            "id": "safe-handling",
+            "title": "Règles Générales de Manipulation",
+            "type": "checklist",
+            "content": "#### Avant Manipulation\n\n**CHECK-LIST OBLIGATOIRE :**\n```\n□ Lire la FDS (Section 7 et 8)\n□ Identifier les dangers (pictogrammes)\n□ Préparer EPI appropriés\n□ Vérifier ventilation\n□ Prévoir absorbants (déversement)\n□ Localiser douche/rince-œil\n□ Informer collègues\n□ Permis de travail si requis\n```"
+          },
+          {
+            "id": "storage-rules",
+            "title": "Stockage des Produits Chimiques",
+            "type": "safety_rules",
+            "content": "#### Incompatibilités Majeures\n\n| Produit A | NE PAS stocker avec | Risque |\n|-----------|---------------------|--------|\n| **Acides** | Bases, métaux | Réaction violente, gaz, chaleur |\n| **Bases** | Acides | Réaction exothermique |\n| **Comburants** | Inflammables | Incendie, explosion |\n| **Eau** | Métaux alcalins, carbures | Réaction violente, H₂ |\n| **Chlore** | Ammoniac | Gaz toxique |"
+          }
+        ]
+      },
+      {
+        "id": "module-chem-5",
+        "title": "🚨 SITUATIONS D'URGENCE",
+        "duration": 1,
+        "description": "Déversements, expositions et premiers secours",
+        "content": [
+          {
+            "id": "spill-response",
+            "title": "Déversement de Produit Chimique",
+            "type": "emergency_protocol",
+            "content": "#### Déversement Mineur (<1 litre)\n\n**PROCÉDURE :**\n\n**1. SÉCURISER (30 secondes)**\n```\nPorter EPI appropriés\nÉloigner personnel\nBaliser zone\nCouper sources d'ignition (si inflammable)\n```\n\n**2. CONFINER (1 minute)**\n```\nBoudin absorbant autour de la flaque\nEmpêcher écoulement vers égouts\nFermer vannes si possible\n```\n\n**3. ABSORBER (5-10 minutes)**\n```\nRépandre absorbant (sable, vermiculite, coussin)\nAttendre imprégnation (2-3 min)\nRacler vers centre\nCollecter dans sac à déchets\n```"
+          }
+        ]
+      }
+    ],
+    "assessments": [
+      {
+        "id": "chem-qcm",
+        "title": "QCM Produits Chimiques",
+        "type": "qcm",
+        "passingScore": 85,
+        "duration": 30,
+        "questions": [
+          {
+            "id": "q1",
+            "text": "Que signifie le pictogramme tête de mort ?",
+            "type": "multiple_choice",
+            "options": ["Inflammable", "Toxique/Mortel", "Corrosif"],
+            "correctAnswer": "Toxique/Mortel",
+            "explanation": "Le pictogramme tête de mort indique un produit toxique ou mortel même à faible dose."
+          }
+        ]
+      }
+    ]
+  }
+}

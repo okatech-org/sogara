@@ -601,7 +601,16 @@ export class NotificationRepository {
   private notifications: Notification[] = [];
 
   constructor() {
-    this.notifications = getFromStorage<Notification>(STORAGE_KEYS.NOTIFICATIONS);
+    const stored = getFromStorage<Notification>(STORAGE_KEYS.NOTIFICATIONS);
+    // Convertir les timestamps strings en Date
+    this.notifications = stored.map(notif => ({
+      ...notif,
+      timestamp: typeof notif.timestamp === 'string' 
+        ? new Date(notif.timestamp) 
+        : notif.timestamp instanceof Date 
+          ? notif.timestamp 
+          : new Date()
+    }));
   }
 
   private save(): void {
@@ -609,7 +618,11 @@ export class NotificationRepository {
   }
 
   getAll(): Notification[] {
-    return this.notifications.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+    return this.notifications.sort((a, b) => {
+      const dateA = a.timestamp instanceof Date ? a.timestamp : new Date(a.timestamp);
+      const dateB = b.timestamp instanceof Date ? b.timestamp : new Date(b.timestamp);
+      return dateB.getTime() - dateA.getTime();
+    });
   }
 
   create(notification: Omit<Notification, 'id' | 'timestamp' | 'read'>): Notification {

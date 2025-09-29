@@ -1,0 +1,188 @@
+{
+  "id": "HSE-008",
+  "code": "FIRST-AID",
+  "title": "Sauveteur Secouriste du Travail (SST)",
+  "category": "Obligatoire",
+  "description": "Formation complète pour devenir Sauveteur Secouriste du Travail. Apprendre les gestes qui sauvent en milieu professionnel.",
+  "objectives": [
+    "PROTÉGER la victime et les témoins",
+    "EXAMINER l'état de la victime",
+    "ALERTER ou faire alerter les secours",
+    "SECOURIR en attendant l'arrivée des professionnels"
+  ],
+  "duration": 14,
+  "durationUnit": "heures",
+  "validityMonths": 24,
+  "requiredForRoles": ["EMPLOYE", "SUPERVISEUR", "HSE", "ADMIN"],
+  "prerequisites": [],
+  "certification": {
+    "examRequired": true,
+    "passingScore": 80,
+    "practicalTest": true,
+    "certificateType": "Certificat de Sauveteur Secouriste du Travail"
+  },
+  "instructor": {
+    "qualificationRequired": "Formateur SST certifié INRS",
+    "minExperience": "Formation médicale ou secourisme"
+  },
+  "maxParticipants": 10,
+  "language": ["Français"],
+  "deliveryMethods": ["Présentiel obligatoire"],
+  "refresherRequired": true,
+  "refresherFrequency": 24,
+  "content": {
+    "modules": [
+      {
+        "id": "module-sst-1",
+        "title": "🆘 LE SAUVETEUR SECOURISTE DU TRAVAIL",
+        "duration": 1,
+        "description": "Rôle et responsabilités du SST",
+        "content": [
+          {
+            "id": "sst-definition",
+            "title": "Qu'est-ce qu'un SST ?",
+            "type": "text",
+            "content": "Un **SST** est un salarié de l'entreprise formé pour :\n- Intervenir rapidement en cas d'accident\n- Prodiguer les premiers secours\n- Être le relais avec les secours professionnels\n\n**🎖️ Vous êtes le premier maillon de la chaîne des secours**\n\n#### En Cas d'Accident\n\n```\nVOUS ÊTES PRÉSENT\n      ↓\nVOUS INTERVENEZ\n      ↓\nVOUS SAUVEZ DES VIES\n```"
+          },
+          {
+            "id": "sst-limits",
+            "title": "Limites de Votre Intervention",
+            "type": "safety_rules",
+            "content": "#### ✅ CE QUE VOUS POUVEZ FAIRE\n\n- Protéger la zone\n- Examiner la victime\n- Alerter les secours\n- Gestes de premiers secours de base\n- Rassurer la victime\n\n#### ❌ CE QUE VOUS NE DEVEZ PAS FAIRE\n\n- Poser un diagnostic médical\n- Administrer des médicaments\n- Déplacer une victime (sauf danger immédiat)\n- Promettre que \"tout ira bien\"\n- Dépasser vos compétences\n\n**Règle d'Or : En cas de doute, ALERTER les secours professionnels**"
+          }
+        ]
+      },
+      {
+        "id": "module-sst-2",
+        "title": "🛡️ PROTÉGER, EXAMINER, ALERTER",
+        "duration": 2,
+        "description": "Les 3 premières étapes vitales",
+        "content": [
+          {
+            "id": "protect-principle",
+            "title": "PROTÉGER - Sécuriser la Zone",
+            "type": "emergency_protocol",
+            "content": "**Avant toute intervention : VOTRE SÉCURITÉ d'abord !**\n\n```\nVOUS MORT = 0 secours\nVOUS BLESSÉ = 2 victimes au lieu d'1\n```\n\n**→ Ne devenez pas une victime supplémentaire**\n\n#### Les 3 Types de Dangers\n\n**1. Danger Persistant**\nLe danger est toujours présent et menace tout le monde\n\n**Exemples en raffinerie :**\n- Fuite de gaz continue\n- Machine en marche\n- Feu actif\n- Câble électrique sous tension\n- Circulation de véhicules\n\n**Action : SUPPRIMER LE DANGER**\n- Fermer la vanne de gaz\n- Arrêter la machine (bouton d'urgence)\n- Couper l'électricité\n- Baliser la zone\n- Détourner la circulation"
+          },
+          {
+            "id": "examine-victim",
+            "title": "EXAMINER - Évaluer l'État de la Victime",
+            "type": "procedure",
+            "content": "#### Le Bilan de Conscience\n\n**Question à poser : \"Vous m'entendez ?\"**\n\n```\nVICTIME RÉPOND ou BOUGE\n     ↓\nCONSCIENTE\n     ↓\n[Continuer examen]\n\nVICTIME NE RÉPOND PAS\n     ↓\nINCONSCIENTE\n     ↓\n[Libérer voies aériennes]\n```\n\n#### Le Bilan Respiratoire (Si Inconscient)\n\n**Méthode VES : Voir - Écouter - Sentir**\n\n```\n1. VOIR le thorax bouger\n   +\n2. ÉCOUTER les bruits respiratoires\n   +\n3. SENTIR le souffle sur votre joue\n\n= DURÉE : 10 secondes maximum\n```\n\n**Résultat :**\n- ✅ **RESPIRE** → Position Latérale de Sécurité\n- ❌ **NE RESPIRE PAS** → Réanimation Cardio-Pulmonaire"
+          }
+        ]
+      },
+      {
+        "id": "module-sst-3",
+        "title": "🫁 OBSTRUCTION DES VOIES AÉRIENNES",
+        "duration": 2,
+        "description": "Techniques de désobstruction et manœuvre de Heimlich",
+        "content": [
+          {
+            "id": "airway-obstruction",
+            "title": "Reconnaître l'Obstruction",
+            "type": "emergency_protocol",
+            "content": "#### Les 2 Types d'Obstruction\n\n**OBSTRUCTION PARTIELLE**\n\n✅ **La victime PEUT :**\n- Parler (difficilement)\n- Tousser\n- Respirer (bruyant)\n\n**CE QU'IL FAUT FAIRE :**\n```\nENCOURAGER À TOUSSER\n       ↓\n\"Toussez fort !\"\n       ↓\nNE RIEN FAIRE D'AUTRE\n       ↓\nSurveiller\n```\n\n**OBSTRUCTION TOTALE** ☠️\n\n❌ **La victime NE PEUT PAS :**\n- Parler\n- Tousser\n- Respirer\n\n**SIGNES :**\n- Porte les mains à la gorge (signe universel)\n- Bouche ouverte, yeux écarquillés\n- Ne produit aucun son\n- Visage devient bleu (cyanose)\n- S'agite puis s'affaiblit\n\n**URGENCE ABSOLUE : Mort en 3-4 minutes !**"
+          },
+          {
+            "id": "heimlich-technique",
+            "title": "Techniques de Désobstruction",
+            "type": "procedure",
+            "content": "#### Pour ADULTE ou ENFANT Conscient\n\n**ÉTAPE 1 : Claques dans le Dos (5 fois)**\n\n```\nPosition :\n- Victime debout ou assise\n- Pencher la victime en avant\n- Soutenir le thorax d'une main\n\nTechnique :\n- Talon de la main entre les omoplates\n- Claques FORTES, sèches, verticales\n- 5 fois\n\nVérifier après chaque claque si objet expulsé\n```\n\n**Si échec → ÉTAPE 2**\n\n**ÉTAPE 2 : Compressions Abdominales (Heimlich)**\n\n```\nPosition :\n- Se placer derrière la victime\n- Entourer avec vos bras\n\nTechnique :\n- Poing fermé sous le sternum\n- Autre main sur le poing\n- Compressions vers vous et vers le haut\n- Mouvement en \"J\"\n- 5 fois\n\nVérifier après chaque compression\n```\n\n**Alterner : 5 claques → 5 compressions → 5 claques → ...**"
+          }
+        ]
+      },
+      {
+        "id": "module-sst-4",
+        "title": "🩸 HÉMORRAGIES ET PLAIES",
+        "duration": 2,
+        "description": "Arrêter les saignements et soigner les plaies",
+        "content": [
+          {
+            "id": "hemorrhage-control",
+            "title": "Arrêter l'Hémorragie",
+            "type": "procedure",
+            "content": "#### Technique Universelle : COMPRESSION DIRECTE\n\n**Principe :** Appuyer sur la plaie pour boucher les vaisseaux\n\n```\nÉTAPE 1 : Se Protéger\n   ↓\nGants jetables (risque infection)\n   ↓\nÉTAPE 2 : Comprimer\n   ↓\nMain avec compresse/tissu propre\nSur la plaie\nAppuyer FORT\n   ↓\nÉTAPE 3 : Allonger la Victime\n   ↓\nPosition horizontale\nJambes surélevées si possible\n   ↓\nÉTAPE 4 : Maintenir la Compression\n   ↓\nJUSQU'À L'ARRIVÉE DES SECOURS\n(Ne jamais relâcher)\n```\n\n**Durée Compression : 10-15 minutes minimum**"
+          }
+        ]
+      },
+      {
+        "id": "module-sst-5",
+        "title": "💓 ARRÊT CARDIAQUE",
+        "duration": 3,
+        "description": "Réanimation cardio-pulmonaire et défibrillateur",
+        "content": [
+          {
+            "id": "cardiac-arrest",
+            "title": "Reconnaître l'Arrêt Cardiaque",
+            "type": "emergency_protocol",
+            "content": "#### La Chaîne d'Événements\n\n```\nMALAISE CARDIAQUE\n      ↓\nCœur bat anormalement (fibrillation)\n      ↓\nPERTE DE CONNAISSANCE\n      ↓\nARRÊT RESPIRATOIRE\n      ↓\nARRÊT CARDIAQUE\n      ↓\nMORT en 5-7 minutes\n```\n\n#### Signes\n\n```\n1. INCONSCIENTE\n   - Ne répond pas\n   - Ne réagit pas\n\n2. NE RESPIRE PAS\n   - VES négatif\n   - Ou respiration agonique\n     (gasps = râles irréguliers)\n```\n\n**⚠️ URGENCE ABSOLUE**"
+          },
+          {
+            "id": "cpr-technique",
+            "title": "Réanimation Cardio-Pulmonaire (RCP)",
+            "type": "procedure",
+            "content": "#### Technique des Compressions\n\n**POSITION DU SAUVETEUR**\n```\nÀ genoux au niveau du thorax\nBras tendus verticaux\nÉpaules au-dessus des mains\n```\n\n**POSITION DES MAINS**\n```\n1. Repérer centre du thorax\n   (entre les deux seins)\n\n2. Talon d'une main au centre\n\n3. Autre main par-dessus\n\n4. Doigts entrecroisés\n   (ne touchent pas thorax)\n```\n\n**TECHNIQUE DE COMPRESSION**\n```\nEnfoncement : 5-6 cm\n(Adulte) (2/3 épaisseur thorax)\n\nFréquence : 100-120 compressions/minute\n(Chanson \"Stayin' Alive\")\n\nRelâchement : COMPLET\n(Thorax remonte entièrement)\n\nSans interruption\n(Qualité > Vitesse)\n```\n\n#### Le Cycle RCP\n\n```\n30 COMPRESSIONS\n      ↓\n2 INSUFFLATIONS\n      ↓\n30 COMPRESSIONS\n      ↓\n2 INSUFFLATIONS\n      ↓\n... RÉPÉTER ...\n```"
+          }
+        ]
+      },
+      {
+        "id": "module-sst-6",
+        "title": "⚡ DÉFIBRILLATEUR (DAE)",
+        "duration": 2,
+        "description": "Utilisation du défibrillateur automatisé externe",
+        "content": [
+          {
+            "id": "dae-usage",
+            "title": "Utilisation Étape par Étape",
+            "type": "procedure",
+            "content": "#### Localisation SOGARA\n\n**Emplacements :**\n- Entrée principale (réception)\n- Salle de contrôle\n- Atelier maintenance\n- Réfectoire\n- Infirmerie\n\n**Signalétique :**\n- Pictogramme vert avec cœur + éclair\n- Armoire rouge/verte\n\n#### Utilisation\n\n**1. ALLUMER LE DAE**\n```\nOuvrir le couvercle\nOU\nAppuyer sur bouton vert\n      ↓\nMessages vocaux démarrent\n```\n\n**2. DÉNUDER LE THORAX**\n```\nRetirer vêtements\nSécher si mouillé\nRaser si très poilu\n```\n\n**3. COLLER LES ÉLECTRODES**\n```\nSuivre schéma sur électrodes :\n\nÉlectrode 1 : Sous clavicule droite\nÉlectrode 2 : Sous sein gauche (côté)\n\nBien plaquer (adhérence)\n```\n\n**4. LAISSER ANALYSER**\n```\n\"Analyse en cours\"\n      ↓\nNE PAS TOUCHER LA VICTIME\n      ↓\nÉcarter tout le monde\n```"
+          }
+        ]
+      }
+    ],
+    "resources": [
+      {
+        "id": "sst-quick-guide",
+        "title": "Guide Rapide SST",
+        "type": "pdf",
+        "url": "/resources/hse/sst-quick-guide.pdf",
+        "description": "Guide de poche des gestes de premiers secours",
+        "downloadable": true
+      },
+      {
+        "id": "cpr-poster",
+        "title": "Affiche RCP",
+        "type": "pdf",
+        "url": "/resources/hse/cpr-poster.pdf",
+        "description": "Affiche aide-mémoire pour la réanimation",
+        "downloadable": true
+      }
+    ],
+    "assessments": [
+      {
+        "id": "sst-practical",
+        "title": "Évaluations Pratiques SST",
+        "type": "practical",
+        "passingScore": 100,
+        "duration": 60,
+        "questions": [
+          {
+            "id": "accident-scenario",
+            "text": "Situation 1: Accident du travail avec plaie grave et hémorragie",
+            "type": "open",
+            "correctAnswer": "Protéger, examiner, alerter, compression directe sur la plaie",
+            "explanation": "Évaluation sur la conduite à tenir face à un accident avec hémorragie."
+          },
+          {
+            "id": "cardiac-arrest-scenario",
+            "text": "Situation 2: Arrêt cardiaque avec utilisation du défibrillateur",
+            "type": "open",
+            "correctAnswer": "RCP immédiate + utilisation DAE selon protocole",
+            "explanation": "Évaluation sur la prise en charge d'un arrêt cardiaque."
+          }
+        ]
+      }
+    ]
+  }
+}

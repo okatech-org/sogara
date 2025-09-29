@@ -1,0 +1,151 @@
+{
+  "id": "HSE-010",
+  "code": "ENV-AWARENESS",
+  "title": "Sensibilisation Environnementale",
+  "category": "Prévention",
+  "description": "Formation sur les impacts environnementaux et gestes éco-responsables. Tri des déchets, prévention des pollutions et développement durable.",
+  "objectives": [
+    "Comprendre les impacts environnementaux de SOGARA",
+    "Appliquer le tri sélectif des déchets",
+    "Prévenir les pollutions (eau, air, sol)",
+    "Respecter les procédures environnementales",
+    "Contribuer à l'amélioration continue"
+  ],
+  "duration": 3,
+  "durationUnit": "heures",
+  "validityMonths": 24,
+  "requiredForRoles": ["EMPLOYE", "SUPERVISEUR", "HSE", "ADMIN", "RECEP"],
+  "prerequisites": [],
+  "certification": {
+    "examRequired": true,
+    "passingScore": 75,
+    "practicalTest": true,
+    "certificateType": "Attestation de Sensibilisation Environnementale"
+  },
+  "instructor": {
+    "qualificationRequired": "Responsable Environnement ou HSE",
+    "minExperience": "Formation ISO 14001"
+  },
+  "maxParticipants": 25,
+  "language": ["Français"],
+  "deliveryMethods": ["Présentiel", "E-learning"],
+  "refresherRequired": true,
+  "refresherFrequency": 24,
+  "content": {
+    "modules": [
+      {
+        "id": "module-env-1",
+        "title": "🌍 COMPRENDRE L'ENVIRONNEMENT",
+        "duration": 0.75,
+        "description": "Politique environnementale et impacts",
+        "content": [
+          {
+            "id": "env-policy",
+            "title": "Politique Environnementale SOGARA",
+            "type": "text",
+            "content": "#### Notre Engagement\n\n**Vision SOGARA :**\n> \"Raffiner de manière responsable en minimisant notre empreinte environnementale et en contribuant au développement durable du Gabon.\"\n\n#### Certification ISO 14001:2015\n\n**SOGARA est certifiée ISO 14001** depuis 2024\n\n**Qu'est-ce que l'ISO 14001 ?**\n- Norme internationale de management environnemental\n- Engagement d'amélioration continue\n- Audit annuel par organisme indépendant\n- Reconnaissance mondiale"
+          },
+          {
+            "id": "environmental-pillars",
+            "title": "Les 5 Piliers Environnementaux SOGARA",
+            "type": "text",
+            "content": "**1. RÉDUIRE nos émissions atmosphériques**\n- Moins de CO₂, NOx, SOx\n- Technologies propres\n\n**2. PROTÉGER les ressources en eau**\n- Traitement des eaux usées\n- Réduction consommation\n\n**3. GÉRER responsablement nos déchets**\n- Tri, valorisation, élimination sécurisée\n- Zéro déchet sauvage\n\n**4. PRÉVENIR les pollutions**\n- Sols, nappes phréatiques\n- Plans d'urgence\n\n**5. PRÉSERVER la biodiversité**\n- Protection faune/flore locale\n- Zones vertes"
+          },
+          {
+            "id": "refinery-impacts",
+            "title": "Les Impacts d'une Raffinerie",
+            "type": "text",
+            "content": "#### Impacts Positifs ✅\n\n**Ne l'oublions pas !**\n\n- ✅ Produits essentiels (essence, diesel, kérosène)\n- ✅ Emplois (directs et indirects)\n- ✅ Développement économique du Gabon\n- ✅ Indépendance énergétique\n\n#### Impacts Négatifs ⚠️ (À Minimiser)\n\n**SUR L'AIR :**\n- Émissions de CO₂ (gaz à effet de serre)\n- NOx et SOx (pluies acides, maladies respiratoires)\n- Composés Organiques Volatils - COV (benzène, toluène)\n- Odeurs (H₂S notamment)\n- Particules fines\n\n**SUR L'EAU :**\n- Consommation d'eau (refroidissement, process)\n- Eaux usées industrielles (hydrocarbures, produits chimiques)\n- Risque de pollution accidentelle (déversement)\n- Échauffement (rejets d'eau chaude)"
+          }
+        ]
+      },
+      {
+        "id": "module-env-2",
+        "title": "♻️ GESTION DES DÉCHETS",
+        "duration": 1,
+        "description": "Tri sélectif et déchets dangereux",
+        "content": [
+          {
+            "id": "waste-sorting",
+            "title": "Le Tri Sélectif à SOGARA",
+            "type": "procedure",
+            "content": "#### Les Poubelles SOGARA (Code Couleur)\n\n**🔴 POUBELLE ROUGE = DÉCHETS DANGEREUX**\n\n**Ce qui va dedans :**\n- Chiffons souillés hydrocarbures\n- Absorbants usés (huile, essence)\n- Filtres usés\n- Gants souillés produits chimiques\n- EPI contaminés non lavables\n\n**🟡 POUBELLE JAUNE = PLASTIQUES / MÉTAUX**\n\n**Ce qui va dedans :**\n- Bouteilles plastiques (eau, soda)\n- Emballages plastiques propres\n- Canettes aluminium\n- Conserves métalliques propres\n- Bidons plastiques vides et rincés\n\n**🔵 POUBELLE BLEUE = PAPIER / CARTON**\n\n**Ce qui va dedans :**\n- Papiers (feuilles, documents)\n- Journaux, magazines\n- Cartons (emballages)\n- Enveloppes\n\n**🟢 POUBELLE VERTE = DÉCHETS ORGANIQUES**\n\n**Ce qui va dedans :**\n- Restes de repas\n- Épluchures\n- Marc de café\n- Végétaux (feuilles, tonte)"
+          }
+        ]
+      },
+      {
+        "id": "module-env-3",
+        "title": "💧 PRÉVENTION DES POLLUTIONS",
+        "duration": 0.75,
+        "description": "Protection eau, air et sol",
+        "content": [
+          {
+            "id": "water-protection",
+            "title": "Pollution de l'Eau",
+            "type": "emergency_protocol",
+            "content": "#### Votre Rôle\n\n**PRÉVENTION :**\n\n✅ **Signaler immédiatement toute fuite** (vanne, bride, réservoir)\n- Téléphone : 2222 ou superviseur\n\n✅ **Ne jamais laver équipement souillé au jet d'eau** sans collecte\n- Utiliser zone dédiée avec récupération\n\n✅ **Utiliser bacs de rétention** sous tout transvasement\n\n✅ **Ne rien jeter dans égouts**\n- Ni hydrocarbures\n- Ni produits chimiques\n- Ni déchets solides\n\n**EN CAS DE DÉVERSEMENT :**\n\n**PETIT déversement (<1 litre) :**\n```\n1. CONFINER (boudins absorbants)\n2. ABSORBER (coussins, sable)\n3. COLLECTER (sac déchets dangereux)\n4. NETTOYER zone\n5. SIGNALER (traçabilité)\n```\n\n**GRAND déversement (>1 litre) :**\n```\n1. ALERTER immédiatement (2222)\n2. BALISER zone\n3. EMPÊCHER écoulement vers égout\n4. NE PAS INTERVENIR (équipe spécialisée)\n5. RESTER DISPONIBLE (infos)\n```"
+          }
+        ]
+      },
+      {
+        "id": "module-env-4",
+        "title": "🌱 GESTES ÉCOLOGIQUES QUOTIDIENS",
+        "duration": 0.5,
+        "description": "Économies d'énergie et éco-gestes",
+        "content": [
+          {
+            "id": "energy-savings",
+            "title": "Économies d'Énergie",
+            "type": "checklist",
+            "content": "#### Électricité\n\n**AU BUREAU :**\n```\n☀️ Profiter lumière naturelle\n💡 Éteindre lumières si pièce vide >10 min\n🖥️ Éteindre écran si absent >15 min\n🖥️ Éteindre PC le soir\n❄️ Clim à 24°C (pas 18°C !)\n🚪 Fermer portes (garde fraîcheur/chaleur)\n🔌 Débrancher chargeurs (consomment à vide)\n```\n\n**EN PRODUCTION :**\n```\n⚙️ Arrêter équipements non utilisés\n💡 Éteindre éclairage zones inoccupées\n🌡️ Signaler chauffage/clim en défaut\n🔧 Signaler fuites air comprimé (énergie coûteuse)\n```"
+          }
+        ]
+      }
+    ],
+    "resources": [
+      {
+        "id": "waste-sorting-guide",
+        "title": "Guide Tri Sélectif",
+        "type": "pdf",
+        "url": "/resources/hse/waste-sorting-guide.pdf",
+        "description": "Guide complet du tri sélectif SOGARA",
+        "downloadable": true
+      },
+      {
+        "id": "eco-gestures-poster",
+        "title": "Affiche Éco-Gestes",
+        "type": "pdf",
+        "url": "/resources/hse/eco-gestures-poster.pdf",
+        "description": "Affiche des gestes écologiques quotidiens",
+        "downloadable": true
+      }
+    ],
+    "assessments": [
+      {
+        "id": "env-qcm",
+        "title": "QCM Environnement",
+        "type": "qcm",
+        "passingScore": 75,
+        "duration": 20,
+        "questions": [
+          {
+            "id": "q1",
+            "text": "Quelle est la norme environnementale de SOGARA ?",
+            "type": "multiple_choice",
+            "options": ["ISO 9001", "ISO 14001", "ISO 45001"],
+            "correctAnswer": "ISO 14001",
+            "explanation": "SOGARA est certifiée ISO 14001 pour le management environnemental."
+          },
+          {
+            "id": "q2",
+            "text": "De quelle couleur est la poubelle pour déchets dangereux ?",
+            "type": "multiple_choice",
+            "options": ["Jaune", "Rouge", "Bleue"],
+            "correctAnswer": "Rouge",
+            "explanation": "La poubelle rouge est réservée aux déchets dangereux (souillés hydrocarbures)."
+          }
+        ]
+      }
+    ]
+  }
+}

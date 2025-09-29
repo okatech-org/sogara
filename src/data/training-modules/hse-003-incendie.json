@@ -1,0 +1,253 @@
+{
+  "id": "HSE-003",
+  "code": "FIRE-SAFETY",
+  "title": "Prévention et Lutte contre l'Incendie",
+  "category": "Obligatoire",
+  "description": "Formation pour devenir Équipier de Première Intervention (EPI). Comprendre le feu, utiliser les extincteurs et maîtriser les procédures d'évacuation.",
+  "objectives": [
+    "Comprendre comment un feu démarre et se propage",
+    "Identifier les classes de feu et choisir le bon extincteur",
+    "Utiliser un extincteur en toute sécurité",
+    "Évacuer correctement en cas d'incendie",
+    "Prévenir les risques d'incendie au quotidien"
+  ],
+  "duration": 6,
+  "durationUnit": "heures",
+  "validityMonths": 12,
+  "requiredForRoles": ["EMPLOYE", "SUPERVISEUR", "HSE", "ADMIN"],
+  "prerequisites": ["HSE-001"],
+  "certification": {
+    "examRequired": true,
+    "passingScore": 80,
+    "practicalTest": true,
+    "certificateType": "Certificat d'Équipier de Première Intervention (EPI)"
+  },
+  "instructor": {
+    "qualificationRequired": "Formateur EPI certifié",
+    "minExperience": "Formation pompier ou sécurité incendie"
+  },
+  "maxParticipants": 12,
+  "language": ["Français"],
+  "deliveryMethods": ["Présentiel obligatoire"],
+  "refresherRequired": true,
+  "refresherFrequency": 12,
+  "content": {
+    "modules": [
+      {
+        "id": "module-fire-1",
+        "title": "🔥 COMPRENDRE LE FEU",
+        "duration": 1,
+        "description": "Triangle du feu et propagation des incendies",
+        "content": [
+          {
+            "id": "fire-triangle",
+            "title": "Le Triangle du Feu",
+            "type": "procedure",
+            "content": "Pour qu'un feu démarre, il faut **3 éléments réunis** :\n\n```\n         🔥 ÉNERGIE D'ACTIVATION\n         (étincelle, flamme, chaleur)\n                /\\\n               /  \\\n              /    \\\n             /______\\\n        COMBUSTIBLE   COMBURANT\n        (matière      (oxygène de\n         qui brûle)    l'air)\n```\n\n**Principe de base :** Enlever UN SEUL de ces 3 éléments = **LE FEU S'ÉTEINT**\n\nC'est le principe de l'extinction !",
+            "illustrations": [
+              {
+                "id": "fire-triangle-diagram",
+                "type": "diagram",
+                "title": "Triangle du Feu",
+                "description": "Les trois éléments nécessaires pour le feu",
+                "url": "/images/hse/fire-triangle.svg",
+                "alt": "Diagramme du triangle du feu"
+              }
+            ]
+          },
+          {
+            "id": "fire-classes",
+            "title": "Les Classes de Feu",
+            "type": "text",
+            "content": "Il existe **6 classes de feu** selon le combustible :\n\n| Classe | Symbole | Type de Combustible | Exemples |\n|--------|---------|---------------------|----------|\n| **Classe A** | 🔥 Triangle vert | Solides formant braises | Bois, papier, carton, tissu |\n| **Classe B** | 🔥 Carré rouge | Liquides inflammables | Essence, diesel, huiles, peintures |\n| **Classe C** | 🔥 Rond bleu | Gaz inflammables | Propane, butane, gaz naturel |\n| **Classe D** | 🔥 Étoile jaune | Métaux inflammables | Magnésium, aluminium, sodium |\n| **Classe F** | 🔥 Rectangle jaune | Huiles de cuisson | Friteuses (cuisines) |\n| **Feux électriques** | ⚡ Éclair jaune | Équipements sous tension | Armoires électriques, moteurs |\n\n**☝️ IMPORTANT :** Chaque classe de feu nécessite un **type d'extincteur spécifique**."
+          }
+        ]
+      },
+      {
+        "id": "module-fire-2",
+        "title": "🚨 PRÉVENTION DES INCENDIES",
+        "duration": 1,
+        "description": "Systèmes de détection et mesures préventives",
+        "content": [
+          {
+            "id": "detection-systems",
+            "title": "Détection Automatique",
+            "type": "text",
+            "content": "SOGARA dispose de systèmes de détection automatique :\n\n#### Détecteurs de Fumée\n- Détectent les particules de fumée\n- Alarment avant que le feu soit visible\n- Dans bureaux, salles de contrôle, locaux techniques\n\n#### Détecteurs de Flamme (UV/IR)\n- Détectent le rayonnement des flammes\n- Réponse en quelques secondes\n- Sur les installations extérieures\n\n#### Détecteurs de Chaleur\n- S'activent à une température programmée\n- Dans zones à forte chaleur normale\n- Déclenchent l'extinction automatique"
+          },
+          {
+            "id": "fire-permit",
+            "title": "Permis de Feu",
+            "type": "safety_rules",
+            "content": "**Tous les travaux par points chauds nécessitent un PERMIS DE FEU**\n\n#### Travaux nécessitant un permis :\n- 🔥 Soudure, brasage\n- ⚙️ Meulage, découpage\n- 🔨 Burinage (étincelles)\n- 🔧 Tout outil créant des étincelles\n- 🔌 Travaux électriques\n- 🚬 Même allumer un briquet !\n\n#### Avant de démarrer les travaux :\n\n**1. Analyser les Risques**\n- Y a-t-il des vapeurs inflammables ?\n- Des hydrocarbures à proximité ?\n- Des égouts ouverts ?\n\n**2. Mesures de Prévention**\n- Test atmosphérique (LEL < 10%)\n- Ventilation de la zone\n- Isolation des équipements\n- Bâches ignifugées\n- Extincteurs à proximité\n\n**3. Surveillance**\n- Surveillant incendie présent\n- Pendant les travaux\n- 1 heure APRÈS les travaux (ré-inflammation)"
+          }
+        ]
+      },
+      {
+        "id": "module-fire-3",
+        "title": "🧯 MOYENS DE LUTTE",
+        "duration": 1.5,
+        "description": "Extincteurs et équipements de lutte contre l'incendie",
+        "content": [
+          {
+            "id": "extinguisher-types",
+            "title": "Les Extincteurs",
+            "type": "procedure",
+            "content": "#### Types d'Extincteurs et Utilisations\n\n| Type | Agent | Classe de Feu | Couleur | Fonctionnement |\n|------|-------|---------------|---------|----------------|\n| **Eau + Additif** | Eau avec additif | A (B) | Rouge | Refroidit et pénètre |\n| **Poudre ABC** | Poudre chimique | A, B, C | Rouge/Jaune | Étouffe le feu |\n| **CO₂** | Dioxyde carbone | B, Élec. | Rouge/Noir | Chasse l'oxygène |\n| **Mousse** | Mousse AFFF | A, B | Rouge/Crème | Flotte et étouffe |\n\n#### Comment Choisir le Bon Extincteur ?\n\n**📖 Méthode Simple : Regardez l'Étiquette !**\n\nSur chaque extincteur, il y a :\n- Les pictogrammes des classes de feu\n- Les interdictions (barré)\n- Le mode d'emploi",
+            "illustrations": [
+              {
+                "id": "extinguisher-selection",
+                "type": "infographic",
+                "title": "Guide de Sélection Extincteurs",
+                "description": "Tableau de sélection des extincteurs par classe de feu",
+                "url": "/images/hse/extinguisher-selection.svg",
+                "alt": "Guide de sélection des extincteurs"
+              }
+            ]
+          },
+          {
+            "id": "pass-technique",
+            "title": "Utilisation d'un Extincteur - Méthode PASS",
+            "type": "procedure",
+            "content": "#### 🔧 Technique PASS\n\n```\nP - PULL (Tirer)\n    ↓ Tirer la goupille de sécurité\n\nA - AIM (Viser)\n    ↓ Viser la BASE des flammes (pas le sommet)\n\nS - SQUEEZE (Presser)\n    ↓ Presser la poignée\n\nS - SWEEP (Balayer)\n    ↓ Balayer de gauche à droite\n```\n\n#### 📐 Règles de Sécurité\n\n**Distance :**\n- Se placer à **3-4 mètres** du feu\n- Jamais trop près (chaleur intense)\n- Jamais trop loin (extincteur inefficace)\n\n**Position :**\n- **DOS AU VENT** (le vent pousse les flammes loin de vous)\n- Sortie libre derrière vous\n- Posture stable (genoux fléchis)\n\n**Technique :**\n- Viser la **BASE** des flammes\n- Avancer progressivement\n- Balayage horizontal continu\n- Ne pas gaspiller l'agent",
+            "illustrations": [
+              {
+                "id": "pass-technique-demo",
+                "type": "diagram",
+                "title": "Technique PASS",
+                "description": "Démonstration de la technique PASS d'utilisation d'extincteur",
+                "url": "/images/hse/pass-technique.svg",
+                "alt": "Diagramme de la technique PASS"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "module-fire-4",
+        "title": "🚪 ÉVACUATION D'URGENCE",
+        "duration": 1,
+        "description": "Procédures d'évacuation et points de rassemblement",
+        "content": [
+          {
+            "id": "evacuation-signal",
+            "title": "Signal d'Alarme",
+            "type": "emergency_protocol",
+            "content": "**🔔 Alarme Incendie = Sirène Continue**\n\n**Dès que vous entendez l'alarme :**\n1. **STOP** immédiat de votre activité\n2. **PAS DE PANIQUE** (rester calme)\n3. **SUIVRE** les procédures d'évacuation"
+          },
+          {
+            "id": "evacuation-procedure",
+            "title": "Procédure d'Évacuation",
+            "type": "emergency_protocol",
+            "content": "#### Étape 1 : Mise en Sécurité\n\n**Si vous êtes en poste :**\n```\nArrêt d'urgence sécurisé\n    ↓\nFermeture des vannes principales\n    ↓\nCoupure équipements électriques\n    ↓\nFermeture des portes (sans verrouiller)\n```\n\n**⏱️ Maximum 30 secondes**\n\n#### Étape 2 : Évacuation\n\n**Règles d'Or :**\n- ✅ Suivre les **panneaux verts \"Sortie\"**\n- ✅ **Marcher** (ne pas courir)\n- ✅ **Ne rien emporter** (sauf EPI portés)\n- ✅ **Aider** les personnes en difficulté\n- ✅ Fermer portes derrière vous (ralentir feu)\n\n**❌ NE JAMAIS :**\n- Utiliser ascenseurs (risque blocage)\n- Retourner chercher affaires\n- Se cacher (toilettes, bureaux)\n- Bloquer les issues"
+          }
+        ]
+      },
+      {
+        "id": "module-fire-5",
+        "title": "🔥 PRATIQUE SUR FEU RÉEL",
+        "duration": 1.5,
+        "description": "Exercices pratiques avec extincteurs sur feux contrôlés",
+        "content": [
+          {
+            "id": "practical-fire",
+            "title": "Bac à Feu Contrôlé",
+            "type": "procedure",
+            "content": "**⚠️ Cette partie se fait à l'extérieur sur l'aire de formation**\n\n#### Exercice 1 : Feu de Classe A (Bois)\n- Allumage d'un petit feu de palettes\n- Utilisation extincteur à eau\n- Technique PASS\n- En binôme\n\n#### Exercice 2 : Feu de Classe B (Hydrocarbures)\n- Bac avec nappe d'essence\n- Utilisation extincteur à mousse\n- Approche sécuritaire\n- Dos au vent\n\n#### Exercice 3 : Feu Électrique (Simulation)\n- Armoire électrique factice\n- Utilisation extincteur CO₂\n- Distance de sécurité\n- Coupure alimentation d'abord"
+          },
+          {
+            "id": "evaluation-practice",
+            "title": "Évaluation Pratique Individuelle",
+            "type": "checklist",
+            "content": "**Chaque participant doit :**\n\n✅ Identifier le bon extincteur\n✅ Retirer la goupille correctement\n✅ Se positionner (distance, dos au vent)\n✅ Viser la base des flammes\n✅ Balayer efficacement\n✅ Éteindre le feu complètement\n\n**Critères de Réussite :**\n- Sécurité respectée (distance, position)\n- Gestes corrects\n- Feu éteint en < 15 secondes\n- Pas de panique"
+          }
+        ]
+      }
+    ],
+    "resources": [
+      {
+        "id": "fire-extinguisher-guide",
+        "title": "Guide des Extincteurs",
+        "type": "pdf",
+        "url": "/resources/hse/fire-extinguisher-guide.pdf",
+        "description": "Guide complet de sélection et utilisation des extincteurs",
+        "downloadable": true
+      },
+      {
+        "id": "evacuation-plans",
+        "title": "Plans d'Évacuation",
+        "type": "pdf",
+        "url": "/resources/hse/evacuation-plans.pdf",
+        "description": "Plans d'évacuation détaillés de tous les bâtiments",
+        "downloadable": true
+      },
+      {
+        "id": "fire-safety-checklist",
+        "title": "Check-List Prévention Incendie",
+        "type": "pdf",
+        "url": "/resources/hse/fire-prevention-checklist.pdf",
+        "description": "Liste de vérification quotidienne prévention incendie",
+        "downloadable": true
+      }
+    ],
+    "assessments": [
+      {
+        "id": "fire-qcm",
+        "title": "QCM Prévention Incendie",
+        "type": "qcm",
+        "passingScore": 80,
+        "duration": 30,
+        "questions": [
+          {
+            "id": "q1",
+            "text": "Quels sont les 3 éléments du triangle du feu ?",
+            "type": "multiple_choice",
+            "options": [
+              "Combustible, Comburant, Énergie d'activation",
+              "Chaleur, Oxygène, Matière",
+              "Essence, Air, Étincelle"
+            ],
+            "correctAnswer": "Combustible, Comburant, Énergie d'activation",
+            "explanation": "Le triangle du feu comprend le combustible (ce qui brûle), le comburant (oxygène) et l'énergie d'activation (source d'allumage)."
+          },
+          {
+            "id": "q2",
+            "text": "Quel extincteur utiliser sur un feu d'huile ?",
+            "type": "multiple_choice",
+            "options": ["Eau", "Mousse ou Poudre", "CO₂"],
+            "correctAnswer": "Mousse ou Poudre",
+            "explanation": "Pour les feux de classe B (liquides inflammables), on utilise la mousse ou la poudre. L'eau est interdite car elle provoque des projections."
+          },
+          {
+            "id": "q3",
+            "text": "Que signifie PASS dans la technique d'extinction ?",
+            "type": "multiple_choice",
+            "options": [
+              "Pull, Aim, Squeeze, Sweep",
+              "Protect, Alert, Stop, Secure",
+              "Position, Assess, Spray, Save"
+            ],
+            "correctAnswer": "Pull, Aim, Squeeze, Sweep",
+            "explanation": "PASS est l'acronyme pour utiliser un extincteur : Pull (tirer goupille), Aim (viser base), Squeeze (presser), Sweep (balayer)."
+          }
+        ]
+      },
+      {
+        "id": "fire-practical",
+        "title": "Évaluation Pratique Feu",
+        "type": "practical",
+        "passingScore": 100,
+        "duration": 45,
+        "questions": [
+          {
+            "id": "extinguisher-demo",
+            "text": "Démontrer l'utilisation correcte d'un extincteur sur feu réel",
+            "type": "open",
+            "correctAnswer": "Technique PASS appliquée correctement avec respect des distances de sécurité",
+            "explanation": "L'évaluation pratique doit démontrer la maîtrise de la technique et des règles de sécurité."
+          }
+        ]
+      }
+    ]
+  }
+}

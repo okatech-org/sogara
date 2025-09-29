@@ -1,0 +1,296 @@
+{
+  "id": "HSE-015",
+  "code": "H2S-AWARENESS",
+  "title": "Sulfure d'Hydrogène (H2S)",
+  "category": "Critique",
+  "description": "Formation critique obligatoire sur le gaz H2S, le plus dangereux en raffinerie. Apprend à détecter, éviter et réagir face à ce gaz mortel.",
+  "objectives": [
+    "Comprendre les propriétés mortelles du H2S",
+    "Utiliser correctement les détecteurs H2S",
+    "Maîtriser les procédures d'urgence H2S",
+    "Connaître les équipements de protection respiratoire",
+    "Savoir porter secours sans devenir victime"
+  ],
+  "duration": 4,
+  "durationUnit": "heures",
+  "validityMonths": 12,
+  "requiredForRoles": ["EMPLOYE", "SUPERVISEUR", "HSE", "ADMIN"],
+  "prerequisites": ["HSE-001"],
+  "certification": {
+    "examRequired": true,
+    "passingScore": 100,
+    "practicalTest": true,
+    "certificateType": "Habilitation H2S - Renouvellement Annuel OBLIGATOIRE"
+  },
+  "instructor": {
+    "qualificationRequired": "Formateur HSE certifié + Formation H2S spécialisée",
+    "minExperience": "5 ans en raffinerie + Expérience incidents H2S"
+  },
+  "maxParticipants": 15,
+  "language": ["Français"],
+  "deliveryMethods": ["Présentiel obligatoire"],
+  "refresherRequired": true,
+  "refresherFrequency": 12,
+  "content": {
+    "modules": [
+      {
+        "id": "module-h2s-1",
+        "title": "🚨 COMPRENDRE LE H2S - GAZ MORTEL",
+        "duration": 1,
+        "description": "Propriétés du H2S et pourquoi il est si dangereux",
+        "content": [
+          {
+            "id": "h2s-intro",
+            "title": "⚠️ POURQUOI CETTE FORMATION EST CRITIQUE ?",
+            "type": "emergency_protocol",
+            "content": "Le H2S est le **GAZ LE PLUS DANGEREUX** présent dans une raffinerie. Il tue en quelques secondes et sans prévenir. Cette formation peut **VOUS SAUVER LA VIE**.\n\n### Statistiques Alarmantes\n\n- **1 seconde** d'exposition à 1000 ppm = **MORT CERTAINE**\n- **80%** des accidents H2S sont mortels\n- **50%** des victimes sont des secouristes non protégés\n\n**RETENEZ :** Le H2S ne pardonne pas. Il faut le connaître, le respecter et savoir s'en protéger.",
+            "illustrations": [
+              {
+                "id": "h2s-danger-stats",
+                "type": "infographic",
+                "title": "Statistiques H2S",
+                "description": "Graphique montrant la mortalité du H2S",
+                "url": "/images/hse/h2s-stats.svg",
+                "alt": "Infographie des statistiques d'accidents H2S"
+              }
+            ]
+          },
+          {
+            "id": "h2s-properties",
+            "title": "Propriétés Physiques du H2S",
+            "type": "text",
+            "content": "**Nom complet :** Sulfure d'Hydrogène (H₂S)\n**Aussi appelé :** Hydrogène sulfuré, gaz d'égout\n\n| Propriété | Détail | Danger |\n|-----------|--------|--------|\n| **Aspect** | Gaz incolore et invisible | ⚠️ Impossible à voir |\n| **Odeur** | Œuf pourri (à faible dose) | ⚠️ Saturation olfactive |\n| **Densité** | 1.19 (plus lourd que l'air) | ⚠️ S'accumule au sol |\n| **Inflammabilité** | Très inflammable (4-44%) | ⚠️ Risque d'explosion |\n| **Solubilité** | Soluble dans l'eau et l'huile | ⚠️ Peut se concentrer |",
+            "illustrations": [
+              {
+                "id": "h2s-molecule",
+                "type": "diagram",
+                "title": "Molécule H2S",
+                "description": "Structure moléculaire du sulfure d'hydrogène",
+                "url": "/images/hse/h2s-molecule.svg",
+                "alt": "Diagramme de la molécule H2S"
+              }
+            ]
+          },
+          {
+            "id": "h2s-olfactory-trap",
+            "title": "⚠️ LE PIÈGE MORTEL DE L'ODEUR",
+            "type": "emergency_protocol",
+            "content": "#### ⚠️ PIÈGE MORTEL N°1 : La Saturation Olfactive\n\n**Phase 1 - Détection (0.5 à 10 ppm) :**\n- Vous sentez une odeur d'œuf pourri\n- C'est désagréable mais supportable\n- Votre nez détecte le H2S\n\n**Phase 2 - Accoutumance (10 à 50 ppm) :**\n- Après 2-5 minutes, vous ne sentez **PLUS RIEN**\n- Votre nez est \"saturé\"\n- **VOUS PENSEZ que le gaz est parti**\n- ⚠️ **FAUX ! Le gaz est toujours là et augmente !**\n\n**Phase 3 - Paralysie (>100 ppm) :**\n- Votre nez est complètement paralysé\n- Vous ne sentez **RIEN**\n- Le H2S est à une concentration **MORTELLE**\n- Vous tombez inconscient sans avertissement\n\n#### 📖 Histoire Vraie\n\n*\"Un technicien entre dans un espace confiné. Il sent l'odeur d'œuf pourri. Après 3 minutes, l'odeur disparaît. Il pense que la ventilation a fonctionné. Il continue à travailler. 10 minutes plus tard, il s'effondre. Son collègue entre pour le secourir sans masque. Les deux meurent. Le H2S était à 500 ppm.\"*\n\n**LEÇON :** Ne JAMAIS faire confiance à votre nez. TOUJOURS utiliser un détecteur.",
+            "illustrations": [
+              {
+                "id": "olfactory-saturation",
+                "type": "diagram",
+                "title": "Courbe de Saturation Olfactive",
+                "description": "Graphique montrant comment l'odorat perd sa capacité de détection",
+                "url": "/images/hse/olfactory-saturation.svg",
+                "alt": "Graphique de la saturation olfactive du H2S"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "module-h2s-2",
+        "title": "💀 EFFETS SUR LA SANTÉ",
+        "duration": 1,
+        "description": "Impact du H2S sur l'organisme et valeurs limites",
+        "content": [
+          {
+            "id": "h2s-exposure-limits",
+            "title": "Valeurs Limites d'Exposition",
+            "type": "safety_rules",
+            "content": "| Concentration | Effet | Temps d'exposition | Danger |\n|---------------|-------|-------------------|--------|\n| **0.5 ppm** | Odeur perceptible | - | ⚪ Détection |\n| **10 ppm** | Irritation yeux et gorge | 8h (TWA) | 🟡 Limite légale |\n| **15 ppm** | Irritation forte | 15 min (STEL) | 🟡 Limite court terme |\n| **50 ppm** | Conjonctivite, toux | 1h | 🟠 Danger |\n| **100 ppm** | Perte d'odorat (saturation) | 30 min | 🟠 Grave |\n| **200-300 ppm** | Œdème pulmonaire | 5-10 min | 🔴 Très grave |\n| **500 ppm** | Perte de conscience | 2-5 min | 🔴 Mortel |\n| **1000+ ppm** | **MORT INSTANTANÉE** | Quelques secondes | ⚫ Fatal |",
+            "illustrations": [
+              {
+                "id": "h2s-concentration-effects",
+                "type": "chart",
+                "title": "Effets selon la Concentration",
+                "description": "Tableau des effets du H2S selon la concentration",
+                "url": "/images/hse/h2s-effects-chart.svg",
+                "alt": "Graphique des effets du H2S par concentration"
+              }
+            ]
+          },
+          {
+            "id": "h2s-symptoms",
+            "title": "Symptômes d'Exposition",
+            "type": "emergency_protocol",
+            "content": "#### Exposition Faible (10-50 ppm)\n- Irritation des yeux (sensation de brûlure)\n- Larmoiement excessif\n- Mal de gorge\n- Toux\n- Maux de tête\n- Nausées\n\n#### Exposition Moyenne (50-200 ppm)\n- **Conjonctivite chimique** (yeux rouges, douloureux)\n- Difficulté à respirer\n- Douleurs thoraciques\n- Vertiges importants\n- Confusion mentale\n- Perte d'équilibre\n\n#### Exposition Élevée (>200 ppm)\n- **Œdème pulmonaire** (liquide dans les poumons)\n- Paralysie respiratoire\n- **Perte de conscience immédiate** (>500 ppm)\n- Convulsions\n- **ARRÊT CARDIAQUE** (>1000 ppm)\n- **MORT** en quelques respirations"
+          }
+        ]
+      },
+      {
+        "id": "module-h2s-3",
+        "title": "📟 DÉTECTION ET SURVEILLANCE",
+        "duration": 1,
+        "description": "Utilisation des détecteurs H2S et surveillance atmosphérique",
+        "content": [
+          {
+            "id": "h2s-detectors",
+            "title": "Types de Détecteurs H2S",
+            "type": "procedure",
+            "content": "#### A. Détecteur Portable (Individuel)\n\n**Caractéristiques :**\n- Porté sur vous en permanence\n- Alarmes sonores et visuelles\n- Autonomie 12-24h\n- Test quotidien obligatoire\n\n**Alarmes Standards :**\n- 🟡 **10 ppm** : Alarme basse (alerte, attention)\n- 🟠 **15 ppm** : Alarme haute (évacuez la zone)\n- 🔴 **STEL dépassée** : Évacuation immédiate\n\n**Entretien :**\n- Test de fonctionnement chaque matin (bump test)\n- Calibration mensuelle\n- Remplacement capteur selon fabricant\n- Chargement batterie quotidien",
+            "illustrations": [
+              {
+                "id": "h2s-detector",
+                "type": "photo",
+                "title": "Détecteur H2S Portable",
+                "description": "Exemple de détecteur portatif avec écran et alarmes",
+                "url": "/images/hse/h2s-detector.jpg",
+                "alt": "Photo d'un détecteur H2S portatif"
+              }
+            ]
+          },
+          {
+            "id": "h2s-detector-usage",
+            "title": "Comment Utiliser Votre Détecteur",
+            "type": "checklist",
+            "content": "#### Avant Votre Poste (Check Quotidien)\n\n**1. Test de Fonctionnement (Bump Test)**\n\n✅ Allumer le détecteur\n✅ Attendre l'initialisation (30 secondes)\n✅ Vérifier l'affichage (doit indiquer 0 ppm)\n✅ Tester les alarmes (bouton test)\n✅ Vérifier la batterie (>50%)\n\n**2. Positionnement**\n- Fixer à la ceinture ou poche de poitrine\n- Capteur vers le bas (H2S descend)\n- Ne pas couvrir le capteur\n- Garder à portée de vue et d'ouïe\n\n#### Pendant Votre Travail\n\n**Que faire si l'alarme sonne ?**\n\n```\n🚨 ALARME 10 PPM (Alerte)\n↓\n1. STOP travail immédiatement\n2. Vérifier la lecture\n3. Alerter collègues et superviseur\n4. Quitter la zone si persiste\n5. Ne revenir qu'après autorisation\n\n🚨 ALARME 15 PPM (Danger)\n↓\n1. ÉVACUATION IMMÉDIATE\n2. Dos au vent\n3. Rejoindre zone sûre\n4. Signaler au poste sécurité (2222)\n5. Ne JAMAIS retourner seul\n```"
+          }
+        ]
+      },
+      {
+        "id": "module-h2s-4",
+        "title": "🆘 URGENCE ET SAUVETAGE",
+        "duration": 1,
+        "description": "Procédures d'urgence et techniques de sauvetage spécifiques H2S",
+        "content": [
+          {
+            "id": "h2s-emergency",
+            "title": "Que Faire Si Alarme Gaz ?",
+            "type": "emergency_protocol",
+            "content": "```\n🚨 ALARME H2S RETENTIT\n         ↓\n    STOP IMMÉDIAT\n         ↓\n    DOS AU VENT ← [Le vent pousse le gaz loin de vous]\n         ↓\n  ÉVACUER ZONE\n         ↓\n   COMPTAGE au Point de Rassemblement\n         ↓\n    PERSONNE MANQUANTE ?\n       ↙        ↘\n     OUI        NON\n      ↓          ↓\n  ALERTER     ATTENDRE\n  ÉQUIPE      AUTORISATION\n  SECOURS     RETOUR\n```\n\n#### ⚠️ RÈGLE VITALE : NE JAMAIS PORTER SECOURS SEUL\n\n**Pourquoi ?**\n- Vous deviendrez la 2ème victime\n- Le H2S est invisible\n- Vous n'aurez pas le temps de réagir\n- 50% des morts H2S sont des sauveteurs\n\n**La Bonne Procédure :**\n1. Alerter équipe de sauvetage (2222)\n2. Donner localisation exacte\n3. Empêcher d'autres personnes d'entrer\n4. Attendre équipe équipée d'ARI",
+            "illustrations": [
+              {
+                "id": "h2s-emergency-flow",
+                "type": "diagram",
+                "title": "Procédure d'Urgence H2S",
+                "description": "Organigramme des actions en cas d'alarme H2S",
+                "url": "/images/hse/h2s-emergency-procedure.svg",
+                "alt": "Diagramme de procédure d'urgence H2S"
+              }
+            ]
+          },
+          {
+            "id": "h2s-first-aid",
+            "title": "Premiers Secours Spécifiques H2S",
+            "type": "emergency_protocol",
+            "content": "#### Si Vous Trouvez une Victime\n\n**AVANT TOUT : VOTRE SÉCURITÉ**\n- ✅ Porter un ARI\n- ✅ Travailler en binôme minimum\n- ✅ Corde de sécurité attachée\n\n**Dégagement de la Victime :**\n1. Saisir par les vêtements (pas les bras)\n2. Tirer vers zone sûre (dos au vent)\n3. Ne pas perdre de temps sur place\n\n#### Réanimation d'Urgence\n\n**1. Vérifier Conscience**\n```\n\"Vous m'entendez ?\"\nSecouer légèrement les épaules\nPas de réponse = INCONSCIENT\n```\n\n**2. Libérer Voies Aériennes**\n```\nBasculer la tête en arrière\nSoulever le menton\nRetirer corps étrangers visibles\n```\n\n**3. Vérifier Respiration**\n```\nRegarder le thorax\nÉcouter les bruits respiratoires\nSentir le souffle\n10 secondes maximum\n```\n\n**4a. SI RESPIRE : Position Latérale de Sécurité (PLS)**\n```\nSur le côté\nTête en arrière\nBouche vers le sol\nSurveiller en continu\n```\n\n**4b. SI NE RESPIRE PAS : Réanimation Cardio-Pulmonaire**\n```\nAPPELER À L'AIDE\n↓\n30 COMPRESSIONS THORACIQUES\n(centre du thorax, 5-6 cm, 100-120/min)\n↓\n2 INSUFFLATIONS\n(bouche-à-bouche ou masque)\n↓\nRÉPÉTER jusqu'à l'arrivée des secours\n```"
+          }
+        ]
+      }
+    ],
+    "resources": [
+      {
+        "id": "h2s-emergency-card",
+        "title": "Carte d'Urgence H2S",
+        "type": "pdf",
+        "url": "/resources/hse/h2s-emergency-card.pdf",
+        "description": "Carte de poche avec procédures d'urgence H2S",
+        "downloadable": true
+      },
+      {
+        "id": "h2s-detector-manual",
+        "title": "Manuel Détecteur H2S",
+        "type": "pdf",
+        "url": "/resources/hse/h2s-detector-manual.pdf",
+        "description": "Mode d'emploi détecteur H2S portable",
+        "downloadable": true
+      },
+      {
+        "id": "h2s-safety-poster",
+        "title": "Affiche Sécurité H2S",
+        "type": "pdf",
+        "url": "/resources/hse/h2s-safety-poster.pdf",
+        "description": "Affiche de sécurité à imprimer pour les postes de travail",
+        "downloadable": true
+      }
+    ],
+    "assessments": [
+      {
+        "id": "h2s-qcm",
+        "title": "QCM H2S - Score minimum : 100% (Aucune erreur tolérée)",
+        "type": "qcm",
+        "passingScore": 100,
+        "duration": 20,
+        "questions": [
+          {
+            "id": "q1",
+            "text": "À quelle concentration le H2S provoque-t-il la mort instantanée ?",
+            "type": "multiple_choice",
+            "options": ["100 ppm", "500 ppm", "1000 ppm"],
+            "correctAnswer": "1000 ppm",
+            "explanation": "À 1000 ppm et plus, le H2S provoque la mort instantanée en quelques respirations."
+          },
+          {
+            "id": "q2",
+            "text": "Pourquoi ne peut-on pas se fier à l'odeur du H2S ?",
+            "type": "multiple_choice",
+            "options": [
+              "Il n'a pas d'odeur",
+              "L'odorat se sature rapidement",
+              "L'odeur disparaît à forte concentration"
+            ],
+            "correctAnswer": "L'odorat se sature rapidement",
+            "explanation": "La saturation olfactive fait que vous ne sentez plus rien après quelques minutes, même si la concentration augmente."
+          },
+          {
+            "id": "q3",
+            "text": "Que faire si votre détecteur H2S alarme à 15 ppm ?",
+            "type": "multiple_choice",
+            "options": [
+              "Continuer le travail en surveillant",
+              "Évacuer immédiatement", 
+              "Mettre un masque à cartouche"
+            ],
+            "correctAnswer": "Évacuer immédiatement",
+            "explanation": "15 ppm dépasse la limite court terme (STEL). Évacuation immédiate obligatoire."
+          },
+          {
+            "id": "q4",
+            "text": "Quelle est la limite d'exposition sur 8h (TWA) ?",
+            "type": "multiple_choice",
+            "options": ["5 ppm", "10 ppm", "15 ppm"],
+            "correctAnswer": "10 ppm",
+            "explanation": "La limite TWA (Time Weighted Average) sur 8h est de 10 ppm."
+          },
+          {
+            "id": "q5",
+            "text": "Votre collègue est inconscient dans une zone H2S. Que faites-vous ?",
+            "type": "multiple_choice",
+            "options": [
+              "J'entre le sauver immédiatement",
+              "J'alerte les secours et attends équipe ARI",
+              "Je mets un masque à cartouche et j'entre"
+            ],
+            "correctAnswer": "J'alerte les secours et attends équipe ARI",
+            "explanation": "60% des morts H2S sont des sauveteurs. Ne jamais entrer sans ARI et équipe formée."
+          }
+        ]
+      },
+      {
+        "id": "h2s-practical",
+        "title": "Démonstration Pratique",
+        "type": "practical",
+        "passingScore": 100,
+        "duration": 30,
+        "questions": [
+          {
+            "id": "detector-test",
+            "text": "Démontrer le test quotidien (bump test) d'un détecteur H2S",
+            "type": "open",
+            "correctAnswer": "Allumage, initialisation, test alarmes, vérification batterie",
+            "explanation": "Le bump test quotidien est vital pour s'assurer du bon fonctionnement du détecteur."
+          },
+          {
+            "id": "emergency-response",
+            "text": "Simuler la réponse à une alarme H2S (procédure complète)",
+            "type": "open",
+            "correctAnswer": "Stop immédiat, dos au vent, évacuation, comptage, alerte si manquant",
+            "explanation": "La procédure d'urgence doit être automatique et suivie à la lettre."
+          }
+        ]
+      }
+    ]
+  }
+}

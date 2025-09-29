@@ -1,0 +1,230 @@
+{
+  "id": "HSE-001",
+  "code": "INDUCTION-BASE",
+  "title": "Induction HSE - Accueil Sécurité",
+  "category": "Obligatoire",
+  "description": "Formation d'accueil obligatoire pour tous les nouveaux employés et sous-traitants. Couvre les règles de base de sécurité, les risques généraux de la raffinerie et les procédures d'urgence.",
+  "objectives": [
+    "Comprendre et appliquer la politique HSE de SOGARA",
+    "Identifier les principaux risques présents dans une raffinerie",
+    "Réagir correctement en cas d'urgence",
+    "Respecter les règles de sécurité de base sur le site"
+  ],
+  "duration": 8,
+  "durationUnit": "heures",
+  "validityMonths": 12,
+  "requiredForRoles": ["EMPLOYE", "SUPERVISEUR", "HSE", "ADMIN", "RECEP"],
+  "prerequisites": [],
+  "certification": {
+    "examRequired": true,
+    "passingScore": 80,
+    "practicalTest": true,
+    "certificateType": "Badge d'accès sécurisé SOGARA"
+  },
+  "instructor": {
+    "qualificationRequired": "Formateur HSE certifié",
+    "minExperience": "3 ans en raffinerie"
+  },
+  "maxParticipants": 20,
+  "language": ["Français"],
+  "deliveryMethods": ["Présentiel", "E-learning (théorie)"],
+  "refresherRequired": true,
+  "refresherFrequency": 12,
+  "content": {
+    "modules": [
+      {
+        "id": "module-1",
+        "title": "Politique HSE SOGARA",
+        "duration": 1,
+        "description": "Comprendre la vision Zéro Accident et vos responsabilités",
+        "content": [
+          {
+            "id": "section-1-1",
+            "title": "Qu'est-ce que la HSE ?",
+            "type": "text",
+            "content": "**HSE** signifie **Hygiène, Sécurité et Environnement**. C'est l'ensemble des règles et pratiques qui protègent :\n\n- 👤 **Vous** (votre santé, votre vie)\n- 👥 **Vos collègues** (travail d'équipe sécuritaire)\n- 🌍 **L'environnement** (préserver la nature)"
+          },
+          {
+            "id": "section-1-2",
+            "title": "La Vision Zéro Accident de SOGARA",
+            "type": "safety_rules",
+            "content": "**Notre objectif : ZÉRO accident, ZÉRO blessure, ZÉRO pollution**\n\nCela signifie que :\n- Chaque accident peut être évité\n- Chacun a le droit de rentrer chez soi en bonne santé\n- Nous pouvons travailler sans nuire à l'environnement"
+          },
+          {
+            "id": "section-1-3",
+            "title": "Vos Responsabilités",
+            "type": "checklist",
+            "content": "En tant qu'employé, VOUS devez :\n\n1. **Porter vos EPI** (Équipements de Protection Individuelle) en permanence\n2. **Signaler les dangers** que vous observez\n3. **Respecter les procédures** de sécurité\n4. **Participer aux formations** HSE\n5. **Avoir le DROIT DE REFUSER** un travail dangereux"
+          }
+        ],
+        "illustrations": [
+          {
+            "id": "hse-triangle",
+            "type": "diagram",
+            "title": "Triangle HSE",
+            "description": "Les trois piliers de la HSE chez SOGARA",
+            "url": "/images/hse/hse-triangle.svg",
+            "alt": "Diagramme montrant les trois piliers HSE : Hygiène, Sécurité, Environnement"
+          }
+        ]
+      },
+      {
+        "id": "module-2",
+        "title": "Risques Majeurs en Raffinerie",
+        "duration": 2,
+        "description": "Identifier et comprendre les dangers spécifiques à l'industrie pétrolière",
+        "content": [
+          {
+            "id": "section-2-1",
+            "title": "Risques d'Incendie et d'Explosion",
+            "type": "emergency_protocol",
+            "content": "Une raffinerie manipule des **hydrocarbures** (pétrole, essence, gaz) qui sont :\n\n- 🔥 **Très inflammables** (prennent feu facilement)\n- 💥 **Explosifs** (peuvent exploser au contact d'une flamme)\n- ☁️ **Volatils** (forment des vapeurs invisibles)",
+            "illustrations": [
+              {
+                "id": "fire-triangle",
+                "type": "diagram",
+                "title": "Triangle du Feu",
+                "description": "Les trois éléments nécessaires pour qu'un feu démarre",
+                "url": "/images/hse/fire-triangle.svg",
+                "alt": "Triangle montrant combustible, comburant et énergie d'activation"
+              }
+            ]
+          },
+          {
+            "id": "section-2-2",
+            "title": "Sulfure d'Hydrogène (H2S) - GAZ MORTEL",
+            "type": "emergency_protocol",
+            "content": "Le H2S est le **danger N°1** en raffinerie.\n\n**Caractéristiques :**\n- Odeur d'œuf pourri à faible concentration\n- **DANGER :** Votre nez s'habitue ! Après quelques minutes, vous ne sentez plus rien\n- Incolore et invisible\n- Plus lourd que l'air (s'accumule au sol)\n\n**Effets sur la santé :**\n- **10 ppm :** Irritation des yeux\n- **100 ppm :** Perte de connaissance en quelques minutes\n- **1000 ppm :** MORT INSTANTANÉE"
+          }
+        ]
+      },
+      {
+        "id": "module-3",
+        "title": "Procédures d'Urgence",
+        "duration": 2,
+        "description": "Savoir réagir en cas d'urgence : alarmes, évacuation, premiers secours",
+        "content": [
+          {
+            "id": "section-3-1",
+            "title": "Système d'Alarme",
+            "type": "emergency_protocol",
+            "content": "SOGARA dispose de plusieurs types d'alarmes :\n\n#### 🔔 Alarme Incendie (sirène continue)\n**Que faire ?**\n1. Arrêter votre travail en sécurité\n2. Fermer les vannes si possible\n3. Évacuer calmement\n4. Ne pas utiliser les ascenseurs\n5. Se rendre au point de rassemblement\n\n#### 🚨 Alarme Gaz (sirène intermittente)\n**Que faire ?**\n1. Mettre votre appareil respiratoire (ARI) si vous en avez un\n2. Se placer **DOS AU VENT** (le vent pousse le gaz loin de vous)\n3. Évacuer la zone rapidement\n4. Rejoindre le point de rassemblement"
+          },
+          {
+            "id": "section-3-2",
+            "title": "Numéros d'Urgence",
+            "type": "emergency_protocol",
+            "content": "**À mémoriser :**\n\n| Urgence | Numéro | Utilisation |\n|---------|--------|-------------|\n| 🚒 Pompiers | **18** | Incendie, fuite de gaz |\n| 🚑 SAMU | **15** | Blessé, malaise |\n| 👮 Police | **17** | Intrusion, incident sécurité |\n| ☎️ Numéro Urgence Européen | **112** | Toute urgence |\n| 🏭 Poste de Sécurité SOGARA | **2222** | Urgence interne |"
+          }
+        ]
+      },
+      {
+        "id": "module-4",
+        "title": "Règles de Sécurité de Base",
+        "duration": 2,
+        "description": "EPI obligatoires, permis de travail et interdictions strictes",
+        "content": [
+          {
+            "id": "section-4-1",
+            "title": "Port Obligatoire des EPI",
+            "type": "checklist",
+            "content": "Les **EPI** (Équipements de Protection Individuelle) sont obligatoires **100% du temps** sur site.\n\n#### EPI de Base (Obligatoires Partout)\n\n1. **Casque de sécurité** 🪖\n2. **Chaussures de sécurité S3** 👢\n3. **Lunettes de sécurité** 👓\n4. **Vêtements de travail ignifugés** 👔\n5. **Gants adaptés** 🧤"
+          },
+          {
+            "id": "section-4-2",
+            "title": "Interdictions Strictes",
+            "type": "safety_rules",
+            "content": "#### ❌ STRICTEMENT INTERDIT sur le site :\n\n1. **Fumer** 🚬 (uniquement dans zones fumeurs désignées)\n2. **Téléphone portable** 📱 (interdit en zones ATEX)\n3. **Flammes nues** 🔥 (sauf avec permis de feu)\n4. **Courir** 🏃 (marcher calmement)\n5. **Écouteurs/musique** 🎧 (empêche d'entendre les alarmes)\n6. **Alcool et drogues** 🍺 (tolérance zéro)"
+          }
+        ]
+      },
+      {
+        "id": "module-5",
+        "title": "Évaluation Pratique",
+        "duration": 1,
+        "description": "QCM, visite guidée et démonstration EPI",
+        "content": [
+          {
+            "id": "section-5-1",
+            "title": "QCM Théorique",
+            "type": "text",
+            "content": "**20 questions - Score minimum : 16/20 (80%)**\n\nExemples de questions :\n1. Que signifie HSE ?\n2. À partir de quelle concentration le H2S devient-il mortel ?\n3. Quel numéro composer en cas d'urgence interne ?\n4. Que faire si l'alarme gaz retentit ?\n5. Quels sont les 3 éléments du triangle du feu ?"
+          }
+        ]
+      }
+    ],
+    "resources": [
+      {
+        "id": "manuel-hse",
+        "title": "Manuel HSE SOGARA",
+        "type": "pdf",
+        "url": "/resources/hse/manuel-hse-sogara.pdf",
+        "description": "Manuel complet de sécurité HSE de SOGARA",
+        "downloadable": true
+      },
+      {
+        "id": "plans-evacuation",
+        "title": "Plans d'Évacuation",
+        "type": "pdf",
+        "url": "/resources/hse/plans-evacuation.pdf",
+        "description": "Plans d'évacuation pour toutes les zones du site",
+        "downloadable": true
+      }
+    ],
+    "assessments": [
+      {
+        "id": "qcm-induction",
+        "title": "QCM Induction HSE",
+        "type": "qcm",
+        "passingScore": 80,
+        "duration": 30,
+        "questions": [
+          {
+            "id": "q1",
+            "text": "Que signifie HSE ?",
+            "type": "multiple_choice",
+            "options": [
+              "Hygiène, Sécurité et Environnement",
+              "Haute Sécurité Energétique", 
+              "Habilitation Spéciale Electricité"
+            ],
+            "correctAnswer": "Hygiène, Sécurité et Environnement",
+            "explanation": "HSE signifie Hygiène, Sécurité et Environnement, les trois piliers de la prévention des risques."
+          },
+          {
+            "id": "q2",
+            "text": "À quelle concentration le H2S devient-il mortel instantanément ?",
+            "type": "multiple_choice",
+            "options": ["100 ppm", "500 ppm", "1000 ppm"],
+            "correctAnswer": "1000 ppm",
+            "explanation": "À 1000 ppm, le H2S provoque la mort instantanée en quelques respirations."
+          },
+          {
+            "id": "q3",
+            "text": "Quel numéro composer pour une urgence interne SOGARA ?",
+            "type": "multiple_choice",
+            "options": ["15", "18", "2222"],
+            "correctAnswer": "2222",
+            "explanation": "Le 2222 est le numéro du poste de sécurité SOGARA, disponible 24h/24."
+          }
+        ]
+      },
+      {
+        "id": "practical-demo",
+        "title": "Démonstration Pratique",
+        "type": "practical",
+        "passingScore": 100,
+        "duration": 20,
+        "questions": [
+          {
+            "id": "epi-demo",
+            "text": "Démontrer l'enfilage correct des EPI de base",
+            "type": "open",
+            "correctAnswer": "Enfilage correct du casque, ajustement du harnais, test du détecteur H2S",
+            "explanation": "Tous les EPI doivent être correctement ajustés et fonctionnels."
+          }
+        ]
+      }
+    ]
+  }
+}

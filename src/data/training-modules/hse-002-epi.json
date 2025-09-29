@@ -1,0 +1,314 @@
+{
+  "id": "HSE-002",
+  "code": "EPI-ADVANCED",
+  "title": "Port et Utilisation des EPI",
+  "category": "Obligatoire",
+  "description": "Formation approfondie sur l'utilisation correcte des équipements de protection individuelle spécifiques à l'industrie pétrolière.",
+  "objectives": [
+    "Identifier les différents types d'EPI et leurs usages",
+    "Choisir le bon EPI pour chaque situation",
+    "Utiliser correctement chaque équipement",
+    "Entretenir et inspecter vos EPI",
+    "Reconnaître un EPI défectueux"
+  ],
+  "duration": 4,
+  "durationUnit": "heures",
+  "validityMonths": 24,
+  "requiredForRoles": ["EMPLOYE", "SUPERVISEUR", "HSE"],
+  "prerequisites": ["HSE-001"],
+  "certification": {
+    "examRequired": true,
+    "passingScore": 85,
+    "practicalTest": true,
+    "certificateType": "Certificat de Compétence EPI"
+  },
+  "instructor": {
+    "qualificationRequired": "Formateur HSE certifié",
+    "minExperience": "3 ans en raffinerie"
+  },
+  "maxParticipants": 16,
+  "language": ["Français"],
+  "deliveryMethods": ["Présentiel obligatoire"],
+  "refresherRequired": true,
+  "refresherFrequency": 24,
+  "content": {
+    "modules": [
+      {
+        "id": "module-epi-1",
+        "title": "📚 COMPRENDRE LES EPI",
+        "duration": 0.5,
+        "description": "Définition, importance et hiérarchie des protections",
+        "content": [
+          {
+            "id": "epi-definition",
+            "title": "Qu'est-ce qu'un EPI ?",
+            "type": "text",
+            "content": "**EPI = Équipement de Protection Individuelle**\n\n**Définition Officielle :**\n> \"Tout équipement porté ou tenu par une personne en vue de la protéger contre un ou plusieurs risques pour sa santé ou sa sécurité.\"\n\n### Pourquoi Porter des EPI ?\n\n#### Les Statistiques Parlent\n\n**En Raffinerie :**\n- 70% des blessures auraient pu être évitées avec EPI approprié\n- Les yeux : 90% des blessures évitables\n- Les mains : 80% des accidents du travail\n- La tête : Chaque casque évite potentiellement une mort\n\n**📖 Histoire Vraie :**\n*\"Un technicien retire ses lunettes 'juste 5 secondes' pour essuyer la transpiration. Une particule métallique lui perfore l'œil. Perte de vision permanente. 5 secondes ont changé sa vie.\"*",
+            "illustrations": [
+              {
+                "id": "epi-stats",
+                "type": "infographic",
+                "title": "Statistiques EPI",
+                "description": "Infographie sur l'efficacité des EPI",
+                "url": "/images/hse/epi-statistics.svg",
+                "alt": "Statistiques de prévention par les EPI"
+              }
+            ]
+          },
+          {
+            "id": "protection-hierarchy",
+            "title": "Hiérarchie des Protections",
+            "type": "procedure",
+            "content": "**L'EPI est la DERNIÈRE ligne de défense**\n\n```\n1️⃣ ÉLIMINER le danger\n   (Meilleure solution)\n        ↓\n2️⃣ PROTECTION COLLECTIVE\n   (Garde-corps, ventilation)\n        ↓\n3️⃣ PROCÉDURES de sécurité\n   (Permis, consignes)\n        ↓\n4️⃣ EPI - PROTECTION INDIVIDUELLE\n   (Dernier rempart)\n```\n\n**Mais une fois au travail : EPI = OBLIGATOIRE**",
+            "illustrations": [
+              {
+                "id": "protection-pyramid",
+                "type": "diagram",
+                "title": "Pyramide des Protections",
+                "description": "Hiérarchie des mesures de protection",
+                "url": "/images/hse/protection-hierarchy.svg",
+                "alt": "Pyramide hiérarchique des protections"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "module-epi-2",
+        "title": "⛑️ PROTECTION DE LA TÊTE",
+        "duration": 0.5,
+        "description": "Casques de sécurité : types, utilisation et entretien",
+        "content": [
+          {
+            "id": "helmet-types",
+            "title": "Le Casque de Sécurité",
+            "type": "text",
+            "content": "#### Contre Quoi Protège-t-il ?\n\n- 💥 Chocs par impact (chute d'objets)\n- 💥 Chocs par enfoncement (objet lourd posé sur tête)\n- ⚡ Contact électrique (jusqu'à 1000V pour certains)\n- 🔥 Projections de métal en fusion (pour certains)\n\n#### Code Couleur SOGARA\n\n| Couleur | Fonction |\n|---------|----------|\n| **Blanc** | Direction, Ingénieurs |\n| **Jaune** | Ouvriers, Techniciens |\n| **Bleu** | Visiteurs, Sous-traitants |\n| **Rouge** | Sécurité, Pompiers |\n| **Vert** | HSE, Environnement |",
+            "illustrations": [
+              {
+                "id": "helmet-colors",
+                "type": "infographic",
+                "title": "Code Couleur Casques",
+                "description": "Guide des couleurs de casques selon les fonctions",
+                "url": "/images/hse/helmet-colors.svg",
+                "alt": "Code couleur des casques de sécurité SOGARA"
+              }
+            ]
+          },
+          {
+            "id": "helmet-wearing",
+            "title": "Comment Porter Correctement un Casque",
+            "type": "procedure",
+            "content": "#### Réglage du Harnais\n\n**Étape 1 : Ajuster la Coiffe**\n```\nTourner molette arrière\n      ↓\nSerrer jusqu'à contact franc\n      ↓\nPas trop serré (mal de tête)\nPas trop lâche (tombe)\n```\n\n**Étape 2 : Ajuster la Jugulaire**\n```\nPasser sous le menton\n      ↓\nSerrer modérément\n      ↓\nTest : 2 doigts passent\n```\n\n**Étape 3 : Position sur la Tête**\n```\nFront dégagé (2-3 cm au-dessus sourcils)\nHorizontal (pas penché)\nStable (ne bouge pas si vous secouez tête)\n```"
+          },
+          {
+            "id": "helmet-inspection",
+            "title": "Inspection du Casque",
+            "type": "checklist",
+            "content": "**À FAIRE CHAQUE JOUR avant de commencer :**\n\n```\n✅ CALOTTE\n   - Pas de fissures\n   - Pas de déformation\n   - Pas de trou\n   - Propre\n\n✅ HARNAIS\n   - Sangles intactes\n   - Pas de déchirure\n   - Fixations solides\n   - Pas trop usé\n\n✅ JUGULAIRE\n   - Boucle fonctionne\n   - Sangle entière\n   - Ajustement correct\n\n✅ DATE DE FABRICATION\n   - Marquage lisible\n   - < 5 ans d'âge\n```\n\n**❌ SI UN SEUL DÉFAUT → REMPLACER**"
+          }
+        ]
+      },
+      {
+        "id": "module-epi-3",
+        "title": "🫁 PROTECTION RESPIRATOIRE",
+        "duration": 1,
+        "description": "Masques, ARI et protection contre les gaz dangereux",
+        "content": [
+          {
+            "id": "respiratory-dangers",
+            "title": "Comprendre les Dangers Respiratoires",
+            "type": "text",
+            "content": "#### Types de Contaminants\n\n**GAZ et VAPEURS**\n- H2S, CO, vapeurs d'hydrocarbures\n- Invisibles\n- Peuvent être inodores\n- Traversent filtres ordinaires\n\n**POUSSIÈRES**\n- Particules solides en suspension\n- Visibles ou invisibles\n- S'accumulent dans poumons\n\n**FUMÉES**\n- Particules très fines\n- Issues de combustion\n- Très toxiques\n\n**BROUILLARDS**\n- Gouttelettes liquides\n- Huiles, acides\n- Irritants"
+          },
+          {
+            "id": "mask-types",
+            "title": "Types de Protection Respiratoire",
+            "type": "procedure",
+            "content": "### Masques Filtrants (Usage Limité)\n\n**FFP1** (Peu filtrant)\n- Filtre 80% particules\n- Poussières non toxiques\n- Nuisance légère\n\n**FFP2** (Filtration moyenne)\n- Filtre 94% particules\n- Poussières, brouillards\n- Usage courant\n\n**FFP3** (Haute filtration)\n- Filtre 99% particules\n- Poussières très fines toxiques\n- Amiante, fibres\n\n**⚠️ LIMITATIONS CRITIQUES :**\n- ❌ Ne protège QUE contre poussières\n- ❌ AUCUNE protection contre gaz\n- ❌ Nécessite O₂ > 19,5%\n- ❌ Usage unique ou limité\n\n### Appareil Respiratoire Isolant (ARI)\n\n**APPORTE SON PROPRE AIR**\n- Totalement indépendant atmosphère\n- Protection maximale\n- Utilisable partout\n\n#### Composants\n\n**Bouteille d'Air Comprimé**\n- 200-300 bars\n- Autonomie 30-60 minutes\n- Sur le dos\n\n**Détendeur et Moyenne Pression**\n- Réduit pression à respiration\n- Débit à la demande\n\n**Masque Complet**\n- Couvre tout le visage\n- Pression positive (empêche entrée gaz)\n- Visière large\n\n**Alarme Basse Pression**\n- Sonne à 55 bars environ\n- Signal évacuation (5-10 min restantes)",
+            "illustrations": [
+              {
+                "id": "ari-components",
+                "type": "schema",
+                "title": "Composants ARI",
+                "description": "Schéma détaillé d'un ARI avec tous ses composants",
+                "url": "/images/hse/ari-components.svg",
+                "alt": "Schéma des composants d'un ARI"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "module-epi-4",
+        "title": "👀 PROTECTION DES YEUX",
+        "duration": 0.5,
+        "description": "Lunettes et écrans faciaux pour protéger la vue",
+        "content": [
+          {
+            "id": "eye-protection",
+            "title": "Les Dangers pour les Yeux",
+            "type": "text",
+            "content": "**En Raffinerie :**\n- 💥 Projections de particules (meulage, burinage)\n- 💧 Éclaboussures chimiques (acides, bases)\n- 🔥 Projections de métal en fusion (soudure)\n- ☀️ Rayonnements (UV de soudure, laser)\n- 💨 Poussières\n- 💦 Gouttelettes d'huile\n\n**Conséquence :** Blessure oculaire = Souvent irréversible"
+          }
+        ]
+      },
+      {
+        "id": "module-epi-5",
+        "title": "🔊 PROTECTION AUDITIVE",
+        "duration": 0.33,
+        "description": "Protection contre le bruit en milieu industriel",
+        "content": [
+          {
+            "id": "noise-levels",
+            "title": "Le Bruit en Raffinerie",
+            "type": "safety_rules",
+            "content": "#### Seuils de Danger\n\n| Niveau | Description | Effet | Temps Exposition Max |\n|--------|-------------|-------|---------------------|\n| **80 dB** | Limite confort | Fatigue | 8h |\n| **85 dB** | Limite légale | Risque auditif | 8h avec protection |\n| **90 dB** | Zone marquée | Lésions progressives | 2h30 sans protection |\n| **100 dB** | Zone rouge | Dommages rapides | 15 min |\n| **120 dB** | Douleur | Lésions immédiates | Immédiat |\n\n**Sources en Raffinerie :**\n- Compresseurs : 95-105 dB\n- Turbines : 90-100 dB\n- Meulage : 100-110 dB\n- Soupapes vapeur : 110-120 dB"
+          }
+        ]
+      },
+      {
+        "id": "module-epi-6",
+        "title": "🧤 PROTECTION DES MAINS",
+        "duration": 0.5,
+        "description": "Gants de protection selon les risques",
+        "content": [
+          {
+            "id": "hand-protection",
+            "title": "Pourquoi les Mains ?",
+            "type": "text",
+            "content": "**Statistiques :**\n- 80% des accidents du travail touchent les mains\n- 1/3 des arrêts de travail\n- Blessures souvent graves (amputation, brûlures)\n\n**Les mains sont vos outils de travail. Protégez-les !**\n\n#### Types de Gants par Risque\n\n**Risques MÉCANIQUES**\n| Type | Protection | Usage SOGARA |\n|------|-----------|-------------|\n| Cuir | Abrasion, coupure | Manutention générale |\n| Kevlar | Coupure élevée | Manipulation tôles |\n| Latex renforcé | Déchirure, perforation | Travaux précis |\n| Anti-vibration | Vibrations | Outils pneumatiques |\n\n**Risques CHIMIQUES**\n| Type | Protection | Usage |\n|------|-----------|-------|\n| Nitrile | Hydrocarbures, huiles | Manipulation HC |\n| Néoprène | Acides, bases | Produits chimiques |\n| PVC | Acides faibles | Nettoyage |\n| Butyle | Cétones, esters | Solvants |"
+          }
+        ]
+      },
+      {
+        "id": "module-epi-7",
+        "title": "👕 PROTECTION DU CORPS",
+        "duration": 0.5,
+        "description": "Vêtements de travail et chaussures de sécurité",
+        "content": [
+          {
+            "id": "work-clothing",
+            "title": "Vêtements de Travail",
+            "type": "safety_rules",
+            "content": "#### Vêtements Ignifugés (Obligatoire en Raffinerie)\n\n**Pourquoi ?**\n- Hydrocarbures partout = Risque feu\n- Vêtements normaux fondent/brûlent\n- Vêtements ignifugés résistent\n\n**Normes :**\n- EN ISO 11612 : Protection chaleur/flamme\n- EN 1149-5 : Antistatique\n\n**Caractéristiques :**\n- Ne s'enflamment pas facilement\n- S'éteignent seuls\n- Ne fondent pas\n- Évacuent électricité statique\n\n#### Ce qui est INTERDIT\n\n**❌ Vêtements Synthétiques :**\n- Polyester, nylon, acrylique\n- Fondent à la chaleur\n- Collent à la peau (brûlures horribles)\n- Génèrent électricité statique (étincelles)\n\n**❌ Bijoux et Accessoires :**\n- Bagues, bracelets, chaînes\n- Conducteurs électriques\n- Risque d'accrochage\n- Piègent produits chimiques"
+          },
+          {
+            "id": "safety-shoes",
+            "title": "Chaussures de Sécurité",
+            "type": "procedure",
+            "content": "#### Norme S3 (Obligatoire SOGARA)\n\n**Composants Obligatoires S3 :**\n```\nS3 = S1 + P + WRU\n\nS1 = Embout + Antistatique + Absorption énergie talon\nP = Semelle anti-perforation\nWRU = Résistance eau (Water Resistant Upper)\n```\n\n**Protection Apportée :**\n- 💥 Embout protège orteils (résiste 200 joules = 20kg à 1m)\n- 🔩 Semelle anti-perforation (clou, débris pointus)\n- 💧 Résistantes aux hydrocarbures\n- ⚡ Antistatiques (évacue électricité)\n- 🌊 Imperméables",
+            "illustrations": [
+              {
+                "id": "safety-shoe-cutaway",
+                "type": "schema",
+                "title": "Coupe Chaussure S3",
+                "description": "Vue en coupe d'une chaussure de sécurité S3",
+                "url": "/images/hse/safety-shoe-cutaway.svg",
+                "alt": "Schéma en coupe d'une chaussure de sécurité S3"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "module-epi-8",
+        "title": "✅ ÉVALUATION FINALE",
+        "duration": 0.67,
+        "description": "Exercices pratiques et certification",
+        "content": [
+          {
+            "id": "practical-exercises",
+            "title": "Exercices Pratiques",
+            "type": "procedure",
+            "content": "### Exercice Pratique 1 : Inspection EPI\n\n**Vous recevez votre dotation EPI. Inspectez et validez :**\n\n1. Casque\n2. Lunettes\n3. Bouchons d'oreilles\n4. Gants\n5. Chaussures\n\n**Identifiez les défauts sur équipements volontairement défectueux**\n\n### Exercice Pratique 2 : Choix des EPI\n\n**Situation 1 :** Meulage d'une tuyauterie\n- Casque ✅\n- Lunettes de sécurité ✅\n- Écran facial ✅ (en plus)\n- Bouchons oreilles ✅\n- Gants anti-vibration/coupure ✅\n- Chaussures S3 ✅\n- Vêtements ignifugés ✅\n\n**Situation 2 :** Vidange de cuve contenant hydrocarbures\n- Casque ✅\n- ARI (espace confiné) ✅\n- Gants nitrile ✅\n- Bottes imperméables ✅\n- Vêtements chimiques ✅\n- Harnais ✅"
+          }
+        ]
+      }
+    ],
+    "resources": [
+      {
+        "id": "epi-checklist",
+        "title": "Check-List Quotidienne EPI",
+        "type": "pdf",
+        "url": "/resources/hse/epi-daily-checklist.pdf",
+        "description": "Liste de vérification quotidienne des EPI",
+        "downloadable": true
+      },
+      {
+        "id": "epi-maintenance",
+        "title": "Guide d'Entretien EPI",
+        "type": "pdf",
+        "url": "/resources/hse/epi-maintenance-guide.pdf",
+        "description": "Instructions d'entretien et de remplacement des EPI",
+        "downloadable": true
+      },
+      {
+        "id": "epi-selection-matrix",
+        "title": "Matrice de Sélection EPI",
+        "type": "pdf",
+        "url": "/resources/hse/epi-selection-matrix.pdf",
+        "description": "Guide de sélection des EPI selon les tâches",
+        "downloadable": true
+      }
+    ],
+    "assessments": [
+      {
+        "id": "epi-qcm",
+        "title": "QCM Port et Utilisation des EPI",
+        "type": "qcm",
+        "passingScore": 85,
+        "duration": 25,
+        "questions": [
+          {
+            "id": "q1",
+            "text": "Quelle est la durée de vie maximale d'un casque de sécurité ?",
+            "type": "multiple_choice",
+            "options": ["3 ans", "5 ans", "10 ans"],
+            "correctAnswer": "5 ans",
+            "explanation": "Un casque doit être remplacé après 5 ans maximum, même s'il paraît en bon état."
+          },
+          {
+            "id": "q2",
+            "text": "Un masque à cartouche protège-t-il en espace confiné ?",
+            "type": "true_false",
+            "options": ["Vrai", "Faux"],
+            "correctAnswer": "Faux",
+            "explanation": "Un masque à cartouche nécessite un taux d'oxygène >19,5% et ne protège que contre certains gaz. En espace confiné, seul l'ARI est autorisé."
+          },
+          {
+            "id": "q3",
+            "text": "À partir de quel niveau de bruit la protection auditive est-elle obligatoire ?",
+            "type": "multiple_choice",
+            "options": ["80 dB", "85 dB", "90 dB"],
+            "correctAnswer": "85 dB",
+            "explanation": "La protection auditive devient obligatoire à partir de 85 dB d'exposition continue."
+          }
+        ]
+      },
+      {
+        "id": "epi-practical",
+        "title": "Évaluation Pratique EPI",
+        "type": "practical",
+        "passingScore": 100,
+        "duration": 30,
+        "questions": [
+          {
+            "id": "epi-inspection",
+            "text": "Effectuer l'inspection complète d'un set d'EPI et identifier les défauts",
+            "type": "open",
+            "correctAnswer": "Inspection systématique de tous les éléments selon la check-list",
+            "explanation": "L'inspection quotidienne des EPI est cruciale pour détecter les défauts avant qu'ils ne causent un accident."
+          },
+          {
+            "id": "epi-selection",
+            "text": "Choisir les EPI appropriés pour 3 situations de travail données",
+            "type": "open",
+            "correctAnswer": "Sélection correcte selon la matrice des risques",
+            "explanation": "Le choix des EPI doit être adapté aux risques spécifiques de chaque tâche."
+          }
+        ]
+      }
+    ]
+  }
+}

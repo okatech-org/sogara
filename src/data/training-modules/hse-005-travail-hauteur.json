@@ -1,0 +1,191 @@
+{
+  "id": "HSE-005",
+  "code": "WORK-HEIGHT",
+  "title": "Travail en Hauteur et Port du Harnais",
+  "category": "Spécialisée",
+  "description": "Formation spécialisée pour le travail en hauteur. Utilisation du harnais antichute, points d'ancrage et techniques de sauvetage.",
+  "objectives": [
+    "Identifier les situations de travail en hauteur",
+    "Choisir et utiliser correctement un harnais antichute",
+    "Vérifier les points d'ancrage",
+    "Mettre en œuvre les systèmes d'arrêt de chute",
+    "Respecter les procédures de sécurité"
+  ],
+  "duration": 7,
+  "durationUnit": "heures",
+  "validityMonths": 24,
+  "requiredForRoles": ["EMPLOYE", "SUPERVISEUR", "HSE"],
+  "prerequisites": ["HSE-001", "HSE-002"],
+  "certification": {
+    "examRequired": true,
+    "passingScore": 85,
+    "practicalTest": true,
+    "certificateType": "Certificat Travail en Hauteur - Niveau 1"
+  },
+  "instructor": {
+    "qualificationRequired": "Formateur travail en hauteur certifié",
+    "minExperience": "Formation cordiste ou sécurité hauteur"
+  },
+  "maxParticipants": 8,
+  "language": ["Français"],
+  "deliveryMethods": ["Présentiel obligatoire"],
+  "refresherRequired": true,
+  "refresherFrequency": 24,
+  "content": {
+    "modules": [
+      {
+        "id": "module-height-1",
+        "title": "📏 COMPRENDRE LE RISQUE DE CHUTE",
+        "duration": 1,
+        "description": "Définition du travail en hauteur et statistiques d'accidents",
+        "content": [
+          {
+            "id": "height-definition",
+            "title": "Qu'est-ce qu'un Travail en Hauteur ?",
+            "type": "text",
+            "content": "#### Définition Réglementaire\n\n**Travail en hauteur = Travail à partir de 3 mètres**\n\nMais **ATTENTION** : Même à 1 mètre, le risque existe !\n\n**Situations en Raffinerie SOGARA :**\n- 🏗️ Plateformes en hauteur\n- 🪜 Échelles fixes et mobiles\n- 🏭 Passerelles et ponts roulants\n- 🛢️ Toits de réservoirs\n- 🏗️ Échafaudages\n- 🚁 Nacelles élévatrices\n- 🌲 Structures métalliques"
+          },
+          {
+            "id": "fall-statistics",
+            "title": "Statistiques Alarmantes",
+            "type": "emergency_protocol",
+            "content": "#### En France (Tous Secteurs)\n\n- **90 morts/an** par chute de hauteur\n- **1 accident mortel du travail sur 6** = chute hauteur\n- **12% des accidents** avec arrêt de travail\n- **Hauteur moyenne** des chutes mortelles : **5 mètres**\n\n**📖 Histoire Vraie :**\n*\"Un technicien expérimenté monte sur une plateforme pour une intervention 'rapide'. Il ne met pas son harnais 'pour gagner du temps - juste 2 minutes'. Il glisse sur une flaque d'huile. Chute de 4 mètres. Décès sur le coup. 2 minutes ont coûté une vie.\"*"
+          },
+          {
+            "id": "fall-consequences",
+            "title": "Conséquences d'une Chute",
+            "type": "text",
+            "content": "#### Blessures Selon Hauteur de Chute\n\n| Hauteur | Vitesse Impact | Conséquences Typiques |\n|---------|----------------|----------------------|\n| **1 m** | 16 km/h | Entorses, fractures mineures |\n| **3 m** | 27 km/h | Fractures multiples, traumatismes |\n| **5 m** | 36 km/h | Traumatismes graves, handicap |\n| **10 m** | 50 km/h | Souvent mortel |\n| **15 m** | 61 km/h | Mortel dans 95% des cas |\n\n**IMPORTANT :** La gravité dépend aussi de la surface d'impact (béton vs sol meuble)"
+          }
+        ]
+      },
+      {
+        "id": "module-height-2",
+        "title": "🦺 ÉQUIPEMENTS ANTICHUTE",
+        "duration": 1.5,
+        "description": "Harnais, longes et points d'ancrage",
+        "content": [
+          {
+            "id": "harness-anatomy",
+            "title": "Le Harnais Antichute",
+            "type": "procedure",
+            "content": "#### Anatomie du Harnais\n\n**Composants Obligatoires :**\n\n```\nPOINT D'ATTACHE DORSAL\n(Entre les omoplates)\n      ↑\nSANGLES D'ÉPAULES\n      ↑\nSANGLES PECTORALES\n(Réglage largeur)\n      ↑\nSANGLES SOUS-FESSIÈRES\n(Réglage tour de cuisse)\n      ↑\nSANGLES DE CUISSES\n```\n\n**Autres Éléments :**\n- Boucles de réglage\n- Point d'attache sternal (optionnel)\n- Anneaux de positionnement latéraux\n- Étiquette d'identification et norme"
+          },
+          {
+            "id": "anchor-points",
+            "title": "Points d'Ancrage",
+            "type": "safety_rules",
+            "content": "#### Qu'est-ce qu'un Point d'Ancrage ?\n\n**Point solide** auquel on se connecte pour arrêter une chute.\n\n**Exigences :**\n- ✅ Résistance : **12 kN minimum** (1200 kg)\n- ✅ Positionné au-dessus de l'utilisateur\n- ✅ Accessible facilement\n- ✅ Identifié et marqué\n\n#### Types de Points d'Ancrage\n\n**Fixes Permanents**\n- Anneaux scellés dans structure\n- Poutres certifiées\n- Norme EN 795 Classe A\n\n**Temporaires**\n- Sangles autour poutre\n- Trépied (espace confiné)\n- Norme EN 795 Classe B/E"
+          }
+        ]
+      },
+      {
+        "id": "module-height-3",
+        "title": "🧗 UTILISATION DU HARNAIS",
+        "duration": 1.5,
+        "description": "Enfilage, réglage et utilisation correcte",
+        "content": [
+          {
+            "id": "harness-inspection",
+            "title": "Inspection Avant Utilisation",
+            "type": "checklist",
+            "content": "**OBLIGATOIRE avant CHAQUE utilisation**\n\n#### Check-List Visuelle\n\n```\n✅ ÉTIQUETTE\n   - Lisible (date fabrication, n° série)\n   - < 10 ans d'âge\n   - Contrôle périodique à jour\n\n✅ SANGLES\n   - Pas de coupure, déchirure\n   - Pas d'usure excessive (fils visibles)\n   - Pas de brûlure\n   - Pas de déformation\n   - Coutures intactes\n\n✅ BOUCLES ET RÉGLAGES\n   - Fonctionnement correct\n   - Pas de déformation\n   - Blocage efficace\n\n✅ ANNEAUX MÉTALLIQUES\n   - Pas de fissure, corrosion\n   - Pas de déformation\n   - Articulation libre\n\n✅ ABSORBEUR D'ÉNERGIE\n   - Pochette non déchirée\n   - Pas déjà déployé\n```\n\n**❌ UN SEUL DÉFAUT = HARNAIS HORS SERVICE**"
+          },
+          {
+            "id": "harness-fitting",
+            "title": "Enfilage du Harnais",
+            "type": "procedure",
+            "content": "**Méthode Étape par Étape :**\n\n#### Étape 1 : Préparation\n\n```\nDesserrer toutes les sangles\nIdentifier devant/dos\n(Étiquette dans le dos)\nIdentifier point d'attache dorsal\n```\n\n#### Étape 2 : Passage dans le Harnais\n\n```\nTenir harnais par sangles d'épaules\n      ↓\nPasser bras dans les bretelles\n(Comme mettre un sac à dos)\n      ↓\nAjuster sur les épaules\n```\n\n#### Étape 3 : Sangles Sous-Fessières\n\n```\nPrendre sangle droite\n      ↓\nPasser entre les jambes\n      ↓\nConnecter à boucle avant droite\n      ↓\nRépéter pour sangle gauche\n      ↓\nVérifier : pas de vrille (torsion)\n```"
+          }
+        ]
+      },
+      {
+        "id": "module-height-4",
+        "title": "🪜 MOYENS D'ACCÈS EN HAUTEUR",
+        "duration": 1,
+        "description": "Échelles, échafaudages et nacelles",
+        "content": [
+          {
+            "id": "ladder-safety",
+            "title": "Échelles Portables",
+            "type": "safety_rules",
+            "content": "#### Règles d'Utilisation\n\n**Installation :**\n```\nAngle : 75° (1 horizontal pour 4 vertical)\nDépassement : 1m au-dessus palier\nSol : Stable, horizontal\nPieds : Antidérapants OK\nFixation : En haut si >3m\n```\n\n**Utilisation :**\n```\n✅ Face à l'échelle (pas de côté)\n✅ Mains sur barreaux (pas montants)\n✅ 3 points d'appui toujours\n✅ Ne pas dépasser dernier barreau\n✅ Pas d'outils lourds en montant\n```\n\n**⚠️ INTERDIT :**\n- Échelle en bois en zone ATEX\n- Plus de 1 personne à la fois\n- Travail prolongé (>30 min)\n- Porter charge >25 kg"
+          }
+        ]
+      },
+      {
+        "id": "module-height-5",
+        "title": "🆘 SAUVETAGE ET URGENCE",
+        "duration": 1,
+        "description": "Syndrome du harnais et techniques de sauvetage",
+        "content": [
+          {
+            "id": "harness-syndrome",
+            "title": "Syndrome du Harnais",
+            "type": "emergency_protocol",
+            "content": "**Danger Méconnu :**\n\nAprès une chute arrêtée par le harnais, rester **suspendu immobile** peut être **MORTEL** :\n\n```\nSUSPENSION IMMOBILE\n      ↓\nSangles compriment artères fémorales\n      ↓\nSang ne circule plus dans jambes\n      ↓\nAccumulation toxines + manque O₂\n      ↓\nARRÊT CARDIAQUE en 15-30 minutes\n```\n\n**URGENCE ABSOLUE :** Secourir rapidement (<10 minutes)\n\n#### Symptômes Suspension Prolongée\n\n```\nAprès 5 minutes :\n- Fourmillements jambes\n- Engourdissement\n\nAprès 10 minutes :\n- Douleurs importantes\n- Difficulté respirer\n- Sueurs, nausées\n\nAprès 15-20 minutes :\n- Perte de conscience\n- ARRÊT CARDIAQUE POSSIBLE\n```"
+          }
+        ]
+      },
+      {
+        "id": "module-height-6",
+        "title": "🎯 EXERCICES PRATIQUES",
+        "duration": 1.5,
+        "description": "Enfilage, progression et évaluation",
+        "content": [
+          {
+            "id": "practical-exercises",
+            "title": "Exercices Pratiques",
+            "type": "procedure",
+            "content": "### Enfilage de Harnais\n\n**Exercice Chronométré :**\n\n```\nTemps Maximum : 3 minutes\n\nCritères :\n✅ Toutes sangles bien positionnées\n✅ Réglages corrects\n✅ Aucune vrille\n✅ Confortable et sécuritaire\n```\n\n### Progression sur Structure\n\n**Parcours Pratique :**\n\n```\n1. Enfiler harnais\n2. Connecter au point de départ\n3. Progression avec longe double\n4. Franchir 5 points d'ancrage\n5. Arriver sécuritairement\n```\n\n**Évaluation :**\n- Aucune déconnexion complète\n- Manipulations correctes mousquetons\n- Gestion longes\n- Temps < 5 minutes"
+          }
+        ]
+      }
+    ],
+    "resources": [
+      {
+        "id": "harness-inspection-card",
+        "title": "Carte d'Inspection Harnais",
+        "type": "pdf",
+        "url": "/resources/hse/harness-inspection-card.pdf",
+        "description": "Carte de poche pour inspection quotidienne du harnais",
+        "downloadable": true
+      },
+      {
+        "id": "height-safety-poster",
+        "title": "Affiche Sécurité Hauteur",
+        "type": "pdf",
+        "url": "/resources/hse/height-safety-poster.pdf",
+        "description": "Affiche des règles de sécurité pour travail en hauteur",
+        "downloadable": true
+      }
+    ],
+    "assessments": [
+      {
+        "id": "height-qcm",
+        "title": "QCM Travail en Hauteur",
+        "type": "qcm",
+        "passingScore": 85,
+        "duration": 30,
+        "questions": [
+          {
+            "id": "q1",
+            "text": "À partir de quelle hauteur parle-t-on de travail en hauteur ?",
+            "type": "multiple_choice",
+            "options": ["1 mètre", "3 mètres", "5 mètres"],
+            "correctAnswer": "3 mètres",
+            "explanation": "Réglementairement, le travail en hauteur commence à 3 mètres, mais le risque existe dès 1 mètre."
+          },
+          {
+            "id": "q2",
+            "text": "Quelle est la résistance minimale d'un point d'ancrage ?",
+            "type": "multiple_choice",
+            "options": ["6 kN", "12 kN", "20 kN"],
+            "correctAnswer": "12 kN",
+            "explanation": "Un point d'ancrage doit résister à au moins 12 kN (1200 kg) pour arrêter une chute."
+          }
+        ]
+      }
+    ]
+  }
+}

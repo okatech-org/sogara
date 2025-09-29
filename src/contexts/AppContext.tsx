@@ -279,5 +279,6 @@ export function useAuth() {
     logout,
     hasRole,
     hasAnyRole,
+    state, // Ajout de state pour permettre l'accès aux données globales
   };
 }

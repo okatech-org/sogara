@@ -130,6 +130,127 @@ export interface HSETraining {
   updatedAt: Date;
 }
 
+export interface HSETrainingModule {
+  id: string;
+  code: string;
+  title: string;
+  category: 'Critique' | 'Obligatoire' | 'Spécialisée' | 'Management' | 'Prévention';
+  description: string;
+  objectives: string[];
+  duration: number;
+  durationUnit: 'heures' | 'minutes' | 'jours';
+  validityMonths: number;
+  requiredForRoles: UserRole[];
+  prerequisites: string[];
+  certification: {
+    examRequired: boolean;
+    passingScore: number | null;
+    practicalTest: boolean;
+    certificateType: string;
+  };
+  instructor: {
+    qualificationRequired: string;
+    minExperience: string;
+  };
+  maxParticipants: number;
+  language: string[];
+  deliveryMethods: string[];
+  refresherRequired: boolean;
+  refresherFrequency: number;
+  content: HSETrainingContent;
+}
+
+export interface HSETrainingContent {
+  modules: HSEContentModule[];
+  resources: HSETrainingResource[];
+  assessments: HSEAssessment[];
+}
+
+export interface HSEContentModule {
+  id: string;
+  title: string;
+  duration: number;
+  description: string;
+  content: HSEModuleSection[];
+  illustrations?: HSEIllustration[];
+}
+
+export interface HSEModuleSection {
+  id: string;
+  title: string;
+  content: string;
+  type: 'text' | 'checklist' | 'case_study' | 'procedure' | 'safety_rules' | 'emergency_protocol';
+  illustrations?: HSEIllustration[];
+  interactive?: HSEInteractiveElement[];
+}
+
+export interface HSEIllustration {
+  id: string;
+  type: 'diagram' | 'photo' | 'schema' | 'infographic' | 'chart';
+  title: string;
+  description: string;
+  url: string;
+  alt: string;
+}
+
+export interface HSEInteractiveElement {
+  id: string;
+  type: 'quiz' | 'simulation' | 'checklist' | 'video' | 'animation';
+  title: string;
+  content: any;
+}
+
+export interface HSETrainingResource {
+  id: string;
+  title: string;
+  type: 'pdf' | 'video' | 'document' | 'link' | 'checklist';
+  url: string;
+  description: string;
+  downloadable: boolean;
+}
+
+export interface HSEAssessment {
+  id: string;
+  title: string;
+  type: 'qcm' | 'practical' | 'case_study';
+  questions: HSEQuestion[];
+  passingScore: number;
+  duration: number;
+}
+
+export interface HSEQuestion {
+  id: string;
+  text: string;
+  type: 'multiple_choice' | 'true_false' | 'open';
+  options?: string[];
+  correctAnswer: string | string[];
+  explanation?: string;
+  illustration?: HSEIllustration;
+}
+
+export interface HSETrainingProgress {
+  id: string;
+  employeeId: string;
+  trainingModuleId: string;
+  status: 'not_started' | 'in_progress' | 'completed' | 'expired';
+  currentModule?: string;
+  completedModules: string[];
+  assessmentResults: HSEAssessmentResult[];
+  startedAt?: Date;
+  completedAt?: Date;
+  certificateIssuedAt?: Date;
+  expiresAt?: Date;
+}
+
+export interface HSEAssessmentResult {
+  assessmentId: string;
+  score: number;
+  passed: boolean;
+  attempts: number;
+  completedAt: Date;
+  answers: any[];
+}
+
 export interface HSETrainingSession {
   id: string;
   trainingId: string;

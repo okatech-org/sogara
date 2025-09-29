@@ -1,0 +1,199 @@
+{
+  "id": "HSE-004",
+  "code": "CONFINED-SPACE",
+  "title": "Travail en Espace Confiné",
+  "category": "Critique",
+  "description": "Formation critique pour le travail en espace confiné. Couvre les dangers mortels, les procédures de sécurité et les techniques de sauvetage.",
+  "objectives": [
+    "Identifier les espaces confinés et leurs dangers",
+    "Maîtriser les procédures de permis de pénétrer",
+    "Utiliser correctement les équipements de protection",
+    "Appliquer les techniques de surveillance et sauvetage",
+    "Reconnaître les situations d'urgence"
+  ],
+  "duration": 8,
+  "durationUnit": "heures",
+  "validityMonths": 24,
+  "requiredForRoles": ["EMPLOYE", "SUPERVISEUR", "HSE"],
+  "prerequisites": ["HSE-001", "HSE-002"],
+  "certification": {
+    "examRequired": true,
+    "passingScore": 90,
+    "practicalTest": true,
+    "certificateType": "Habilitation Espace Confiné"
+  },
+  "instructor": {
+    "qualificationRequired": "Formateur espace confiné certifié",
+    "minExperience": "5 ans + Formation sauvetage"
+  },
+  "maxParticipants": 8,
+  "language": ["Français"],
+  "deliveryMethods": ["Présentiel obligatoire"],
+  "refresherRequired": true,
+  "refresherFrequency": 24,
+  "content": {
+    "modules": [
+      {
+        "id": "module-confined-1",
+        "title": "⚠️ COMPRENDRE LES ESPACES CONFINÉS",
+        "duration": 1.5,
+        "description": "Définition, identification et dangers mortels",
+        "content": [
+          {
+            "id": "confined-definition",
+            "title": "Qu'est-ce qu'un Espace Confiné ?",
+            "type": "procedure",
+            "content": "#### Définition Officielle\n\nUn espace confiné est un lieu qui remplit **CES 3 CRITÈRES** :\n\n```\n1. ❌ Non conçu pour être occupé en permanence\n   (Pas un lieu de travail normal)\n        ↓\n2. 🚪 Entrées et sorties limitées ou difficiles\n   (On ne peut pas sortir rapidement)\n        ↓\n3. 🌬️ Ventilation naturelle insuffisante\n   (L'air ne se renouvelle pas bien)\n```\n\n**➡️ Si les 3 critères = ESPACE CONFINÉ**\n\n#### Exemples en Raffinerie SOGARA\n\n| Type | Exemples Concrets | Danger Principal |\n|------|-------------------|------------------|\n| **Réservoirs** | Cuves de stockage, bacs à fuel | Asphyxie, H2S, vapeurs |\n| **Canalisations** | Tuyaux >0,5m de diamètre | Asphyxie, noyade |\n| **Fosses** | Fosses de rétention, puisards | Gaz, noyade, ensevelissement |\n| **Égouts** | Réseaux d'assainissement | H2S, méthane, noyade |\n| **Citernes** | Camions-citernes, wagons-citernes | Vapeurs, gaz résiduels |\n| **Tranchées** | Fouilles >1,2m de profondeur | Effondrement, asphyxie |",
+            "illustrations": [
+              {
+                "id": "confined-spaces-examples",
+                "type": "diagram",
+                "title": "Exemples d'Espaces Confinés",
+                "description": "Schémas des différents types d'espaces confinés",
+                "url": "/images/hse/confined-spaces.svg",
+                "alt": "Diagrammes d'espaces confinés typiques"
+              }
+            ]
+          },
+          {
+            "id": "confined-dangers",
+            "title": "Les 4 Dangers Mortels",
+            "type": "emergency_protocol",
+            "content": "**1️⃣ DANGERS ATMOSPHÉRIQUES**\n\n##### A. Manque d'Oxygène (Hypoxie)\n\n**L'air normal contient 21% d'oxygène**\n\n| Taux O₂ | Effets | Temps avant danger |\n|---------|--------|-------------------|\n| **21%** | Normal, respiration normale | - |\n| **19,5%** | Limite de sécurité minimale | ⚠️ Limite légale |\n| **17%** | Essoufflement, vertiges | 30 min |\n| **15%** | Jugement altéré, fatigue | 10 min |\n| **12%** | Respiration très difficile, nausées | 5 min |\n| **10%** | Perte de conscience | 2-3 min |\n| **6%** | **MORT** | 1 min |\n\n**☠️ PIÈGE MORTEL :** L'air sans oxygène n'a pas d'odeur, pas de couleur. Vous tombez inconscient en 3 respirations.\n\n##### B. Gaz Toxiques\n\n| Gaz | Odeur | Source en Raffinerie | Effet |\n|-----|-------|----------------------|-------|\n| **H₂S** | Œuf pourri | Hydrocarbures, égouts | Mort <1 min à 1000ppm |\n| **CO** | Inodore | Combustion incomplète | Asphyxie progressive |\n| **CO₂** | Inodore | Décomposition, fermentation | Asphyxie + narcose |\n| **CH₄** | Inodore | Égouts, décomposition | Asphyxie + explosion |"
+          }
+        ]
+      },
+      {
+        "id": "module-confined-2",
+        "title": "📋 PERMIS DE PÉNÉTRER",
+        "duration": 1.5,
+        "description": "Procédures obligatoires avant toute entrée",
+        "content": [
+          {
+            "id": "entry-permit",
+            "title": "Le Permis de Pénétrer - Document Obligatoire",
+            "type": "safety_rules",
+            "content": "**AUCUNE entrée en espace confiné sans permis signé**\n\n#### Qui Délivre le Permis ?\n\n**Chargé de Consignation ou Responsable HSE**\n\nPersonnes formées et habilitées qui :\n- Évaluent les risques\n- Autorisent ou refusent l'entrée\n- Définissent les mesures de sécurité\n\n#### Contenu du Permis\n\n**Section 1 : IDENTIFICATION**\n- Localisation précise de l'espace\n- Description de l'espace\n- Travaux à réaliser\n- Durée prévue\n\n**Section 2 : ÉVALUATION DES RISQUES**\n- Liste des dangers identifiés\n- Analyse de risques (grille)\n- Niveau de risque global\n\n**Section 3 : TESTS ATMOSPHÉRIQUES**\n- Résultats mesures O₂, H₂S, CO, LEL\n- Nom du testeur\n- Heure du test\n- Validité des mesures"
+          },
+          {
+            "id": "atmospheric-testing",
+            "title": "Test Atmosphérique Initial",
+            "type": "procedure",
+            "content": "**Ordre des Tests (Important !) :**\n\n```\n1. OXYGÈNE (O₂)\n   ✅ 19,5% à 23,5%\n   \n2. INFLAMMABILITÉ (LEL)\n   ✅ < 10% du LEL\n   \n3. TOXIQUES (H₂S, CO)\n   ✅ H₂S < 10 ppm\n   ✅ CO < 35 ppm\n```\n\n**Pourquoi cet ordre ?**\n- Si pas d'O₂, les capteurs LEL ne fonctionnent pas !\n- O₂ d'abord pour vérifier fiabilité détecteurs\n\n**Méthode de Test :**\n- Tester à **3 niveaux** (haut, milieu, bas)\n- Attendre stabilisation lectures (30 secondes)\n- Noter TOUTES les valeurs\n- Refaire test si doute\n\n**❌ Si UNE SEULE valeur hors limite = PAS D'ENTRÉE**"
+          }
+        ]
+      },
+      {
+        "id": "module-confined-3",
+        "title": "🔍 SURVEILLANCE ET ÉQUIPEMENTS",
+        "duration": 2,
+        "description": "Détection continue, ventilation et équipements de protection",
+        "content": [
+          {
+            "id": "gas-detection",
+            "title": "Détection de Gaz en Continu",
+            "type": "procedure",
+            "content": "#### Détecteurs Portables Multi-Gaz\n\n**Configuration Standard :**\n```\n📟 DÉTECTEUR 4 GAZ\n├─ O₂ (Oxygène)\n├─ LEL (Explosivité)\n├─ H₂S (Sulfure d'hydrogène)\n└─ CO (Monoxyde de carbone)\n```\n\n**Alarmes Typiques :**\n- 🔴 O₂ < 19,5% ou > 23,5%\n- 🔴 LEL > 10%\n- 🔴 H₂S > 10 ppm\n- 🔴 CO > 35 ppm\n\n**Positionnement :**\n- 1 détecteur porté par chaque entrant\n- 1 détecteur fixe à l'intérieur (si possible)\n- 1 détecteur avec le surveillant externe"
+          },
+          {
+            "id": "ventilation-systems",
+            "title": "Ventilation",
+            "type": "procedure",
+            "content": "#### Ventilation Forcée ✅ **OBLIGATOIRE**\n\n**Ventilation par Soufflage (Recommandée)**\n```\n       VENTILATEUR\n            ↓\n     [ AIR FRAIS ]\n            ↓\n   ╔═════════════╗\n   ║ ESPACE      ║ → AIR VICIÉ sort naturellement\n   ║ CONFINÉ     ║\n   ╚═════════════╝\n```\n\n**Avantages :**\n- Air frais arrive directement sur travailleurs\n- Repousse gaz toxiques\n- Pression positive (empêche entrée gaz)\n\n#### Règles de Ventilation\n\n**AVANT l'entrée :**\n- Minimum **15 minutes** de ventilation\n- Débit adapté au volume\n- Test atmosphérique après ventilation\n\n**PENDANT les travaux :**\n- Ventilation **CONTINUE**\n- Ne JAMAIS arrêter\n- Vérifier position flexible (pas écrasé)"
+          }
+        ]
+      },
+      {
+        "id": "module-confined-4",
+        "title": "🆘 SAUVETAGE ET URGENCE",
+        "duration": 2,
+        "description": "Plans de sauvetage et procédures d'urgence",
+        "content": [
+          {
+            "id": "rescue-plan",
+            "title": "Plan de Sauvetage Obligatoire",
+            "type": "emergency_protocol",
+            "content": "**Avant TOUTE entrée, un plan de sauvetage doit être prêt**\n\n#### Contenu du Plan\n\n**1. Équipement de Sauvetage sur Place**\n- ARI de secours (minimum 2)\n- Treuil ou système d'extraction\n- Civière si nécessaire\n- Trousse de premiers secours\n\n**2. Équipe de Sauvetage Identifiée**\n- Minimum 2 personnes formées\n- Présentes sur site\n- Équipées et prêtes\n\n**3. Procédure d'Alerte**\n- Numéros d'urgence affichés\n- Moyen de communication testé\n- Itinéraire d'accès pompiers dégagé\n\n**4. Exercice de Sauvetage**\n- Simulation avant travaux à risque élevé\n- Vérification temps d'extraction\n- Test du matériel"
+          },
+          {
+            "id": "emergency-response",
+            "title": "Que Faire en Cas d'Urgence ?",
+            "type": "emergency_protocol",
+            "content": "#### Scénario : Un Travailleur Ne Répond Plus\n\n**PHASE 1 : ALERTE IMMÉDIATE (0-30 secondes)**\n\n```\nSURVEILLANT CONSTATE PROBLÈME\n        ↓\n\"Code Rouge Espace Confiné !\"\n        ↓\nAPPEL SECOURS : 2222\n        ↓\n\"Espace confiné [localisation]\n 1 personne inconsciente\n Atmosphère dangereuse\n Envoyez équipe de sauvetage ARI\"\n```\n\n**PHASE 2 : SÉCURISATION (30 secondes - 2 minutes)**\n\n```\nSURVEILLANT :\n  ├─ Empêche entrée autres personnes\n  ├─ Rassemble équipement sauvetage\n  ├─ Met son ARI\n  └─ Attend aide (NE PAS ENTRER SEUL)\n```\n\n**PHASE 3 : EXTRACTION (2-5 minutes)**\n\n```\nÉQUIPE SAUVETAGE ARRIVE (2 personnes min)\n        ↓\nTOUS portent ARI\n        ↓\n1 entre + attache victime\n        ↓\n2 reste dehors + actionne treuil\n        ↓\nEXTRACTION vers zone sûre\n        ↓\nRÉANIMATION si nécessaire\n```"
+          }
+        ]
+      },
+      {
+        "id": "module-confined-5",
+        "title": "🎯 EXERCICES PRATIQUES",
+        "duration": 1,
+        "description": "Simulations et évaluations pratiques",
+        "content": [
+          {
+            "id": "case-studies",
+            "title": "Analyse de Cas Réels",
+            "type": "case_study",
+            "content": "#### Cas #1 : Le Piège de l'Habitude\n\n**Situation :**\n*\"Un technicien expérimenté (20 ans de métier) doit réparer une pompe au fond d'une fosse de 3 mètres. Il y est déjà allé 10 fois sans problème. Cette fois, il décide de gagner du temps : pas de test atmosphérique, pas de ventilation. Il descend. Perte de connaissance immédiate. Collègue le voit, entre sans ARI. Deux morts.\"*\n\n**Erreurs Commises :**\n1. ❌ Pas de permis de pénétrer\n2. ❌ Pas de test atmosphérique\n3. ❌ Pas de ventilation\n4. ❌ Sauvetage sans protection\n\n**Leçons :**\n- Ne JAMAIS se fier à l'habitude\n- CHAQUE entrée nécessite procédure complète\n- Un espace \"sûr\" hier peut être mortel aujourd'hui"
+          }
+        ]
+      }
+    ],
+    "resources": [
+      {
+        "id": "confined-space-permit",
+        "title": "Modèle Permis de Pénétrer",
+        "type": "pdf",
+        "url": "/resources/hse/confined-space-permit.pdf",
+        "description": "Modèle de permis de pénétrer en espace confiné",
+        "downloadable": true
+      },
+      {
+        "id": "rescue-equipment-checklist",
+        "title": "Check-List Équipement Sauvetage",
+        "type": "pdf",
+        "url": "/resources/hse/rescue-equipment-checklist.pdf",
+        "description": "Liste du matériel de sauvetage obligatoire",
+        "downloadable": true
+      }
+    ],
+    "assessments": [
+      {
+        "id": "confined-qcm",
+        "title": "QCM Espace Confiné",
+        "type": "qcm",
+        "passingScore": 90,
+        "duration": 40,
+        "questions": [
+          {
+            "id": "q1",
+            "text": "Quels sont les 3 critères d'un espace confiné ?",
+            "type": "multiple_choice",
+            "options": [
+              "Non conçu pour occupation permanente, Entrées limitées, Ventilation insuffisante",
+              "Profond, Sombre, Dangereux",
+              "Fermé, Petit, Inaccessible"
+            ],
+            "correctAnswer": "Non conçu pour occupation permanente, Entrées limitées, Ventilation insuffisante",
+            "explanation": "Ces trois critères définissent réglementairement un espace confiné."
+          },
+          {
+            "id": "q2",
+            "text": "À partir de quel taux d'O₂ y a-t-il danger de mort ?",
+            "type": "multiple_choice",
+            "options": ["15%", "12%", "6%"],
+            "correctAnswer": "6%",
+            "explanation": "En dessous de 6% d'oxygène, la mort survient en moins d'une minute."
+          },
+          {
+            "id": "q3",
+            "text": "Peut-on utiliser un masque à cartouche en espace confiné ?",
+            "type": "true_false",
+            "options": ["Vrai", "Faux"],
+            "correctAnswer": "Faux",
+            "explanation": "Les masques à cartouche nécessitent un taux d'O₂ >19,5%. En espace confiné, seul l'ARI est autorisé."
+          }
+        ]
+      }
+    ]
+  }
+}

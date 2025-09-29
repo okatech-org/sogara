@@ -100,19 +100,17 @@ export function Header() {
             )}
 
             <div className="flex items-center gap-1">
-              {/* Notifications générales */}
-              <Button variant="ghost" size="sm" className="relative">
-                <Bell className="w-4 h-4" />
-                {unreadCount > 0 && (
-                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
-                    {unreadCount}
-                  </Badge>
-                )}
-              </Button>
-              
-              {/* Notifications HSE */}
-              {hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR', 'EMPLOYE']) && (
+              {hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR', 'EMPLOYE']) ? (
                 <HSENotificationCenter />
+              ) : (
+                <Button variant="ghost" size="sm" className="relative">
+                  <Bell className="w-4 h-4" />
+                  {unreadCount > 0 && (
+                    <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
+                      {unreadCount}
+                    </Badge>
+                  )}
+                </Button>
               )}
             </div>
           </div>

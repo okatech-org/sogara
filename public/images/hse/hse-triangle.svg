@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <linearGradient id="hseGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e40af;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Triangle principal -->
+  <polygon points="200,50 100,200 300,200" 
+           fill="none" 
+           stroke="#1e40af" 
+           stroke-width="3"/>
+  
+  <!-- Cercles pour chaque pilier -->
+  <circle cx="200" cy="70" r="25" fill="url(#hseGradient)" opacity="0.8"/>
+  <circle cx="120" cy="180" r="25" fill="#22c55e" opacity="0.8"/>
+  <circle cx="280" cy="180" r="25" fill="#f59e0b" opacity="0.8"/>
+  
+  <!-- Icônes -->
+  <text x="200" y="80" text-anchor="middle" fill="white" font-size="20" font-weight="bold">🏥</text>
+  <text x="120" y="190" text-anchor="middle" fill="white" font-size="20" font-weight="bold">🛡️</text>
+  <text x="280" y="190" text-anchor="middle" fill="white" font-size="20" font-weight="bold">🌍</text>
+  
+  <!-- Labels -->
+  <text x="200" y="110" text-anchor="middle" fill="#1e40af" font-size="14" font-weight="bold">HYGIÈNE</text>
+  <text x="120" y="220" text-anchor="middle" fill="#22c55e" font-size="14" font-weight="bold">SÉCURITÉ</text>
+  <text x="280" y="220" text-anchor="middle" fill="#f59e0b" font-size="14" font-weight="bold">ENVIRONNEMENT</text>
+  
+  <!-- Titre -->
+  <text x="200" y="30" text-anchor="middle" fill="#1e40af" font-size="16" font-weight="bold">Triangle HSE SOGARA</text>
+  
+  <!-- Descriptions -->
+  <text x="200" y="125" text-anchor="middle" fill="#6b7280" font-size="10">Santé et bien-être</text>
+  <text x="120" y="235" text-anchor="middle" fill="#6b7280" font-size="10">Protection des personnes</text>
+  <text x="280" y="235" text-anchor="middle" fill="#6b7280" font-size="10">Préservation nature</text>
+</svg>

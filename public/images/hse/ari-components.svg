@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 400" width="500" height="400">
+  <defs>
+    <linearGradient id="ariGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e40af;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Titre -->
+  <text x="250" y="25" text-anchor="middle" fill="#1e40af" font-size="18" font-weight="bold">APPAREIL RESPIRATOIRE ISOLANT (ARI)</text>
+  
+  <!-- Corps humain (silhouette) -->
+  <ellipse cx="250" cy="200" rx="40" ry="80" fill="#e5e7eb" stroke="#6b7280" stroke-width="2"/>
+  <circle cx="250" cy="140" r="25" fill="#e5e7eb" stroke="#6b7280" stroke-width="2"/>
+  
+  <!-- Bouteille d'air -->
+  <rect x="220" y="120" width="15" height="60" fill="url(#ariGradient)" rx="7"/>
+  <text x="200" y="115" fill="#1e40af" font-size="12" font-weight="bold">Bouteille</text>
+  <text x="200" y="128" fill="#6b7280" font-size="9">200-300 bars</text>
+  <text x="200" y="138" fill="#6b7280" font-size="9">30-60 min</text>
+  
+  <!-- Harnais -->
+  <path d="M 230 130 Q 220 120 210 130" stroke="#374151" stroke-width="2" fill="none"/>
+  <path d="M 270 130 Q 280 120 290 130" stroke="#374151" stroke-width="2" fill="none"/>
+  <text x="300" y="125" fill="#374151" font-size="10" font-weight="bold">Harnais dorsal</text>
+  
+  <!-- Détendeur -->
+  <rect x="240" y="120" width="20" height="10" fill="#dc2626" rx="2"/>
+  <text x="270" y="115" fill="#dc2626" font-size="10" font-weight="bold">Détendeur</text>
+  <text x="270" y="127" fill="#6b7280" font-size="8">Réduit pression</text>
+  
+  <!-- Tuyau moyenne pression -->
+  <path d="M 250 130 Q 260 135 250 145" stroke="#22c55e" stroke-width="3" fill="none"/>
+  <text x="270" y="142" fill="#22c55e" font-size="10" font-weight="bold">Moyenne pression</text>
+  
+  <!-- Masque complet -->
+  <ellipse cx="250" cy="140" rx="18" ry="15" fill="rgba(30,64,175,0.3)" stroke="#1e40af" stroke-width="2"/>
+  <text x="280" y="145" fill="#1e40af" font-size="10" font-weight="bold">Masque complet</text>
+  <text x="280" y="155" fill="#6b7280" font-size="8">Pression positive</text>
+  
+  <!-- Alarme -->
+  <circle cx="235" cy="125" r="3" fill="#f59e0b"/>
+  <text x="200" y="100" fill="#f59e0b" font-size="9" font-weight="bold">🔔 Alarme</text>
+  <text x="200" y="110" fill="#6b7280" font-size="8">55 bars</text>
+  
+  <!-- Flèches de circulation d'air -->
+  <path d="M 235 150 L 245 140" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowGreen)"/>
+  <text x="200" y="160" fill="#22c55e" font-size="9">Air pur</text>
+  
+  <!-- Autonomie -->
+  <rect x="50" y="300" width="400" height="60" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" rx="5"/>
+  <text x="60" y="315" fill="#1e40af" font-size="12" font-weight="bold">Autonomie selon activité :</text>
+  
+  <text x="60" y="330" fill="#374151" font-size="10">• Travail léger : 45-60 minutes</text>
+  <text x="60" y="342" fill="#374151" font-size="10">• Travail modéré : 30-45 minutes</text>
+  <text x="60" y="354" fill="#374151" font-size="10">• Travail intense : 20-30 minutes</text>
+  
+  <text x="250" y="330" fill="#374151" font-size="10">• Sauvetage d'urgence : 15-20 minutes</text>
+  <text x="250" y="342" fill="#dc2626" font-size="10" font-weight="bold">⚠️ Toujours garder 25% de réserve</text>
+  <text x="250" y="354" fill="#dc2626" font-size="10">⚠️ Sortir quand alarme sonne</text>
+  
+  <!-- Vérifications -->
+  <rect x="50" y="250" width="180" height="40" fill="#fef3c7" stroke="#f59e0b" stroke-width="1" rx="3"/>
+  <text x="60" y="265" fill="#92400e" font-size="11" font-weight="bold">Vérifications avant usage :</text>
+  <text x="60" y="277" fill="#92400e" font-size="9">✓ Pression > 200 bars</text>
+  <text x="60" y="287" fill="#92400e" font-size="9">✓ Test alarme basse pression</text>
+  
+  <rect x="270" y="250" width="180" height="40" fill="#dcfce7" stroke="#22c55e" stroke-width="1" rx="3"/>
+  <text x="280" y="265" fill="#166534" font-size="11" font-weight="bold">Test d'étanchéité :</text>
+  <text x="280" y="277" fill="#166534" font-size="9">✓ Bloquer arrivée air</text>
+  <text x="280" y="287" fill="#166534" font-size="9">✓ Masque doit se plaquer</text>
+  
+  <defs>
+    <marker id="arrowGreen" markerWidth="8" markerHeight="6" 
+     refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#22c55e" />
+    </marker>
+  </defs>
+</svg>

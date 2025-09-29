@@ -1,0 +1,161 @@
+{
+  "id": "HSE-011",
+  "code": "ELEC-SAFETY",
+  "title": "Habilitation Électrique B0-H0-H0V",
+  "category": "Spécialisée",
+  "description": "Formation d'habilitation électrique pour personnel non-électricien. Sécurité à proximité d'installations électriques et conduite à tenir en cas d'accident.",
+  "objectives": [
+    "Travailler en sécurité à proximité d'installations électriques",
+    "Identifier les risques électriques",
+    "Respecter les distances de sécurité",
+    "Réagir en cas d'accident électrique",
+    "Appliquer les procédures de sécurité"
+  ],
+  "duration": 7,
+  "durationUnit": "heures",
+  "validityMonths": 36,
+  "requiredForRoles": ["EMPLOYE", "SUPERVISEUR"],
+  "prerequisites": ["HSE-001"],
+  "certification": {
+    "examRequired": true,
+    "passingScore": 70,
+    "practicalTest": true,
+    "certificateType": "Titre d'Habilitation Électrique B0-H0-H0V"
+  },
+  "instructor": {
+    "qualificationRequired": "Formateur habilitation électrique certifié",
+    "minExperience": "Électricien confirmé + Formation pédagogie"
+  },
+  "maxParticipants": 12,
+  "language": ["Français"],
+  "deliveryMethods": ["Présentiel obligatoire"],
+  "refresherRequired": true,
+  "refresherFrequency": 36,
+  "content": {
+    "modules": [
+      {
+        "id": "module-elec-1",
+        "title": "⚡ COMPRENDRE L'ÉLECTRICITÉ",
+        "duration": 1,
+        "description": "Notions de base et dangers électriques",
+        "content": [
+          {
+            "id": "electrical-basics",
+            "title": "Notions d'Électricité",
+            "type": "text",
+            "content": "#### Les Grandeurs Électriques (Simplifié)\n\n**TENSION (Volt - V) ⚡**\n```\n= \"Pression\" électrique\n= Force qui pousse le courant\n\nExemples :\n- Pile : 1,5 V (inoffensif)\n- Prise maison : 230 V (dangereux)\n- Industrie : 400 V (très dangereux)\n- Haute Tension : >1000 V (mortel)\n```\n\n**COURANT (Ampère - A) ⚡**\n```\n= Quantité d'électricité qui circule\n= \"Débit\" électrique\n\nEffets sur le corps :\n- 10 mA : Picotement, inconfort\n- 30 mA : Tétanisation (ne peut plus lâcher)\n- 75 mA : Fibrillation cardiaque → MORT\n- >1 A : Brûlures graves, arrêt cardiaque\n```\n\n**RÉSISTANCE (Ohm - Ω)**\n```\n= Opposition au passage du courant\n= \"Frein\" électrique\n\nRésistance du corps humain :\n- Peau sèche : 5000 Ω (bonne protection)\n- Peau mouillée : 1000 Ω (5x moins !)\n- Intérieur corps : 500 Ω\n\n→ Eau + Électricité = DANGER MORTEL\n```"
+          },
+          {
+            "id": "electrical-dangers",
+            "title": "Dangers de l'Électricité",
+            "type": "emergency_protocol",
+            "content": "#### 1. Électrisation\n\n**= Passage du courant dans le corps (NON mortel)**\n\n**Effets :**\n- Contraction musculaire (tétanisation)\n- Impossibilité de lâcher (main fermée)\n- Brûlures légères\n- Traumatismes (chute)\n\n#### 2. Électrocution ☠️\n\n**= Passage du courant → MORT**\n\n**Causes de mort :**\n- **Fibrillation ventriculaire** (cœur bat anarchiquement)\n- **Arrêt respiratoire** (muscles paralysés)\n- **Arrêt cardiaque**\n\n#### 3. Brûlures Électriques\n\n**BRÛLURES PAR EFFET JOULE :**\n- Passage du courant dans tissus\n- Chaleur produite\n- Brûlures profondes (internes)\n\n**BRÛLURES PAR ARC ÉLECTRIQUE :**\n- Court-circuit\n- Arc lumineux à 4000°C\n- Projection de métal en fusion\n- Brûlures graves + aveuglement possible"
+          }
+        ]
+      },
+      {
+        "id": "module-elec-2",
+        "title": "📏 LES HABILITATIONS",
+        "duration": 1,
+        "description": "Types d'habilitation et symboles",
+        "content": [
+          {
+            "id": "habilitation-structure",
+            "title": "Structure du Symbole d'Habilitation",
+            "type": "procedure",
+            "content": "#### Structure du Symbole d'Habilitation\n\n**Format : [1] [2] [3]**\n\n**[1] - DOMAINE DE TENSION :**\n- **B** = Basse Tension (BT)\n- **H** = Haute Tension (HT)\n\n**[2] - QUALITÉ DE LA PERSONNE :**\n- **0** = Non-électricien (exécutant)\n- **1** = Électricien (exécutant)\n- **2** = Chargé de travaux\n- **C** = Chargé de consignation\n- **R** = Chargé d'intervention\n\n**[3] - NATURE DES OPÉRATIONS :**\n- **Rien** = Travaux hors tension\n- **V** = Travaux au voisinage\n- **T** = Travaux sous tension\n- **N** = Nettoyage sous tension"
+          },
+          {
+            "id": "b0-habilitation",
+            "title": "Habilitation B0",
+            "type": "safety_rules",
+            "content": "#### Définition\n\n**B0 = Basse Tension, Non-électricien, Exécutant**\n\n**Vous permet de :**\n- ✅ Travailler dans un environnement BT\n- ✅ Effectuer travaux NON électriques\n- ✅ Respecter les consignes données\n\n**Vous NE pouvez PAS :**\n- ❌ Manipuler des parties sous tension\n- ❌ Intervenir dans armoires électriques\n- ❌ Réaliser des branchements\n\n**Exemples de travaux B0 :**\n- Peinture dans local électrique\n- Nettoyage zone (sans toucher équipements)\n- Manutention (déplacement cartons)\n- Travaux mécaniques à proximité"
+          }
+        ]
+      },
+      {
+        "id": "module-elec-3",
+        "title": "📐 ZONES ET DISTANCES DE SÉCURITÉ",
+        "duration": 1.5,
+        "description": "Zones de travail et distances réglementaires",
+        "content": [
+          {
+            "id": "safety-zones",
+            "title": "Les 4 Zones de Travail (BT)",
+            "type": "procedure",
+            "content": "#### Zone 0 : Hors Voisinage ✅ SÛRE\n\n**Distance : > 30 cm** des pièces nues sous tension\n\n**Travail LIBRE :**\n- Aucune prescription particulière\n- Zone normale de travail\n- Pas de risque électrique\n\n#### Zone 1 : Voisinage Simple ⚠️ ATTENTION\n\n**Distance : 30 cm à 3 cm** des pièces nues sous tension\n\n**Précautions :**\n- Habilitation B0V ou supérieure\n- Surveillance par personne habilitée\n- Consignes spécifiques\n- Balisage zone\n\n#### Zone 2 : Voisinage Renforcé ⚠️⚠️ DANGER\n\n**Distance : < 3 cm** des pièces nues sous tension\n\n**INTERDIT à B0 !**\n- Seuls électriciens habilités (B1V, B2V)\n- EPI spéciaux (gants isolants 1000V)\n- Outillage isolé\n\n#### Zone 4 : Contact ☠️ MORTEL\n\n**= Toucher directement pièce sous tension**\n\n**Contact accidentel = ÉLECTROCUTION**"
+          }
+        ]
+      },
+      {
+        "id": "module-elec-4",
+        "title": "🆘 CONDUITE À TENIR EN CAS D'ACCIDENT",
+        "duration": 1,
+        "description": "Secours et premiers soins électriques",
+        "content": [
+          {
+            "id": "electrical-accident",
+            "title": "Accident Électrique",
+            "type": "emergency_protocol",
+            "content": "#### RÈGLE ABSOLUE : SE PROTÉGER D'ABORD\n\n**⚠️ NE JAMAIS toucher directement la victime**\n(Vous deviendriez 2ème victime !)\n\n#### Étape 1 : COUPER L'ALIMENTATION (Si possible rapidement)\n\n**Méthodes par ordre de préférence :**\n\n**A. Disjoncteur/Sectionneur à proximité**\n```\nSi vous savez où il est ET accessible rapidement\n      ↓\nOUVRIR (position OFF)\n      ↓\nVérifier coupure effective (voyants)\n```\n\n**B. Bouton d'Arrêt d'Urgence**\n```\nSi équipement en a un\n      ↓\nFRAPPER (gros bouton rouge/jaune)\n```\n\n**C. Débrancher la prise**\n```\nSi équipement sur prise\n      ↓\nTIRER la prise (pas le câble)\n      ↓\nSe protéger (gants secs)\n```"
+          }
+        ]
+      },
+      {
+        "id": "module-elec-5",
+        "title": "🛡️ ÉQUIPEMENTS DE PROTECTION",
+        "duration": 0.5,
+        "description": "EPI électriques et règles de sécurité",
+        "content": [
+          {
+            "id": "electrical-ppe",
+            "title": "EPI de Base",
+            "type": "checklist",
+            "content": "#### Obligatoires\n\n**CHAUSSURES DE SÉCURITÉ :**\n- Isolantes (semelle)\n- Norme EN 50321\n- Évitent contact sol\n\n**VÊTEMENTS DE TRAVAIL :**\n- Coton (pas synthétique qui fond)\n- Ignifugés\n- Pas de vêtements flottants\n\n**PAS de bijoux métalliques**\n\n#### Les 10 Règles d'Or\n\n1. **NE JAMAIS travailler sous tension** (sauf habilitation spécifique)\n2. **TOUJOURS vérifier absence de tension** (VAT)\n3. **RESPECTER les distances** de sécurité\n4. **NE JAMAIS pénétrer seul** dans local électrique\n5. **PRÉVENIR avant intervention** (chargé d'exploitation)\n6. **PORTER les EPI** requis\n7. **UTILISER outils isolés** (si nécessaire)\n8. **SIGNALER toute anomalie** immédiatement\n9. **NE JAMAIS modifier** une installation\n10. **EN CAS DE DOUTE**, NE PAS intervenir → Demander"
+          }
+        ]
+      }
+    ],
+    "resources": [
+      {
+        "id": "electrical-safety-card",
+        "title": "Carte Sécurité Électrique",
+        "type": "pdf",
+        "url": "/resources/hse/electrical-safety-card.pdf",
+        "description": "Carte de poche avec règles de sécurité électrique",
+        "downloadable": true
+      }
+    ],
+    "assessments": [
+      {
+        "id": "elec-qcm",
+        "title": "QCM Habilitation Électrique",
+        "type": "qcm",
+        "passingScore": 70,
+        "duration": 25,
+        "questions": [
+          {
+            "id": "q1",
+            "text": "Que signifie B0 ?",
+            "type": "multiple_choice",
+            "options": [
+              "Basse Tension, Non-électricien, Exécutant",
+              "Batterie, Opérateur, Base",
+              "Bâtiment, Ouvrier, Basique"
+            ],
+            "correctAnswer": "Basse Tension, Non-électricien, Exécutant",
+            "explanation": "B0 signifie Basse Tension, personne Non-électricienne, niveau Exécutant."
+          },
+          {
+            "id": "q2",
+            "text": "À quelle distance se situe la zone de voisinage simple (BT) ?",
+            "type": "multiple_choice",
+            "options": ["0 à 30 cm", "30 cm à 3 cm", "Plus de 30 cm"],
+            "correctAnswer": "30 cm à 3 cm",
+            "explanation": "La zone de voisinage simple BT s'étend de 30 cm à 3 cm des pièces nues sous tension."
+          }
+        ]
+      }
+    ]
+  }
+}

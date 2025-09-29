@@ -1,0 +1,151 @@
+{
+  "id": "HSE-009",
+  "code": "LOCKOUT-TAGOUT",
+  "title": "Consignation/Déconsignation (Lockout/Tagout)",
+  "category": "Spécialisée",
+  "description": "Formation sur les procédures de consignation des énergies dangereuses. Maîtriser les 6 étapes de la consignation pour intervenir en sécurité.",
+  "objectives": [
+    "Identifier toutes les sources d'énergie dangereuses",
+    "Appliquer les 6 étapes de la consignation",
+    "Utiliser correctement cadenas et étiquettes",
+    "Vérifier l'absence totale d'énergie",
+    "Déconsigner en toute sécurité"
+  ],
+  "duration": 6,
+  "durationUnit": "heures",
+  "validityMonths": 36,
+  "requiredForRoles": ["EMPLOYE", "SUPERVISEUR", "HSE"],
+  "prerequisites": ["HSE-001"],
+  "certification": {
+    "examRequired": true,
+    "passingScore": 90,
+    "practicalTest": true,
+    "certificateType": "Habilitation Consignation"
+  },
+  "instructor": {
+    "qualificationRequired": "Formateur consignation certifié",
+    "minExperience": "5 ans maintenance + Formation LOTO"
+  },
+  "maxParticipants": 12,
+  "language": ["Français"],
+  "deliveryMethods": ["Présentiel obligatoire"],
+  "refresherRequired": true,
+  "refresherFrequency": 36,
+  "content": {
+    "modules": [
+      {
+        "id": "module-loto-1",
+        "title": "⚡ COMPRENDRE LES ÉNERGIES DANGEREUSES",
+        "duration": 1,
+        "description": "Les 7 types d'énergie et leurs dangers",
+        "content": [
+          {
+            "id": "energy-types",
+            "title": "Les 7 Types d'Énergie",
+            "type": "text",
+            "content": "#### 1. ÉNERGIE ÉLECTRIQUE ⚡\n\n**Sources :**\n- Réseau électrique (basse/haute tension)\n- Batteries, condensateurs\n- Générateurs\n- Cellules photovoltaïques\n\n**Dangers :**\n- Électrocution (mort)\n- Brûlures par arc électrique\n- Chute (choc électrique)\n\n**Énergie résiduelle :**\n- Condensateurs restent chargés\n- Câbles inductifs (courant induit)\n\n#### 2. ÉNERGIE MÉCANIQUE ⚙️\n\n**Sources :**\n- Machines tournantes (pompes, ventilateurs)\n- Courroies, chaînes, engrenages\n- Pièces en mouvement\n- Ressorts comprimés\n\n**Dangers :**\n- Happement, écrasement\n- Coupure, cisaillement\n- Projection de pièces\n\n#### 3. ÉNERGIE HYDRAULIQUE 💧\n\n**Sources :**\n- Circuits d'huile sous pression\n- Vérins hydrauliques\n- Accumulateurs hydrauliques\n\n**Dangers :**\n- Pression extrême (200-300 bars)\n- Projection d'huile (injection dans peau)\n- Mouvement brutal de vérins"
+          },
+          {
+            "id": "lockout-principle",
+            "title": "Principe de la Consignation",
+            "type": "procedure",
+            "content": "#### Définition\n\n**CONSIGNATION = Ensemble d'opérations** permettant de mettre et maintenir en sécurité un équipement **AVANT** intervention.\n\n**Objectifs :**\n- ✅ SUPPRIMER toutes les énergies\n- ✅ EMPÊCHER remise en marche intempestive\n- ✅ SIGNALER l'intervention en cours\n- ✅ VÉRIFIER l'efficacité\n\n#### Les 3 Piliers\n\n```\nSÉPARER (isoler sources)\n      +\nCONDAMNER (verrouiller)\n      +\nVÉRIFIER (s'assurer efficacité)\n      =\nSÉCURITÉ GARANTIE\n```"
+          }
+        ]
+      },
+      {
+        "id": "module-loto-2",
+        "title": "🔐 LES 6 ÉTAPES DE LA CONSIGNATION",
+        "duration": 1.5,
+        "description": "Procédure détaillée de consignation",
+        "content": [
+          {
+            "id": "loto-steps",
+            "title": "Les 6 Étapes (Mémotechnique)",
+            "type": "procedure",
+            "content": "**P.I.S.C.D.V.**\n\n- **P**réparation\n- **I**nformation\n- **S**éparation\n- **C**ondamnation\n- **D**issipation\n- **V**érification\n\n### Étape 1 : PRÉPARATION\n\n#### Identifier l'Équipement\n\n**Questions à répondre :**\n- Quel équipement exact ? (TAG, numéro)\n- Fonction de l'équipement ?\n- Où est-il situé ?\n\n#### Consulter la Documentation\n\n**Documents nécessaires :**\n- Schémas électriques (armoires, circuits)\n- Plans P&ID (tuyauteries, vannes)\n- Manuels d'équipement\n- **Procédure de consignation spécifique** (si existe)"
+          },
+          {
+            "id": "isolation-lockout",
+            "title": "Séparation et Condamnation",
+            "type": "procedure",
+            "content": "### Étape 3 : SÉPARATION (Isoler)\n\n**COUPER physiquement** toutes les sources d'énergie.\n\n**ÉLECTRIQUE :**\n```\nOuvrir disjoncteur/sectionneur\n      ↓\nPosition OFF visible\n      ↓\nVérifier voyants éteints\n```\n\n### Étape 4 : CONDAMNATION (Verrouillage)\n\n**VERROUILLER** physiquement les dispositifs de séparation pour **EMPÊCHER** remise en marche.\n\n#### Le Cadenas Personnel\n\n**RÈGLE ABSOLUE :**\n```\n1 PERSONNE = 1 CADENAS\n\nVous posez VOTRE cadenas\nVous êtes le SEUL à avoir la clé\nVous le retirez VOUS-MÊME à la fin\n```"
+          }
+        ]
+      },
+      {
+        "id": "module-loto-3",
+        "title": "🧪 CAS PRATIQUES",
+        "duration": 1,
+        "description": "Exercices de consignation sur équipements",
+        "content": [
+          {
+            "id": "pump-lockout",
+            "title": "Cas #1 : Consignation Pompe Centrifuge",
+            "type": "case_study",
+            "content": "**Équipement :** Pompe P-123, ligne essence, 15 kW\n\n**Travail :** Remplacement joint mécanique\n\n#### Énergies Présentes\n\n```\n☑ ÉLECTRIQUE (moteur 15kW, 400V)\n☑ MÉCANIQUE (rotation 1450 tr/min)\n☑ HYDRAULIQUE (pression 8 bars)\n☑ CHIMIQUE (essence dans pompe)\n☑ THERMIQUE (pompe tiède, 40°C)\n```\n\n#### Procédure de Consignation\n\n**PRÉPARATION :**\n- Plan P&ID (vannes amont/aval)\n- Schéma électrique (armoire)\n- 2 cadenas (électrique + vanne)\n- EPI (gants nitrile, lunettes)\n- VAT, détecteur LEL\n\n**SÉPARATION :**\n```\n1. ÉLECTRIQUE :\n   - Armoire A-12, disjoncteur Q34 → OFF\n   \n2. HYDRAULIQUE :\n   - Vanne amont V-456 → Fermée (12 tours)\n   - Vanne aval V-457 → Fermée (10 tours)\n   \n3. MÉCANIQUE :\n   - Moteur arrêté (inertie 30 secondes)\n```"
+          }
+        ]
+      },
+      {
+        "id": "module-loto-4",
+        "title": "🔓 DÉCONSIGNATION",
+        "duration": 1,
+        "description": "Procédures de remise en service",
+        "content": [
+          {
+            "id": "unlock-procedure",
+            "title": "Procédure de Déconsignation",
+            "type": "procedure",
+            "content": "#### Conditions de Déconsignation\n\n**Check-List OBLIGATOIRE :**\n\n```\n☐ TRAVAUX TERMINÉS\n  - Objectif atteint\n  - Plus rien à faire\n\n☐ OUTILS/MATÉRIEL RETIRÉS\n  - Aucun outil oublié dans équipement\n  - Matériaux enlevés\n  - Zone propre et dégagée\n\n☐ PROTECTIONS ENLEVÉES\n  - Cales retirées\n  - Bouchons/obturateurs enlevés\n  - Mise à terre retirée (si élec HT)\n\n☐ ÉQUIPE HORS ZONE\n  - PERSONNE dans/sur équipement\n  - Périmètre dégagé\n  - Comptage personnes\n```\n\n**Si UN SEUL point NON coché → Pas de déconsignation**"
+          }
+        ]
+      }
+    ],
+    "resources": [
+      {
+        "id": "lockout-procedures",
+        "title": "Procédures de Consignation",
+        "type": "pdf",
+        "url": "/resources/hse/lockout-procedures.pdf",
+        "description": "Manuel complet des procédures de consignation",
+        "downloadable": true
+      },
+      {
+        "id": "energy-checklist",
+        "title": "Check-List Énergies",
+        "type": "pdf",
+        "url": "/resources/hse/energy-identification-checklist.pdf",
+        "description": "Liste de vérification des 7 types d'énergie",
+        "downloadable": true
+      }
+    ],
+    "assessments": [
+      {
+        "id": "loto-qcm",
+        "title": "QCM Consignation",
+        "type": "qcm",
+        "passingScore": 90,
+        "duration": 30,
+        "questions": [
+          {
+            "id": "q1",
+            "text": "Combien y a-t-il d'étapes dans la consignation ?",
+            "type": "multiple_choice",
+            "options": ["4 étapes", "6 étapes", "8 étapes"],
+            "correctAnswer": "6 étapes",
+            "explanation": "La consignation comprend 6 étapes : Préparation, Information, Séparation, Condamnation, Dissipation, Vérification."
+          },
+          {
+            "id": "q2",
+            "text": "Qui peut retirer votre cadenas personnel ?",
+            "type": "multiple_choice",
+            "options": ["Votre superviseur", "Le responsable HSE", "Vous uniquement"],
+            "correctAnswer": "Vous uniquement",
+            "explanation": "Règle absolue : seule la personne qui a posé le cadenas peut le retirer."
+          }
+        ]
+      }
+    ]
+  }
+}

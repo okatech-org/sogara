@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { AlertTriangle, BookOpen, Shield, Plus, Calendar, FileText, Users, TrendingUp, Loader2, RefreshCw } from 'lucide-react';
+import { AlertTriangle, BookOpen, Shield, Plus, Calendar, FileText, Users, TrendingUp, Loader2, RefreshCw, GraduationCap } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -13,9 +13,16 @@ import { HSEComplianceDashboard } from './HSEComplianceDashboard';
 import { HSETrainingImporter } from './HSETrainingImporter';
 import { HSETrainingCatalog } from './HSETrainingCatalog';
 import { HSESessionScheduler } from './HSESessionScheduler';
+import { HSETrainerDashboard } from './training/HSETrainerDashboard';
 import { HSELoadingState } from './HSELoadingState';
 import { HSESystemStatus } from './HSESystemStatus';
 import { HSEQuickActions } from './HSEQuickActions';
+import { HSEEquipmentManagement } from './HSEEquipmentManagement';
+import { HSEAuditDashboard } from './HSEAuditDashboard';
+import { HSEDataImportTools } from './HSEDataImportTools';
+import { HSEMaintenanceTools } from './HSEMaintenanceTools';
+import { HSEAnalyticsDashboard } from './HSEAnalyticsDashboard';
+import { HSEAdvancedSearch } from './HSEAdvancedSearch';
 import { useAuth } from '@/contexts/AppContext';
 import { useHSEIncidents } from '@/hooks/useHSEIncidents';
 import { useHSETrainings } from '@/hooks/useHSETrainings';
@@ -27,6 +34,9 @@ import { HSESystemValidator } from '@/utils/hse-system-validator';
 
 export function HSEDashboard() {
   const { hasAnyRole } = useAuth();
+  
+  // État pour la navigation entre onglets
+  const [activeTab, setActiveTab] = useState('overview');
   const { 
     incidents, 
     addIncident, 
@@ -60,6 +70,10 @@ export function HSEDashboard() {
   const [showTrainingSession, setShowTrainingSession] = useState<{training: HSETraining, session: HSETrainingSession} | null>(null);
   const [showSessionScheduler, setShowSessionScheduler] = useState<HSETraining | null>(null);
   
+  // États pour les filtres et recherche
+  const [filteredIncidents, setFilteredIncidents] = useState<HSEIncident[]>([]);
+  const [searchFilters, setSearchFilters] = useState<any>({});
+  
   const canManageHSE = hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR']);
   const canViewHSE = hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR', 'EMPLOYE']);
 
@@ -75,6 +89,33 @@ export function HSEDashboard() {
       initializeTrainings();
     }
   }, [initializeIncidents, initializeTrainings, isFullyInitialized, isLoading]);
+
+  // Filtrer les incidents
+  useEffect(() => {
+    let filtered = [...incidents];
+    
+    if (searchFilters.searchTerm) {
+      filtered = filtered.filter(incident => 
+        incident.type.toLowerCase().includes(searchFilters.searchTerm.toLowerCase()) ||
+        incident.description.toLowerCase().includes(searchFilters.searchTerm.toLowerCase()) ||
+        incident.location.toLowerCase().includes(searchFilters.searchTerm.toLowerCase())
+      );
+    }
+    
+    if (searchFilters.severity) {
+      filtered = filtered.filter(incident => incident.severity === searchFilters.severity);
+    }
+    
+    if (searchFilters.status) {
+      filtered = filtered.filter(incident => incident.status === searchFilters.status);
+    }
+    
+    if (searchFilters.type) {
+      filtered = filtered.filter(incident => incident.type === searchFilters.type);
+    }
+    
+    setFilteredIncidents(filtered);
+  }, [incidents, searchFilters]);
 
   // Récupérer les statistiques (seulement si initialisé)
   const incidentStats = isFullyInitialized ? getIncidentStats() : { open: 0, resolved: 0, thisMonth: 0, highSeverity: 0, total: 0 };
@@ -408,15 +449,14 @@ export function HSEDashboard() {
       {renderKPIs()}
 
       {/* Contenu principal par onglets */}
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-7">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
           <TabsTrigger value="incidents">Incidents</TabsTrigger>
-          <TabsTrigger value="formations">Formations</TabsTrigger>
-          <TabsTrigger value="compliance">Conformité</TabsTrigger>
-          <TabsTrigger value="catalog">Catalogue</TabsTrigger>
-          <TabsTrigger value="status">Statut</TabsTrigger>
-          <TabsTrigger value="equipment">EPI</TabsTrigger>
+          <TabsTrigger value="formations">Formations & Modules</TabsTrigger>
+          <TabsTrigger value="compliance">Conformité & EPI</TabsTrigger>
+          <TabsTrigger value="status">Système & Outils</TabsTrigger>
+          <TabsTrigger value="analytics">Analyses & Rapports</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -424,14 +464,17 @@ export function HSEDashboard() {
           <HSEQuickActions 
             onCreateIncident={() => setShowIncidentForm(true)}
             onScheduleTraining={() => {
+              setActiveTab('formations');
               // Pour la démo, on peut utiliser la première formation disponible
               if (trainings.length > 0) {
                 setShowSessionScheduler(trainings[0]);
               }
             }}
             onViewCompliance={() => {
-              // Redirection vers l'onglet conformité (simulé)
-              console.log('Redirection vers conformité');
+              setActiveTab('compliance');
+            }}
+            onExportReport={() => {
+              setActiveTab('analytics');
             }}
           />
           
@@ -442,7 +485,102 @@ export function HSEDashboard() {
         </TabsContent>
 
         <TabsContent value="incidents" className="space-y-4">
-          {renderRecentIncidents()}
+          {/* Recherche avancée d'incidents */}
+          <Card className="industrial-card">
+            <CardContent className="pt-6">
+              <HSEAdvancedSearch
+                onSearch={setSearchFilters}
+                onClear={() => setSearchFilters({})}
+                placeholder="Rechercher dans les incidents..."
+                showFilters={['severity', 'status', 'type']}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Liste des incidents filtrés */}
+          <Card className="industrial-card">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <AlertTriangle className="w-5 h-5" />
+                  Incidents HSE
+                  {filteredIncidents.length !== incidents.length && (
+                    <Badge variant="outline">
+                      {filteredIncidents.length} sur {incidents.length}
+                    </Badge>
+                  )}
+                </CardTitle>
+                {canManageHSE && (
+                  <Button 
+                    onClick={() => setShowIncidentForm(true)}
+                    className="gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Nouveau incident
+                  </Button>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent>
+              {!isFullyInitialized ? (
+                <div className="text-center py-8">
+                  <Loader2 className="w-12 h-12 mx-auto mb-4 text-muted-foreground animate-spin" />
+                  <p className="text-muted-foreground">Chargement des incidents...</p>
+                </div>
+              ) : filteredIncidents.length === 0 ? (
+                <div className="text-center py-8">
+                  <Shield className="w-12 h-12 mx-auto mb-4 text-green-500" />
+                  <h3 className="text-lg font-medium mb-2">
+                    {searchFilters.searchTerm || Object.keys(searchFilters).length > 1 
+                      ? 'Aucun incident trouvé' 
+                      : 'Aucun incident signalé'
+                    }
+                  </h3>
+                  <p className="text-muted-foreground">
+                    {searchFilters.searchTerm || Object.keys(searchFilters).length > 1
+                      ? 'Essayez de modifier les critères de recherche'
+                      : 'Excellente nouvelle ! Aucun incident n\'a été signalé.'
+                    }
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {filteredIncidents.map((incident) => (
+                    <div 
+                      key={incident.id} 
+                      className="p-4 rounded-lg border border-border bg-card cursor-pointer hover:bg-muted/50 transition-colors"
+                      onClick={() => setShowIncidentDetails(incident)}
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="font-medium text-foreground">{incident.type}</h3>
+                        <div className="flex items-center gap-2">
+                          <StatusBadge 
+                            status={incident.severity === 'low' ? 'Faible' : 
+                                   incident.severity === 'medium' ? 'Moyen' : 'Élevé'}
+                            variant={incident.severity === 'low' ? 'info' : 
+                                    incident.severity === 'medium' ? 'warning' : 'urgent'}
+                          />
+                          <StatusBadge 
+                            status={incident.status === 'reported' ? 'Signalé' : 
+                                   incident.status === 'investigating' ? 'En cours' : 'Résolu'}
+                            variant={incident.status === 'reported' ? 'info' : 
+                                    incident.status === 'investigating' ? 'warning' : 'success'}
+                          />
+                        </div>
+                      </div>
+                      <div className="text-sm text-muted-foreground space-y-1">
+                        <p className="line-clamp-2">{incident.description}</p>
+                        <p>Lieu: {incident.location}</p>
+                        <p>Date: {incident.occurredAt.toLocaleDateString('fr-FR')}</p>
+                        <p>Déclaré par: {incident.reportedBy}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           {openIncidents.length > 0 && (
             <Card className="industrial-card">
               <CardHeader>
@@ -474,66 +612,114 @@ export function HSEDashboard() {
           )}
         </TabsContent>
 
-        <TabsContent value="formations">
-          <HSETrainingCalendar 
+        <TabsContent value="formations" className="space-y-6">
+          {/* Interface unifiée formations et modules */}
+          <Tabs defaultValue="modules" className="space-y-4">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="modules">Modules Interactifs</TabsTrigger>
+              <TabsTrigger value="calendar">Calendrier & Sessions</TabsTrigger>
+              <TabsTrigger value="catalog">Catalogue & Import</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="modules">
+              <HSETrainerDashboard canManage={canManageHSE} />
+            </TabsContent>
+
+            <TabsContent value="calendar">
+              <HSETrainingCalendar 
+                trainings={trainings}
+                onSessionClick={handleSessionClick}
+                canEdit={canManageHSE}
+              />
+            </TabsContent>
+
+            <TabsContent value="catalog" className="space-y-6">
+              {/* Système d'importation */}
+              <HSETrainingImporter onImportComplete={() => {
+                initializeIncidents();
+                initializeTrainings();
+              }} />
+              
+              {/* Catalogue détaillé */}
+              <HSETrainingCatalog 
+                trainings={trainings}
+                onScheduleSession={handleScheduleSession}
+                canManage={canManageHSE}
+              />
+            </TabsContent>
+          </Tabs>
+        </TabsContent>
+
+        <TabsContent value="compliance" className="space-y-6">
+          {/* Interface unifiée conformité et EPI */}
+          <Tabs defaultValue="dashboard" className="space-y-4">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="dashboard">Tableau de Bord</TabsTrigger>
+              <TabsTrigger value="epi">Gestion EPI</TabsTrigger>
+              <TabsTrigger value="audits">Audits & Contrôles</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="dashboard">
+              <HSEComplianceDashboard />
+            </TabsContent>
+
+            <TabsContent value="epi">
+              <HSEEquipmentManagement />
+            </TabsContent>
+
+            <TabsContent value="audits">
+              <HSEAuditDashboard />
+            </TabsContent>
+          </Tabs>
+        </TabsContent>
+
+        <TabsContent value="status" className="space-y-6">
+          {/* Outils système et administration */}
+          <Tabs defaultValue="system" className="space-y-4">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="system">État Système</TabsTrigger>
+              <TabsTrigger value="imports">Outils Import</TabsTrigger>
+              <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="system">
+              <HSESystemStatus 
+                onAction={(action) => {
+                  switch (action) {
+                    case 'init-training-system':
+                      console.log('Initialisation système formation');
+                      break;
+                    case 'view-compliance':
+                      console.log('Redirection vers conformité');
+                      break;
+                    default:
+                      console.log('Action:', action);
+                  }
+                }}
+              />
+            </TabsContent>
+
+            <TabsContent value="imports">
+              <HSEDataImportTools 
+                onImportComplete={() => {
+                  initializeIncidents();
+                  initializeTrainings();
+                }}
+              />
+            </TabsContent>
+
+            <TabsContent value="maintenance">
+              <HSEMaintenanceTools />
+            </TabsContent>
+          </Tabs>
+        </TabsContent>
+
+        <TabsContent value="analytics" className="space-y-6">
+          <HSEAnalyticsDashboard 
+            incidents={incidents}
             trainings={trainings}
-            onSessionClick={handleSessionClick}
-            canEdit={canManageHSE}
+            employees={state.employees || []}
           />
-        </TabsContent>
-
-        <TabsContent value="compliance">
-          <HSEComplianceDashboard />
-        </TabsContent>
-
-        <TabsContent value="catalog" className="space-y-6">
-          {/* Système d'importation */}
-          <HSETrainingImporter onImportComplete={() => {
-            // Recharger les données après importation
-            initializeIncidents();
-            initializeTrainings();
-          }} />
-          
-          {/* Catalogue détaillé */}
-          <HSETrainingCatalog 
-            trainings={trainings}
-            onScheduleSession={handleScheduleSession}
-            canManage={canManageHSE}
-          />
-        </TabsContent>
-
-        <TabsContent value="status">
-          <HSESystemStatus 
-            onAction={(action) => {
-              switch (action) {
-                case 'init-training-system':
-                  // Rediriger vers l'onglet catalogue pour l'importation
-                  break;
-                case 'view-compliance':
-                  // Rediriger vers l'onglet conformité
-                  break;
-                default:
-                  console.log('Action:', action);
-              }
-            }}
-          />
-        </TabsContent>
-
-        <TabsContent value="equipment" className="space-y-4">
-            <Card className="industrial-card">
-              <CardHeader>
-              <CardTitle>Gestion des EPI</CardTitle>
-              </CardHeader>
-              <CardContent>
-              <div className="text-center py-8">
-                <Shield className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                <h3 className="text-lg font-medium mb-2">Module EPI</h3>
-                <p className="text-muted-foreground">
-                  La gestion des équipements de protection individuelle sera bientôt disponible.
-                </p>
-                </div>
-              </CardContent>
-            </Card>
         </TabsContent>
       </Tabs>
 
