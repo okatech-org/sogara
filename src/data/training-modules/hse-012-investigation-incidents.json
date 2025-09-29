@@ -1,0 +1,237 @@
+{
+  "id": "HSE-012",
+  "code": "INCIDENT-INVEST",
+  "title": "Investigation et Analyse des Incidents",
+  "category": "Management",
+  "description": "Formation approfondie pour mener des investigations d'incidents méthodiques. Outils d'analyse des causes et définition d'actions correctives efficaces.",
+  "objectives": [
+    "Mener une investigation d'incident méthodique et complète",
+    "Utiliser les outils d'analyse (arbre des causes, 5 pourquoi, Ishikawa)",
+    "Identifier les causes profondes (racines) d'un incident",
+    "Définir des actions correctives efficaces et mesurables",
+    "Rédiger un rapport d'investigation professionnel"
+  ],
+  "duration": 8,
+  "durationUnit": "heures",
+  "validityMonths": 36,
+  "requiredForRoles": ["HSE", "SUPERVISEUR", "ADMIN"],
+  "prerequisites": ["HSE-001"],
+  "certification": {
+    "examRequired": true,
+    "passingScore": 85,
+    "practicalTest": true,
+    "certificateType": "Certificat Enquêteur Incident"
+  },
+  "instructor": {
+    "qualificationRequired": "Responsable HSE ou Superviseur expérimenté",
+    "minExperience": "5 ans + Formation investigation"
+  },
+  "maxParticipants": 12,
+  "language": ["Français"],
+  "deliveryMethods": ["Présentiel obligatoire"],
+  "refresherRequired": true,
+  "refresherFrequency": 36,
+  "content": {
+    "modules": [
+      {
+        "id": "module-invest-1",
+        "title": "🎯 POURQUOI INVESTIGUER ?",
+        "duration": 1,
+        "description": "Objectifs et culture juste de l'investigation",
+        "content": [
+          {
+            "id": "investigation-goals",
+            "title": "Objectifs de l'Investigation",
+            "type": "text",
+            "content": "#### Pourquoi Investiguer un Incident ?\n\n**PAS pour :**\n- ❌ Punir quelqu'un\n- ❌ Trouver un coupable\n- ❌ Se protéger juridiquement seulement\n\n**MAIS pour :**\n- ✅ **COMPRENDRE** ce qui s'est réellement passé\n- ✅ **APPRENDRE** de l'événement\n- ✅ **PRÉVENIR** qu'il ne se reproduise\n- ✅ **AMÉLIORER** nos systèmes de sécurité"
+          },
+          {
+            "id": "just-culture",
+            "title": "La Culture Juste (Just Culture)",
+            "type": "safety_rules",
+            "content": "**Principe Fondamental :**\n\n```\nERREUR HUMAINE ≠ FAUTE\n\nL'erreur est normale chez l'humain.\nCe qui ne l'est pas, c'est de ne pas apprendre de nos erreurs.\n```\n\n**Les 3 Comportements :**\n\n1. **ERREUR** (Human Error)\n   - Involontaire, non intentionnelle\n   - Glissement, oubli, distraction\n   - → Formation, amélioration système\n\n2. **VIOLATION NON INTENTIONNELLE** (At-Risk Behavior)\n   - Raccourci pris sans conscience du danger\n   - \"On fait toujours comme ça\"\n   - → Coaching, sensibilisation\n\n3. **VIOLATION INTENTIONNELLE** (Reckless Behavior)\n   - Conscient du danger mais s'en fiche\n   - Mise en danger délibérée\n   - → Sanction disciplinaire\n\n**Règle d'Or :** Dans 95% des cas, c'est une ERREUR ou une VIOLATION NON INTENTIONNELLE. Le système doit évoluer, pas seulement la personne."
+          },
+          {
+            "id": "bird-pyramid",
+            "title": "La Pyramide de Bird",
+            "type": "text",
+            "content": "#### Comprendre la Fréquence des Événements\n\n```\n                1 ACCIDENT MORTEL\n              /\n            10 ACCIDENTS GRAVES\n          /\n        30 ACCIDENTS BÉNINS\n      /\n    600 INCIDENTS (Presque-accidents)\n  /\n████████████████████████████████\nMILLIERS DE COMPORTEMENTS À RISQUE\n```\n\n**Message Clé :**\n\n> **Pour chaque accident mortel, il y a eu 600 signaux faibles (incidents) que nous n'avons pas traités.**\n\n**Conclusion :**\n- Investiguer les PETITS incidents\n- Chaque presque-accident est une opportunité d'apprendre\n- Ne pas attendre l'accident grave",
+            "illustrations": [
+              {
+                "id": "bird-pyramid-diagram",
+                "type": "infographic",
+                "title": "Pyramide de Bird",
+                "description": "Ratio des accidents selon leur gravité",
+                "url": "/images/hse/bird-pyramid.svg",
+                "alt": "Pyramide de Bird des accidents"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "module-invest-2",
+        "title": "🔍 MÉTHODOLOGIE D'INVESTIGATION",
+        "duration": 2,
+        "description": "Les 6 étapes de l'investigation méthodique",
+        "content": [
+          {
+            "id": "investigation-steps",
+            "title": "Les 6 Étapes de l'Investigation",
+            "type": "procedure",
+            "content": "```\n1. SÉCURISER LA SCÈNE\n      ↓\n2. COLLECTER LES PREUVES\n      ↓\n3. INTERVIEWER LES TÉMOINS\n      ↓\n4. RECONSTITUER LES FAITS\n      ↓\n5. ANALYSER LES CAUSES\n      ↓\n6. DÉFINIR LES ACTIONS\n```"
+          },
+          {
+            "id": "secure-scene",
+            "title": "Étape 1 : Sécuriser la Scène",
+            "type": "emergency_protocol",
+            "content": "#### Agir Immédiatement\n\n**PRIORITÉ N°1 : SÉCURITÉ**\n\n```\nAccident vient de se produire\n      ↓\nSécuriser la zone\n      ↓\nSoigner la victime\n      ↓\nPUIS seulement investiguer\n```\n\n**Actions Immédiates :**\n\n1. **Interdire l'accès** à la zone\n   - Ruban de sécurité\n   - Gardiennage si nécessaire\n\n2. **Préserver l'état des lieux**\n   - NE RIEN TOUCHER\n   - NE RIEN RANGER\n   - Figer la situation\n\n3. **Photographier immédiatement**\n   - Avant que quelqu'un ne déplace quelque chose\n   - Vue d'ensemble + détails\n\n**Durée Idéale de Conservation :** 24-48h minimum"
+          },
+          {
+            "id": "collect-evidence",
+            "title": "Étape 2 : Collecter les Preuves",
+            "type": "checklist",
+            "content": "#### Types de Preuves\n\n**1. PREUVES PHYSIQUES**\n- Équipements impliqués (machine, outils)\n- EPI (étaient-ils portés ? en bon état ?)\n- Produits chimiques (FDS disponible ?)\n- Marquages au sol (traces de freinage, etc.)\n\n**2. PREUVES DOCUMENTAIRES**\n- Permis de travail (était-il valide ?)\n- Procédures (étaient-elles suivies ?)\n- Registres de maintenance\n- Formations de l'employé\n- Habilitations\n\n**3. PREUVES TESTIMONIALES**\n- Déclarations des témoins\n- Déclaration de la victime (si possible)\n\n**4. PREUVES ENVIRONNEMENTALES**\n- Météo (pluie, vent, chaleur)\n- Éclairage (suffisant ?)\n- Bruit (communication possible ?)\n- Heure (fatigue, fin de poste ?)\n\n#### Outil : Grille de Collecte\n\n```\n□ Photos : Vue générale + 4 angles + détails\n□ Vidéos : Caméras surveillance si disponibles\n□ Échantillons : Produits, matériaux impliqués\n□ Documents : Permis, procédures, formations\n□ Mesures : Distances, hauteurs, niveaux\n□ Conditions : Température, vent, bruit, éclairage\n```"
+          },
+          {
+            "id": "interview-witnesses",
+            "title": "Étape 3 : Interviewer les Témoins",
+            "type": "procedure",
+            "content": "#### Règles de l'Interview\n\n**✅ FAIRE :**\n- Interview individuelle (pas de groupe)\n- Écouter sans interrompre\n- Poser des questions ouvertes\n- Prendre des notes\n- Reformuler pour vérifier compréhension\n- Remercier le témoin\n\n**❌ NE PAS FAIRE :**\n- Accuser ou blâmer\n- Suggérer des réponses\n- Mettre sous pression\n- Juger les comportements\n- Interrompre le récit\n\n#### Questions Clés\n\n**Questions Ouvertes (QQOQCP) :**\n\n- **QUI** était impliqué ? Qui était présent ?\n- **QUOI** s'est-il passé exactement ?\n- **OÙ** cela s'est-il produit ?\n- **QUAND** ? (heure, jour, moment du poste)\n- **COMMENT** cela s'est-il déroulé ?\n- **POURQUOI** (selon le témoin) ?"
+          }
+        ]
+      },
+      {
+        "id": "module-invest-3",
+        "title": "🔧 OUTILS D'ANALYSE",
+        "duration": 2.5,
+        "description": "5 Pourquoi, Arbre des causes, Ishikawa, Swiss Cheese",
+        "content": [
+          {
+            "id": "five-whys",
+            "title": "La Méthode des 5 POURQUOI",
+            "type": "procedure",
+            "content": "#### Principe\n\n**Creuser pour trouver la cause racine**\n\n```\nSYMPTÔME (ce qu'on voit)\n      ↓ Pourquoi ?\nCAUSE IMMÉDIATE\n      ↓ Pourquoi ?\nCAUSE INTERMÉDIAIRE\n      ↓ Pourquoi ?\nCAUSE ORGANISATIONNELLE\n      ↓ Pourquoi ?\nCAUSE RACINE (système)\n```\n\n#### Exemple Concret : Brûlure par Projection\n\n**1. Incident :** Employé brûlé par projection de liquide chaud\n\n**Pourquoi ?**\n→ Le couvercle de la vanne a sauté sous pression\n\n**2. Pourquoi le couvercle a-t-il sauté ?**\n→ La pression était trop élevée (15 bars au lieu de 5)\n\n**3. Pourquoi la pression était-elle trop élevée ?**\n→ La vanne d'isolation en amont n'avait pas été fermée\n\n**4. Pourquoi la vanne n'avait-elle pas été fermée ?**\n→ Elle ne figurait pas sur le permis de travail\n\n**5. Pourquoi ne figurait-elle pas sur le permis ?**\n→ Le plan des installations était obsolète (modification en 2023 non mise à jour)\n\n**CAUSE RACINE :** Système de gestion des modifications (Management of Change) défaillant\n\n**ACTION CORRECTIVE :** Mettre à jour tous les plans + procédure MOC stricte"
+          },
+          {
+            "id": "cause-tree",
+            "title": "L'Arbre des Causes",
+            "type": "procedure",
+            "content": "#### Principe\n\n**Représenter TOUTES les causes et leurs interactions**\n\nUn incident a TOUJOURS plusieurs causes combinées (rarement une seule)\n\n#### Exemple Visuel : Chute depuis Échelle\n\n```\n            [CHUTE DEPUIS ÉCHELLE]\n                    |\n        ┌───────────┴───────────┐\n        |                       |\n   [SOL GLISSANT]        [ÉCHELLE INSTABLE]\n        |                       |\n    ┌───┴───┐              ┌────┴────┐\n    |       |              |         |\n[FUITE] [PAS DE]    [PIEDS PAS]  [VENT]\n HUILE   BALISAGE    BLOQUÉS     FORT\n```\n\n**Lecture :**\n- La chute s'est produite PARCE QUE le sol était glissant ET l'échelle instable\n- Le sol était glissant PARCE QU'il y avait une fuite d'huile ET absence de balisage\n- L'échelle était instable PARCE QUE les pieds n'étaient pas bloqués ET il y avait du vent\n\n**Intérêt :**\n- Montre la complexité\n- Évite de se focaliser sur UNE seule cause\n- Identifie TOUS les points d'amélioration"
+          },
+          {
+            "id": "ishikawa-diagram",
+            "title": "Le Diagramme d'Ishikawa (5M)",
+            "type": "procedure",
+            "content": "#### Principe\n\n**Analyser les causes selon 5 catégories**\n\n```\n          Matériel        Méthode\n              \\            /\n               \\          /\n                \\        /\n                 \\      /\n                  \\    /\n           [INCIDENT]\n                  /    \\\n                 /      \\\n                /        \\\n               /          \\\n              /            \\\n         Milieu         Main d'œuvre\n                \\\n                 \\\n                Matière\n```\n\n**Les 5M :**\n\n1. **MATÉRIEL** (Équipement)\n   - Machine défectueuse ?\n   - Outil inadapté ?\n   - EPI manquant ?\n\n2. **MÉTHODE** (Procédure)\n   - Procédure inexistante ?\n   - Procédure non respectée ?\n   - Procédure obsolète ?\n\n3. **MAIN D'ŒUVRE** (Personnel)\n   - Formation insuffisante ?\n   - Fatigue ?\n   - Compétence inadaptée ?\n\n4. **MILIEU** (Environnement)\n   - Éclairage insuffisant ?\n   - Bruit excessif ?\n   - Chaleur ?\n   - Météo ?\n\n5. **MATIÈRE** (Produit)\n   - Produit chimique dangereux ?\n   - Matériau défectueux ?\n   - FDS non disponible ?"
+          },
+          {
+            "id": "swiss-cheese",
+            "title": "Facteurs Humains et Organisationnels",
+            "type": "text",
+            "content": "#### Le Modèle Reason (Swiss Cheese)\n\n**Concept :**\n\n```\n[BARRIÈRE 1] ○ [BARRIÈRE 2] ○ [BARRIÈRE 3] ○ [BARRIÈRE 4]\n    Formation     Procédure      Permis         EPI\n\nSi TOUS les trous s'alignent → ACCIDENT\n```\n\n**Les Barrières de Sécurité :**\n\n1. **Formation** : L'employé sait-il comment faire ?\n2. **Procédure** : La méthode sûre est-elle écrite ?\n3. **Permis** : L'autorisation a-t-elle été donnée ?\n4. **EPI** : La protection est-elle portée ?\n5. **Supervision** : Quelqu'un vérifie-t-il ?\n\n**Question Clé :** Quelle(s) barrière(s) a/ont failli ?\n\n#### Facteurs Organisationnels\n\n**Au-delà de l'individu :**\n\n- **Pression de production** : \"Faire vite\"\n- **Manque de ressources** : Pas assez de personnel, d'équipement\n- **Culture sécurité faible** : \"On prend des raccourcis\"\n- **Communication défaillante** : Infos pas transmises\n- **Management absent** : Pas de supervision"
+          }
+        ]
+      },
+      {
+        "id": "module-invest-4",
+        "title": "🎯 ACTIONS CORRECTIVES",
+        "duration": 1.5,
+        "description": "Hiérarchie des mesures et actions SMART",
+        "content": [
+          {
+            "id": "prevention-hierarchy",
+            "title": "Hiérarchie des Mesures de Prévention",
+            "type": "procedure",
+            "content": "#### Pyramide de la Prévention\n\n```\n    [ÉLIMINATION] ← PLUS EFFICACE\n          ↑\n    [SUBSTITUTION]\n          ↑\n   [MESURES TECHNIQUES]\n          ↑\n [MESURES ORGANISATIONNELLES]\n          ↑\n        [EPI] ← MOINS EFFICACE\n```\n\n**De la plus efficace à la moins efficace :**\n\n1. **ÉLIMINATION**\n   - Supprimer le danger\n   - Exemple : Automatiser une tâche dangereuse\n\n2. **SUBSTITUTION**\n   - Remplacer par moins dangereux\n   - Exemple : Produit chimique moins toxique\n\n3. **MESURES TECHNIQUES (Engineering)**\n   - Protéger par la conception\n   - Exemple : Garde-corps, ventilation\n\n4. **MESURES ORGANISATIONNELLES**\n   - Procédures, formation, permis\n   - Exemple : Permis de travail, formation\n\n5. **EPI (Dernier recours)**\n   - Protection individuelle\n   - Exemple : Casque, gants\n\n**Principe :** Toujours viser le HAUT de la pyramide"
+          },
+          {
+            "id": "smart-actions",
+            "title": "Critères SMART pour les Actions",
+            "type": "checklist",
+            "content": "#### Définir des Actions Efficaces\n\n**Une bonne action corrective est SMART :**\n\n- **S**pécifique : Précise, claire, sans ambiguïté\n- **M**esurable : On peut vérifier si c'est fait\n- **A**cceptable : Réaliste et acceptée par tous\n- **R**éaliste : Techniquement et financièrement faisable\n- **T**emporelle : Date limite fixée\n\n#### Exemples Mauvais vs Bons\n\n**❌ Action Floue :**\n> \"Améliorer la formation\"\n\n**✅ Action SMART :**\n> \"Former les 15 opérateurs de l'unité X à la procédure de consignation (HSE-009) d'ici le 30 juin 2025. Formateur : Marie LAKIBI (HSE).\"\n\n**❌ Action Floue :**\n> \"Sensibiliser sur les EPI\"\n\n**✅ Action SMART :**\n> \"Organiser 3 toolbox talks (15 min) sur le port des gants adaptés, semaines 12, 13, 14. Responsable : Superviseur de chaque équipe. Taux de participation cible : 100%.\""
+          }
+        ]
+      },
+      {
+        "id": "module-invest-5",
+        "title": "📚 ÉTUDES DE CAS",
+        "duration": 1,
+        "description": "Cas pratiques d'investigation",
+        "content": [
+          {
+            "id": "case-study-1",
+            "title": "Cas Pratique N°1 : Brûlure Chimique",
+            "type": "case_study",
+            "content": "#### Situation\n\n**Incident :** Opérateur reçoit projection d'acide sulfurique (H₂SO₄) sur l'avant-bras. Brûlure chimique 2ème degré.\n\n**Contexte :**\n- Tâche : Prélèvement d'échantillon sur ligne acide\n- Lieu : Unité de traitement\n- Heure : 14h30 (après-midi)\n- Victime : Pierre, 28 ans, 5 ans d'ancienneté\n\n#### Exercice : Menez l'Investigation\n\n**1. Quelles preuves collectez-vous ?**\n- Photos de la ligne, du point de prélèvement\n- Vérifier les EPI de Pierre (gants ? lunettes ? tablier ?)\n- FDS de l'acide sulfurique\n- Procédure de prélèvement (existe-t-elle ?)\n- Permis de travail (requis ?)\n- Formation de Pierre (formé au prélèvement ?)\n- Température/pression ligne au moment incident\n\n**2. Qui interviewez-vous ?**\n- Pierre (la victime) si état le permet\n- Superviseur de Pierre\n- Collègues présents\n- Personne ayant fait le dernier prélèvement\n\n**3. Actions SMART proposées :**\n1. **Technique :** Installer un by-pass avec vanne basse pression pour prélèvements. Responsable : Maintenance. Délai : 30/06.\n2. **EPI :** Doter tous les opérateurs d'un tablier anti-acide. Responsable : Magasin. Délai : 15/04.\n3. **Formation :** Former les 8 opérateurs à la procédure de prélèvement sécurisée. Responsable : HSE. Délai : 31/05."
+          }
+        ]
+      }
+    ],
+    "resources": [
+      {
+        "id": "investigation-template",
+        "title": "Modèle Rapport d'Investigation",
+        "type": "pdf",
+        "url": "/resources/hse/investigation-report-template.pdf",
+        "description": "Modèle de rapport d'investigation complet",
+        "downloadable": true
+      },
+      {
+        "id": "analysis-tools-guide",
+        "title": "Guide des Outils d'Analyse",
+        "type": "pdf",
+        "url": "/resources/hse/analysis-tools-guide.pdf",
+        "description": "Guide pratique des outils (5 Pourquoi, Arbre, Ishikawa)",
+        "downloadable": true
+      }
+    ],
+    "assessments": [
+      {
+        "id": "invest-qcm",
+        "title": "QCM Investigation",
+        "type": "qcm",
+        "passingScore": 85,
+        "duration": 30,
+        "questions": [
+          {
+            "id": "q1",
+            "text": "Quel est l'objectif principal d'une investigation d'incident ?",
+            "type": "multiple_choice",
+            "options": [
+              "Trouver un coupable",
+              "Se protéger juridiquement",
+              "Comprendre et prévenir"
+            ],
+            "correctAnswer": "Comprendre et prévenir",
+            "explanation": "L'investigation vise à comprendre ce qui s'est passé pour éviter que ça se reproduise, pas à blâmer."
+          },
+          {
+            "id": "q2",
+            "text": "Dans la pyramide de Bird, pour 1 accident mortel il y a :",
+            "type": "multiple_choice",
+            "options": ["10 incidents", "100 incidents", "600 incidents"],
+            "correctAnswer": "600 incidents",
+            "explanation": "La pyramide de Bird montre qu'il y a 600 incidents (presque-accidents) pour chaque accident mortel."
+          }
+        ]
+      },
+      {
+        "id": "invest-practical",
+        "title": "Étude de Cas Réel",
+        "type": "case_study",
+        "passingScore": 80,
+        "duration": 90,
+        "questions": [
+          {
+            "id": "case-analysis",
+            "text": "Analyser un incident réel et produire : arbre des causes, analyse 5M, 5 actions SMART",
+            "type": "open",
+            "correctAnswer": "Analyse complète avec outils appropriés et actions hiérarchisées",
+            "explanation": "L'évaluation porte sur l'exhaustivité de l'analyse et la pertinence des actions."
+          }
+        ]
+      }
+    ]
+  }
+}

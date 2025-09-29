@@ -1,0 +1,237 @@
+{
+  "id": "HSE-014",
+  "code": "ERGONOMICS",
+  "title": "Gestes et Postures - Ergonomie",
+  "category": "Prévention",
+  "description": "Formation sur l'ergonomie au travail. Prévention des TMS, techniques de manutention et postures de travail optimales.",
+  "objectives": [
+    "Comprendre les risques de Troubles Musculo-Squelettiques (TMS)",
+    "Adopter les bonnes postures de travail (debout, assis, accroupi)",
+    "Effectuer les gestes de manutention en toute sécurité",
+    "Aménager votre poste de travail de manière ergonomique",
+    "Prévenir les douleurs chroniques (dos, épaules, poignets)"
+  ],
+  "duration": 4,
+  "durationUnit": "heures",
+  "validityMonths": 24,
+  "requiredForRoles": ["EMPLOYE", "SUPERVISEUR", "HSE", "ADMIN"],
+  "prerequisites": [],
+  "certification": {
+    "examRequired": true,
+    "passingScore": 80,
+    "practicalTest": true,
+    "certificateType": "Attestation Gestes et Postures"
+  },
+  "instructor": {
+    "qualificationRequired": "Formateur ergonomie ou Médecin du travail",
+    "minExperience": "Formation PRAP (Prévention Risques Activité Physique)"
+  },
+  "maxParticipants": 15,
+  "language": ["Français"],
+  "deliveryMethods": ["Présentiel obligatoire"],
+  "refresherRequired": true,
+  "refresherFrequency": 24,
+  "content": {
+    "modules": [
+      {
+        "id": "module-ergo-1",
+        "title": "🦴 ANATOMIE ET TMS",
+        "duration": 1,
+        "description": "Comprendre le dos et les troubles musculo-squelettiques",
+        "content": [
+          {
+            "id": "spine-anatomy",
+            "title": "Comprendre Votre Dos",
+            "type": "text",
+            "content": "#### La Colonne Vertébrale\n\n**Structure :**\n\n```\n    CERVICALES (7 vertèbres)\n    Cou - Mobile\n    ↓\n    DORSALES (12 vertèbres)\n    Cage thoracique - Rigide\n    ↓\n    LOMBAIRES (5 vertèbres)\n    Bas du dos - Très sollicitées ⚠️\n    ↓\n    SACRUM (5 vertèbres soudées)\n    Bassin\n    ↓\n    COCCYX\n```\n\n**Les Vertèbres :**\n- Os empilés comme des perles\n- Protègent la moelle épinière (nerfs)\n\n**Les Disques Intervertébraux :**\n- Entre chaque vertèbre\n- Comme des coussins (80% d'eau)\n- Amortissent les chocs\n- S'usent avec l'âge ET les mauvaises postures\n\n**Quand Vous Vous Penchez en Avant (Mal) :**\n\n```\n   ╔═════╗\n   ║     ║\n   ╚══ ▓▓  ← DISQUE écrasé d'un côté\n   ╔═════╗\n```\n\n**Le disque SORT de sa place → Hernie Discale → DOULEUR INTENSE**",
+            "illustrations": [
+              {
+                "id": "spine-anatomy-diagram",
+                "type": "diagram",
+                "title": "Anatomie de la Colonne Vertébrale",
+                "description": "Schéma détaillé de la colonne avec disques",
+                "url": "/images/hse/spine-anatomy.svg",
+                "alt": "Diagramme anatomique de la colonne vertébrale"
+              }
+            ]
+          },
+          {
+            "id": "tms-definition",
+            "title": "Qu'est-ce qu'un TMS ?",
+            "type": "text",
+            "content": "#### Définition\n\n**TMS = Troubles Musculo-Squelettiques**\n\n**Ce sont des douleurs ou lésions qui touchent :**\n- Muscles\n- Tendons (attaches muscles-os)\n- Nerfs\n- Articulations\n\n**Zones Fréquemment Touchées :**\n\n```\n    [COU] ← Cervicalgies\n      |\n  [ÉPAULES] ← Tendinites\n      |\n  [COUDES] ← Épicondylites\n      |\n  [POIGNETS] ← Syndrome canal carpien\n      |\n  [DOS LOMBAIRES] ← Lombalgies (80% des TMS)\n      |\n  [GENOUX] ← Tendinites rotule\n```\n\n#### Les TMS en Chiffres\n\n**Dans le Monde :**\n- 1ère cause de maladie professionnelle (40%)\n- 80% des adultes auront mal au dos dans leur vie\n- Coût : Milliards € en arrêts de travail\n\n**À SOGARA :**\n- TMS = 30% des incidents déclarés\n- Principalement : Lombalgies (mal de dos bas)\n\n**Le Pire :** Les TMS s'installent progressivement. Quand vous avez mal, c'est souvent trop tard."
+          },
+          {
+            "id": "risk-factors",
+            "title": "Facteurs de Risque des TMS",
+            "type": "safety_rules",
+            "content": "#### Les 4 Grands Facteurs\n\n**1. RÉPÉTITIVITÉ**\n\nFaire le même geste 1000 fois par jour\n\n**Exemples SOGARA :**\n- Serrer/desserrer boulons (maintenance)\n- Taper sur clavier toute la journée (bureau)\n- Prélever échantillons\n\n**Risque :** Usure progressive des tendons → Tendinite\n\n**2. FORCE**\n\nSoulever ou pousser des charges lourdes\n\n**Exemples :**\n- Porter sacs 25 kg\n- Pousser chariots chargés\n- Serrer boulons grippés\n\n**Risque :** Déchirure musculaire, hernie discale\n\n**3. POSTURE CONTRAIGNANTE**\n\nPosition qui force le corps\n\n**Exemples :**\n- Dos penché en avant (> 45°)\n- Bras au-dessus des épaules (longtemps)\n- Accroupi prolongé\n- Torsion du tronc\n\n**Risque :** Compression disques, douleurs chroniques\n\n**4. IMMOBILITÉ**\n\nRester dans la MÊME position trop longtemps\n\n**Exemples :**\n- Assis 8h sans bouger (bureau)\n- Debout statique (poste de contrôle)\n\n**Risque :** Circulation sanguine réduite, raideurs"
+          }
+        ]
+      },
+      {
+        "id": "module-ergo-2",
+        "title": "📦 PRINCIPES DE MANUTENTION",
+        "duration": 1.5,
+        "description": "Techniques de levage et aides mécaniques",
+        "content": [
+          {
+            "id": "load-assessment",
+            "title": "Évaluer la Charge",
+            "type": "procedure",
+            "content": "#### Avant de Soulever\n\n**Questions à Se Poser :**\n\n```\n1. POIDS ?\n   ├─ < 5 kg : OK seul\n   ├─ 5-15 kg : Vigilance\n   ├─ 15-25 kg : Technique stricte\n   └─ > 25 kg : Aide mécanique ou binôme\n\n2. VOLUME ?\n   ├─ Petit et compact : Facile\n   └─ Grand et encombrant : Difficile (déséquilibre)\n\n3. PRISE ?\n   ├─ Poignées : Facile\n   └─ Surface lisse : Difficile (glisse)\n\n4. DISTANCE ?\n   ├─ Proche du corps : Facile\n   └─ Bras tendus : × 10 effort !\n\n5. HAUTEUR ?\n   ├─ Entre genoux et épaules : OK\n   ├─ Au sol : Technique flexion\n   └─ > Épaules : DANGEREUX\n```\n\n**Règle d'Or :** Si UN SEUL doute → Demander aide"
+          },
+          {
+            "id": "lifting-technique",
+            "title": "Techniques de Levage Sécuritaire",
+            "type": "procedure",
+            "content": "#### La Technique de Référence\n\n**Soulever du Sol :**\n\n```\nMAUVAIS (❌) :          BON (✅) :\n\n    Dos courbé            Dos DROIT\n    Jambes tendues        Jambes pliées\n      \\○/                   |○|\n       |                    |█|\n      / \\                  /█ █\\\n    ──────               ────────\n   [CHARGE]              [CHARGE]\n```\n\n**Étapes Détaillées :**\n\n**ÉTAPE 1 : APPROCHER**\n```\nPieds de part et d'autre de la charge\nLargeur bassin\nPied avant légèrement avancé\n```\n\n**ÉTAPE 2 : FLÉCHIR GENOUX**\n```\nDescendre en pliant jambes (SQUAT)\nPAS en penchant le dos\nDos reste DROIT\n```\n\n**ÉTAPE 3 : SAISIR**\n```\nMains SOUS la charge\nPrise ferme (paumes, pas doigts)\nCharge CONTRE le corps (le plus près possible)\n```\n\n**ÉTAPE 4 : SOULEVER**\n```\nPousser sur les JAMBES (cuisses)\nGarder dos droit\nRespirer (expirer en poussant)\nRegarder devant (pas en bas)\n```",
+            "illustrations": [
+              {
+                "id": "lifting-technique-diagram",
+                "type": "diagram",
+                "title": "Technique de Levage Correcte",
+                "description": "Comparaison bonne vs mauvaise technique",
+                "url": "/images/hse/lifting-technique.svg",
+                "alt": "Diagramme des techniques de levage"
+              }
+            ]
+          },
+          {
+            "id": "mechanical-aids",
+            "title": "Utilisation des Aides Mécaniques",
+            "type": "procedure",
+            "content": "#### Les Aides Disponibles à SOGARA\n\n**1. Chariot à Roulettes**\n\n**Pour Quoi ?**\n- Charges < 100 kg\n- Distances longues (> 10 mètres)\n\n**Comment ?**\n```\nPousser (pas tirer) ✅\nDos droit\nMains hauteur taille\nVitesse modérée\n```\n\n**JAMAIS tirer** (torsion dos + pas voir où on va)\n\n**2. Transpalette Manuel**\n\n**Pour Quoi ?**\n- Palettes\n- Charges < 500 kg\n\n**Technique :**\n```\nLevier pour lever\nPousser (pas tirer)\nDégager pieds de la palette\n```\n\n**Danger :** Écrasement pieds (chaussures S3 obligatoires)"
+          },
+          {
+            "id": "weight-limits",
+            "title": "Limites Réglementaires",
+            "type": "safety_rules",
+            "content": "#### Poids Maximum (Code du Travail Gabonais)\n\n**Hommes :**\n- Occasionnel : 30 kg\n- Fréquent (>10×/jour) : **25 kg**\n- Jeunes (<18 ans) : 15 kg\n\n**Femmes :**\n- Occasionnel : 15 kg\n- Fréquent : **10 kg**\n\n**Au-delà → Obligatoirement aide mécanique ou binôme**\n\n#### Distances Recommandées\n\n**Port de Charge :**\n- < 10 mètres : Acceptable\n- 10-50 mètres : Utiliser chariot\n- > 50 mètres : Aide mécanique obligatoire\n\n**Fréquence :**\n- < 5 fois/heure : OK\n- > 10 fois/heure : Risque TMS élevé"
+          }
+        ]
+      },
+      {
+        "id": "module-ergo-3",
+        "title": "🪑 POSTURES DE TRAVAIL",
+        "duration": 1,
+        "description": "Postures debout, assis et contraignantes",
+        "content": [
+          {
+            "id": "standing-work",
+            "title": "Travail Debout Prolongé",
+            "type": "procedure",
+            "content": "#### Dangers Posture Debout (> 4h)\n\n**Effets :**\n- Jambes lourdes (circulation)\n- Pieds gonflés\n- Varices (long terme)\n- Lombalgies (dos figé)\n\n#### Bonnes Pratiques\n\n**POSTURE :**\n```\nTête droite (pas penchée avant)\nÉpaules relâchées (pas tendues)\nDos droit naturellement\nPoids réparti sur 2 pieds\nGenoux légèrement fléchis (pas verrouillés)\n```\n\n**ALTERNER :**\n```\nChanger d'appui toutes les 10 minutes\nPied droit → Pied gauche\nUtiliser repose-pied si disponible\n```\n\n**BOUGER :**\n```\nMarcher sur place\nFlexions genoux légères\nÉtirements mollets\n```"
+          },
+          {
+            "id": "office-work",
+            "title": "Travail Assis (Bureautique)",
+            "type": "procedure",
+            "content": "#### Dangers Posture Assise Prolongée\n\n**Effets :**\n- Compression disques lombaires\n- Circulation jambes ralentie\n- Tensions épaules/nuque\n- Syndrome canal carpien (poignets)\n\n**Pire que Debout si mal assis !**\n\n#### La Chaise Parfaite\n\n```\n       [ÉCRAN]\n    Hauteur yeux\n    Distance 50-70 cm\n          |\n      [CLAVIER]\n    Coudes 90°\n    Poignets droits\n          |\n    [SIÈGE RÉGLÉ]\n    Dossier soutient lombaires\n    Assise horizontale\n    Pieds à plat au sol\n          |\n    ▓▓▓▓▓▓▓ (Sol)\n```\n\n**Réglages Siège :**\n\n**1. HAUTEUR ASSISE**\n```\nPieds à plat au sol\nGenoux 90°\nCuisses horizontales\n```\n\n**2. DOSSIER**\n```\nSoutien lombaire (creux du bas dos)\nInclinaison légère arrière (100-110°)\nContact permanent dos-dossier\n```\n\n#### Règle des 20-20-20\n\n**Toutes les 20 minutes :**\n- Se lever 20 secondes\n- Regarder à 20 mètres (reposer yeux)\n\n**OU Version SOGARA :**\n\n**Toutes les heures :**\n- Pause 5 minutes\n- Marcher (café, WC)\n- Étirements simples",
+            "illustrations": [
+              {
+                "id": "office-ergonomics",
+                "type": "diagram",
+                "title": "Ergonomie du Poste Bureau",
+                "description": "Position optimale pour travail sur écran",
+                "url": "/images/hse/office-ergonomics.svg",
+                "alt": "Schéma ergonomie bureau"
+              }
+            ]
+          },
+          {
+            "id": "constrained-positions",
+            "title": "Positions Contraignantes",
+            "type": "safety_rules",
+            "content": "#### Bras au-dessus des Épaules\n\n**Exemples :**\n- Peinture plafond\n- Serrage boulons hauteur\n- Inspection vanne en hauteur\n\n**Danger :**\n- Tendinite épaule (coiffe des rotateurs)\n- Fatigue rapide\n\n**Solutions :**\n```\nUtiliser escabeau/échelle (se rapprocher)\nOutil à manche télescopique\nPause toutes les 15 minutes\n```\n\n#### Torsion du Tronc\n\n**Exemples :**\n- Saisir objet sur le côté (sans tourner pieds)\n- Regarder derrière en restant de face\n\n**Danger :**\n- Hernie discale lombaire\n- Lumbago (blocage dos)\n\n**Solution :**\n```\nTOUJOURS tourner les PIEDS en même temps que le tronc\nPas de torsion dos isolée\n```"
+          }
+        ]
+      },
+      {
+        "id": "module-ergo-4",
+        "title": "🤸 EXERCICES PRATIQUES",
+        "duration": 0.5,
+        "description": "Démonstrations et étirements",
+        "content": [
+          {
+            "id": "lifting-demos",
+            "title": "Démonstrations de Levage",
+            "type": "procedure",
+            "content": "#### Exercice 1 : Soulever Caisse 20 kg\n\n**Matériel :** Caisse avec poignées\n\n**Chaque Participant :**\n\n1. **MAUVAISE Technique** (démonstration)\n   - Dos courbé, jambes tendues\n   - Formateur explique pourquoi DANGER\n\n2. **BONNE Technique** (pratique)\n   - Approcher\n   - Fléchir genoux\n   - Dos droit\n   - Soulever avec jambes\n\n**Correction Individuelle par Formateur**\n\n#### Exercice 2 : Porter à 2 Personnes\n\n**Par Binômes :**\n\n**Scénario :** Porter caisse 30 kg sur 10 mètres\n\n**Étapes :**\n```\n1. Communication (qui prend où ?)\n2. Position symétrique\n3. Décompte \"1, 2, 3, Hop !\"\n4. Marcher synchronisé\n5. Déposer ensemble\n```\n\n**Observation :** Communication = Clé"
+          },
+          {
+            "id": "stretching-exercises",
+            "title": "Étirements au Poste",
+            "type": "procedure",
+            "content": "#### Pour Travail Debout / Manutention\n\n**ÉTIREMENT 1 : Dos (Lombaires)**\n\n```\nPosition : Debout\nAction : Mains sur hanches, pencher doucement en arrière\nDurée : 10 secondes\nRépéter : 3 fois\n```\n\n**ÉTIREMENT 2 : Ischio-jambiers (Arrière cuisses)**\n\n```\nPosition : Debout, pieds largeur hanches\nAction : Pencher vers avant, mains vers pieds (jambes tendues)\nDurée : 15 secondes\nRépéter : 2 fois\n```\n\n#### Pour Travail Assis (Bureau)\n\n**ÉTIREMENT 4 : Nuque**\n\n```\nPosition : Assis, dos droit\nAction : Pencher tête vers épaule droite (oreille vers épaule)\nDurée : 10 secondes chaque côté\nRépéter : 2 fois\n```\n\n**ÉTIREMENT 5 : Poignets**\n\n```\nPosition : Assis ou debout\nAction : Bras tendu, tirer doigts vers soi avec autre main\nDurée : 10 secondes chaque main\nRépéter : 2 fois\n```\n\n**Fréquence :** Toutes les 2 heures minimum"
+          }
+        ]
+      }
+    ],
+    "resources": [
+      {
+        "id": "ergonomics-poster",
+        "title": "Affiche Gestes et Postures",
+        "type": "pdf",
+        "url": "/resources/hse/ergonomics-poster.pdf",
+        "description": "Affiche des bonnes postures à afficher aux postes",
+        "downloadable": true
+      },
+      {
+        "id": "stretching-guide",
+        "title": "Guide des Étirements",
+        "type": "pdf",
+        "url": "/resources/hse/stretching-exercises.pdf",
+        "description": "Exercices d'étirement illustrés pour tous les postes",
+        "downloadable": true
+      },
+      {
+        "id": "workstation-setup",
+        "title": "Guide Aménagement Poste",
+        "type": "pdf",
+        "url": "/resources/hse/workstation-ergonomics.pdf",
+        "description": "Guide d'aménagement ergonomique des postes de travail",
+        "downloadable": true
+      }
+    ],
+    "assessments": [
+      {
+        "id": "ergo-practical",
+        "title": "Évaluation Pratique Continue",
+        "type": "practical",
+        "passingScore": 80,
+        "duration": 60,
+        "questions": [
+          {
+            "id": "lifting-technique",
+            "text": "Démontrer la technique de levage correcte avec caisse de 20 kg",
+            "type": "open",
+            "correctAnswer": "Technique complète : approche, flexion genoux, dos droit, saisie ferme, port près du corps",
+            "explanation": "Évaluation sur 10 points de la technique de levage."
+          },
+          {
+            "id": "team-lifting",
+            "text": "Travail en binôme pour porter une charge de 30 kg",
+            "type": "open",
+            "correctAnswer": "Communication, synchronisation, port coordonné",
+            "explanation": "Évaluation sur 5 points du travail en équipe."
+          },
+          {
+            "id": "stretching-demo",
+            "text": "Exécuter 3 étirements différents correctement",
+            "type": "open",
+            "correctAnswer": "Exécution correcte avec respiration",
+            "explanation": "Évaluation sur 3 points des étirements."
+          },
+          {
+            "id": "workstation-analysis",
+            "text": "Analyser un poste de travail et proposer 3 améliorations ergonomiques",
+            "type": "open",
+            "correctAnswer": "Identification pertinente des problèmes et solutions réalistes",
+            "explanation": "Évaluation sur 7 points de l'analyse ergonomique."
+          }
+        ]
+      }
+    ]
+  }
+}

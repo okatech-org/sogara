@@ -33,7 +33,7 @@ import { HSEIncident, HSETraining, HSETrainingSession } from '@/types';
 import { HSESystemValidator } from '@/utils/hse-system-validator';
 
 export function HSEDashboard() {
-  const { hasAnyRole } = useAuth();
+  const { hasAnyRole, state } = useAuth();
   
   // État pour la navigation entre onglets
   const [activeTab, setActiveTab] = useState('overview');

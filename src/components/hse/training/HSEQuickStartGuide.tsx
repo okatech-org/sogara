@@ -75,6 +75,9 @@ export function HSEQuickStartGuide({ onStartTraining }: HSEQuickStartGuideProps)
     { code: 'HSE-009', title: 'Consignation', category: 'Spécialisée', critical: false },
     { code: 'HSE-010', title: 'Environnement', category: 'Prévention', critical: false },
     { code: 'HSE-011', title: 'Habilitation Électrique', category: 'Spécialisée', critical: false },
+    { code: 'HSE-012', title: 'Investigation Incidents', category: 'Management', critical: false },
+    { code: 'HSE-013', title: 'Conduite Défensive', category: 'Spécialisée', critical: false },
+    { code: 'HSE-014', title: 'Gestes et Postures', category: 'Prévention', critical: false },
     { code: 'HSE-015', title: 'H2S Critique', category: 'Critique', critical: true }
   ];
 
@@ -89,10 +92,10 @@ export function HSEQuickStartGuide({ onStartTraining }: HSEQuickStartGuideProps)
             </div>
             <div className="flex-1">
               <h2 className="text-xl font-bold text-blue-900">
-                Bienvenue dans le Système de Formation HSE SOGARA
+                Système de Formation HSE SOGARA - 15 Modules Complets
               </h2>
               <p className="text-blue-700 mt-1">
-                Interface complète pour gérer les formations de sécurité avec contenus interactifs et PDF téléchargeables
+                Interface complète avec toutes les formations HSE : contenus interactifs, illustrations SVG et PDF téléchargeables avec logo SOGARA
               </p>
             </div>
           </div>

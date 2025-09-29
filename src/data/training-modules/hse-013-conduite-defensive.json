@@ -1,0 +1,193 @@
+{
+  "id": "HSE-013",
+  "code": "DRIVING-SAFETY",
+  "title": "Conduite Défensive et Sécurité Routière",
+  "category": "Spécialisée",
+  "description": "Formation à la conduite sécuritaire sur site industriel. Règles spécifiques, conduite défensive et gestion des urgences.",
+  "objectives": [
+    "Conduire en sécurité sur le site industriel SOGARA",
+    "Anticiper les dangers spécifiques à un environnement industriel",
+    "Respecter les règles de circulation interne",
+    "Réagir correctement face aux situations d'urgence",
+    "Effectuer les vérifications avant conduite"
+  ],
+  "duration": 4,
+  "durationUnit": "heures",
+  "validityMonths": 36,
+  "requiredForRoles": ["EMPLOYE", "SUPERVISEUR", "HSE"],
+  "prerequisites": ["Permis de conduire valide"],
+  "certification": {
+    "examRequired": true,
+    "passingScore": 80,
+    "practicalTest": true,
+    "certificateType": "Autorisation de Conduite Interne"
+  },
+  "instructor": {
+    "qualificationRequired": "Formateur conduite ou Responsable Transport",
+    "minExperience": "Permis poids lourd + Formation conduite défensive"
+  },
+  "maxParticipants": 8,
+  "language": ["Français"],
+  "deliveryMethods": ["Présentiel obligatoire"],
+  "refresherRequired": true,
+  "refresherFrequency": 36,
+  "content": {
+    "modules": [
+      {
+        "id": "module-drive-1",
+        "title": "🏭 CIRCULATION SUR SITE INDUSTRIEL",
+        "duration": 1,
+        "description": "Spécificités et règles de circulation SOGARA",
+        "content": [
+          {
+            "id": "site-specifics",
+            "title": "Spécificités du Site SOGARA",
+            "type": "safety_rules",
+            "content": "#### Différences Route Publique vs Site Industriel\n\n**Route Publique :**\n- Circulation fluide\n- Véhicules légers majoritaires\n- Limitations 50-90 km/h\n- Signalisation routière classique\n\n**Site Industriel SOGARA :**\n- ⚠️ Engins lourds (chariots élévateurs, camions-citernes)\n- ⚠️ Piétons nombreux (passages fréquents)\n- ⚠️ Zones à risques (ATEX, produits dangereux)\n- ⚠️ Visibilité réduite (tuyauteries, structures)\n- ⚠️ Limitations strictes : **10-20 km/h maximum**\n\n**Règle Absolue :**\n\n> **Sur SOGARA, TOUS les véhicules sont des invités.**\n> **Les piétons et les process ont la priorité.**"
+          },
+          {
+            "id": "circulation-zones",
+            "title": "Plan de Circulation SOGARA",
+            "type": "procedure",
+            "content": "#### Zones de Circulation\n\n```\n┌─────────────────────────────────────┐\n│   ZONE VERTE (20 km/h)             │\n│   - Routes principales             │\n│   - Parkings                       │\n│   - Bâtiments administratifs       │\n└─────────────────────────────────────┘\n\n┌─────────────────────────────────────┐\n│   ZONE ORANGE (10 km/h)            │\n│   - Unités de production           │\n│   - Zones de chargement            │\n│   - Ateliers maintenance           │\n└─────────────────────────────────────┘\n\n┌─────────────────────────────────────┐\n│   ZONE ROUGE (INTERDITE)           │\n│   - Zones ATEX                     │\n│   - Périmètres de sécurité         │\n│   - Travaux en cours               │\n└─────────────────────────────────────┘\n```\n\n**Panneaux Spécifiques SOGARA :**\n\n- 🔴 **Disque Rouge** = ARRÊT OBLIGATOIRE (checkpoint sécurité)\n- 🟠 **Triangle Orange** = DANGER INDUSTRIEL (gaz, pression)\n- ⚪ **Rond Blanc 10** = Limitation 10 km/h\n- 🚫 **Interdit Véhicules** = Zone piétonne uniquement"
+          },
+          {
+            "id": "heavy-vehicles",
+            "title": "Croisement avec Engins Lourds",
+            "type": "emergency_protocol",
+            "content": "#### Les Engins sur SOGARA\n\n**Types d'Engins :**\n- Chariots élévateurs (3-5 tonnes)\n- Camions-citernes (20-40 tonnes)\n- Grues mobiles\n- Camions bennes\n- Véhicules de maintenance\n\n**Dangers Spécifiques :**\n\n**1. ANGLES MORTS Énormes**\n\n```\n        [CAMION-CITERNE]\n           VUE CONDUCTEUR\n               ↓\n         ╔═════════╗\n         ║  ████   ║\n         ║         ║\n         ╚═════════╝\n    ░░░░░           ░░░░░\n    ANGLES MORTS (conducteur ne vous voit PAS)\n```\n\n**Zones Aveugles :**\n- 3 mètres devant le camion\n- Tout le côté droit (jusqu'à 5 mètres)\n- 10 mètres derrière\n\n**2. TEMPS DE FREINAGE Long**\n\n```\nVoiture légère (80 km/h) : 50 mètres\nCamion-citerne chargé (20 km/h) : 30 mètres !\n```\n\n**À 10 km/h, un camion de 40 tonnes met 15 mètres à s'arrêter**\n\n#### Règles d'Or Croisement\n\n```\n✅ VOUS voyez l'engin → VOUS vous arrêtez\n✅ Attendre que l'engin passe COMPLÈTEMENT\n✅ Contact visuel avec le conducteur (signe de la main)\n✅ JAMAIS se faufiler, JAMAIS doubler\n✅ Distance de sécurité : 10 mètres minimum\n```"
+          }
+        ]
+      },
+      {
+        "id": "module-drive-2",
+        "title": "🛡️ PRINCIPES DE CONDUITE DÉFENSIVE",
+        "duration": 1.5,
+        "description": "Anticipation et distances de sécurité",
+        "content": [
+          {
+            "id": "defensive-driving",
+            "title": "Qu'est-ce que la Conduite Défensive ?",
+            "type": "text",
+            "content": "#### Définition\n\n**Conduite Défensive :**\n\n> Conduire en anticipant les erreurs des AUTRES, les dangers de l'environnement, et en gardant TOUJOURS une marge de sécurité.\n\n**Principe :**\n\n```\nSUPPOSER que les autres vont faire des erreurs\n        ↓\nANTICIPER ces erreurs\n        ↓\nSE PRÉPARER à réagir\n        ↓\nRESTER EN SÉCURITÉ\n```\n\n**Exemples :**\n\n❌ **Conduite normale :**\n\"Le piéton est sur le trottoir, il ne va pas traverser.\"\n\n✅ **Conduite défensive :**\n\"Le piéton est sur le trottoir, mais il POURRAIT traverser sans regarder. Je ralentis, pied sur le frein.\""
+          },
+          {
+            "id": "safety-distance",
+            "title": "Distance de Sécurité",
+            "type": "procedure",
+            "content": "#### Règle des 2 Secondes\n\n**Comment Mesurer ?**\n\n```\n1. Le véhicule devant passe un repère (poteau, marquage)\n2. Vous comptez : \"Un SOGARA, Deux SOGARA\"\n3. Vous devez passer le repère APRÈS avoir compté 2 secondes\n```\n\n**Si Vous Passez AVANT 2 secondes → TROP PROCHE**\n\n**Distance de Sécurité SOGARA :**\n\n| Vitesse | Distance Minimale | En Pratique |\n|---------|------------------|-------------|\n| 10 km/h | 6 mètres | Longueur d'1 voiture |\n| 20 km/h | 12 mètres | 2 voitures |\n\n**Augmenter en Cas de :**\n- ⚠️ Pluie : × 2 (24 mètres à 20 km/h)\n- ⚠️ Chaussée huileuse : × 3\n- ⚠️ Engin lourd devant : × 2"
+          },
+          {
+            "id": "blind-spots",
+            "title": "Angles Morts",
+            "type": "procedure",
+            "content": "#### Vos Propres Angles Morts\n\n**Même une petite voiture a des angles morts !**\n\n```\n       [VOTRE VOITURE]\n    ░░░ ══════════ ░░░\n    ░░░            ░░░\n    ░░░            ░░░\n        ══════════\n          ░░░░░\n     ANGLES MORTS\n```\n\n**Zone Morte :**\n- Montants de pare-brise (piliers A)\n- Arrière latéral (quartiers arrière)\n- Derrière (même avec rétroviseurs)\n\n#### Compensation des Angles Morts\n\n**AVANT de Tourner ou Changer de Voie :**\n\n```\n1. Rétroviseur intérieur\n2. Rétroviseur latéral du côté du virage\n3. COUP D'ŒIL DIRECT (tourner la tête) ← ESSENTIEL\n4. Clignotant\n5. Manœuvre progressive\n```\n\n**JAMAIS de manœuvre brusque sur site industriel**"
+          }
+        ]
+      },
+      {
+        "id": "module-drive-3",
+        "title": "🔧 VÉRIFICATIONS ET ENTRETIEN",
+        "duration": 0.5,
+        "description": "Contrôles avant conduite et maintenance",
+        "content": [
+          {
+            "id": "pre-drive-check",
+            "title": "Contrôle Avant Départ",
+            "type": "checklist",
+            "content": "#### Check-List Obligatoire (3 minutes)\n\n**À CHAQUE Prise de Véhicule :**\n\n```\n□ EXTÉRIEUR\n  □ Pneus : Gonflés, pas de clou/déchirure\n  □ Feux : Avant, arrière, clignotants, stop\n  □ Rétroviseurs : Présents, propres, bien orientés\n  □ Pare-brise : Propre, pas de fissure\n  □ Carrosserie : Pas de nouveau choc (signaler si oui)\n\n□ INTÉRIEUR\n  □ Siège : Réglé à bonne position\n  □ Ceinture : Fonctionne, pas vrillée\n  □ Rétroviseur intérieur : Bien orienté\n  □ Essuie-glaces : Fonctionnels\n  □ Klaxon : Fonctionne\n\n□ DOCUMENTS\n  □ Carte grise présente\n  □ Assurance à jour\n  □ Extincteur (dans véhicule)\n```\n\n**Si UN élément défaillant → NE PAS UTILISER**\n→ Signaler au Garage SOGARA (poste 2270)"
+          }
+        ]
+      },
+      {
+        "id": "module-drive-4",
+        "title": "🎯 EXERCICES PRATIQUES",
+        "duration": 1,
+        "description": "Parcours supervisé et manœuvres",
+        "content": [
+          {
+            "id": "practical-course",
+            "title": "Conduite Supervisée sur Site",
+            "type": "procedure",
+            "content": "#### Parcours Pratique SOGARA\n\n**Trajet :**\n```\nParking Admin\n    ↓\nZone Verte (20 km/h) - 500m\n    ↓\nCheckpoint Sécurité (STOP obligatoire)\n    ↓\nZone Orange (10 km/h) - 300m\n    ↓\nCroisement chariot élévateur (attente)\n    ↓\nDemi-tour sécurisé\n    ↓\nRetour Parking\n```\n\n**Évaluation par Formateur :**\n- Respect vitesses (contrôle radar)\n- Arrêt complet checkpoint\n- Anticipation chariot élévateur\n- Distance de sécurité\n- Vérifications visuelles (rétros)\n- Réactions aux imprévus (piéton)"
+          },
+          {
+            "id": "emergency-maneuvers",
+            "title": "Manœuvres en Sécurité",
+            "type": "procedure",
+            "content": "#### Marche Arrière\n\n**Danger N°1 sur les sites industriels**\n\n**Procédure Obligatoire :**\n\n```\n1. Descendre du véhicule\n2. FAIRE LE TOUR à pied\n3. Vérifier AUCUN obstacle/personne\n4. Remonter\n5. Rétroviseurs + caméra (si équipé)\n6. Marche arrière LENTE (5 km/h max)\n7. STOP si doute → Redescendre vérifier\n```\n\n**Si Manœuvre Complexe :**\n→ Demander aide collègue (guide à l'extérieur)\n\n#### Freinage d'Urgence\n\n**Situation :** Piéton traverse soudainement\n\n**Réaction (en 1 seconde) :**\n\n```\n1. Pied FORT sur frein (écraser pédale)\n2. NE PAS lâcher (ABS vibre = normal)\n3. Direction : DROIT (pas de braquage brusque)\n4. KLAXON (avertir)\n```\n\n**Distance de Freinage (Site SOGARA) :**\n\n| Vitesse | Distance Réaction | Distance Freinage | TOTAL |\n|---------|------------------|------------------|-------|\n| 10 km/h | 3 m | 2 m | **5 m** |\n| 20 km/h | 6 m | 6 m | **12 m** |\n\n**Leçon :** Même à 20 km/h, il faut **12 mètres** pour s'arrêter !"
+          }
+        ]
+      }
+    ],
+    "resources": [
+      {
+        "id": "site-circulation-map",
+        "title": "Plan de Circulation SOGARA",
+        "type": "pdf",
+        "url": "/resources/hse/site-circulation-map.pdf",
+        "description": "Plan détaillé des zones et limitations de vitesse",
+        "downloadable": true
+      },
+      {
+        "id": "vehicle-checklist",
+        "title": "Check-List Véhicule",
+        "type": "pdf",
+        "url": "/resources/hse/vehicle-pre-check.pdf",
+        "description": "Liste de vérification avant conduite",
+        "downloadable": true
+      }
+    ],
+    "assessments": [
+      {
+        "id": "drive-qcm",
+        "title": "QCM Conduite Défensive",
+        "type": "qcm",
+        "passingScore": 80,
+        "duration": 25,
+        "questions": [
+          {
+            "id": "q1",
+            "text": "Vitesse maximale Zone Verte SOGARA ?",
+            "type": "multiple_choice",
+            "options": ["20 km/h", "30 km/h", "50 km/h"],
+            "correctAnswer": "20 km/h",
+            "explanation": "La vitesse maximale en Zone Verte (routes principales) est de 20 km/h."
+          },
+          {
+            "id": "q2",
+            "text": "Qui a la priorité : piéton ou véhicule ?",
+            "type": "multiple_choice",
+            "options": ["Véhicule", "Piéton", "Le plus rapide"],
+            "correctAnswer": "Piéton",
+            "explanation": "Sur le site SOGARA, les piétons ont TOUJOURS la priorité absolue."
+          },
+          {
+            "id": "q3",
+            "text": "Distance de sécurité à 10 km/h ?",
+            "type": "multiple_choice",
+            "options": ["3 mètres", "6 mètres", "10 mètres"],
+            "correctAnswer": "6 mètres",
+            "explanation": "La règle des 2 secondes donne 6 mètres de distance de sécurité à 10 km/h."
+          }
+        ]
+      },
+      {
+        "id": "drive-practical",
+        "title": "Parcours Évalué",
+        "type": "practical",
+        "passingScore": 80,
+        "duration": 45,
+        "questions": [
+          {
+            "id": "circuit-evaluation",
+            "text": "Parcours complet avec vérifications, conduite zones, croisements et manœuvres",
+            "type": "open",
+            "correctAnswer": "Respect de toutes les consignes et réactions appropriées",
+            "explanation": "Évaluation globale de la conduite défensive sur site industriel."
+          }
+        ]
+      }
+    ]
+  }
+}

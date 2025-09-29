@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <linearGradient id="fatalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c2d12;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#991b1b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="seriousGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#dc2626;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#b91c1c;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="minorGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ea580c;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="incidentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#eab308;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ca8a04;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="behaviorGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Titre -->
+  <text x="200" y="25" text-anchor="middle" fill="#374151" font-size="16" font-weight="bold">PYRAMIDE DE BIRD - RATIO DES ACCIDENTS</text>
+  
+  <!-- Niveau 1 - Accident mortel -->
+  <rect x="180" y="50" width="40" height="25" fill="url(#fatalGradient)" rx="3"/>
+  <text x="200" y="68" text-anchor="middle" fill="white" font-size="14" font-weight="bold">1</text>
+  <text x="235" y="68" fill="#7c2d12" font-size="12" font-weight="bold">ACCIDENT MORTEL</text>
+  
+  <!-- Niveau 2 - Accidents graves -->
+  <rect x="160" y="80" width="80" height="30" fill="url(#seriousGradient)" rx="3"/>
+  <text x="200" y="100" text-anchor="middle" fill="white" font-size="14" font-weight="bold">10</text>
+  <text x="255" y="100" fill="#dc2626" font-size="12" font-weight="bold">ACCIDENTS GRAVES</text>
+  
+  <!-- Niveau 3 - Accidents bénins -->
+  <rect x="140" y="115" width="120" height="35" fill="url(#minorGradient)" rx="3"/>
+  <text x="200" y="138" text-anchor="middle" fill="white" font-size="14" font-weight="bold">30</text>
+  <text x="275" y="138" fill="#f97316" font-size="12" font-weight="bold">ACCIDENTS BÉNINS</text>
+  
+  <!-- Niveau 4 - Incidents -->
+  <rect x="120" y="155" width="160" height="40" fill="url(#incidentGradient)" rx="3"/>
+  <text x="200" y="180" text-anchor="middle" fill="white" font-size="14" font-weight="bold">600</text>
+  <text x="295" y="180" fill="#eab308" font-size="12" font-weight="bold">INCIDENTS</text>
+  <text x="295" y="192" fill="#ca8a04" font-size="10">(Presque-accidents)</text>
+  
+  <!-- Niveau 5 - Comportements à risque -->
+  <rect x="80" y="200" width="240" height="50" fill="url(#behaviorGradient)" rx="3"/>
+  <text x="200" y="230" text-anchor="middle" fill="white" font-size="14" font-weight="bold">MILLIERS</text>
+  <text x="320" y="225" fill="#3b82f6" font-size="12" font-weight="bold">COMPORTEMENTS</text>
+  <text x="320" y="237" fill="#1d4ed8" font-size="12" font-weight="bold">À RISQUE</text>
+  
+  <!-- Flèches de progression -->
+  <g stroke="#6b7280" stroke-width="2" fill="#6b7280">
+    <path d="M 190 75 L 185 85 L 195 85 Z"/>
+    <path d="M 190 110 L 185 120 L 195 120 Z"/>
+    <path d="M 190 150 L 185 160 L 195 160 Z"/>
+    <path d="M 190 195 L 185 205 L 195 205 Z"/>
+  </g>
+  
+  <!-- Message clé -->
+  <rect x="50" y="270" width="300" height="40" fill="#fef3c7" stroke="#f59e0b" stroke-width="1" rx="5"/>
+  <text x="200" y="285" text-anchor="middle" fill="#92400e" font-size="11" font-weight="bold">MESSAGE CLÉ :</text>
+  <text x="200" y="300" text-anchor="middle" fill="#92400e" font-size="10">Pour chaque accident mortel, il y a eu 600 signaux faibles non traités</text>
+  
+  <!-- Enseignement -->
+  <text x="200" y="330" text-anchor="middle" fill="#374151" font-size="12" font-weight="bold">→ Investiguer les PETITS incidents pour prévenir les GRANDS accidents</text>
+  
+  <!-- Statistiques sur le côté -->
+  <g fill="#6b7280" font-size="9">
+    <text x="30" y="65">Fatal</text>
+    <text x="30" y="95">Hospitalisé</text>
+    <text x="30" y="133">Premiers secours</text>
+    <text x="30" y="175">Presque raté</text>
+    <text x="30" y="225">Actes non sûrs</text>
+  </g>
+  
+  <!-- Échelle de gravité -->
+  <text x="20" y="40" fill="#374151" font-size="10" font-weight="bold" transform="rotate(-90, 20, 40)">GRAVITÉ</text>
+  <text x="380" y="160" fill="#374151" font-size="10" font-weight="bold" transform="rotate(90, 380, 160)">FRÉQUENCE</text>
+</svg>

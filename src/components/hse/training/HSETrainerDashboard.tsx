@@ -13,21 +13,24 @@ import {
   Download,
   FileText,
   Eye,
-  Edit
+  Edit,
+  Play
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Progress } from '@/components/ui/progress';
-import { HSETrainingModule, HSETrainingProgress, Employee } from '@/types';
+import { HSETrainingModule as TrainingModuleType, HSETrainingProgress, Employee } from '@/types';
 import { hseTrainingService } from '@/services/hse-training.service';
 import { HSETrainingModule as TrainingModuleComponent } from './HSETrainingModule';
 import { HSEQuickStartGuide } from './HSEQuickStartGuide';
+import { HSEEmployeeSelector } from './HSEEmployeeSelector';
 import { PDFGeneratorService } from '@/services/pdf-generator.service';
 import { useAuth } from '@/contexts/AppContext';
 
@@ -44,6 +47,9 @@ import sstModule from '@/data/training-modules/hse-008-sst.json';
 import lockoutModule from '@/data/training-modules/hse-009-consignation.json';
 import envModule from '@/data/training-modules/hse-010-environnement.json';
 import elecModule from '@/data/training-modules/hse-011-habilitation-electrique.json';
+import investigationModule from '@/data/training-modules/hse-012-investigation-incidents.json';
+import drivingModule from '@/data/training-modules/hse-013-conduite-defensive.json';
+import ergonomicsModule from '@/data/training-modules/hse-014-gestes-postures.json';
 
 interface HSETrainerDashboardProps {
   canManage?: boolean;
@@ -51,11 +57,13 @@ interface HSETrainerDashboardProps {
 
 export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardProps) {
   const { currentUser, state } = useAuth();
-  const [selectedModule, setSelectedModule] = useState<HSETrainingModule | null>(null);
+  const [selectedModule, setSelectedModule] = useState<TrainingModuleType | null>(null);
   const [selectedEmployee, setSelectedEmployee] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState<string>('all');
   const [showModuleCreator, setShowModuleCreator] = useState(false);
+  const [showEmployeeSelector, setShowEmployeeSelector] = useState<TrainingModuleType | null>(null);
+  const [notifications, setNotifications] = useState<Array<{id: string, message: string, type: 'success' | 'error'}>>([]);
 
   // Gestion du cas où state n'est pas encore initialisé
   if (!state || !state.employees) {
@@ -70,22 +78,36 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
   }
 
   // Modules de formation disponibles (ordre logique de progression)
-  const trainingModules: HSETrainingModule[] = [
-    inductionModule as HSETrainingModule,           // HSE-001 - Base obligatoire
-    epiModule as HSETrainingModule,                 // HSE-002 - EPI de base
-    fireModule as HSETrainingModule,                // HSE-003 - Incendie
-    confinedSpaceModule as HSETrainingModule,       // HSE-004 - Espace confiné
-    heightModule as HSETrainingModule,              // HSE-005 - Travail hauteur
-    chemModule as HSETrainingModule,                // HSE-006 - Produits chimiques
-    permitModule as HSETrainingModule,              // HSE-007 - Permis (management)
-    sstModule as HSETrainingModule,                 // HSE-008 - Secourisme
-    lockoutModule as HSETrainingModule,             // HSE-009 - Consignation
-    envModule as HSETrainingModule,                 // HSE-010 - Environnement
-    elecModule as HSETrainingModule,                // HSE-011 - Électricité
-    h2sModule as HSETrainingModule,                 // HSE-015 - H2S (critique en fin)
+  const trainingModules: TrainingModuleType[] = [
+    inductionModule as TrainingModuleType,           // HSE-001 - Base obligatoire
+    epiModule as TrainingModuleType,                 // HSE-002 - EPI de base
+    fireModule as TrainingModuleType,                // HSE-003 - Incendie
+    confinedSpaceModule as TrainingModuleType,       // HSE-004 - Espace confiné
+    heightModule as TrainingModuleType,              // HSE-005 - Travail hauteur
+    chemModule as TrainingModuleType,                // HSE-006 - Produits chimiques
+    permitModule as TrainingModuleType,              // HSE-007 - Permis (management)
+    sstModule as TrainingModuleType,                 // HSE-008 - Secourisme
+    lockoutModule as TrainingModuleType,             // HSE-009 - Consignation
+    envModule as TrainingModuleType,                 // HSE-010 - Environnement
+    elecModule as TrainingModuleType,                // HSE-011 - Électricité
+    investigationModule as TrainingModuleType,       // HSE-012 - Investigation incidents
+    drivingModule as TrainingModuleType,             // HSE-013 - Conduite défensive
+    ergonomicsModule as TrainingModuleType,          // HSE-014 - Gestes et postures
+    h2sModule as TrainingModuleType,                 // HSE-015 - H2S (critique en fin)
   ];
 
   const employees = state.employees || [];
+
+  // Fonction pour ajouter une notification
+  const addNotification = (message: string, type: 'success' | 'error' = 'success') => {
+    const id = Math.random().toString(36).substring(7);
+    setNotifications(prev => [...prev, { id, message, type }]);
+    
+    // Auto-supprimer après 5 secondes
+    setTimeout(() => {
+      setNotifications(prev => prev.filter(n => n.id !== id));
+    }, 5000);
+  };
 
   // Statistiques des formations
   const getTrainingStats = () => {
@@ -145,9 +167,23 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
         module={selectedModule}
         employeeId={selectedEmployee}
         onComplete={(progress) => {
-          console.log('Formation terminée:', progress);
-          setSelectedModule(null);
-          setSelectedEmployee('');
+          try {
+            const employee = employees.find(emp => emp.id === progress.employeeId);
+            const module = trainingModules.find(mod => mod.id === progress.trainingModuleId);
+            
+            if (employee && module) {
+              addNotification(
+                `🎉 Félicitations ! ${employee.firstName} ${employee.lastName} a terminé la formation "${module.title}" avec succès.`,
+                'success'
+              );
+            }
+            
+            setSelectedModule(null);
+            setSelectedEmployee('');
+          } catch (error) {
+            console.error('Erreur fin de formation:', error);
+            addNotification('Erreur lors de la finalisation de la formation', 'error');
+          }
         }}
         onExit={() => {
           setSelectedModule(null);
@@ -159,6 +195,22 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
 
   return (
     <div className="space-y-6">
+      {/* Notifications */}
+      {notifications.length > 0 && (
+        <div className="fixed top-4 right-4 z-50 space-y-2">
+          {notifications.map((notification) => (
+            <Alert 
+              key={notification.id}
+              variant={notification.type === 'error' ? 'destructive' : 'default'}
+              className="w-96 animate-in slide-in-from-right"
+            >
+              <CheckCircle className="h-4 w-4" />
+              <AlertDescription>{notification.message}</AlertDescription>
+            </Alert>
+          ))}
+        </div>
+      )}
+
       {/* En-tête */}
       <div className="flex items-center justify-between">
         <div>
@@ -167,12 +219,30 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
             Interface formateur pour gérer et suivre les formations de sécurité
           </p>
         </div>
-        {canManage && (
-          <Button onClick={() => setShowModuleCreator(true)} className="gap-2">
-            <Plus className="w-4 h-4" />
-            Nouveau module
-          </Button>
-        )}
+        <div className="flex gap-2">
+          {/* Test rapide avec utilisateur actuel */}
+          {currentUser && (
+            <Button 
+              variant="outline"
+              onClick={() => {
+                // Utiliser la première formation pour test
+                const testModule = trainingModules[0];
+                setSelectedModule(testModule);
+                setSelectedEmployee(currentUser.id);
+              }}
+              className="gap-2"
+            >
+              <Play className="w-4 h-4" />
+              Test Formation
+            </Button>
+          )}
+          {canManage && (
+            <Button onClick={() => setShowModuleCreator(true)} className="gap-2">
+              <Plus className="w-4 h-4" />
+              Nouveau module
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Statistiques générales */}
@@ -430,9 +500,7 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
                         <Button 
                           size="sm" 
                           onClick={() => {
-                            setSelectedModule(module);
-                            // Pour démo, on utilise l'utilisateur actuel
-                            setSelectedEmployee(currentUser?.id || employees[0]?.id || '');
+                            setShowEmployeeSelector(module);
                           }}
                           className="flex-1 gap-2"
                         >
@@ -502,16 +570,38 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
                                    'Non démarré'}
                                 </div>
                               </div>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => {
-                                  setSelectedModule(module);
-                                  setSelectedEmployee(employee.id);
-                                }}
-                              >
-                                <Eye className="w-3 h-3" />
-                              </Button>
+                              <div className="flex gap-1">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    setSelectedModule(module);
+                                    setSelectedEmployee(employee.id);
+                                  }}
+                                  title="Voir/Continuer formation"
+                                >
+                                  {progress.status === 'not_started' ? (
+                                    <Play className="w-3 h-3" />
+                                  ) : progress.status === 'in_progress' ? (
+                                    <BookOpen className="w-3 h-3" />
+                                  ) : (
+                                    <Eye className="w-3 h-3" />
+                                  )}
+                                </Button>
+                                {progress.status === 'completed' && (
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => {
+                                      // Générer certificat pour cet employé
+                                      console.log('Générer certificat pour:', employee.firstName, module.title);
+                                    }}
+                                    title="Certificat"
+                                  >
+                                    <Award className="w-3 h-3" />
+                                  </Button>
+                                )}
+                              </div>
                             </div>
                           ))}
                         </div>
@@ -621,6 +711,37 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Sélecteur d'employé pour démarrer formation */}
+      {showEmployeeSelector && (
+        <HSEEmployeeSelector
+          employees={employees}
+          module={{
+            id: showEmployeeSelector.id,
+            title: showEmployeeSelector.title,
+            code: showEmployeeSelector.code,
+            requiredForRoles: showEmployeeSelector.requiredForRoles
+          }}
+          onSelectEmployee={(employeeId) => {
+            try {
+              const employee = employees.find(emp => emp.id === employeeId);
+              if (employee && showEmployeeSelector) {
+                setSelectedModule(showEmployeeSelector);
+                setSelectedEmployee(employeeId);
+                setShowEmployeeSelector(null);
+                addNotification(
+                  `Formation "${showEmployeeSelector.title}" démarrée pour ${employee.firstName} ${employee.lastName}`,
+                  'success'
+                );
+              }
+            } catch (error) {
+              console.error('Erreur démarrage formation:', error);
+              addNotification('Erreur lors du démarrage de la formation', 'error');
+            }
+          }}
+          onCancel={() => setShowEmployeeSelector(null)}
+        />
+      )}
     </div>
   );
 }
