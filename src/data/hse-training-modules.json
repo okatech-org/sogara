@@ -1,0 +1,323 @@
+{
+  "hseTrainingModules": [
+    {
+      "id": "HSE-001",
+      "code": "INDUCTION-BASE",
+      "title": "Induction HSE - Accueil Sécurité",
+      "category": "Obligatoire",
+      "description": "Formation d'accueil obligatoire pour tous les nouveaux employés et sous-traitants. Couvre les règles de base de sécurité, les risques généraux de la raffinerie et les procédures d'urgence.",
+      "objectives": [
+        "Comprendre la politique HSE de SOGARA",
+        "Identifier les risques majeurs de la raffinerie",
+        "Connaître les procédures d'urgence et d'évacuation",
+        "Respecter les règles de base de sécurité sur site"
+      ],
+      "duration": 8,
+      "durationUnit": "heures",
+      "validityMonths": 12,
+      "requiredForRoles": ["EMPLOYE", "SUPERVISEUR", "HSE", "ADMIN", "RECEP", "COMMUNICATION"],
+      "prerequisites": [],
+      "certification": {
+        "examRequired": true,
+        "passingScore": 80,
+        "practicalTest": true,
+        "certificateType": "Badge d'accès sécurisé"
+      },
+      "instructor": {
+        "qualificationRequired": "Formateur HSE certifié",
+        "minExperience": "3 ans en raffinerie"
+      },
+      "maxParticipants": 20,
+      "language": ["Français", "Anglais"],
+      "deliveryMethods": ["Présentiel", "E-learning (théorie)"],
+      "refresherRequired": true,
+      "refresherFrequency": 12
+    },
+    {
+      "id": "HSE-002",
+      "code": "EPI-ADVANCED",
+      "title": "Port et Utilisation des EPI",
+      "category": "Obligatoire",
+      "description": "Formation approfondie sur l'utilisation correcte des équipements de protection individuelle spécifiques à l'industrie pétrolière.",
+      "objectives": [
+        "Identifier les différents types d'EPI et leurs usages",
+        "Utiliser correctement chaque EPI",
+        "Entretenir et inspecter les EPI",
+        "Reconnaître les EPI défectueux"
+      ],
+      "duration": 4,
+      "durationUnit": "heures",
+      "validityMonths": 24,
+      "requiredForRoles": ["EMPLOYE", "SUPERVISEUR", "HSE"],
+      "prerequisites": ["HSE-001"],
+      "certification": {
+        "examRequired": true,
+        "passingScore": 85,
+        "practicalTest": true,
+        "certificateType": "Certificat de compétence EPI"
+      },
+      "instructor": {
+        "qualificationRequired": "Technicien HSE",
+        "minExperience": "2 ans"
+      },
+      "maxParticipants": 15,
+      "language": ["Français"],
+      "deliveryMethods": ["Présentiel"],
+      "refresherRequired": true,
+      "refresherFrequency": 24
+    },
+    {
+      "id": "HSE-003",
+      "code": "FIRE-SAFETY",
+      "title": "Prévention et Lutte contre l'Incendie",
+      "category": "Obligatoire",
+      "description": "Formation complète sur la prévention des incendies, l'utilisation des extincteurs et les procédures d'évacuation en raffinerie.",
+      "objectives": [
+        "Comprendre le triangle du feu et les classes de feux",
+        "Utiliser les extincteurs appropriés",
+        "Mettre en œuvre les procédures d'évacuation",
+        "Prévenir les risques d'incendie en raffinerie"
+      ],
+      "duration": 6,
+      "durationUnit": "heures",
+      "validityMonths": 12,
+      "requiredForRoles": ["EMPLOYE", "SUPERVISEUR", "HSE"],
+      "prerequisites": ["HSE-001"],
+      "certification": {
+        "examRequired": true,
+        "passingScore": 80,
+        "practicalTest": true,
+        "certificateType": "Certificat Équipier de Première Intervention (EPI)"
+      },
+      "instructor": {
+        "qualificationRequired": "Sapeur-pompier ou formateur incendie certifié",
+        "minExperience": "5 ans"
+      },
+      "maxParticipants": 12,
+      "language": ["Français"],
+      "deliveryMethods": ["Présentiel"],
+      "refresherRequired": true,
+      "refresherFrequency": 12
+    },
+    {
+      "id": "HSE-004",
+      "code": "CONFINED-SPACE",
+      "title": "Travail en Espace Confiné",
+      "category": "Spécialisée",
+      "description": "Formation spécialisée pour le personnel amené à travailler dans des espaces confinés (réservoirs, cuves, fosses, canalisations).",
+      "objectives": [
+        "Identifier un espace confiné et ses dangers",
+        "Appliquer les procédures de permis d'entrée",
+        "Utiliser les équipements de surveillance atmosphérique",
+        "Mettre en œuvre les procédures de sauvetage"
+      ],
+      "duration": 8,
+      "durationUnit": "heures",
+      "validityMonths": 24,
+      "requiredForRoles": ["EMPLOYE", "SUPERVISEUR"],
+      "prerequisites": ["HSE-001", "HSE-002"],
+      "certification": {
+        "examRequired": true,
+        "passingScore": 90,
+        "practicalTest": true,
+        "certificateType": "Habilitation Espace Confiné"
+      },
+      "instructor": {
+        "qualificationRequired": "Expert HSE avec certification espace confiné",
+        "minExperience": "5 ans"
+      },
+      "maxParticipants": 10,
+      "language": ["Français"],
+      "deliveryMethods": ["Présentiel"],
+      "refresherRequired": true,
+      "refresherFrequency": 24
+    },
+    {
+      "id": "HSE-005",
+      "code": "WORK-HEIGHT",
+      "title": "Travail en Hauteur et Port du Harnais",
+      "category": "Spécialisée",
+      "description": "Formation pour les travaux en hauteur supérieurs à 3 mètres avec utilisation de harnais antichute et systèmes d'arrêt de chute.",
+      "objectives": [
+        "Identifier les risques de chute",
+        "Utiliser correctement un harnais antichute",
+        "Mettre en œuvre les systèmes d'ancrage",
+        "Respecter les procédures de sécurité en hauteur"
+      ],
+      "duration": 7,
+      "durationUnit": "heures",
+      "validityMonths": 24,
+      "requiredForRoles": ["EMPLOYE", "SUPERVISEUR"],
+      "prerequisites": ["HSE-001", "HSE-002"],
+      "certification": {
+        "examRequired": true,
+        "passingScore": 85,
+        "practicalTest": true,
+        "certificateType": "Certificat de compétence Travail en Hauteur"
+      },
+      "instructor": {
+        "qualificationRequired": "Cordiste professionnel ou formateur travail en hauteur",
+        "minExperience": "5 ans"
+      },
+      "maxParticipants": 10,
+      "language": ["Français"],
+      "deliveryMethods": ["Présentiel"],
+      "refresherRequired": true,
+      "refresherFrequency": 24
+    },
+    {
+      "id": "HSE-006",
+      "code": "CHEM-SAFETY",
+      "title": "Manipulation des Produits Chimiques Dangereux",
+      "category": "Spécialisée",
+      "description": "Formation sur la manipulation sécuritaire des produits chimiques, lecture des FDS et gestion des déversements.",
+      "objectives": [
+        "Lire et comprendre les Fiches de Données de Sécurité (FDS)",
+        "Identifier les pictogrammes de danger",
+        "Manipuler les produits chimiques en toute sécurité",
+        "Intervenir en cas de déversement ou d'exposition"
+      ],
+      "duration": 6,
+      "durationUnit": "heures",
+      "validityMonths": 24,
+      "requiredForRoles": ["EMPLOYE", "SUPERVISEUR", "HSE"],
+      "prerequisites": ["HSE-001"],
+      "certification": {
+        "examRequired": true,
+        "passingScore": 85,
+        "practicalTest": true,
+        "certificateType": "Certificat Manipulation Produits Chimiques"
+      },
+      "instructor": {
+        "qualificationRequired": "Chimiste ou Ingénieur HSE",
+        "minExperience": "3 ans"
+      },
+      "maxParticipants": 15,
+      "language": ["Français"],
+      "deliveryMethods": ["Présentiel", "Blended (théorie en e-learning)"],
+      "refresherRequired": true,
+      "refresherFrequency": 24
+    },
+    {
+      "id": "HSE-007",
+      "code": "PERMIT-WORK",
+      "title": "Système de Permis de Travail",
+      "category": "Spécialisée",
+      "description": "Formation sur le système de permis de travail pour travaux à risque (chaud, froid, électrique, hauteur, espace confiné).",
+      "objectives": [
+        "Comprendre le système de permis de travail",
+        "Identifier les travaux nécessitant un permis",
+        "Remplir correctement un permis de travail",
+        "Superviser l'exécution des travaux à permis"
+      ],
+      "duration": 4,
+      "durationUnit": "heures",
+      "validityMonths": 24,
+      "requiredForRoles": ["SUPERVISEUR", "HSE"],
+      "prerequisites": ["HSE-001"],
+      "certification": {
+        "examRequired": true,
+        "passingScore": 90,
+        "practicalTest": false,
+        "certificateType": "Habilitation Émetteur/Récepteur de Permis"
+      },
+      "instructor": {
+        "qualificationRequired": "Responsable HSE ou Ingénieur Process",
+        "minExperience": "5 ans"
+      },
+      "maxParticipants": 15,
+      "language": ["Français"],
+      "deliveryMethods": ["Présentiel"],
+      "refresherRequired": true,
+      "refresherFrequency": 24
+    },
+    {
+      "id": "HSE-008",
+      "code": "FIRST-AID",
+      "title": "Sauveteur Secouriste du Travail (SST)",
+      "category": "Obligatoire",
+      "description": "Formation aux premiers secours en entreprise pour intervenir efficacement en cas d'accident.",
+      "objectives": [
+        "Protéger, examiner, alerter",
+        "Secourir une victime en détresse",
+        "Utiliser un défibrillateur automatique",
+        "Intervenir face aux situations d'urgence"
+      ],
+      "duration": 14,
+      "durationUnit": "heures",
+      "validityMonths": 24,
+      "requiredForRoles": ["EMPLOYE", "SUPERVISEUR", "HSE"],
+      "prerequisites": [],
+      "certification": {
+        "examRequired": true,
+        "passingScore": null,
+        "practicalTest": true,
+        "certificateType": "Certificat SST (INRS)"
+      },
+      "instructor": {
+        "qualificationRequired": "Formateur SST certifié INRS",
+        "minExperience": "Formation initiale obligatoire"
+      },
+      "maxParticipants": 10,
+      "language": ["Français"],
+      "deliveryMethods": ["Présentiel"],
+      "refresherRequired": true,
+      "refresherFrequency": 24
+    },
+    {
+      "id": "HSE-015",
+      "code": "H2S-AWARENESS",
+      "title": "Sensibilisation Sulfure d'Hydrogène (H2S)",
+      "category": "Critique",
+      "description": "Formation spécifique sur les dangers du sulfure d'hydrogène (H2S), gaz mortel présent dans les hydrocarbures.",
+      "objectives": [
+        "Reconnaître les propriétés et dangers du H2S",
+        "Utiliser les détecteurs de H2S",
+        "Appliquer les procédures d'urgence",
+        "Porter les équipements de protection respiratoire"
+      ],
+      "duration": 4,
+      "durationUnit": "heures",
+      "validityMonths": 12,
+      "requiredForRoles": ["EMPLOYE", "SUPERVISEUR", "HSE"],
+      "prerequisites": ["HSE-001"],
+      "certification": {
+        "examRequired": true,
+        "passingScore": 100,
+        "practicalTest": true,
+        "certificateType": "Certificat de sensibilisation H2S"
+      },
+      "instructor": {
+        "qualificationRequired": "Expert HSE raffinerie",
+        "minExperience": "5 ans"
+      },
+      "maxParticipants": 15,
+      "language": ["Français"],
+      "deliveryMethods": ["Présentiel"],
+      "refresherRequired": true,
+      "refresherFrequency": 12
+    }
+  ],
+  "metadata": {
+    "version": "1.0",
+    "lastUpdated": "2025-01-15",
+    "organization": "SOGARA - Société Gabonaise de Raffinage",
+    "country": "Gabon",
+    "industry": "Raffinage pétrolier",
+    "complianceStandards": [
+      "ISO 45001:2018 (Santé et sécurité au travail)",
+      "ISO 14001:2015 (Management environnemental)",
+      "OHSAS 18001",
+      "Code du Travail Gabonais",
+      "Normes OSHA",
+      "API (American Petroleum Institute)"
+    ],
+    "totalModules": 9,
+    "trainingCategories": {
+      "Obligatoire": 4,
+      "Spécialisée": 4,
+      "Critique": 1
+    },
+    "notes": "Catalogue de formations HSE adapté à la raffinerie SOGARA. Tous les modules doivent être dispensés par des formateurs qualifiés et certifiés."
+  }
+}

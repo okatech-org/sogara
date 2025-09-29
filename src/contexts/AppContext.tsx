@@ -8,7 +8,9 @@ import {
   Notification, 
   DashboardStats,
   UserRole,
-  Post
+  Post,
+  HSEIncident,
+  HSETraining
 } from '@/types';
 import { repositories } from '@/services/repositories';
 
@@ -19,6 +21,8 @@ interface AppState {
   visits: Visit[];
   packages: PackageMail[];
   equipment: Equipment[];
+  hseIncidents: HSEIncident[];
+  hseTrainings: HSETraining[];
   notifications: Notification[];
   dashboardStats: DashboardStats;
   posts: Post[];
@@ -42,6 +46,14 @@ type AppAction =
   | { type: 'SET_EQUIPMENT'; payload: Equipment[] }
   | { type: 'ADD_EQUIPMENT'; payload: Equipment }
   | { type: 'UPDATE_EQUIPMENT'; payload: Equipment }
+  | { type: 'SET_HSE_INCIDENTS'; payload: HSEIncident[] }
+  | { type: 'ADD_HSE_INCIDENT'; payload: HSEIncident }
+  | { type: 'UPDATE_HSE_INCIDENT'; payload: HSEIncident }
+  | { type: 'DELETE_HSE_INCIDENT'; payload: string }
+  | { type: 'SET_HSE_TRAININGS'; payload: HSETraining[] }
+  | { type: 'ADD_HSE_TRAINING'; payload: HSETraining }
+  | { type: 'UPDATE_HSE_TRAINING'; payload: HSETraining }
+  | { type: 'DELETE_HSE_TRAINING'; payload: string }
   | { type: 'SET_NOTIFICATIONS'; payload: Notification[] }
   | { type: 'ADD_NOTIFICATION'; payload: Notification }
   | { type: 'UPDATE_DASHBOARD_STATS'; payload: DashboardStats }
@@ -58,6 +70,8 @@ const initialState: AppState = {
   visits: [],
   packages: [],
   equipment: [],
+  hseIncidents: [],
+  hseTrainings: [],
   notifications: [],
   posts: [],
   dashboardStats: {
@@ -140,6 +154,46 @@ function appReducer(state: AppState, action: AppAction): AppState {
         equipment: state.equipment.map(eq => 
           eq.id === action.payload.id ? action.payload : eq
         ),
+      };
+    
+    case 'SET_HSE_INCIDENTS':
+      return { ...state, hseIncidents: action.payload };
+    
+    case 'ADD_HSE_INCIDENT':
+      return { ...state, hseIncidents: [...state.hseIncidents, action.payload] };
+    
+    case 'UPDATE_HSE_INCIDENT':
+      return {
+        ...state,
+        hseIncidents: state.hseIncidents.map(incident => 
+          incident.id === action.payload.id ? action.payload : incident
+        ),
+      };
+    
+    case 'DELETE_HSE_INCIDENT':
+      return {
+        ...state,
+        hseIncidents: state.hseIncidents.filter(incident => incident.id !== action.payload),
+      };
+    
+    case 'SET_HSE_TRAININGS':
+      return { ...state, hseTrainings: action.payload };
+    
+    case 'ADD_HSE_TRAINING':
+      return { ...state, hseTrainings: [...state.hseTrainings, action.payload] };
+    
+    case 'UPDATE_HSE_TRAINING':
+      return {
+        ...state,
+        hseTrainings: state.hseTrainings.map(training => 
+          training.id === action.payload.id ? action.payload : training
+        ),
+      };
+    
+    case 'DELETE_HSE_TRAINING':
+      return {
+        ...state,
+        hseTrainings: state.hseTrainings.filter(training => training.id !== action.payload),
       };
     
     case 'SET_NOTIFICATIONS':

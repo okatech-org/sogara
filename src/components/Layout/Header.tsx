@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AppContext';
 import { useDashboard } from '@/hooks/useDashboard';
+import { HSENotificationCenter } from '@/components/hse/HSENotificationCenter';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -98,14 +99,22 @@ export function Header() {
               </DropdownMenu>
             )}
 
-            <Button variant="ghost" size="sm" className="relative">
-              <Bell className="w-4 h-4" />
-              {unreadCount > 0 && (
-                <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
-                  {unreadCount}
-                </Badge>
+            <div className="flex items-center gap-1">
+              {/* Notifications générales */}
+              <Button variant="ghost" size="sm" className="relative">
+                <Bell className="w-4 h-4" />
+                {unreadCount > 0 && (
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
+                    {unreadCount}
+                  </Badge>
+                )}
+              </Button>
+              
+              {/* Notifications HSE */}
+              {hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR', 'EMPLOYE']) && (
+                <HSENotificationCenter />
               )}
-            </Button>
+            </div>
           </div>
 
           <div className="h-6 w-px bg-border" />

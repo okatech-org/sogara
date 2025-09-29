@@ -112,6 +112,8 @@ export interface HSEIncident {
   status: 'reported' | 'investigating' | 'resolved';
   attachments?: string[];
   reportedBy: string;
+  investigatedBy?: string;
+  correctiveActions?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -143,6 +145,8 @@ export interface HSEAttendance {
   employeeId: string;
   status: 'registered' | 'present' | 'absent' | 'completed';
   score?: number;
+  certificationDate?: Date;
+  expirationDate?: Date;
   notes?: string;
 }
 
@@ -221,5 +225,61 @@ export interface DashboardStats {
     openIncidents: number;
     trainingsThisWeek: number;
     complianceRate: number;
+  };
+}
+
+// Types HSE étendus pour le module complet
+export interface HSENotification extends Notification {
+  type: NotificationType | 'hse_training_expiring' | 'hse_incident_high' | 'hse_equipment_check' | 'hse_compliance_alert';
+  metadata: {
+    employeeId?: string;
+    trainingId?: string;
+    incidentId?: string;
+    equipmentId?: string;
+    daysUntilExpiry?: number;
+    complianceRate?: number;
+  };
+}
+
+export interface ComplianceData {
+  service: string;
+  complianceRate: number;
+  expiredTrainings: number;
+  employeesCount: number;
+}
+
+export interface TimelineEvent {
+  date: Date;
+  action: string;
+  user: string;
+  details?: string;
+}
+
+export interface EmployeeCompliance {
+  employeeId: string;
+  totalRequired: number;
+  completed: number;
+  expired: number;
+  missing: number;
+  rate: number;
+}
+
+export interface HSEStats {
+  incidents: {
+    open: number;
+    resolved: number;
+    thisMonth: number;
+    highSeverity: number;
+  };
+  trainings: {
+    scheduled: number;
+    completed: number;
+    compliance: number;
+    upcomingTrainings: number;
+  };
+  equipment: {
+    needsInspection: number;
+    operational: number;
+    maintenance: number;
   };
 }

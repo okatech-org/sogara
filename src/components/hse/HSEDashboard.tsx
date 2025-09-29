@@ -1,586 +1,494 @@
-import React, { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
+import { AlertTriangle, BookOpen, Shield, Plus, Calendar, FileText, Users, TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  AlertTriangle, 
-  Shield, 
-  TrendingUp, 
-  Users, 
-  Calendar,
-  FileText,
-  CheckCircle,
-  XCircle,
-  Clock
-} from 'lucide-react';
-import { useHSE } from '@/hooks/useHSE';
+import { Badge } from '@/components/ui/badge';
+import { StatusBadge } from '@/components/ui/status-badge';
+import { HSEIncidentForm } from './HSEIncidentForm';
+import { HSEIncidentTimeline } from './HSEIncidentTimeline';
+import { HSETrainingCalendar } from './HSETrainingCalendar';
+import { HSEComplianceDashboard } from './HSEComplianceDashboard';
+import { HSETrainingImporter } from './HSETrainingImporter';
+import { HSETrainingCatalog } from './HSETrainingCatalog';
+import { HSESessionScheduler } from './HSESessionScheduler';
 import { useAuth } from '@/contexts/AppContext';
-import { HSEIncident, HSETraining } from '@/types';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  Cell
-} from 'recharts';
+import { useHSEIncidents } from '@/hooks/useHSEIncidents';
+import { useHSETrainings } from '@/hooks/useHSETrainings';
+import { useHSECompliance } from '@/hooks/useHSECompliance';
+import { useHSEData } from '@/hooks/useHSEData';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { HSEIncident, HSETraining, HSETrainingSession } from '@/types';
 
 export function HSEDashboard() {
+  const { hasAnyRole } = useAuth();
   const { 
     incidents, 
-    trainings, 
-    loading,
-    getOpenIncidents,
-    getHighSeverityIncidents,
-    getUpcomingTrainings,
-    getComplianceRate,
-    getIncidentTrends,
-    getTrainingCompletionRate,
-    getHSEStats
-  } = useHSE();
+    addIncident, 
+    getStats: getIncidentStats, 
+    initializeIncidents,
+    getIncidentsByStatus,
+    getRecentIncidents 
+  } = useHSEIncidents();
   
-  const { hasAnyRole } = useAuth();
-  const [complianceRate, setComplianceRate] = useState(0);
-  const [completionRate, setCompletionRate] = useState(0);
-  const [incidentTrends, setIncidentTrends] = useState<any>(null);
+  const { 
+    trainings, 
+    getStats: getTrainingStats, 
+    initializeTrainings,
+    getUpcomingSessions 
+  } = useHSETrainings();
+  
+  const { getOverallCompliance } = useHSECompliance();
+  
+  // Initialiser les données de démonstration
+  useHSEData();
 
-  const canManageHSE = hasAnyRole(['ADMIN', 'HSE']);
+  // États des dialogs
+  const [showIncidentForm, setShowIncidentForm] = useState(false);
+  const [showIncidentDetails, setShowIncidentDetails] = useState<HSEIncident | null>(null);
+  const [showTrainingSession, setShowTrainingSession] = useState<{training: HSETraining, session: HSETrainingSession} | null>(null);
+  const [showSessionScheduler, setShowSessionScheduler] = useState<HSETraining | null>(null);
+  
+  const canManageHSE = hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR']);
+  const canViewHSE = hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR', 'EMPLOYE']);
 
-  // Charger les statistiques
+  // Initialiser les données
   useEffect(() => {
-    const loadStats = async () => {
-      try {
-        const [compliance, completion, trends] = await Promise.all([
-          getComplianceRate(),
-          getTrainingCompletionRate(),
-          getIncidentTrends('month')
-        ]);
-        
-        setComplianceRate(compliance);
-        setCompletionRate(completion);
-        setIncidentTrends(trends);
-      } catch (error) {
-        console.error('Erreur chargement stats HSE:', error);
-      }
-    };
+    initializeIncidents();
+    initializeTrainings();
+  }, [initializeIncidents, initializeTrainings]);
 
-    loadStats();
-  }, [incidents, trainings]);
+  // Récupérer les statistiques
+  const incidentStats = getIncidentStats();
+  const trainingStats = getTrainingStats();
+  const complianceRate = getOverallCompliance();
+  const upcomingSessions = getUpcomingSessions(7);
+  const recentIncidents = getRecentIncidents(30);
+  const openIncidents = getIncidentsByStatus('reported').concat(getIncidentsByStatus('investigating'));
 
-  const stats = getHSEStats();
-  const openIncidents = getOpenIncidents();
-  const highSeverityIncidents = getHighSeverityIncidents();
-  const upcomingTrainings = getUpcomingTrainings();
+  const handleIncidentSubmit = async (incidentData: Partial<HSEIncident>) => {
+    await addIncident(incidentData as Omit<HSEIncident, 'id' | 'createdAt' | 'updatedAt' | 'status'>);
+    setShowIncidentForm(false);
+  };
 
-  // Données pour les graphiques
-  const incidentsBySeverity = [
-    { name: 'Faible', value: incidents.filter(i => i.severity === 'low').length, color: '#22c55e' },
-    { name: 'Moyen', value: incidents.filter(i => i.severity === 'medium').length, color: '#eab308' },
-    { name: 'Élevé', value: incidents.filter(i => i.severity === 'high').length, color: '#ef4444' }
-  ];
+  const handleSessionClick = (training: HSETraining, session: HSETrainingSession) => {
+    setShowTrainingSession({ training, session });
+  };
 
-  const incidentsByStatus = [
-    { name: 'Signalés', value: incidents.filter(i => i.status === 'reported').length },
-    { name: 'En cours', value: incidents.filter(i => i.status === 'investigating').length },
-    { name: 'Résolus', value: incidents.filter(i => i.status === 'resolved').length }
-  ];
-
-  const statsCards = [
-    {
-      title: 'Incidents ouverts',
-      value: stats.incidents.openIncidents,
-      icon: AlertTriangle,
-      color: 'text-red-500',
-      trend: stats.incidents.thisMonth > 0 ? '+' + stats.incidents.thisMonth : '0',
-      trendLabel: 'ce mois'
-    },
-    {
-      title: 'Incidents critiques',
-      value: stats.incidents.highSeverity,
-      icon: XCircle,
-      color: 'text-orange-500',
-      trend: '',
-      trendLabel: 'à traiter'
-    },
-    {
-      title: 'Formations à venir',
-      value: stats.trainings.upcomingTrainings,
-      icon: Calendar,
-      color: 'text-blue-500',
-      trend: '',
-      trendLabel: 'planifiées'
-    },
-    {
-      title: 'Taux de conformité',
-      value: `${complianceRate}%`,
-      icon: Shield,
-      color: 'text-green-500',
-      trend: complianceRate >= 90 ? '✓' : '⚠️',
-      trendLabel: 'objectif: 95%'
+  const handleScheduleSession = (trainingId: string) => {
+    const training = trainings.find(t => t.id === trainingId);
+    if (training) {
+      setShowSessionScheduler(training);
     }
-  ];
+  };
 
-  if (loading) {
+  const renderKPIs = () => (
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <Card className="industrial-card">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Incidents ouverts</CardTitle>
+          <AlertTriangle className="h-4 w-4 text-destructive" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{incidentStats.open}</div>
+          <div className="flex items-center gap-2 mt-1">
+            {incidentStats.highSeverity > 0 && (
+              <Badge variant="destructive" className="text-xs">
+                {incidentStats.highSeverity} sévérité élevée
+              </Badge>
+            )}
+          </div>
+          <p className="text-xs text-muted-foreground mt-2">
+            {incidentStats.thisMonth} ce mois
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card className="industrial-card">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Formations cette semaine</CardTitle>
+          <BookOpen className="h-4 w-4 text-primary" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{upcomingSessions.length}</div>
+          <p className="text-xs text-muted-foreground mt-2">
+            Sessions programmées
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card className="industrial-card">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Taux de conformité</CardTitle>
+          <Shield className="h-4 w-4 text-success" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{complianceRate}%</div>
+          <StatusBadge 
+            status={complianceRate >= 90 ? 'Conforme' : 'À améliorer'}
+            variant={complianceRate >= 90 ? 'success' : 'warning'}
+            className="mt-2"
+          />
+        </CardContent>
+      </Card>
+
+      <Card className="industrial-card">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Actions requises</CardTitle>
+          <TrendingUp className="h-4 w-4 text-warning" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">
+            {incidents.filter(i => i.status === 'investigating').length}
+          </div>
+          <p className="text-xs text-muted-foreground mt-2">
+            Enquêtes en cours
+          </p>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
+  const renderRecentIncidents = () => (
+    <Card className="industrial-card">
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2">
+            <AlertTriangle className="w-5 h-5" />
+            Incidents récents
+          </CardTitle>
+          {canManageHSE && (
+            <Button 
+              size="sm" 
+              onClick={() => setShowIncidentForm(true)}
+              className="gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              Déclarer un incident
+            </Button>
+          )}
+        </div>
+      </CardHeader>
+      <CardContent>
+        {recentIncidents.length === 0 ? (
+          <div className="text-center py-8">
+            <Shield className="w-12 h-12 mx-auto mb-4 text-green-500" />
+            <h3 className="text-lg font-medium mb-2">Aucun incident récent</h3>
+            <p className="text-muted-foreground">
+              Excellente nouvelle ! Aucun incident n'a été signalé récemment.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {recentIncidents.slice(0, 5).map((incident) => (
+              <div 
+                key={incident.id} 
+                className="p-4 rounded-lg border border-border bg-card cursor-pointer hover:bg-muted/50 transition-colors"
+                onClick={() => setShowIncidentDetails(incident)}
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-medium text-foreground">{incident.type}</h3>
+                  <div className="flex items-center gap-2">
+                    <StatusBadge 
+                      status={incident.severity === 'low' ? 'Faible' : 
+                             incident.severity === 'medium' ? 'Moyen' : 'Élevé'}
+                      variant={incident.severity === 'low' ? 'info' : 
+                              incident.severity === 'medium' ? 'warning' : 'urgent'}
+                    />
+                    <StatusBadge 
+                      status={incident.status === 'reported' ? 'Signalé' : 
+                             incident.status === 'investigating' ? 'En cours' : 'Résolu'}
+                      variant={incident.status === 'reported' ? 'info' : 
+                              incident.status === 'investigating' ? 'warning' : 'success'}
+                    />
+                  </div>
+                </div>
+                <div className="text-sm text-muted-foreground space-y-1">
+                  <p>Lieu: {incident.location}</p>
+                  <p>Date: {incident.occurredAt.toLocaleDateString('fr-FR')}</p>
+                  <p>Déclaré par: {incident.reportedBy}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+
+  const renderUpcomingTrainings = () => (
+    <Card className="industrial-card">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Calendar className="w-5 h-5" />
+          Formations à venir
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        {upcomingSessions.length === 0 ? (
+          <div className="text-center py-6">
+            <BookOpen className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
+            <p className="text-muted-foreground">Aucune formation programmée</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {upcomingSessions.slice(0, 3).map(({ training, session }) => (
+              <div 
+                key={session.id}
+                className="p-3 rounded-lg border border-border cursor-pointer hover:bg-muted/50 transition-colors"
+                onClick={() => handleSessionClick(training, session)}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-medium">{training.title}</h4>
+                  <StatusBadge 
+                    status={session.status === 'scheduled' ? 'Programmé' : 'En cours'}
+                    variant={session.status === 'scheduled' ? 'info' : 'warning'}
+                  />
+                </div>
+                <div className="text-sm text-muted-foreground space-y-1">
+                  <p>📅 {session.date.toLocaleDateString('fr-FR', { 
+                    day: 'numeric', 
+                    month: 'short',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}</p>
+                  <p>👨‍🏫 {session.instructor}</p>
+                  <p>👥 {session.attendance.length}/{session.maxParticipants} participants</p>
+                </div>
+                <div className="mt-2">
+                  <div className="w-full bg-muted rounded-full h-1.5">
+                    <div 
+                      className="bg-primary h-1.5 rounded-full transition-all" 
+                      style={{ width: `${(session.attendance.length / session.maxParticipants) * 100}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+
+  if (!canViewHSE) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="text-muted-foreground mt-2">Chargement des données HSE...</p>
+          <Shield className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+          <h3 className="text-lg font-medium mb-2">Accès restreint</h3>
+          <p className="text-muted-foreground">
+            Vous n'avez pas les permissions nécessaires pour accéder au module HSE.
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       {/* En-tête */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Dashboard HSE</h1>
+          <h1 className="text-3xl font-bold text-foreground">HSE - Hygiène, Sécurité et Environnement</h1>
           <p className="text-muted-foreground">
-            Hygiène, Sécurité et Environnement
+            Gestion des incidents, formations et conformité réglementaire
           </p>
         </div>
-        
         {canManageHSE && (
           <div className="flex gap-2">
-            <Button variant="outline">
-              <FileText className="w-4 h-4 mr-2" />
-              Générer rapport
-            </Button>
-            <Button className="gap-2 bg-red-600 hover:bg-red-700">
+            <Button onClick={() => setShowIncidentForm(true)} className="gap-2">
               <AlertTriangle className="w-4 h-4" />
-              Signaler incident
+              Déclarer un incident
             </Button>
           </div>
         )}
       </div>
 
-      {/* Cartes de statistiques */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {statsCards.map((stat, index) => {
-          const Icon = stat.icon;
-          return (
-            <Card key={index} className="industrial-card">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground">{stat.title}</p>
-                    <p className="text-2xl font-bold">{stat.value}</p>
-                    {stat.trendLabel && (
-                      <p className="text-xs text-muted-foreground">
-                        {stat.trend} {stat.trendLabel}
-                      </p>
-                    )}
-                  </div>
-                  <Icon className={`w-8 h-8 ${stat.color}`} />
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
+      {/* KPIs */}
+      {renderKPIs()}
 
-      {/* Contenu principal */}
-      <Tabs defaultValue="incidents" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+      {/* Contenu principal par onglets */}
+      <Tabs defaultValue="overview" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-6">
+          <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
           <TabsTrigger value="incidents">Incidents</TabsTrigger>
-          <TabsTrigger value="trainings">Formations</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="formations">Formations</TabsTrigger>
           <TabsTrigger value="compliance">Conformité</TabsTrigger>
+          <TabsTrigger value="catalog">Catalogue</TabsTrigger>
+          <TabsTrigger value="equipment">EPI</TabsTrigger>
         </TabsList>
 
-        {/* Onglet Incidents */}
-        <TabsContent value="incidents" className="space-y-6">
+        <TabsContent value="overview" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Incidents récents */}
+            {renderRecentIncidents()}
+            {renderUpcomingTrainings()}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="incidents" className="space-y-4">
+          {renderRecentIncidents()}
+          {openIncidents.length > 0 && (
             <Card className="industrial-card">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <AlertTriangle className="w-5 h-5" />
-                  Incidents récents
-                </CardTitle>
+                <CardTitle>Incidents nécessitant une attention</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {incidents.slice(0, 5).map((incident) => (
-                    <div
+                  {openIncidents.map(incident => (
+                    <div 
                       key={incident.id}
-                      className="p-3 rounded-lg border hover:bg-muted/30 transition-colors"
+                      className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg cursor-pointer hover:bg-yellow-100 transition-colors"
+                      onClick={() => setShowIncidentDetails(incident)}
                     >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <Badge
-                              variant={
-                                incident.severity === 'high' ? 'destructive' :
-                                incident.severity === 'medium' ? 'default' :
-                                'secondary'
-                              }
-                            >
-                              {incident.type}
-                            </Badge>
-                            <Badge
-                              variant={
-                                incident.status === 'resolved' ? 'default' :
-                                incident.status === 'investigating' ? 'secondary' :
-                                'outline'
-                              }
-                            >
-                              {incident.status === 'reported' ? 'Signalé' :
-                               incident.status === 'investigating' ? 'En cours' :
-                               'Résolu'}
-                            </Badge>
-                          </div>
-                          
-                          <p className="text-sm text-muted-foreground mb-1">
-                            {incident.location} • {format(incident.occurredAt, "dd/MM/yyyy 'à' HH:mm")}
-                          </p>
-                          
-                          <p className="text-sm line-clamp-2">
-                            {incident.description}
-                          </p>
-                        </div>
+                      <div>
+                        <h4 className="font-medium">{incident.type}</h4>
+                        <p className="text-sm text-muted-foreground">
+                          {incident.location} • {incident.occurredAt.toLocaleDateString('fr-FR')}
+                        </p>
                       </div>
-                    </div>
-                  ))}
-                  
-                  {incidents.length === 0 && (
-                    <div className="text-center py-8 text-muted-foreground">
-                      <AlertTriangle className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                      <p>Aucun incident signalé</p>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Répartition par gravité */}
-            <Card className="industrial-card">
-              <CardHeader>
-                <CardTitle>Répartition par gravité</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="h-64">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={incidentsBySeverity}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={60}
-                        outerRadius={100}
-                        paddingAngle={5}
-                        dataKey="value"
-                      >
-                        {incidentsBySeverity.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-                
-                <div className="flex justify-center gap-4 mt-4">
-                  {incidentsBySeverity.map((entry) => (
-                    <div key={entry.name} className="flex items-center gap-2">
-                      <div 
-                        className="w-3 h-3 rounded-full" 
-                        style={{ backgroundColor: entry.color }}
+                      <StatusBadge 
+                        status={incident.status === 'reported' ? 'À traiter' : 'En cours'}
+                        variant="warning"
                       />
-                      <span className="text-sm">{entry.name}: {entry.value}</span>
                     </div>
                   ))}
                 </div>
               </CardContent>
             </Card>
-          </div>
+          )}
         </TabsContent>
 
-        {/* Onglet Formations */}
-        <TabsContent value="trainings" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Formations à venir */}
-            <Card className="industrial-card">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Calendar className="w-5 h-5" />
-                  Formations à venir
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {upcomingTrainings.slice(0, 5).map((training) => (
-                    <div
-                      key={training.id}
-                      className="p-3 rounded-lg border hover:bg-muted/30 transition-colors"
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h4 className="font-medium mb-1">{training.title}</h4>
-                          <p className="text-sm text-muted-foreground mb-2">
-                            {training.description}
-                          </p>
-                          
-                          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                            <span>Durée: {training.duration}min</span>
-                            <span>Validité: {training.validityMonths} mois</span>
-                            <span>Sessions: {training.sessions.length}</span>
-                          </div>
-                          
-                          <div className="flex flex-wrap gap-1 mt-2">
-                            {training.requiredForRoles.map(role => (
-                              <Badge key={role} variant="outline" className="text-xs">
-                                {role}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  
-                  {upcomingTrainings.length === 0 && (
-                    <div className="text-center py-8 text-muted-foreground">
-                      <Calendar className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                      <p>Aucune formation programmée</p>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Taux de complétion */}
-            <Card className="industrial-card">
-              <CardHeader>
-                <CardTitle>Taux de complétion</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">Formations complétées</span>
-                    <span className="text-2xl font-bold">{completionRate}%</span>
-                  </div>
-                  <Progress value={completionRate} className="h-2" />
-                </div>
-                
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">Conformité réglementaire</span>
-                    <span className="text-2xl font-bold">{complianceRate}%</span>
-                  </div>
-                  <Progress value={complianceRate} className="h-2" />
-                  <p className="text-xs text-muted-foreground">
-                    Objectif: 95% minimum
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 pt-4">
-                  <div className="text-center">
-                    <p className="text-2xl font-bold text-green-600">{stats.trainings.completedSessions}</p>
-                    <p className="text-xs text-muted-foreground">Sessions complétées</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-bold text-blue-600">{stats.trainings.totalSessions}</p>
-                    <p className="text-xs text-muted-foreground">Sessions totales</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+        <TabsContent value="formations">
+          <HSETrainingCalendar 
+            trainings={trainings}
+            onSessionClick={handleSessionClick}
+            canEdit={canManageHSE}
+          />
         </TabsContent>
 
-        {/* Onglet Analytics */}
-        <TabsContent value="analytics" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Tendances des incidents */}
-            <Card className="industrial-card">
-              <CardHeader>
-                <CardTitle>Tendances des incidents</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="h-64">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={incidentTrends?.datasets[0]?.data?.map((value: number, index: number) => ({
-                      date: incidentTrends.labels[index],
-                      incidents: value
-                    })) || []}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="date" />
-                      <YAxis />
-                      <Tooltip />
-                      <Line 
-                        type="monotone" 
-                        dataKey="incidents" 
-                        stroke="#ef4444" 
-                        strokeWidth={2}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Répartition par statut */}
-            <Card className="industrial-card">
-              <CardHeader>
-                <CardTitle>Statut des incidents</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="h-64">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={incidentsByStatus}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <Tooltip />
-                      <Bar dataKey="value" fill="#3b82f6" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+        <TabsContent value="compliance">
+          <HSEComplianceDashboard />
         </TabsContent>
 
-        {/* Onglet Conformité */}
-        <TabsContent value="compliance" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Indicateurs de conformité */}
-            <Card className="industrial-card lg:col-span-2">
-              <CardHeader>
-                <CardTitle>Indicateurs de conformité</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-3">
-                    <h4 className="font-medium">Sécurité</h4>
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-sm">Incidents résolus</span>
-                        <span className="text-sm font-medium">85%</span>
-                      </div>
-                      <Progress value={85} className="h-2" />
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-sm">Temps de résolution</span>
-                        <span className="text-sm font-medium">92%</span>
-                      </div>
-                      <Progress value={92} className="h-2" />
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-3">
-                    <h4 className="font-medium">Formation</h4>
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-sm">Employés formés</span>
-                        <span className="text-sm font-medium">{complianceRate}%</span>
-                      </div>
-                      <Progress value={complianceRate} className="h-2" />
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-sm">Certifications à jour</span>
-                        <span className="text-sm font-medium">88%</span>
-                      </div>
-                      <Progress value={88} className="h-2" />
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="pt-4 border-t">
-                  <div className="flex items-center justify-between">
-                    <span className="text-lg font-medium">Score global HSE</span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-3xl font-bold text-green-600">89%</span>
-                      <Badge variant="default" className="bg-green-600">
-                        Bon
-                      </Badge>
-                    </div>
-                  </div>
-                  <Progress value={89} className="h-3 mt-2" />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Objectif réglementaire: 95%
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+        <TabsContent value="catalog" className="space-y-6">
+          {/* Système d'importation */}
+          <HSETrainingImporter onImportComplete={() => {
+            // Recharger les données après importation
+            initializeIncidents();
+            initializeTrainings();
+          }} />
+          
+          {/* Catalogue détaillé */}
+          <HSETrainingCatalog 
+            trainings={trainings}
+            onScheduleSession={handleScheduleSession}
+            canManage={canManageHSE}
+          />
+        </TabsContent>
 
-            {/* Actions rapides */}
-            <Card className="industrial-card">
-              <CardHeader>
-                <CardTitle>Actions rapides</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {canManageHSE && (
-                  <>
-                    <Button className="w-full justify-start gap-2 bg-red-600 hover:bg-red-700">
-                      <AlertTriangle className="w-4 h-4" />
-                      Signaler incident urgent
-                    </Button>
-                    
-                    <Button variant="outline" className="w-full justify-start gap-2">
-                      <Calendar className="w-4 h-4" />
-                      Programmer formation
-                    </Button>
-                    
-                    <Button variant="outline" className="w-full justify-start gap-2">
-                      <FileText className="w-4 h-4" />
-                      Générer rapport mensuel
-                    </Button>
-                    
-                    <Button variant="outline" className="w-full justify-start gap-2">
-                      <CheckCircle className="w-4 h-4" />
-                      Audit de conformité
-                    </Button>
-                  </>
-                )}
-                
-                <div className="pt-3 border-t space-y-2">
-                  <h4 className="text-sm font-medium">Alertes</h4>
-                  
-                  {highSeverityIncidents.length > 0 && (
-                    <div className="p-2 bg-red-50 dark:bg-red-950 rounded border border-red-200">
-                      <p className="text-sm text-red-700 dark:text-red-300">
-                        {highSeverityIncidents.length} incident(s) critique(s) à traiter
-                      </p>
-                    </div>
-                  )}
-                  
-                  {complianceRate < 90 && (
-                    <div className="p-2 bg-yellow-50 dark:bg-yellow-950 rounded border border-yellow-200">
-                      <p className="text-sm text-yellow-700 dark:text-yellow-300">
-                        Taux de conformité en dessous du seuil
-                      </p>
-                    </div>
-                  )}
-                  
-                  {upcomingTrainings.length > 0 && (
-                    <div className="p-2 bg-blue-50 dark:bg-blue-950 rounded border border-blue-200">
-                      <p className="text-sm text-blue-700 dark:text-blue-300">
-                        {upcomingTrainings.length} formation(s) cette semaine
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+        <TabsContent value="equipment" className="space-y-4">
+          <Card className="industrial-card">
+            <CardHeader>
+              <CardTitle>Gestion des EPI</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-8">
+                <Shield className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+                <h3 className="text-lg font-medium mb-2">Module EPI</h3>
+                <p className="text-muted-foreground">
+                  La gestion des équipements de protection individuelle sera bientôt disponible.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Dialogs */}
+      <Dialog open={showIncidentForm} onOpenChange={setShowIncidentForm}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <HSEIncidentForm 
+            onSubmit={handleIncidentSubmit}
+            onCancel={() => setShowIncidentForm(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!showIncidentDetails} onOpenChange={() => setShowIncidentDetails(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          {showIncidentDetails && (
+            <HSEIncidentTimeline 
+              incident={showIncidentDetails}
+              canEdit={canManageHSE}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!showTrainingSession} onOpenChange={() => setShowTrainingSession(null)}>
+        <DialogContent className="max-w-2xl">
+          {showTrainingSession && (
+            <Card>
+              <CardHeader>
+                <CardTitle>{showTrainingSession.training.title}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <p className="text-muted-foreground">
+                    {showTrainingSession.training.description}
+                  </p>
+                  
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="font-medium">Date:</span> {showTrainingSession.session.date.toLocaleDateString('fr-FR')}
+                    </div>
+                    <div>
+                      <span className="font-medium">Formateur:</span> {showTrainingSession.session.instructor}
+                    </div>
+                    <div>
+                      <span className="font-medium">Lieu:</span> {showTrainingSession.session.location}
+                    </div>
+                    <div>
+                      <span className="font-medium">Durée:</span> {showTrainingSession.training.duration} min
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between text-sm mb-2">
+                      <span>Participants inscrits</span>
+                      <span>{showTrainingSession.session.attendance.length}/{showTrainingSession.session.maxParticipants}</span>
+                    </div>
+                    <div className="w-full bg-muted rounded-full h-2">
+                      <div 
+                        className="bg-primary h-2 rounded-full" 
+                        style={{ width: `${(showTrainingSession.session.attendance.length / showTrainingSession.session.maxParticipants) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!showSessionScheduler} onOpenChange={() => setShowSessionScheduler(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          {showSessionScheduler && (
+            <HSESessionScheduler
+              training={showSessionScheduler}
+              onScheduled={(session) => {
+                console.log('Session programmée:', session);
+                setShowSessionScheduler(null);
+                // Recharger les formations
+                initializeTrainings();
+              }}
+              onCancel={() => setShowSessionScheduler(null)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
