@@ -231,8 +231,8 @@ export function LoginForm({ onBackToHome }: LoginFormProps) {
           {/* Login Form */}
           <Card className="industrial-card-elevated">
             <CardHeader className="text-center space-y-4">
-              <div className="w-16 h-16 gradient-primary rounded-xl flex items-center justify-center mx-auto">
-                <HardHat className="w-8 h-8 text-white" />
+              <div className="w-16 h-16 rounded-xl overflow-hidden bg-white mx-auto">
+                <img src={'/Sogara_logo.png'} alt="SOGARA" className="w-full h-full object-contain" onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/placeholder.svg'; }} />
               </div>
               <div>
                 <CardTitle className="text-2xl font-bold">Connexion</CardTitle>

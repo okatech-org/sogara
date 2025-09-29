@@ -11,7 +11,8 @@ import {
   UserRole,
   Post,
   PostComment,
-  EquipmentHistory
+  EquipmentHistory,
+  FolderDocument
 } from '@/types';
 
 import sogaraCompanyImage from '@/assets/sogara-company.jpg';
@@ -33,6 +34,7 @@ const STORAGE_KEYS = {
   HSE_TRAININGS: 'sogara_hse_trainings',
   NOTIFICATIONS: 'sogara_notifications',
   POSTS: 'sogara_posts',
+  DOCUMENTS: 'sogara_documents',
 };
 
 function getFromStorage<T>(key: string): T[] {
@@ -471,6 +473,40 @@ export class PackageRepository {
       urgent: this.packages.filter(p => p.priority === 'urgent' && p.status !== 'delivered').length,
       delivered: this.packages.filter(p => p.status === 'delivered').length,
     };
+  }
+}
+
+export class DocumentRepository {
+  private documents: FolderDocument[] = [];
+
+  constructor() {
+    this.documents = getFromStorage<FolderDocument>(STORAGE_KEYS.DOCUMENTS);
+  }
+
+  private save(): void {
+    saveToStorage(STORAGE_KEYS.DOCUMENTS, this.documents);
+  }
+
+  getAll(): FolderDocument[] {
+    return this.documents;
+  }
+
+  getByOwner(ownerType: 'employee' | 'service', ownerIdOrService?: string): FolderDocument[] {
+    if (ownerType === 'employee') {
+      return this.documents.filter(d => d.ownerType === 'employee' && d.ownerId === ownerIdOrService);
+    }
+    return this.documents.filter(d => d.ownerType === 'service' && d.serviceName === ownerIdOrService);
+  }
+
+  create(doc: Omit<FolderDocument, 'id' | 'createdAt'>): FolderDocument {
+    const newDoc: FolderDocument = {
+      ...doc,
+      id: generateId(),
+      createdAt: new Date(),
+    };
+    this.documents.push(newDoc);
+    this.save();
+    return newDoc;
   }
 }
 
@@ -1054,4 +1090,5 @@ export const repositories = {
   posts: new PostRepository(),
   hseIncidents: new HSEIncidentRepository(),
   hseTrainings: new HSETrainingRepository(),
+  documents: new DocumentRepository(),
 };

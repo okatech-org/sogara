@@ -9,6 +9,8 @@ import { useEmployees } from '@/hooks/useEmployees';
 import { useAuth } from '@/contexts/AppContext';
 import { Equipment, EquipmentStatus } from '@/types';
 import { StatusBadge } from '@/components/ui/status-badge';
+import { CreateEquipmentDialog } from '@/components/dialogs/CreateEquipmentDialog';
+import { AssignEquipmentDialog } from '@/components/dialogs/AssignEquipmentDialog';
 
 export function EquipementsPage() {
   const { equipment, assignEquipment, unassignEquipment } = useEquipment();
@@ -98,10 +100,7 @@ export function EquipementsPage() {
           </p>
         </div>
         {canManageEquipment && (
-          <Button className="gap-2 gradient-primary">
-            <Plus className="w-4 h-4" />
-            Nouvel équipement
-          </Button>
+          <CreateEquipmentDialog />
         )}
       </div>
 
@@ -321,9 +320,7 @@ export function EquipementsPage() {
                         Libérer l'équipement
                       </Button>
                     ) : (
-                      <Button className="w-full gradient-primary">
-                        Affecter à un employé
-                      </Button>
+                      <AssignEquipmentDialog equipmentId={selectedEquipment.id} />
                     )}
                     <Button className="w-full" variant="outline">
                       Modifier l'équipement

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { repositories } from '@/services/repositories';
-import { PackageMail, PackageStatus } from '@/types';
+import { PackageMail, PackageStatus, Priority } from '@/types';
 import { toast } from '@/hooks/use-toast';
 import { convex, convexClientAvailable } from '@/lib/convexClient';
 
@@ -71,7 +71,10 @@ export function usePackages() {
           return mapped;
         }
       }
-      const newPackage = repositories.packages.create(packageData);
+      const newPackage = repositories.packages.create({
+        ...packageData,
+        type: 'package',
+      });
       dispatch({ type: 'ADD_PACKAGE', payload: newPackage });
       repositories.notifications.create({
         type: newPackage.priority === 'urgent' ? 'urgent' : 'info',
@@ -83,6 +86,96 @@ export function usePackages() {
       return newPackage;
     } catch (error) {
       toast({ title: 'Erreur', description: 'Impossible d\'enregistrer le colis/courrier.', variant: 'destructive' });
+      throw error;
+    }
+  };
+
+  const createMail = async (input: {
+    reference: string;
+    sender: string;
+    recipientEmployeeId?: string;
+    recipientService?: string;
+    description: string;
+    priority: Priority;
+    isConfidential: boolean;
+    scannedFileUrls?: string[];
+    photoUrl?: string;
+  }) => {
+    try {
+      const baseData: Omit<PackageMail, 'id' | 'createdAt' | 'updatedAt'> = {
+        type: 'mail',
+        reference: input.reference,
+        sender: input.sender,
+        recipientEmployeeId: input.recipientEmployeeId,
+        recipientService: input.recipientService,
+        description: input.description,
+        photoUrl: input.photoUrl,
+        isConfidential: input.isConfidential,
+        scannedFileUrls: input.scannedFileUrls,
+        priority: input.priority,
+        status: 'received',
+        receivedAt: new Date(),
+      } as any;
+
+      if (convexClientAvailable) {
+        const created = await convex.mutation('packages:create', baseData);
+        if (created) {
+          const mapped: PackageMail = {
+            id: String(created._id ?? created.id),
+            type: created.type,
+            priority: created.priority,
+            status: created.status as PackageStatus,
+            sender: created.sender,
+            recipientEmployeeId: created.recipientEmployeeId ? String(created.recipientEmployeeId) : undefined,
+            recipientService: created.recipientService,
+            reference: created.reference,
+            photoUrl: created.photoUrl,
+            description: created.description,
+            isConfidential: created.isConfidential,
+            scannedFileUrls: created.scannedFileUrls,
+            receivedAt: new Date(created.receivedAt ?? created.createdAt ?? Date.now()),
+            deliveredAt: created.deliveredAt ? new Date(created.deliveredAt) : undefined,
+            deliveredBy: created.deliveredBy,
+            createdAt: new Date(created.createdAt ?? Date.now()),
+            updatedAt: new Date(created.updatedAt ?? Date.now()),
+          } as PackageMail;
+          dispatch({ type: 'ADD_PACKAGE', payload: mapped });
+          toast({ title: 'Enregistré', description: 'Courrier ajouté avec succès.' });
+          return mapped;
+        }
+      }
+
+      const newMail = repositories.packages.create(baseData);
+      dispatch({ type: 'ADD_PACKAGE', payload: newMail });
+
+      if (!input.isConfidential && input.scannedFileUrls && input.scannedFileUrls.length > 0) {
+        const ownerType = input.recipientEmployeeId ? 'employee' : 'service';
+        const ownerIdOrService = input.recipientEmployeeId || input.recipientService;
+        const ts = new Date();
+        input.scannedFileUrls.forEach((url, idx) => {
+          repositories.documents.create({
+            ownerType: ownerType as any,
+            ownerId: ownerType === 'employee' ? ownerIdOrService : undefined,
+            serviceName: ownerType === 'service' ? ownerIdOrService : undefined,
+            source: 'mail',
+            name: `Courrier ${input.reference} - pièce ${idx + 1}`,
+            url,
+            mailId: newMail.id,
+          });
+        });
+      }
+
+      repositories.notifications.create({
+        type: input.priority === 'urgent' ? 'urgent' : 'info',
+        title: 'Nouveau courrier',
+        message: `${input.isConfidential ? 'Confidentiel' : 'Numérisé'} pour ${input.recipientEmployeeId ? 'employé' : 'service'}`,
+        metadata: { packageId: newMail.id, recipientEmployeeId: input.recipientEmployeeId, recipientService: input.recipientService },
+      });
+
+      toast({ title: 'Enregistré', description: 'Courrier ajouté avec succès.' });
+      return newMail;
+    } catch (error) {
+      toast({ title: 'Erreur', description: 'Impossible d\'enregistrer le courrier.', variant: 'destructive' });
       throw error;
     }
   };
@@ -153,6 +246,7 @@ export function usePackages() {
   return {
     packages: state.packages,
     createPackage,
+    createMail,
     updatePackageStatus,
     getPendingPackages,
     getUrgentPackages,

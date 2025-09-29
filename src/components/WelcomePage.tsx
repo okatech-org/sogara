@@ -101,8 +101,8 @@ export function WelcomePage({ onShowLogin }: WelcomePageProps) {
         <div className="relative container mx-auto px-4 py-20">
           <div className="text-center max-w-4xl mx-auto">
             <div className="flex items-center justify-center gap-4 mb-8">
-              <div className="w-20 h-20 gradient-primary rounded-2xl flex items-center justify-center shadow-[var(--shadow-industrial)]">
-                <HardHat className="w-10 h-10 text-white" />
+              <div className="w-20 h-20 rounded-2xl overflow-hidden bg-white shadow-[var(--shadow-industrial)]">
+                <img src={'/Sogara_logo.png'} alt="SOGARA" className="w-full h-full object-contain" onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/placeholder.svg'; }} />
               </div>
               <div className="text-left">
                 <h1 className="text-4xl md:text-6xl font-bold text-foreground">
@@ -388,8 +388,8 @@ export function WelcomePage({ onShowLogin }: WelcomePageProps) {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="flex items-center gap-2 mb-4 md:mb-0">
-              <div className="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center">
-                <HardHat className="w-5 h-5 text-white" />
+              <div className="w-8 h-8 rounded-lg overflow-hidden bg-white">
+                <img src={'/Sogara_logo.png'} alt="SOGARA" className="w-full h-full object-contain" onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/placeholder.svg'; }} />
               </div>
               <span className="font-semibold text-foreground">SOGARA Access</span>
               <span className="text-muted-foreground">- Pour le personnel, par le personnel</span>

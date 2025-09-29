@@ -1,4 +1,4 @@
-import { Bell, Package, Users, HardHat, Plus, List } from 'lucide-react';
+import { Bell, Package, Users, Plus, List, HardHat } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -48,8 +48,13 @@ export function Header() {
       <div className="container flex h-16 items-center justify-between px-4">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center">
-              <HardHat className="w-5 h-5 text-white" />
+            <div className="w-8 h-8 rounded-lg overflow-hidden bg-white">
+              <img
+                src={'/Sogara_logo.png'}
+                alt="SOGARA"
+                className="w-full h-full object-contain"
+                onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/placeholder.svg'; }}
+              />
             </div>
             <div>
               <h1 className="text-lg font-bold text-foreground">SOGARA Access</h1>

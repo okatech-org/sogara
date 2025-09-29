@@ -449,9 +449,12 @@ export const exportPackagesToPDF = (packages: PackageMail[], employees: Employee
     { header: 'Référence', key: 'reference' },
     { header: 'Type', key: 'type', formatter: (type) => type === 'package' ? 'Colis' : 'Courrier' },
     { header: 'Expéditeur', key: 'sender' },
-    { header: 'Destinataire', key: 'recipientEmployeeId', formatter: (id) => {
+    { header: 'Destinataire', key: 'recipientEmployeeId', formatter: (id, ...rest: any[]) => {
+      const pkg: any = rest?.[0];
       const emp = employees.find(e => e.id === id);
-      return emp ? `${emp.firstName} ${emp.lastName}` : 'Inconnu';
+      if (emp) return `${emp.firstName} ${emp.lastName}`;
+      const service = (pkg && pkg.recipientService) || '';
+      return service || 'Inconnu';
     }},
     { header: 'Priorité', key: 'priority', formatter: (priority) => priority === 'urgent' ? 'Urgente' : 'Normale' },
     { header: 'Statut', key: 'status', formatter: (status) => {

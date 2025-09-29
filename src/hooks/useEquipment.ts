@@ -11,6 +11,7 @@ export function useEquipment() {
   useEffect(() => {
     let cancelled = false;
     const load = async () => {
+      dispatch({ type: 'SET_LOADING', payload: true });
       try {
         if (convexClientAvailable) {
           const res = await convex.query('equipment:list', {});
@@ -30,12 +31,20 @@ export function useEquipment() {
               updatedAt: new Date(e.updatedAt ?? Date.now()),
             })) as Equipment[];
             dispatch({ type: 'SET_EQUIPMENT', payload: mapped });
+            dispatch({ type: 'SET_LOADING', payload: false });
             return;
           }
         }
-      } catch (_) {}
+      } catch (_) {
+        if (!cancelled) {
+          toast({ title: 'Erreur', description: 'Impossible de charger les équipements.', variant: 'destructive' });
+        }
+      }
       const local = repositories.equipment.getAll();
-      if (!cancelled) dispatch({ type: 'SET_EQUIPMENT', payload: local });
+      if (!cancelled) {
+        dispatch({ type: 'SET_EQUIPMENT', payload: local });
+        dispatch({ type: 'SET_LOADING', payload: false });
+      }
     };
     load();
     return () => {

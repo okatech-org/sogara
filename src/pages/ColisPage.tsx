@@ -9,6 +9,8 @@ import { useEmployees } from '@/hooks/useEmployees';
 import { useAuth } from '@/contexts/AppContext';
 import { PackageMail, PackageStatus } from '@/types';
 import { StatusBadge } from '@/components/ui/status-badge';
+import { CreatePackageDialog } from '@/components/dialogs/CreatePackageDialog';
+import { CreateMailDialog } from '@/components/dialogs/CreateMailDialog';
 
 export function ColisPage() {
   const { packages, updatePackageStatus } = usePackages();
@@ -28,7 +30,8 @@ export function ColisPage() {
       pkg.sender.toLowerCase().includes(searchLower) ||
       pkg.description.toLowerCase().includes(searchLower) ||
       recipient?.firstName.toLowerCase().includes(searchLower) ||
-      recipient?.lastName.toLowerCase().includes(searchLower)
+      recipient?.lastName.toLowerCase().includes(searchLower) ||
+      (pkg.recipientService?.toLowerCase().includes(searchLower) ?? false)
     );
 
     const matchesStatus = statusFilter === 'all' || pkg.status === statusFilter;
@@ -95,10 +98,10 @@ export function ColisPage() {
           </p>
         </div>
         {canManagePackages && (
-          <Button className="gap-2 gradient-primary">
-            <Plus className="w-4 h-4" />
-            Nouveau colis
-          </Button>
+          <div className="flex gap-2">
+            <CreatePackageDialog />
+            <CreateMailDialog />
+          </div>
         )}
       </div>
 
@@ -196,7 +199,18 @@ export function ColisPage() {
                         </div>
                         <div className="text-sm text-muted-foreground">
                           <p>De: {pkg.sender}</p>
-                          <p>Pour: {getRecipientName(pkg.recipientEmployeeId)}</p>
+                          <p>
+                            Pour: {pkg.recipientEmployeeId ? getRecipientName(pkg.recipientEmployeeId) : pkg.recipientService || 'Destinataire inconnu'}
+                          </p>
+                          {pkg.type === 'mail' && (
+                            <div className="flex gap-2 mt-1">
+                              {pkg.isConfidential ? (
+                                <Badge variant="secondary">Confidentiel</Badge>
+                              ) : (
+                                <Badge variant="outline">Numérisé</Badge>
+                              )}
+                            </div>
+                          )}
                           <p>Description: {pkg.description}</p>
                           <p>Reçu: {new Date(pkg.receivedAt).toLocaleString()}</p>
                           {pkg.deliveredAt && (

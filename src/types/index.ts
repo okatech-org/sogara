@@ -61,9 +61,12 @@ export interface PackageMail {
   type: 'package' | 'mail';
   reference: string;
   sender: string;
-  recipientEmployeeId: string;
+  recipientEmployeeId?: string;
+  recipientService?: string; // Pour les courriers adressés à un service
   description: string;
   photoUrl?: string;
+  isConfidential?: boolean; // Courrier confidentiel: pas de scan
+  scannedFileUrls?: string[]; // Courrier non confidentiel: fichiers scannés
   priority: Priority;
   status: PackageStatus;
   receivedAt: Date;
@@ -158,6 +161,18 @@ export interface NotificationAction {
   label: string;
   action: string;
   style?: 'primary' | 'secondary' | 'destructive';
+}
+
+export interface FolderDocument {
+  id: string;
+  ownerType: 'employee' | 'service';
+  ownerId?: string; // requis si ownerType = 'employee'
+  serviceName?: string; // requis si ownerType = 'service'
+  source: 'mail' | 'package' | 'manual';
+  name: string;
+  url: string; // Data URL ou URL distante
+  mailId?: string; // lien vers le courrier d'origine si applicable
+  createdAt: Date;
 }
 
 export interface Post {
