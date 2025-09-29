@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { AlertTriangle, BookOpen, Shield, Plus, Calendar, FileText, Users, TrendingUp } from 'lucide-react';
+import { AlertTriangle, BookOpen, Shield, Plus, Calendar, FileText, Users, TrendingUp, Loader2, RefreshCw } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { StatusBadge } from '@/components/ui/status-badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { HSEIncidentForm } from './HSEIncidentForm';
 import { HSEIncidentTimeline } from './HSEIncidentTimeline';
 import { HSETrainingCalendar } from './HSETrainingCalendar';
@@ -12,13 +13,17 @@ import { HSEComplianceDashboard } from './HSEComplianceDashboard';
 import { HSETrainingImporter } from './HSETrainingImporter';
 import { HSETrainingCatalog } from './HSETrainingCatalog';
 import { HSESessionScheduler } from './HSESessionScheduler';
+import { HSELoadingState } from './HSELoadingState';
+import { HSESystemStatus } from './HSESystemStatus';
+import { HSEQuickActions } from './HSEQuickActions';
 import { useAuth } from '@/contexts/AppContext';
 import { useHSEIncidents } from '@/hooks/useHSEIncidents';
 import { useHSETrainings } from '@/hooks/useHSETrainings';
 import { useHSECompliance } from '@/hooks/useHSECompliance';
-import { useHSEData } from '@/hooks/useHSEData';
+import { useHSEInit } from '@/hooks/useHSEInit';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { HSEIncident, HSETraining, HSETrainingSession } from '@/types';
+import { HSESystemValidator } from '@/utils/hse-system-validator';
 
 export function HSEDashboard() {
   const { hasAnyRole } = useAuth();
@@ -28,20 +33,26 @@ export function HSEDashboard() {
     getStats: getIncidentStats, 
     initializeIncidents,
     getIncidentsByStatus,
-    getRecentIncidents 
+    getRecentIncidents,
+    loading: incidentsLoading,
+    error: incidentsError,
+    initialized: incidentsInitialized
   } = useHSEIncidents();
   
   const { 
     trainings, 
     getStats: getTrainingStats, 
     initializeTrainings,
-    getUpcomingSessions 
+    getUpcomingSessions,
+    loading: trainingsLoading,
+    error: trainingsError,
+    initialized: trainingsInitialized
   } = useHSETrainings();
   
   const { getOverallCompliance } = useHSECompliance();
   
-  // Initialiser les données de démonstration
-  useHSEData();
+  // Initialiser les données de base de manière simple
+  const { isInitialized: hseDataInitialized } = useHSEInit();
 
   // États des dialogs
   const [showIncidentForm, setShowIncidentForm] = useState(false);
@@ -52,23 +63,35 @@ export function HSEDashboard() {
   const canManageHSE = hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR']);
   const canViewHSE = hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR', 'EMPLOYE']);
 
+  // État de chargement global
+  const isLoading = incidentsLoading || trainingsLoading;
+  const hasErrors = incidentsError || trainingsError;
+  const isFullyInitialized = incidentsInitialized && trainingsInitialized;
+  
   // Initialiser les données
   useEffect(() => {
-    initializeIncidents();
-    initializeTrainings();
-  }, [initializeIncidents, initializeTrainings]);
+    if (!isFullyInitialized && !isLoading) {
+      initializeIncidents();
+      initializeTrainings();
+    }
+  }, [initializeIncidents, initializeTrainings, isFullyInitialized, isLoading]);
 
-  // Récupérer les statistiques
-  const incidentStats = getIncidentStats();
-  const trainingStats = getTrainingStats();
-  const complianceRate = getOverallCompliance();
-  const upcomingSessions = getUpcomingSessions(7);
-  const recentIncidents = getRecentIncidents(30);
-  const openIncidents = getIncidentsByStatus('reported').concat(getIncidentsByStatus('investigating'));
+  // Récupérer les statistiques (seulement si initialisé)
+  const incidentStats = isFullyInitialized ? getIncidentStats() : { open: 0, resolved: 0, thisMonth: 0, highSeverity: 0, total: 0 };
+  const trainingStats = isFullyInitialized ? getTrainingStats() : { scheduled: 0, completed: 0, compliance: 0, totalTrainings: 0, totalSessions: 0, completionRate: 0 };
+  const complianceRate = isFullyInitialized ? getOverallCompliance() : 0;
+  const upcomingSessions = isFullyInitialized ? getUpcomingSessions(7) : [];
+  const recentIncidents = isFullyInitialized ? getRecentIncidents(30) : [];
+  const openIncidents = isFullyInitialized ? getIncidentsByStatus('reported').concat(getIncidentsByStatus('investigating')) : [];
 
   const handleIncidentSubmit = async (incidentData: Partial<HSEIncident>) => {
-    await addIncident(incidentData as Omit<HSEIncident, 'id' | 'createdAt' | 'updatedAt' | 'status'>);
-    setShowIncidentForm(false);
+    try {
+      await addIncident(incidentData as Omit<HSEIncident, 'id' | 'createdAt' | 'updatedAt' | 'status'>);
+      setShowIncidentForm(false);
+      } catch (error) {
+      console.error('Erreur lors de la soumission de l\'incident:', error);
+      // Le toast d'erreur est déjà géré dans le hook
+    }
   };
 
   const handleSessionClick = (training: HSETraining, session: HSETrainingSession) => {
@@ -79,6 +102,29 @@ export function HSEDashboard() {
     const training = trainings.find(t => t.id === trainingId);
     if (training) {
       setShowSessionScheduler(training);
+    }
+  };
+
+  const runSystemValidation = async () => {
+    console.log('🔍 Lancement de la validation système HSE...');
+    try {
+      const validation = await HSESystemValidator.validateSystem();
+      const integrity = await HSESystemValidator.validateDataIntegrity();
+      
+      console.log('📊 RÉSULTATS DE VALIDATION:');
+      console.log(`✅ Système valide: ${validation.isValid}`);
+      console.log(`✅ Intégrité: ${integrity}`);
+      
+      validation.checks.forEach(check => {
+        const icon = check.status === 'success' ? '✅' : 
+                    check.status === 'warning' ? '⚠️' : '❌';
+        console.log(`   ${icon} ${check.name}: ${check.message}`);
+      });
+
+      return validation.isValid && integrity;
+    } catch (error) {
+      console.error('❌ Erreur validation:', error);
+      return false;
     }
   };
 
@@ -156,12 +202,14 @@ export function HSEDashboard() {
           <CardTitle className="flex items-center gap-2">
             <AlertTriangle className="w-5 h-5" />
             Incidents récents
+            {incidentsLoading && <Loader2 className="w-4 h-4 animate-spin" />}
           </CardTitle>
           {canManageHSE && (
             <Button 
               size="sm" 
               onClick={() => setShowIncidentForm(true)}
               className="gap-2"
+              disabled={isLoading}
             >
               <Plus className="w-4 h-4" />
               Déclarer un incident
@@ -170,7 +218,12 @@ export function HSEDashboard() {
         </div>
       </CardHeader>
       <CardContent>
-        {recentIncidents.length === 0 ? (
+        {!isFullyInitialized ? (
+          <div className="text-center py-8">
+            <Loader2 className="w-12 h-12 mx-auto mb-4 text-muted-foreground animate-spin" />
+            <p className="text-muted-foreground">Chargement des incidents...</p>
+          </div>
+        ) : recentIncidents.length === 0 ? (
           <div className="text-center py-8">
             <Shield className="w-12 h-12 mx-auto mb-4 text-green-500" />
             <h3 className="text-lg font-medium mb-2">Aucun incident récent</h3>
@@ -222,10 +275,16 @@ export function HSEDashboard() {
         <CardTitle className="flex items-center gap-2">
           <Calendar className="w-5 h-5" />
           Formations à venir
+          {trainingsLoading && <Loader2 className="w-4 h-4 animate-spin" />}
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {upcomingSessions.length === 0 ? (
+        {!isFullyInitialized ? (
+          <div className="text-center py-8">
+            <Loader2 className="w-12 h-12 mx-auto mb-4 text-muted-foreground animate-spin" />
+            <p className="text-muted-foreground">Chargement des formations...</p>
+          </div>
+        ) : upcomingSessions.length === 0 ? (
           <div className="text-center py-6">
             <BookOpen className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
             <p className="text-muted-foreground">Aucune formation programmée</p>
@@ -271,6 +330,7 @@ export function HSEDashboard() {
     </Card>
   );
 
+  // Vérification des permissions
   if (!canViewHSE) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -286,7 +346,15 @@ export function HSEDashboard() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <HSELoadingState 
+      loading={isLoading && !isFullyInitialized}
+      error={hasErrors ? (incidentsError || trainingsError) : null}
+      onRetry={() => {
+        initializeIncidents();
+        initializeTrainings();
+      }}
+    >
+      <div className="space-y-6 animate-fade-in">
       {/* En-tête */}
       <div className="flex items-center justify-between">
         <div>
@@ -297,10 +365,41 @@ export function HSEDashboard() {
         </div>
         {canManageHSE && (
           <div className="flex gap-2">
-            <Button onClick={() => setShowIncidentForm(true)} className="gap-2">
-              <AlertTriangle className="w-4 h-4" />
+            <Button 
+              onClick={() => setShowIncidentForm(true)} 
+              className="gap-2"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <AlertTriangle className="w-4 h-4" />
+              )}
               Déclarer un incident
             </Button>
+            <Button 
+              variant="outline"
+              onClick={() => {
+                initializeIncidents();
+                initializeTrainings();
+              }}
+              className="gap-2"
+              disabled={isLoading}
+            >
+              <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+              Actualiser
+            </Button>
+            {hasAnyRole(['ADMIN']) && (
+              <Button 
+                variant="ghost"
+                onClick={runSystemValidation}
+                className="gap-2"
+                size="sm"
+              >
+                <FileText className="w-4 h-4" />
+                Test système
+              </Button>
+            )}
           </div>
         )}
       </div>
@@ -310,16 +409,32 @@ export function HSEDashboard() {
 
       {/* Contenu principal par onglets */}
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
           <TabsTrigger value="incidents">Incidents</TabsTrigger>
           <TabsTrigger value="formations">Formations</TabsTrigger>
           <TabsTrigger value="compliance">Conformité</TabsTrigger>
           <TabsTrigger value="catalog">Catalogue</TabsTrigger>
+          <TabsTrigger value="status">Statut</TabsTrigger>
           <TabsTrigger value="equipment">EPI</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
+          {/* Actions rapides */}
+          <HSEQuickActions 
+            onCreateIncident={() => setShowIncidentForm(true)}
+            onScheduleTraining={() => {
+              // Pour la démo, on peut utiliser la première formation disponible
+              if (trainings.length > 0) {
+                setShowSessionScheduler(trainings[0]);
+              }
+            }}
+            onViewCompliance={() => {
+              // Redirection vers l'onglet conformité (simulé)
+              console.log('Redirection vers conformité');
+            }}
+          />
+          
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {renderRecentIncidents()}
             {renderUpcomingTrainings()}
@@ -336,7 +451,7 @@ export function HSEDashboard() {
               <CardContent>
                 <div className="space-y-3">
                   {openIncidents.map(incident => (
-                    <div 
+                    <div
                       key={incident.id}
                       className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg cursor-pointer hover:bg-yellow-100 transition-colors"
                       onClick={() => setShowIncidentDetails(incident)}
@@ -387,21 +502,38 @@ export function HSEDashboard() {
           />
         </TabsContent>
 
+        <TabsContent value="status">
+          <HSESystemStatus 
+            onAction={(action) => {
+              switch (action) {
+                case 'init-training-system':
+                  // Rediriger vers l'onglet catalogue pour l'importation
+                  break;
+                case 'view-compliance':
+                  // Rediriger vers l'onglet conformité
+                  break;
+                default:
+                  console.log('Action:', action);
+              }
+            }}
+          />
+        </TabsContent>
+
         <TabsContent value="equipment" className="space-y-4">
-          <Card className="industrial-card">
-            <CardHeader>
+            <Card className="industrial-card">
+              <CardHeader>
               <CardTitle>Gestion des EPI</CardTitle>
-            </CardHeader>
-            <CardContent>
+              </CardHeader>
+              <CardContent>
               <div className="text-center py-8">
                 <Shield className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
                 <h3 className="text-lg font-medium mb-2">Module EPI</h3>
                 <p className="text-muted-foreground">
                   La gestion des équipements de protection individuelle sera bientôt disponible.
                 </p>
-              </div>
-            </CardContent>
-          </Card>
+                </div>
+              </CardContent>
+            </Card>
         </TabsContent>
       </Tabs>
 
@@ -442,13 +574,13 @@ export function HSEDashboard() {
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
                       <span className="font-medium">Date:</span> {showTrainingSession.session.date.toLocaleDateString('fr-FR')}
-                    </div>
+                      </div>
                     <div>
                       <span className="font-medium">Formateur:</span> {showTrainingSession.session.instructor}
                     </div>
                     <div>
                       <span className="font-medium">Lieu:</span> {showTrainingSession.session.location}
-                    </div>
+                      </div>
                     <div>
                       <span className="font-medium">Durée:</span> {showTrainingSession.training.duration} min
                     </div>
@@ -489,6 +621,7 @@ export function HSEDashboard() {
           )}
         </DialogContent>
       </Dialog>
-    </div>
+                    </div>
+    </HSELoadingState>
   );
 }

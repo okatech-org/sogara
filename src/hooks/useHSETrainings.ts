@@ -1,7 +1,8 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { HSETraining, HSETrainingSession, HSEAttendance, HSENotification, UserRole } from '@/types';
 import { useApp } from '@/contexts/AppContext';
 import { repositories } from '@/services/repositories';
+import { toast } from '@/hooks/use-toast';
 
 function generateId(): string {
   return Math.random().toString(36).substring(2) + Date.now().toString(36);
@@ -9,17 +10,68 @@ function generateId(): string {
 
 export function useHSETrainings() {
   const { state, dispatch } = useApp();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [initialized, setInitialized] = useState(false);
 
   // Initialiser les formations depuis le storage
   const initializeTrainings = useCallback(async () => {
-    const trainings = await repositories.hseTrainings.getAll();
-    dispatch({ type: 'SET_HSE_TRAININGS', payload: trainings });
-  }, [dispatch]);
+    if (initialized || loading) return;
+    
+    try {
+      setLoading(true);
+      setError(null);
+      const trainings = await repositories.hseTrainings.getAll();
+      dispatch({ type: 'SET_HSE_TRAININGS', payload: trainings });
+      setInitialized(true);
+      console.log(`🎓 ${trainings.length} formations HSE chargées`);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Erreur lors du chargement des formations';
+      setError(errorMessage);
+      console.error('❌ Erreur chargement formations HSE:', err);
+      toast({
+        title: "Erreur de chargement",
+        description: "Impossible de charger les formations HSE",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [dispatch, initialized, loading]);
+
+  // Auto-initialiser au premier rendu
+  useEffect(() => {
+    initializeTrainings();
+  }, [initializeTrainings]);
 
   const addTraining = useCallback(async (training: Omit<HSETraining, 'id' | 'createdAt' | 'updatedAt' | 'sessions'>) => {
-    const newTraining = await repositories.hseTrainings.create(training);
-    dispatch({ type: 'ADD_HSE_TRAINING', payload: newTraining });
-    return newTraining;
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const newTraining = await repositories.hseTrainings.create(training);
+      dispatch({ type: 'ADD_HSE_TRAINING', payload: newTraining });
+      
+      toast({
+        title: "Formation créée",
+        description: `La formation "${newTraining.title}" a été ajoutée`,
+        variant: "default",
+      });
+      
+      return newTraining;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Erreur lors de la création de la formation';
+      setError(errorMessage);
+      console.error('❌ Erreur création formation:', err);
+      toast({
+        title: "Erreur",
+        description: "Impossible de créer la formation",
+        variant: "destructive",
+      });
+      throw err;
+    } finally {
+      setLoading(false);
+    }
   }, [dispatch]);
 
   const updateTraining = useCallback(async (id: string, updates: Partial<HSETraining>) => {
@@ -299,7 +351,13 @@ export function useHSETrainings() {
   }, [state.hseTrainings, getUpcomingSessions, getComplianceRate]);
 
   return {
+    // État
     trainings: state.hseTrainings,
+    loading,
+    error,
+    initialized,
+    
+    // Actions
     initializeTrainings,
     addTraining,
     updateTraining,
@@ -307,6 +365,8 @@ export function useHSETrainings() {
     addSession,
     registerEmployee,
     markAttendance,
+    
+    // Queries
     getTrainingBySessionId,
     getSessionById,
     getUpcomingSessions,

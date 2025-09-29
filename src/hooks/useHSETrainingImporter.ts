@@ -63,7 +63,7 @@ export function useHSETrainingImporter() {
 
   // Importer les modules de formation
   const importTrainingModules = useCallback(async () => {
-    if (isImporting) return;
+    if (isImporting) return [];
     
     setIsImporting(true);
     setImportProgress({ step: 'importing', progress: 10, message: 'Importation des modules de formation...' });
@@ -80,7 +80,7 @@ export function useHSETrainingImporter() {
     } catch (error) {
       console.error('Erreur lors de l\'importation:', error);
       setImportProgress({ step: 'error', progress: 0, message: 'Erreur lors de l\'importation' });
-      throw error;
+      return [];
     } finally {
       setIsImporting(false);
     }

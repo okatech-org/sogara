@@ -85,15 +85,7 @@ export function useHSEData() {
     }
   };
 
-  useEffect(() => {
-    // Initialiser les données HSE au premier chargement
-    const timer = setTimeout(() => {
-      initializeHSEData();
-    }, 2000); // Attendre 2 secondes pour que les autres hooks soient initialisés
-
-    return () => clearTimeout(timer);
-  }, []);
-
+  // Exposer les fonctions pour utilisation externe (pas d'auto-initialisation ici)
   return {
     initializeHSEData,
     initializeIntelligentTrainingSystem,

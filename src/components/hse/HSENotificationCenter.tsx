@@ -25,10 +25,21 @@ export function HSENotificationCenter({ className }: HSENotificationCenterProps)
   } = useHSEAlerts();
   
   const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   
-  const unreadAlerts = getUnreadHSEAlerts();
-  const priorityAlerts = getPriorityAlerts();
-  const alertsSummary = getHSEAlertsSummary();
+  // États réactifs avec fallbacks sécurisés
+  const unreadAlerts = getUnreadHSEAlerts() || [];
+  const priorityAlerts = getPriorityAlerts() || [];
+  const alertsSummary = getHSEAlertsSummary() || { 
+    total: 0, 
+    priority: 0, 
+    byType: { 
+      trainingExpiring: 0, 
+      incidentHigh: 0, 
+      equipmentCheck: 0, 
+      complianceAlert: 0 
+    } 
+  };
   
   const getNotificationIcon = (type: HSENotification['type']) => {
     switch (type) {
@@ -61,7 +72,14 @@ export function HSENotificationCenter({ className }: HSENotificationCenterProps)
 
   const handleMarkAsRead = async (alertId: string, event: React.MouseEvent) => {
     event.stopPropagation();
-    await markAlertAsRead(alertId);
+    try {
+      setLoading(true);
+      await markAlertAsRead(alertId);
+    } catch (error) {
+      console.error('Erreur lors du marquage de l\'alerte:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const renderNotificationItem = (notification: HSENotification) => (

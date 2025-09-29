@@ -1,7 +1,8 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { HSEIncident, HSENotification } from '@/types';
 import { useApp } from '@/contexts/AppContext';
 import { repositories } from '@/services/repositories';
+import { toast } from '@/hooks/use-toast';
 
 function generateId(): string {
   return Math.random().toString(36).substring(2) + Date.now().toString(36);
@@ -9,46 +10,119 @@ function generateId(): string {
 
 export function useHSEIncidents() {
   const { state, dispatch } = useApp();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [initialized, setInitialized] = useState(false);
 
   // Initialiser les incidents depuis le storage au premier chargement
   const initializeIncidents = useCallback(async () => {
-    const incidents = await repositories.hseIncidents.getAll();
-    dispatch({ type: 'SET_HSE_INCIDENTS', payload: incidents });
-  }, [dispatch]);
+    if (initialized || loading) return;
+    
+    try {
+      setLoading(true);
+      setError(null);
+      const incidents = await repositories.hseIncidents.getAll();
+      dispatch({ type: 'SET_HSE_INCIDENTS', payload: incidents });
+      setInitialized(true);
+      console.log(`📋 ${incidents.length} incidents HSE chargés`);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Erreur lors du chargement des incidents';
+      setError(errorMessage);
+      console.error('❌ Erreur chargement incidents HSE:', err);
+      toast({
+        title: "Erreur de chargement",
+        description: "Impossible de charger les incidents HSE",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [dispatch, initialized, loading]);
+
+  // Auto-initialiser au premier rendu
+  useEffect(() => {
+    initializeIncidents();
+  }, [initializeIncidents]);
 
   const addIncident = useCallback(async (incident: Omit<HSEIncident, 'id' | 'createdAt' | 'updatedAt' | 'status'>) => {
-    const newIncident = await repositories.hseIncidents.create({
-      ...incident,
-      status: 'reported',
-    });
-
-    dispatch({ type: 'ADD_HSE_INCIDENT', payload: newIncident });
-    
-    // Créer notification si sévérité élevée
-    if (newIncident.severity === 'high') {
-      const notification: HSENotification = {
-        id: generateId(),
-        type: 'hse_incident_high',
-        title: 'Incident de sévérité élevée',
-        message: `${newIncident.type} - ${newIncident.location}`,
-        timestamp: new Date(),
-        read: false,
-        metadata: { incidentId: newIncident.id }
-      };
+    try {
+      setLoading(true);
+      setError(null);
       
-      repositories.notifications.create(notification);
-      dispatch({ type: 'ADD_NOTIFICATION', payload: notification });
+      const newIncident = await repositories.hseIncidents.create({
+        ...incident,
+        status: 'reported',
+      });
+
+      dispatch({ type: 'ADD_HSE_INCIDENT', payload: newIncident });
+      
+      // Créer notification si sévérité élevée
+      if (newIncident.severity === 'high') {
+        const notification: HSENotification = {
+          id: generateId(),
+          type: 'hse_incident_high',
+          title: 'Incident de sévérité élevée',
+          message: `${newIncident.type} - ${newIncident.location}`,
+          timestamp: new Date(),
+          read: false,
+          metadata: { incidentId: newIncident.id }
+        };
+        
+        repositories.notifications.create(notification);
+        dispatch({ type: 'ADD_NOTIFICATION', payload: notification });
+      }
+      
+      toast({
+        title: "Incident déclaré",
+        description: `L'incident "${newIncident.type}" a été enregistré avec succès`,
+        variant: "default",
+      });
+      
+      return newIncident;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Erreur lors de la création de l\'incident';
+      setError(errorMessage);
+      console.error('❌ Erreur création incident:', err);
+      toast({
+        title: "Erreur",
+        description: "Impossible de créer l'incident",
+        variant: "destructive",
+      });
+      throw err;
+    } finally {
+      setLoading(false);
     }
-    
-    return newIncident;
   }, [dispatch]);
 
   const updateIncident = useCallback(async (id: string, updates: Partial<HSEIncident>) => {
-    const updatedIncident = await repositories.hseIncidents.update(id, updates);
-    if (updatedIncident) {
-      dispatch({ type: 'UPDATE_HSE_INCIDENT', payload: updatedIncident });
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const updatedIncident = await repositories.hseIncidents.update(id, updates);
+      if (updatedIncident) {
+        dispatch({ type: 'UPDATE_HSE_INCIDENT', payload: updatedIncident });
+        
+        toast({
+          title: "Incident mis à jour",
+          description: "Les modifications ont été enregistrées",
+          variant: "default",
+        });
+      }
+      return updatedIncident;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Erreur lors de la mise à jour';
+      setError(errorMessage);
+      console.error('❌ Erreur mise à jour incident:', err);
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour l'incident",
+        variant: "destructive",
+      });
+      throw err;
+    } finally {
+      setLoading(false);
     }
-    return updatedIncident;
   }, [dispatch]);
 
   const deleteIncident = useCallback(async (id: string) => {
@@ -124,7 +198,13 @@ export function useHSEIncidents() {
   }, [state.hseIncidents, getIncidentsByStatus, getIncidentsBySeverity]);
 
   return {
+    // État
     incidents: state.hseIncidents,
+    loading,
+    error,
+    initialized,
+    
+    // Actions
     initializeIncidents,
     addIncident,
     updateIncident,
@@ -132,6 +212,8 @@ export function useHSEIncidents() {
     assignInvestigator,
     resolveIncident,
     addAttachment,
+    
+    // Queries
     getIncidentsByStatus,
     getIncidentsBySeverity,
     getIncidentsByEmployee,

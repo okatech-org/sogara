@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AlertTriangle, Camera, X } from 'lucide-react';
+import { AlertTriangle, Camera, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -43,6 +43,7 @@ const locations = [
 
 export function HSEIncidentForm({ incident, onSubmit, onCancel }: HSEIncidentFormProps) {
   const { state } = useApp();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     employeeId: incident?.employeeId || '',
     type: incident?.type || '',
@@ -50,7 +51,7 @@ export function HSEIncidentForm({ incident, onSubmit, onCancel }: HSEIncidentFor
     description: incident?.description || '',
     location: incident?.location || '',
     occurredAt: incident?.occurredAt ? incident.occurredAt.toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16),
-    reportedBy: incident?.reportedBy || '',
+    reportedBy: incident?.reportedBy || state.currentUser?.firstName + ' ' + state.currentUser?.lastName || '',
     attachments: incident?.attachments || [],
   });
 
@@ -70,21 +71,31 @@ export function HSEIncidentForm({ incident, onSubmit, onCancel }: HSEIncidentFor
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) return;
+    if (!validateForm() || isSubmitting) return;
 
-    // Convertir les fichiers en URLs de données (simulation)
-    const attachmentUrls = attachmentFiles.map(file => URL.createObjectURL(file));
-    
-    const incidentData: Partial<HSEIncident> = {
-      ...formData,
-      occurredAt: new Date(formData.occurredAt),
-      attachments: [...formData.attachments, ...attachmentUrls],
-    };
+    try {
+      setIsSubmitting(true);
+      setErrors({});
 
-    onSubmit(incidentData);
+      // Convertir les fichiers en URLs de données (simulation)
+      const attachmentUrls = attachmentFiles.map(file => URL.createObjectURL(file));
+      
+      const incidentData: Partial<HSEIncident> = {
+        ...formData,
+        occurredAt: new Date(formData.occurredAt),
+        attachments: [...formData.attachments, ...attachmentUrls],
+      };
+
+      await onSubmit(incidentData);
+    } catch (error) {
+      console.error('Erreur lors de la soumission:', error);
+      setErrors({ submit: 'Erreur lors de la soumission du formulaire' });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -120,17 +131,28 @@ export function HSEIncidentForm({ incident, onSubmit, onCancel }: HSEIncidentFor
               <Label htmlFor="employeeId">Employé concerné *</Label>
               <Select 
                 value={formData.employeeId} 
-                onValueChange={(value) => setFormData(prev => ({ ...prev, employeeId: value }))}
+                onValueChange={(value) => {
+                  setFormData(prev => ({ ...prev, employeeId: value }));
+                  // Effacer l'erreur si l'utilisateur corrige
+                  if (errors.employeeId) {
+                    setErrors(prev => ({ ...prev, employeeId: '' }));
+                  }
+                }}
+                disabled={isSubmitting}
               >
                 <SelectTrigger className={errors.employeeId ? 'border-red-500' : ''}>
                   <SelectValue placeholder="Sélectionner un employé" />
                 </SelectTrigger>
                 <SelectContent>
-                  {state.employees.map(employee => (
-                    <SelectItem key={employee.id} value={employee.id}>
-                      {employee.firstName} {employee.lastName} ({employee.matricule})
-                    </SelectItem>
-                  ))}
+                  {state.employees.length === 0 ? (
+                    <SelectItem value="" disabled>Aucun employé disponible</SelectItem>
+                  ) : (
+                    state.employees.map(employee => (
+                      <SelectItem key={employee.id} value={employee.id}>
+                        {employee.firstName} {employee.lastName} ({employee.matricule})
+                      </SelectItem>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
               {errors.employeeId && <p className="text-sm text-red-500">{errors.employeeId}</p>}
@@ -140,7 +162,13 @@ export function HSEIncidentForm({ incident, onSubmit, onCancel }: HSEIncidentFor
               <Label htmlFor="type">Type d'incident *</Label>
               <Select 
                 value={formData.type} 
-                onValueChange={(value) => setFormData(prev => ({ ...prev, type: value }))}
+                onValueChange={(value) => {
+                  setFormData(prev => ({ ...prev, type: value }));
+                  if (errors.type) {
+                    setErrors(prev => ({ ...prev, type: '' }));
+                  }
+                }}
+                disabled={isSubmitting}
               >
                 <SelectTrigger className={errors.type ? 'border-red-500' : ''}>
                   <SelectValue placeholder="Sélectionner le type" />
@@ -217,13 +245,19 @@ export function HSEIncidentForm({ incident, onSubmit, onCancel }: HSEIncidentFor
           {/* Description */}
           <div className="space-y-2">
             <Label htmlFor="description">Description détaillée *</Label>
-            <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              placeholder="Décrivez les circonstances de l'incident, les personnes impliquées, les conséquences..."
-              className={`min-h-[120px] ${errors.description ? 'border-red-500' : ''}`}
-            />
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => {
+                  setFormData(prev => ({ ...prev, description: e.target.value }));
+                  if (errors.description) {
+                    setErrors(prev => ({ ...prev, description: '' }));
+                  }
+                }}
+                placeholder="Décrivez les circonstances de l'incident, les personnes impliquées, les conséquences..."
+                className={`min-h-[120px] ${errors.description ? 'border-red-500' : ''}`}
+                disabled={isSubmitting}
+              />
             {errors.description && <p className="text-sm text-red-500">{errors.description}</p>}
           </div>
 
@@ -282,14 +316,37 @@ export function HSEIncidentForm({ incident, onSubmit, onCancel }: HSEIncidentFor
             )}
           </div>
 
+          {/* Erreur de soumission */}
+          {errors.submit && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-sm text-red-600">{errors.submit}</p>
+            </div>
+          )}
+
           {/* Actions */}
           <div className="flex justify-end gap-3 pt-4 border-t">
-            <Button type="button" variant="outline" onClick={onCancel}>
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={onCancel}
+              disabled={isSubmitting}
+            >
               Annuler
             </Button>
-            <Button type="submit" className="gap-2">
-              <AlertTriangle className="w-4 h-4" />
-              {incident ? 'Mettre à jour' : 'Déclarer l\'incident'}
+            <Button 
+              type="submit" 
+              className="gap-2"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <AlertTriangle className="w-4 h-4" />
+              )}
+              {isSubmitting 
+                ? 'Enregistrement...' 
+                : incident ? 'Mettre à jour' : 'Déclarer l\'incident'
+              }
             </Button>
           </div>
         </form>
