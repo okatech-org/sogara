@@ -7,7 +7,7 @@ import { LoginForm } from '@/components/auth/LoginForm';
 import { Dashboard } from '@/pages/Dashboard';
 import { PersonnelPage } from '@/pages/PersonnelPage';
 import { VisitesPage } from '@/pages/VisitesPage';
-import { ColisPage } from '@/pages/ColisPage';
+import { ColisCourrierPage } from '@/pages/ColisCourrierPage';
 import { EquipementsPage } from '@/pages/EquipementsPage';
 import { HSEPage } from '@/pages/HSEPage';
 import { SOGARAConnectPage } from '@/pages/SOGARAConnectPage';
@@ -104,7 +104,7 @@ function AppRoutes() {
           path="colis"
           element={(
             <RoleProtected roles={['ADMIN', 'RECEP']}>
-              <ColisPage />
+              <ColisCourrierPage />
             </RoleProtected>
           )}
         />

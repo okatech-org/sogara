@@ -31,9 +31,11 @@ import { useHSEInit } from '@/hooks/useHSEInit';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { HSEIncident, HSETraining, HSETrainingSession } from '@/types';
 import { HSESystemValidator } from '@/utils/hse-system-validator';
+import { HSEWelcomeTour } from './HSEWelcomeTour';
 
 export function HSEDashboard() {
   const { hasAnyRole, state } = useAuth();
+  const [showWelcomeTour, setShowWelcomeTour] = useState(false);
   
   // État pour la navigation entre onglets
   const [activeTab, setActiveTab] = useState('overview');
@@ -89,6 +91,14 @@ export function HSEDashboard() {
       initializeTrainings();
     }
   }, [initializeIncidents, initializeTrainings, isFullyInitialized, isLoading]);
+
+  // Afficher le tour de bienvenue pour les nouveaux utilisateurs
+  useEffect(() => {
+    const hasSeenTour = localStorage.getItem('sogara_hse_tour_completed');
+    if (!hasSeenTour && isFullyInitialized) {
+      setShowWelcomeTour(true);
+    }
+  }, [isFullyInitialized]);
 
   // Filtrer les incidents
   useEffect(() => {
@@ -387,15 +397,21 @@ export function HSEDashboard() {
   }
 
   return (
-    <HSELoadingState 
-      loading={isLoading && !isFullyInitialized}
-      error={hasErrors ? (incidentsError || trainingsError) : null}
-      onRetry={() => {
-        initializeIncidents();
-        initializeTrainings();
-      }}
-    >
-      <div className="space-y-6 animate-fade-in">
+    <>
+      {/* Tour de bienvenue */}
+      {showWelcomeTour && (
+        <HSEWelcomeTour onComplete={() => setShowWelcomeTour(false)} />
+      )}
+
+      <HSELoadingState 
+        loading={isLoading && !isFullyInitialized}
+        error={hasErrors ? (incidentsError || trainingsError) : null}
+        onRetry={() => {
+          initializeIncidents();
+          initializeTrainings();
+        }}
+      >
+        <div className="space-y-6 animate-fade-in">
       {/* En-tête */}
       <div className="flex items-center justify-between">
         <div>
@@ -808,6 +824,7 @@ export function HSEDashboard() {
         </DialogContent>
       </Dialog>
                     </div>
-    </HSELoadingState>
+      </HSELoadingState>
+    </>
   );
 }
