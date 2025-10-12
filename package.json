@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "dev:convex": "bun convex dev",
+    "dev:full": "bun run dev:convex & bun run dev",
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
