@@ -1,224 +1,267 @@
-import { useCallback, useEffect, useState } from 'react';
-import { HSEIncident, HSENotification } from '@/types';
-import { useApp } from '@/contexts/AppContext';
-import { repositories } from '@/services/repositories';
+import { useMemo, useCallback, useEffect, useState } from 'react';
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../convex/_generated/api";
+import { HSEIncident } from '@/types';
 import { toast } from '@/hooks/use-toast';
-
-function generateId(): string {
-  return Math.random().toString(36).substring(2) + Date.now().toString(36);
-}
+import { Id } from "../../convex/_generated/dataModel";
+import { repositories } from '@/services/repositories';
 
 export function useHSEIncidents() {
-  const { state, dispatch } = useApp();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [initialized, setInitialized] = useState(false);
+  // Queries Convex
+  const incidentsData = useQuery(api.hseIncidents.list);
 
-  // Initialiser les incidents depuis le storage au premier chargement
-  const initializeIncidents = useCallback(async () => {
-    if (initialized || loading) return;
-    
-    try {
-      setLoading(true);
-      setError(null);
-      const incidents = await repositories.hseIncidents.getAll();
-      dispatch({ type: 'SET_HSE_INCIDENTS', payload: incidents });
-      setInitialized(true);
-      console.log(`📋 ${incidents.length} incidents HSE chargés`);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erreur lors du chargement des incidents';
-      setError(errorMessage);
-      console.error('❌ Erreur chargement incidents HSE:', err);
-      toast({
-        title: "Erreur de chargement",
-        description: "Impossible de charger les incidents HSE",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, [dispatch, initialized, loading]);
+  // Fallback local si Convex n'est pas disponible
+  const [fallbackIncidents, setFallbackIncidents] = useState<HSEIncident[] | null>(null);
+  const [fallbackReady, setFallbackReady] = useState(false);
 
-  // Auto-initialiser au premier rendu
   useEffect(() => {
-    initializeIncidents();
-  }, [initializeIncidents]);
-
-  const addIncident = useCallback(async (incident: Omit<HSEIncident, 'id' | 'createdAt' | 'updatedAt' | 'status'>) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const newIncident = await repositories.hseIncidents.create({
-        ...incident,
-        status: 'reported',
-      });
-
-      dispatch({ type: 'ADD_HSE_INCIDENT', payload: newIncident });
-      
-      // Créer notification si sévérité élevée
-      if (newIncident.severity === 'high') {
-        const notification: HSENotification = {
-          id: generateId(),
-          type: 'hse_incident_high',
-          title: 'Incident de sévérité élevée',
-          message: `${newIncident.type} - ${newIncident.location}`,
-          timestamp: new Date(),
-          read: false,
-          metadata: { incidentId: newIncident.id }
-        };
-        
-        repositories.notifications.create(notification);
-        dispatch({ type: 'ADD_NOTIFICATION', payload: notification });
-      }
-      
-      toast({
-        title: "Incident déclaré",
-        description: `L'incident "${newIncident.type}" a été enregistré avec succès`,
-        variant: "default",
-      });
-      
-      return newIncident;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erreur lors de la création de l\'incident';
-      setError(errorMessage);
-      console.error('❌ Erreur création incident:', err);
-      toast({
-        title: "Erreur",
-        description: "Impossible de créer l'incident",
-        variant: "destructive",
-      });
-      throw err;
-    } finally {
-      setLoading(false);
+    let cancelled = false;
+    if (incidentsData === undefined && !fallbackReady) {
+      // Charger depuis localStorage via repositories
+      (async () => {
+        try {
+          const list = await repositories.hseIncidents.getAll();
+          if (!cancelled) {
+            setFallbackIncidents(list);
+            setFallbackReady(true);
+          }
+        } catch (_) {
+          if (!cancelled) setFallbackReady(true);
+        }
+      })();
     }
-  }, [dispatch]);
-
-  const updateIncident = useCallback(async (id: string, updates: Partial<HSEIncident>) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const updatedIncident = await repositories.hseIncidents.update(id, updates);
-      if (updatedIncident) {
-        dispatch({ type: 'UPDATE_HSE_INCIDENT', payload: updatedIncident });
-        
-        toast({
-          title: "Incident mis à jour",
-          description: "Les modifications ont été enregistrées",
-          variant: "default",
-        });
-      }
-      return updatedIncident;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erreur lors de la mise à jour';
-      setError(errorMessage);
-      console.error('❌ Erreur mise à jour incident:', err);
-      toast({
-        title: "Erreur",
-        description: "Impossible de mettre à jour l'incident",
-        variant: "destructive",
-      });
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [dispatch]);
-
-  const deleteIncident = useCallback(async (id: string) => {
-    const success = await repositories.hseIncidents.delete(id);
-    if (success) {
-      dispatch({ type: 'DELETE_HSE_INCIDENT', payload: id });
-    }
-    return success;
-  }, [dispatch]);
-
-  const assignInvestigator = useCallback(async (incidentId: string, investigatorId: string) => {
-    return updateIncident(incidentId, { 
-      investigatedBy: investigatorId,
-      status: 'investigating'
-    });
-  }, [updateIncident]);
-
-  const resolveIncident = useCallback(async (incidentId: string, correctiveActions: string) => {
-    return updateIncident(incidentId, {
-      status: 'resolved',
-      correctiveActions,
-    });
-  }, [updateIncident]);
-
-  const addAttachment = useCallback(async (incidentId: string, attachment: string) => {
-    return repositories.hseIncidents.addAttachment(incidentId, attachment);
-  }, []);
-
-  // Filtres et requêtes
-  const getIncidentsByStatus = useCallback((status: HSEIncident['status']) => {
-    return state.hseIncidents.filter(i => i.status === status);
-  }, [state.hseIncidents]);
-
-  const getIncidentsBySeverity = useCallback((severity: HSEIncident['severity']) => {
-    return state.hseIncidents.filter(i => i.severity === severity);
-  }, [state.hseIncidents]);
-
-  const getIncidentsByEmployee = useCallback((employeeId: string) => {
-    return state.hseIncidents.filter(i => i.employeeId === employeeId);
-  }, [state.hseIncidents]);
-
-  const getIncidentsByDateRange = useCallback((startDate: Date, endDate: Date) => {
-    return state.hseIncidents.filter(i => 
-      i.occurredAt >= startDate && i.occurredAt <= endDate
-    );
-  }, [state.hseIncidents]);
-
-  const getRecentIncidents = useCallback((days: number = 30) => {
-    const cutoffDate = new Date();
-    cutoffDate.setDate(cutoffDate.getDate() - days);
-    return state.hseIncidents
-      .filter(i => i.occurredAt >= cutoffDate)
-      .sort((a, b) => b.occurredAt.getTime() - a.occurredAt.getTime());
-  }, [state.hseIncidents]);
-
-  // Statistiques
-  const getStats = useCallback(() => {
-    const open = getIncidentsByStatus('reported').length + getIncidentsByStatus('investigating').length;
-    const resolved = getIncidentsByStatus('resolved').length;
-    const highSeverity = getIncidentsBySeverity('high').filter(i => i.status !== 'resolved').length;
-    
-    const thisMonth = new Date();
-    thisMonth.setMonth(thisMonth.getMonth() - 1);
-    const monthlyIncidents = state.hseIncidents.filter(i => i.occurredAt >= thisMonth).length;
-
-    return {
-      open,
-      resolved,
-      thisMonth: monthlyIncidents,
-      highSeverity,
-      total: state.hseIncidents.length,
+    return () => {
+      cancelled = true;
     };
-  }, [state.hseIncidents, getIncidentsByStatus, getIncidentsBySeverity]);
+  }, [incidentsData, fallbackReady]);
+
+  // Mutations Convex
+  const createMutation = useMutation(api.hseIncidents.create);
+  const updateMutation = useMutation(api.hseIncidents.update);
+  const assignInvestigatorMutation = useMutation(api.hseIncidents.assignInvestigator);
+  const resolveMutation = useMutation(api.hseIncidents.resolve);
+  const removeMutation = useMutation(api.hseIncidents.remove);
+
+  // Mapper les données (Convex si dispo, sinon fallback local)
+  const incidents: HSEIncident[] = useMemo(() => {
+    if (incidentsData) {
+      return (incidentsData as any[]).map((i: any) => ({
+        id: i._id,
+        employeeId: i.employeeId,
+        type: i.type,
+        severity: i.severity,
+        description: i.description,
+        location: i.location,
+        occurredAt: new Date(i.occurredAt),
+        status: i.status,
+        attachments: i.attachments,
+        reportedBy: i.reportedBy,
+        investigatedBy: i.investigatedBy,
+        correctiveActions: i.correctiveActions,
+        createdAt: new Date(i._creationTime),
+        updatedAt: new Date(i._creationTime),
+      }));
+    }
+    return fallbackIncidents || [];
+  }, [incidentsData, fallbackIncidents]);
+
+  const createIncident = async (incidentData: Omit<HSEIncident, 'id' | 'createdAt' | 'updatedAt' | 'status'>) => {
+    try {
+      await createMutation({
+        employeeId: incidentData.employeeId as Id<"employees">,
+        type: incidentData.type,
+        severity: incidentData.severity,
+        description: incidentData.description,
+        location: incidentData.location,
+        occurredAt: incidentData.occurredAt.getTime(),
+        reportedBy: incidentData.reportedBy as Id<"employees">,
+        attachments: incidentData.attachments,
+      });
+
+      toast({
+        title: 'Incident déclaré',
+        description: 'L\'incident a été enregistré avec succès.',
+      });
+
+      return { success: true };
+    } catch (error: any) {
+      // Fallback local
+      try {
+        const created = await repositories.hseIncidents.create(incidentData);
+        setFallbackIncidents((prev) => (prev ? [created, ...prev] : [created]));
+        toast({ title: 'Incident déclaré (local)', description: 'Mode hors-ligne, sauvegardé localement.' });
+        return { success: true, offline: true } as any;
+      } catch (e: any) {
+        toast({ title: 'Erreur', description: e?.message || 'Impossible de créer l\'incident.', variant: 'destructive' });
+        return { success: false, error: e?.message };
+      }
+    }
+  };
+
+  const updateIncident = async (id: string, updates: Partial<HSEIncident>) => {
+    try {
+      await updateMutation({
+        id: id as Id<"hseIncidents">,
+        status: updates.status,
+        investigatedBy: updates.investigatedBy as Id<"employees"> | undefined,
+        correctiveActions: updates.correctiveActions,
+        rootCause: updates.rootCause,
+      });
+
+      toast({
+        title: 'Incident mis à jour',
+        description: 'Les modifications ont été sauvegardées.',
+      });
+
+      return { success: true };
+    } catch (error: any) {
+      try {
+        const updated = await repositories.hseIncidents.update(id, updates);
+        if (updated) {
+          setFallbackIncidents((prev) => prev ? prev.map(i => i.id === id ? updated : i) : [updated]);
+          toast({ title: 'Incident mis à jour (local)', description: 'Modifications enregistrées hors-ligne.' });
+          return { success: true, offline: true } as any;
+        }
+        return { success: false };
+      } catch (e: any) {
+        toast({ title: 'Erreur', description: e?.message || 'Impossible de mettre à jour l\'incident.', variant: 'destructive' });
+        return { success: false, error: e?.message };
+      }
+    }
+  };
+
+  const assignInvestigator = async (incidentId: string, investigatorId: string) => {
+    try {
+      await assignInvestigatorMutation({
+        incidentId: incidentId as Id<"hseIncidents">,
+        investigatorId: investigatorId as Id<"employees">,
+      });
+
+      toast({
+        title: 'Enquêteur assigné',
+        description: 'L\'enquêteur a été assigné à l\'incident.',
+      });
+
+      return { success: true };
+    } catch (error: any) {
+      // Fallback local direct
+      const updated = await repositories.hseIncidents.update(incidentId, { investigatedBy: investigatorId as any });
+      if (updated) {
+        setFallbackIncidents((prev) => prev ? prev.map(i => i.id === incidentId ? updated : i) : [updated]);
+        toast({ title: 'Enquêteur assigné (local)', description: 'Assignation enregistrée hors-ligne.' });
+        return { success: true, offline: true } as any;
+      }
+      return { success: false };
+    }
+  };
+
+  const resolveIncident = async (incidentId: string, correctiveActions: string, rootCause?: string) => {
+    try {
+      await resolveMutation({
+        incidentId: incidentId as Id<"hseIncidents">,
+        correctiveActions,
+        rootCause,
+      });
+
+      toast({
+        title: 'Incident résolu',
+        description: 'L\'incident a été marqué comme résolu.',
+      });
+
+      return { success: true };
+    } catch (error: any) {
+      const updated = await repositories.hseIncidents.update(incidentId, { status: 'resolved' as any, correctiveActions, rootCause });
+      if (updated) {
+        setFallbackIncidents((prev) => prev ? prev.map(i => i.id === incidentId ? updated : i) : [updated]);
+        toast({ title: 'Incident résolu (local)', description: 'Résolution enregistrée hors-ligne.' });
+        return { success: true, offline: true } as any;
+      }
+      return { success: false };
+    }
+  };
+
+  const deleteIncident = async (id: string) => {
+    try {
+      await removeMutation({ id: id as Id<"hseIncidents"> });
+
+      toast({
+        title: 'Incident supprimé',
+        description: 'L\'incident a été supprimé du système.',
+      });
+
+      return { success: true };
+    } catch (error: any) {
+      const ok = await repositories.hseIncidents.delete(id);
+      if (ok) {
+        setFallbackIncidents((prev) => prev ? prev.filter(i => i.id !== id) : []);
+        toast({ title: 'Incident supprimé (local)', description: 'Suppression effectuée hors-ligne.' });
+        return { success: true, offline: true } as any;
+      }
+      return { success: false };
+    }
+  };
+
+  const getIncidentsBySeverity = (severity: 'low' | 'medium' | 'high') => {
+    return incidents.filter(i => i.severity === severity);
+  };
+
+  const getOpenIncidents = () => {
+    return incidents.filter(i => i.status !== 'resolved');
+  };
+
+  const getIncidentById = (id: string) => {
+    return incidents.find(i => i.id === id);
+  };
+
+  const getIncidentsByStatus = (status: string) => {
+    return incidents.filter(i => i.status === status);
+  };
+
+  const getRecentIncidents = (days: number) => {
+    const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+    return incidents.filter(i => i.occurredAt >= cutoff)
+      .sort((a, b) => b.occurredAt.getTime() - a.occurredAt.getTime());
+  };
+
+  const getStats = () => {
+    const now = new Date();
+    const monthAgo = new Date(now);
+    monthAgo.setMonth(monthAgo.getMonth() - 1);
+
+    const open = incidents.filter(i => i.status !== 'resolved').length;
+    const highSeverity = incidents.filter(i => i.severity === 'high' && i.status !== 'resolved').length;
+    const thisMonth = incidents.filter(i => i.occurredAt >= monthAgo).length;
+
+    return { open, highSeverity, thisMonth };
+  };
+
+  const addIncident = useCallback(async (
+    incidentData: Omit<HSEIncident, 'id' | 'createdAt' | 'updatedAt' | 'status'>
+  ) => createIncident(incidentData), [createMutation]);
+
+  const initializeIncidents = useCallback(async () => true, []);
+
+  const loading = incidentsData === undefined && !fallbackReady;
+  const error: string | null = null;
+  const initialized = incidentsData !== undefined || fallbackReady;
 
   return {
-    // État
-    incidents: state.hseIncidents,
+    incidents,
     loading,
     error,
     initialized,
-    
-    // Actions
-    initializeIncidents,
-    addIncident,
+    createIncident,
     updateIncident,
-    deleteIncident,
     assignInvestigator,
     resolveIncident,
-    addAttachment,
-    
-    // Queries
-    getIncidentsByStatus,
+    deleteIncident,
+    addIncident,
+    initializeIncidents,
     getIncidentsBySeverity,
-    getIncidentsByEmployee,
-    getIncidentsByDateRange,
+    getIncidentsByStatus,
     getRecentIncidents,
+    getOpenIncidents,
+    getIncidentById,
     getStats,
   };
 }

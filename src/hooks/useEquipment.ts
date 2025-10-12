@@ -1,208 +1,173 @@
-import { useEffect } from 'react';
-import { useApp } from '@/contexts/AppContext';
-import { repositories } from '@/services/repositories';
+import { useEffect, useMemo, useState } from 'react';
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../convex/_generated/api";
 import { Equipment, EquipmentStatus } from '@/types';
 import { toast } from '@/hooks/use-toast';
-import { convex, convexClientAvailable } from '@/lib/convexClient';
+import { Id } from "../../convex/_generated/dataModel";
+import { repositories } from '@/services/repositories';
 
 export function useEquipment() {
-  const { state, dispatch } = useApp();
+  // Queries Convex
+  const equipmentData = useQuery(api.equipment.list);
+
+  // Fallback local
+  const [fallbackEquipment, setFallbackEquipment] = useState<Equipment[] | null>(null);
+  const [fallbackReady, setFallbackReady] = useState(false);
 
   useEffect(() => {
-    let cancelled = false;
-    const load = async () => {
-      dispatch({ type: 'SET_LOADING', payload: true });
-      try {
-        if (convexClientAvailable) {
-          const res = await convex.query('equipment:list', {});
-          if (!cancelled && Array.isArray(res)) {
-            const mapped = res.map((e: any) => ({
-              id: String(e._id ?? e.id),
-              type: e.type,
-              label: e.label,
-              serialNumber: e.serialNumber,
-              holderEmployeeId: e.holderEmployeeId ? String(e.holderEmployeeId) : undefined,
-              status: e.status as EquipmentStatus,
-              nextCheckDate: e.nextCheckDate ? new Date(e.nextCheckDate) : undefined,
-              description: e.description,
-              location: e.location,
-              history: e.history ?? [],
-              createdAt: new Date(e.createdAt ?? Date.now()),
-              updatedAt: new Date(e.updatedAt ?? Date.now()),
-            })) as Equipment[];
-            dispatch({ type: 'SET_EQUIPMENT', payload: mapped });
-            dispatch({ type: 'SET_LOADING', payload: false });
-            return;
-          }
-        }
-      } catch (_) {
-        if (!cancelled) {
-          toast({ title: 'Erreur', description: 'Impossible de charger les équipements.', variant: 'destructive' });
-        }
-      }
-      const local = repositories.equipment.getAll();
-      if (!cancelled) {
-        dispatch({ type: 'SET_EQUIPMENT', payload: local });
-        dispatch({ type: 'SET_LOADING', payload: false });
-      }
-    };
-    load();
-    return () => {
-      cancelled = true;
-    };
-  }, [dispatch]);
+    if (equipmentData === undefined && !fallbackReady) {
+      const list = repositories.equipment.getAll();
+      setFallbackEquipment(list);
+      setFallbackReady(true);
+    }
+  }, [equipmentData, fallbackReady]);
+
+  // Mutations Convex
+  const createMutation = useMutation(api.equipment.create);
+  const updateMutation = useMutation(api.equipment.update);
+  const assignMutation = useMutation(api.equipment.assignToEmployee);
+  const unassignMutation = useMutation(api.equipment.unassign);
+  const removeMutation = useMutation(api.equipment.remove);
+
+  // Mapper les données (Convex si dispo, sinon fallback)
+  const equipment: Equipment[] = useMemo(() => {
+    if (equipmentData) {
+      return (equipmentData as any[]).map((e: any) => ({
+        id: e._id,
+        type: e.type,
+        label: e.label,
+        serialNumber: e.serialNumber,
+        holderEmployeeId: e.holderEmployeeId,
+        status: e.status,
+        nextCheckDate: e.nextCheckDate ? new Date(e.nextCheckDate) : undefined,
+        description: e.description,
+        location: e.location,
+        history: [],
+        createdAt: new Date(e._creationTime),
+        updatedAt: new Date(e._creationTime),
+      }));
+    }
+    return fallbackEquipment || [];
+  }, [equipmentData, fallbackEquipment]);
 
   const createEquipment = async (equipmentData: Omit<Equipment, 'id' | 'createdAt' | 'updatedAt'>) => {
     try {
-      if (convexClientAvailable) {
-        const created = await convex.mutation('equipment:create', equipmentData);
-        if (created) {
-          const mapped: Equipment = {
-            id: String(created._id ?? created.id),
-            type: created.type,
-            label: created.label,
-            serialNumber: created.serialNumber,
-            holderEmployeeId: created.holderEmployeeId ? String(created.holderEmployeeId) : undefined,
-            status: created.status as EquipmentStatus,
-            nextCheckDate: created.nextCheckDate ? new Date(created.nextCheckDate) : undefined,
-            description: created.description,
-            location: created.location,
-            history: created.history ?? [],
-            createdAt: new Date(created.createdAt ?? Date.now()),
-            updatedAt: new Date(created.updatedAt ?? Date.now()),
-          };
-          dispatch({ type: 'ADD_EQUIPMENT', payload: mapped });
-          toast({ title: 'Équipement créé', description: `${mapped.label} a été ajouté au catalogue.` });
-          return mapped;
-        }
+      await createMutation({
+        type: equipmentData.type,
+        label: equipmentData.label,
+        serialNumber: equipmentData.serialNumber,
+        holderEmployeeId: equipmentData.holderEmployeeId as Id<"employees"> | undefined,
+        status: equipmentData.status,
+        nextCheckDate: equipmentData.nextCheckDate?.getTime(),
+        description: equipmentData.description,
+        location: equipmentData.location,
+      });
+
+      toast({
+        title: 'Équipement créé',
+        description: `${equipmentData.label} a été ajouté au catalogue.`,
+      });
+
+      return { success: true };
+    } catch (error: any) {
+      try {
+        const created = repositories.equipment.create(equipmentData as any);
+        setFallbackEquipment((prev) => prev ? [created, ...prev] : [created]);
+        toast({ title: 'Équipement créé (local)', description: 'Ajout enregistré localement.' });
+        return { success: true, offline: true } as any;
+      } catch (e: any) {
+        toast({ title: 'Erreur', description: e?.message || 'Impossible de créer l\'équipement.', variant: 'destructive' });
+        return { success: false, error: e?.message };
       }
-      const newEquipment = repositories.equipment.create(equipmentData);
-      dispatch({ type: 'ADD_EQUIPMENT', payload: newEquipment });
-      toast({ title: 'Équipement créé', description: `${newEquipment.label} a été ajouté au catalogue.` });
-      return newEquipment;
-    } catch (error) {
-      toast({ title: 'Erreur', description: 'Impossible de créer l\'équipement.', variant: 'destructive' });
-      throw error;
     }
   };
 
   const updateEquipment = async (id: string, updates: Partial<Equipment>) => {
     try {
-      if (convexClientAvailable) {
-        const updated = await convex.mutation('equipment:update', { id, updates });
+      await updateMutation({
+        id: id as Id<"equipment">,
+        holderEmployeeId: updates.holderEmployeeId as Id<"employees"> | undefined,
+        status: updates.status,
+        nextCheckDate: updates.nextCheckDate?.getTime(),
+        location: updates.location,
+        description: updates.description,
+      });
+
+      toast({
+        title: 'Équipement mis à jour',
+        description: 'Les modifications ont été sauvegardées.',
+      });
+
+      return { success: true };
+    } catch (error: any) {
+      try {
+        const updated = repositories.equipment.update(id, updates as any);
         if (updated) {
-          const mapped: Equipment = {
-            id: String(updated._id ?? updated.id),
-            type: updated.type,
-            label: updated.label,
-            serialNumber: updated.serialNumber,
-            holderEmployeeId: updated.holderEmployeeId ? String(updated.holderEmployeeId) : undefined,
-            status: updated.status as EquipmentStatus,
-            nextCheckDate: updated.nextCheckDate ? new Date(updated.nextCheckDate) : undefined,
-            description: updated.description,
-            location: updated.location,
-            history: updated.history ?? [],
-            createdAt: new Date(updated.createdAt ?? Date.now()),
-            updatedAt: new Date(updated.updatedAt ?? Date.now()),
-          };
-          dispatch({ type: 'UPDATE_EQUIPMENT', payload: mapped });
-          toast({ title: 'Équipement mis à jour', description: 'Les modifications ont été sauvegardées.' });
-          return mapped;
+          setFallbackEquipment((prev) => prev ? prev.map(e => e.id === id ? updated : e) : [updated]);
+          toast({ title: 'Équipement mis à jour (local)', description: 'Modifications sauvegardées localement.' });
+          return { success: true, offline: true } as any;
         }
+        return { success: false };
+      } catch (e: any) {
+        toast({ title: 'Erreur', description: e?.message || 'Impossible de mettre à jour l\'équipement.', variant: 'destructive' });
+        return { success: false, error: e?.message };
       }
-      const updatedEquipment = repositories.equipment.update(id, updates);
-      if (updatedEquipment) {
-        dispatch({ type: 'UPDATE_EQUIPMENT', payload: updatedEquipment });
-        toast({ title: 'Équipement mis à jour', description: 'Les modifications ont été sauvegardées.' });
-      }
-      return updatedEquipment;
-    } catch (error) {
-      toast({ title: 'Erreur', description: 'Impossible de mettre à jour l\'équipement.', variant: 'destructive' });
-      throw error;
     }
   };
 
   const assignEquipment = async (equipmentId: string, employeeId: string) => {
     try {
-      if (convexClientAvailable) {
-        const updated = await convex.mutation('equipment:assign', { id: equipmentId, employeeId });
-        if (updated) {
-          const mapped: Equipment = {
-            id: String(updated._id ?? updated.id),
-            type: updated.type,
-            label: updated.label,
-            serialNumber: updated.serialNumber,
-            holderEmployeeId: updated.holderEmployeeId ? String(updated.holderEmployeeId) : undefined,
-            status: updated.status as EquipmentStatus,
-            nextCheckDate: updated.nextCheckDate ? new Date(updated.nextCheckDate) : undefined,
-            description: updated.description,
-            location: updated.location,
-            history: updated.history ?? [],
-            createdAt: new Date(updated.createdAt ?? Date.now()),
-            updatedAt: new Date(updated.updatedAt ?? Date.now()),
-          };
-          dispatch({ type: 'UPDATE_EQUIPMENT', payload: mapped });
-          toast({ title: 'Équipement affecté', description: "L'affectation a été enregistrée." });
-          return mapped;
-        }
-      }
-      const updatedEquipment = repositories.equipment.update(equipmentId, {
-        holderEmployeeId: employeeId,
-        status: 'operational' as EquipmentStatus,
+      await assignMutation({
+        equipmentId: equipmentId as Id<"equipment">,
+        employeeId: employeeId as Id<"employees">,
       });
-      if (updatedEquipment) {
-        dispatch({ type: 'UPDATE_EQUIPMENT', payload: updatedEquipment });
-        toast({ title: 'Équipement affecté', description: "L'affectation a été enregistrée." });
+
+      toast({
+        title: 'Équipement affecté',
+        description: "L'affectation a été enregistrée.",
+      });
+
+      return { success: true };
+    } catch (error: any) {
+      const updated = repositories.equipment.update(equipmentId, { holderEmployeeId: employeeId } as any);
+      if (updated) {
+        setFallbackEquipment((prev) => prev ? prev.map(e => e.id === equipmentId ? updated : e) : [updated]);
+        toast({ title: 'Équipement affecté (local)', description: "Affectation enregistrée localement." });
+        return { success: true, offline: true } as any;
       }
-      return updatedEquipment;
-    } catch (error) {
-      toast({ title: 'Erreur', description: "Impossible d'affecter l'équipement.", variant: 'destructive' });
-      throw error;
+      return { success: false };
     }
   };
 
   const unassignEquipment = async (equipmentId: string) => {
     try {
-      if (convexClientAvailable) {
-        const updated = await convex.mutation('equipment:unassign', { id: equipmentId });
-        if (updated) {
-          const mapped: Equipment = {
-            id: String(updated._id ?? updated.id),
-            type: updated.type,
-            label: updated.label,
-            serialNumber: updated.serialNumber,
-            holderEmployeeId: updated.holderEmployeeId ? String(updated.holderEmployeeId) : undefined,
-            status: updated.status as EquipmentStatus,
-            nextCheckDate: updated.nextCheckDate ? new Date(updated.nextCheckDate) : undefined,
-            description: updated.description,
-            location: updated.location,
-            history: updated.history ?? [],
-            createdAt: new Date(updated.createdAt ?? Date.now()),
-            updatedAt: new Date(updated.updatedAt ?? Date.now()),
-          };
-          dispatch({ type: 'UPDATE_EQUIPMENT', payload: mapped });
-          toast({ title: 'Équipement libéré', description: "L'équipement est maintenant disponible." });
-          return mapped;
-        }
+      await unassignMutation({
+        equipmentId: equipmentId as Id<"equipment">,
+      });
+
+      toast({
+        title: 'Équipement libéré',
+        description: "L'équipement est maintenant disponible.",
+      });
+
+      return { success: true };
+    } catch (error: any) {
+      const updated = repositories.equipment.update(equipmentId, { holderEmployeeId: undefined } as any);
+      if (updated) {
+        setFallbackEquipment((prev) => prev ? prev.map(e => e.id === equipmentId ? updated : e) : [updated]);
+        toast({ title: 'Équipement libéré (local)', description: "L'équipement est maintenant disponible." });
+        return { success: true, offline: true } as any;
       }
-      const updatedEquipment = repositories.equipment.update(equipmentId, { holderEmployeeId: undefined });
-      if (updatedEquipment) {
-        dispatch({ type: 'UPDATE_EQUIPMENT', payload: updatedEquipment });
-        toast({ title: 'Équipement libéré', description: "L'équipement est maintenant disponible." });
-      }
-      return updatedEquipment;
-    } catch (error) {
-      toast({ title: 'Erreur', description: "Impossible de libérer l'équipement.", variant: 'destructive' });
-      throw error;
+      return { success: false };
     }
   };
 
   const getEquipmentByEmployee = (employeeId: string) => {
-    return state.equipment.filter(eq => eq.holderEmployeeId === employeeId);
+    return equipment.filter(eq => eq.holderEmployeeId === employeeId);
   };
 
   const getAvailableEquipment = () => {
-    return state.equipment.filter(eq => 
+    return equipment.filter(eq => 
       !eq.holderEmployeeId && eq.status === 'operational'
     );
   };
@@ -211,17 +176,81 @@ export function useEquipment() {
     const now = new Date();
     const nextWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
     
-    return state.equipment.filter(eq => 
+    return equipment.filter(eq => 
       eq.nextCheckDate && eq.nextCheckDate <= nextWeek
     );
   };
 
   const getEquipmentById = (id: string) => {
-    return state.equipment.find(eq => eq.id === id);
+    return equipment.find(eq => eq.id === id);
+  };
+
+  // Attribution automatique d'EPI par rôle (raffinerie)
+  const ensureRoleEquipment = async () => {
+    try {
+      const employees = repositories.employees.getAll();
+      const requiredByRole: Record<string, Array<{ type: string; label: string }>> = {
+        EMPLOYE: [
+          { type: 'EPI', label: 'Casque de sécurité' },
+          { type: 'EPI', label: 'Chaussures de sécurité' },
+          { type: 'EPI', label: 'Lunettes de protection' },
+          { type: 'EPI', label: 'Gants de protection' },
+        ],
+        SUPERVISEUR: [
+          { type: 'EPI', label: 'Casque de sécurité' },
+          { type: 'EPI', label: 'Chaussures de sécurité' },
+          { type: 'EPI', label: 'Gilet haute visibilité' },
+          { type: 'EPI', label: 'Radio de communication' },
+        ],
+        HSE: [
+          { type: 'EPI', label: 'Casque de sécurité' },
+          { type: 'EPI', label: 'Chaussures de sécurité' },
+          { type: 'EPI', label: 'Détecteur de gaz portable' },
+          { type: 'EPI', label: 'Gilet haute visibilité' },
+        ],
+        RECEP: [
+          { type: 'EPI', label: 'Gilet haute visibilité' },
+        ],
+        ADMIN: [
+          { type: 'EPI', label: 'Badge accès' },
+        ],
+      };
+
+      const list = repositories.equipment.getAll();
+      const createIfMissing = (holderEmployeeId: string, item: { type: string; label: string }) => {
+        const exists = list.some(eq => eq.holderEmployeeId === holderEmployeeId && eq.label === item.label);
+        if (!exists) {
+          const created = repositories.equipment.create({
+            type: item.type,
+            label: item.label,
+            serialNumber: undefined,
+            holderEmployeeId,
+            status: 'operational' as EquipmentStatus,
+            description: undefined,
+            location: undefined,
+            nextCheckDate: undefined,
+          } as any);
+          list.push(created);
+        }
+      };
+
+      employees.forEach(emp => {
+        emp.roles.forEach(role => {
+          const required = requiredByRole[role];
+          if (required) required.forEach(item => createIfMissing(emp.id, item));
+        });
+      });
+
+      setFallbackEquipment([...list]);
+      return true;
+    } catch (_) {
+      return false;
+    }
   };
 
   return {
-    equipment: state.equipment,
+    equipment,
+    isLoading: equipmentData === undefined && !fallbackReady,
     createEquipment,
     updateEquipment,
     assignEquipment,
@@ -230,5 +259,6 @@ export function useEquipment() {
     getAvailableEquipment,
     getEquipmentNeedingMaintenance,
     getEquipmentById,
+    ensureRoleEquipment,
   };
 }

@@ -189,7 +189,7 @@ export class HSESystemValidator {
 ## Statut: SYSTÈME PLEINEMENT FONCTIONNEL ✅
 
 L'application HSE SOGARA Access est prête pour la production.
-Marie LAKIBI peut utiliser toutes les fonctionnalités sans restriction.
+Marie-Claire NZIEGE peut utiliser toutes les fonctionnalités sans restriction.
 `;
 
     return report;

@@ -56,10 +56,11 @@ export function HSEAnalyticsDashboard({ incidents, trainings, employees }: HSEAn
       });
     }
 
-    // Formations par statut
-    const trainingsByStatus = trainings.reduce((acc, training) => {
-      training.sessions.forEach(session => {
-        const status = session.status || 'scheduled';
+    // Formations par statut (robuste si `sessions` absent)
+    const trainingsByStatus = trainings.reduce((acc, training: any) => {
+      const sessions = Array.isArray(training?.sessions) ? training.sessions : [];
+      sessions.forEach((session: any) => {
+        const status = session?.status || 'scheduled';
         acc[status] = (acc[status] || 0) + 1;
       });
       return acc;

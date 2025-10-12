@@ -88,8 +88,8 @@ export default function AccountHub() {
         </Button>
       </div>
 
-      <Tabs defaultValue="admin" className="space-y-6">
-        <TabsList className="grid grid-cols-3 md:grid-cols-6 w-full">
+      <Tabs defaultValue="adm001" className="space-y-6">
+        <TabsList className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 w-full">
           {demoAccounts.map((account) => (
             <TabsTrigger key={account.id} value={account.slug} className="text-xs md:text-sm">
               {account.matricule}

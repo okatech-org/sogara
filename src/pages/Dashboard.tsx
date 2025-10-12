@@ -1,15 +1,34 @@
 import { useState, useEffect } from 'react';
-import { Calendar, Package, HardHat, Shield, Users, AlertTriangle, Clock, CheckCircle } from 'lucide-react';
+import { Calendar, Package, HardHat, Shield, Users, AlertTriangle, Clock, CheckCircle, BookOpen } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useDashboard } from '@/hooks/useDashboard';
 import { useAuth } from '@/contexts/AppContext';
+import { useEmployeeHSEInbox } from '@/hooks/useEmployeeHSEInbox';
 import { StatusBadge } from '@/components/ui/status-badge';
+import { EmployeeHSEInbox } from '@/components/employee/EmployeeHSEInbox';
+import { EmployeeDashboard } from './EmployeeDashboard';
+import { ExternalDashboard } from './external/ExternalDashboard';
 
 export function Dashboard() {
   const { stats, recentNotifications, markNotificationAsRead } = useDashboard();
-  const { currentUser } = useAuth();
+  const { currentUser, hasAnyRole } = useAuth();
+  const [showHSEInbox, setShowHSEInbox] = useState(false);
+  
+  const { unreadCount, complianceRate, pendingTrainings, completedTrainings } = useEmployeeHSEInbox(currentUser?.id || '');
+
+  // Si l'utilisateur est un candidat EXTERNE, afficher le dashboard externe
+  if (currentUser?.roles.includes('EXTERNE')) {
+    return <ExternalDashboard />;
+  }
+
+  // Si l'utilisateur est un simple EMPLOYE (pas admin, HSE, etc.), afficher le dashboard employé
+  if (currentUser?.roles.length === 1 && currentUser.roles[0] === 'EMPLOYE') {
+    return <EmployeeDashboard />;
+  }
 
   const kpiCards = [
     {
@@ -222,31 +241,87 @@ export function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="industrial-card">
+        <Card 
+          className={`industrial-card cursor-pointer hover:shadow-lg transition-all ${
+            unreadCount > 0 ? 'border-2 border-primary' : ''
+          }`}
+          onClick={() => setShowHSEInbox(true)}
+        >
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Shield className="w-5 h-5" />
-              HSE
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <div className={`p-2 rounded-lg ${
+                  complianceRate >= 90 ? 'bg-green-100' :
+                  complianceRate >= 70 ? 'bg-yellow-100' :
+                  'bg-red-100'
+                }`}>
+                  <Shield className={`w-5 h-5 ${
+                    complianceRate >= 90 ? 'text-green-600' :
+                    complianceRate >= 70 ? 'text-yellow-600' :
+                    'text-red-600'
+                  }`} />
+                </div>
+                <span>Mon Espace HSE</span>
+              </CardTitle>
+              {unreadCount > 0 && (
+                <div className="flex items-center gap-2">
+                  <Badge variant="destructive" className="animate-pulse">
+                    {unreadCount} nouveau{unreadCount > 1 ? 'x' : ''}
+                  </Badge>
+                  <div className="w-2 h-2 bg-red-500 rounded-full animate-ping" />
+                </div>
+              )}
+            </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Taux de conformité</span>
-                <Badge variant={stats.hse.complianceRate >= 95 ? "default" : "destructive"}>
-                  {stats.hse.complianceRate}%
-                </Badge>
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-sm text-muted-foreground">Ma conformité HSE</span>
+                  <Badge variant={complianceRate >= 90 ? "default" : complianceRate >= 70 ? "secondary" : "destructive"}>
+                    {complianceRate}%
+                  </Badge>
+                </div>
+                <Progress 
+                  value={complianceRate} 
+                  className={`h-2 ${
+                    complianceRate >= 90 ? 'bg-green-100' :
+                    complianceRate >= 70 ? 'bg-yellow-100' :
+                    'bg-red-100'
+                  }`}
+                />
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Incidents ouverts</span>
-                <Badge variant={stats.hse.openIncidents > 0 ? "destructive" : "secondary"}>
-                  {stats.hse.openIncidents}
-                </Badge>
+              
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="text-center p-2 bg-yellow-50 rounded">
+                  <div className="font-bold text-lg text-yellow-600">{pendingTrainings.length}</div>
+                  <div className="text-muted-foreground">En attente</div>
+                </div>
+                <div className="text-center p-2 bg-green-50 rounded">
+                  <div className="font-bold text-lg text-green-600">{completedTrainings.length}</div>
+                  <div className="text-muted-foreground">Complétées</div>
+                </div>
               </div>
+
+              <Button size="sm" variant="outline" className="w-full gap-2 group-hover:bg-primary group-hover:text-primary-foreground">
+                <BookOpen className="w-4 h-4" />
+                Accéder à mon espace HSE
+                {unreadCount > 0 && <Badge className="ml-auto">{unreadCount}</Badge>}
+              </Button>
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Dialog Mon Espace HSE */}
+      <Dialog open={showHSEInbox} onOpenChange={setShowHSEInbox}>
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Mon Espace HSE Personnel</DialogTitle>
+          </DialogHeader>
+          <EmployeeHSEInbox employeeId={currentUser?.id || ''} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

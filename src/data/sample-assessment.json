@@ -1,0 +1,150 @@
+{
+  "assessment": {
+    "title": "Test d'Habilitation Accès Raffinerie SOGARA",
+    "description": "Évaluation obligatoire pour tout personnel externe souhaitant accéder aux zones de production de la raffinerie",
+    "type": "EXTERNAL_ACCESS",
+    "category": "Sécurité Raffinerie",
+    "duration": 45,
+    "passingScore": 80,
+    "totalPoints": 100,
+    "validityMonths": 12,
+    "grantsHabilitation": "Accès Zones Production Autorisé",
+    "habilitationCode": "HAB-PROD-EXT-001",
+    "habilitationDescription": "Autorisation d'accès aux zones de production de la raffinerie pour personnel externe qualifié",
+    "instructions": "Ce test évalue vos connaissances en matière de sécurité dans une raffinerie de pétrole. Vous disposez de 45 minutes pour répondre à 10 questions. Un score minimum de 80% est requis pour obtenir l'habilitation. Lisez attentivement chaque question avant de répondre.",
+    "questions": [
+      {
+        "id": "q1",
+        "type": "multiple_choice",
+        "question": "Que devez-vous faire en cas de détection de fuite de H2S (sulfure d'hydrogène) ?",
+        "points": 10,
+        "options": [
+          "Évacuer immédiatement la zone en alertant vos collègues",
+          "Appeler votre superviseur et attendre les instructions",
+          "Tenter de colmater la fuite avec le matériel disponible",
+          "Ouvrir les fenêtres pour aérer la zone"
+        ],
+        "correctAnswer": "Évacuer immédiatement la zone en alertant vos collègues",
+        "explanation": "Le H2S est un gaz mortel. En cas de fuite, l'évacuation immédiate est la seule action à entreprendre.",
+        "requiresManualCorrection": false,
+        "category": "Urgence H2S"
+      },
+      {
+        "id": "q2",
+        "type": "true_false",
+        "question": "Le port des EPI (Équipements de Protection Individuelle) est obligatoire en permanence dans les zones de production.",
+        "points": 5,
+        "options": ["Vrai", "Faux"],
+        "correctAnswer": "Vrai",
+        "explanation": "Le port des EPI est obligatoire en permanence pour votre sécurité et celle de vos collègues.",
+        "requiresManualCorrection": false,
+        "category": "EPI"
+      },
+      {
+        "id": "q3",
+        "type": "multiple_choice",
+        "question": "Avant toute intervention sur un équipement électrique, vous devez :",
+        "points": 10,
+        "options": [
+          "Vérifier que l'équipement est éteint",
+          "Obtenir un permis de travail et consigner l'équipement",
+          "Informer votre superviseur",
+          "Mettre vos gants isolants"
+        ],
+        "correctAnswer": "Obtenir un permis de travail et consigner l'équipement",
+        "explanation": "La consignation et le permis de travail sont obligatoires avant toute intervention électrique.",
+        "requiresManualCorrection": false,
+        "category": "Consignation"
+      },
+      {
+        "id": "q4",
+        "type": "short_text",
+        "question": "Citez 3 EPI obligatoires en zone de production.",
+        "points": 15,
+        "requiresManualCorrection": true,
+        "category": "EPI"
+      },
+      {
+        "id": "q5",
+        "type": "long_text",
+        "question": "Décrivez en détail la procédure complète de consignation LOTO (Lock Out Tag Out) avant intervention sur un équipement.",
+        "points": 20,
+        "requiresManualCorrection": true,
+        "category": "Consignation"
+      },
+      {
+        "id": "q6",
+        "type": "multiple_choice",
+        "question": "En cas d'incendie, le premier réflexe est de :",
+        "points": 10,
+        "options": [
+          "Utiliser l'extincteur le plus proche",
+          "Déclencher l'alarme incendie et évacuer",
+          "Appeler les pompiers",
+          "Fermer les portes pour contenir le feu"
+        ],
+        "correctAnswer": "Déclencher l'alarme incendie et évacuer",
+        "explanation": "Déclencher l'alarme prévient tout le monde et permet l'évacuation rapide.",
+        "requiresManualCorrection": false,
+        "category": "Incendie"
+      },
+      {
+        "id": "q7",
+        "type": "true_false",
+        "question": "Vous pouvez utiliser votre téléphone portable dans les zones ATEX (Atmosphères Explosives).",
+        "points": 5,
+        "options": ["Vrai", "Faux"],
+        "correctAnswer": "Faux",
+        "explanation": "Les téléphones portables standards sont interdits en zone ATEX car ils peuvent provoquer une étincelle.",
+        "requiresManualCorrection": false,
+        "category": "Zone ATEX"
+      },
+      {
+        "id": "q8",
+        "type": "short_text",
+        "question": "Quelle est la signalétique qui indique une zone ATEX ?",
+        "points": 10,
+        "requiresManualCorrection": true,
+        "category": "Signalétique"
+      },
+      {
+        "id": "q9",
+        "type": "long_text",
+        "question": "Expliquez la procédure d'urgence en cas d'alerte sonore d'évacuation générale de la raffinerie.",
+        "points": 15,
+        "requiresManualCorrection": true,
+        "category": "Évacuation"
+      },
+      {
+        "id": "q10",
+        "type": "multiple_choice",
+        "question": "Qui est autorisé à émettre un permis de travail à chaud ?",
+        "points": 10,
+        "options": [
+          "N'importe quel employé formé",
+          "Le superviseur de zone uniquement",
+          "Le responsable HSE ou son délégué",
+          "Le technicien qui va effectuer les travaux"
+        ],
+        "correctAnswer": "Le responsable HSE ou son délégué",
+        "explanation": "Seul le responsable HSE ou son délégué peut émettre un permis de travail à chaud.",
+        "requiresManualCorrection": false,
+        "category": "Permis de Travail"
+      }
+    ]
+  },
+  "externalCandidate": {
+    "firstName": "Jean-Luc",
+    "lastName": "BERNARD",
+    "email": "jl.bernard@totalenergies.com",
+    "phone": "+241 06 12 34 56",
+    "company": "Total Energies Gabon",
+    "position": "Technicien Maintenance Spécialisé",
+    "idDocument": "PASS-FR987654",
+    "documentType": "passport",
+    "purpose": "Maintenance préventive compresseur haute pression - Zone Production A",
+    "requestedBy": null,
+    "status": "pending"
+  }
+}
+

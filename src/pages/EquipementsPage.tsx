@@ -13,7 +13,7 @@ import { CreateEquipmentDialog } from '@/components/dialogs/CreateEquipmentDialo
 import { AssignEquipmentDialog } from '@/components/dialogs/AssignEquipmentDialog';
 
 export function EquipementsPage() {
-  const { equipment, assignEquipment, unassignEquipment } = useEquipment();
+  const { equipment, assignEquipment, unassignEquipment, ensureRoleEquipment } = useEquipment();
   const { employees } = useEmployees();
   const { hasAnyRole } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
@@ -100,7 +100,12 @@ export function EquipementsPage() {
           </p>
         </div>
         {canManageEquipment && (
-          <CreateEquipmentDialog />
+          <div className="flex gap-2">
+            <CreateEquipmentDialog />
+            <Button variant="outline" onClick={ensureRoleEquipment} className="gap-2">
+              Générer EPI par rôle
+            </Button>
+          </div>
         )}
       </div>
 

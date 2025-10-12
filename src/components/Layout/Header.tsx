@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AppContext';
 import { useDashboard } from '@/hooks/useDashboard';
-import { HSENotificationCenter } from '@/components/hse/HSENotificationCenter';
+import { HSENotificationPopover } from '@/components/hse/HSENotificationPopover';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -101,7 +101,7 @@ export function Header() {
 
             <div className="flex items-center gap-1">
               {hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR', 'EMPLOYE']) ? (
-                <HSENotificationCenter />
+                <HSENotificationPopover unreadCount={unreadCount} />
               ) : (
                 <Button variant="ghost" size="sm" className="relative">
                   <Bell className="w-4 h-4" />

@@ -61,12 +61,13 @@ npm start            # Démarrer l'API
 
 | Matricule | Nom | Rôle | Mot de passe |
 |-----------|-----|------|--------------|
-| ADM001 | Alain OBAME | Administrateur | Admin123! |
-| HSE001 | Marie LAKIBI | Responsable HSE | HSE123! |
-| SUP001 | Christian ELLA | Superviseur | Supervisor123! |
-| REC001 | Sylvie KOUMBA | Réceptionniste | Reception123! |
-| COM001 | Aminata SECK | Communication | Communication123! |
-| EMP001 | Pierre ANTCHOUET | Employé | Employee123! |
+| ADM001 | PELLEN Asted | Administrateur | Admin123! |
+| HSE001 | Marie-Claire NZIEGE | Responsable HSE | HSE123! |
+| REC001 | Sylvie KOUMBA | Sécurité | Reception123! |
+| COM001 | Clarisse MBOUMBA | Communication | Communication123! |
+| EMP001 | Pierre BEKALE | Employé | Employee123! |
+| DG001 | Daniel MVOU | Directeur Général | DG123! |
+| DRH001 | Brigitte NGUEMA | DRH | DRH123! |
 
 ## 🔧 Configuration
 

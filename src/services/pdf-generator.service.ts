@@ -281,7 +281,7 @@ export class PDFGeneratorService {
     pdf.text('Responsable HSE', margin + 5, yPosition);
     pdf.line(margin + 5, yPosition + 5, margin + 5 + signatureWidth, yPosition + 5);
     pdf.setFontSize(8);
-    pdf.text('Marie LAKIBI', margin + 5, yPosition + 12);
+    pdf.text('Marie-Claire NZIEGE', margin + 5, yPosition + 12);
 
     // Signature Direction
     pdf.setFontSize(10);

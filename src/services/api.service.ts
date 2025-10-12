@@ -5,7 +5,8 @@ const API_CONFIG = {
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3001/api',
   timeout: 30000, // 30 secondes
   retryAttempts: 3,
-  retryDelay: 1000 // 1 seconde
+  retryDelay: 1000, // 1 seconde
+  healthcheck: String(import.meta.env.VITE_API_HEALTHCHECK || 'true') !== 'false'
 };
 
 // Interface pour la réponse API standardisée
@@ -42,8 +43,10 @@ class ApiService {
     this.baseURL = API_CONFIG.baseURL;
     this.token = localStorage.getItem('accessToken');
     
-    // Vérifier la connectivité au démarrage
-    this.checkConnection();
+    // Vérifier la connectivité au démarrage (optionnel)
+    if (API_CONFIG.healthcheck) {
+      this.checkConnection();
+    }
   }
   
   /**
@@ -351,6 +354,9 @@ class ApiService {
     responseTime: number;
     version?: string;
   }> {
+    if (!API_CONFIG.healthcheck) {
+      return { connected: false, responseTime: 0 };
+    }
     const startTime = Date.now();
     
     try {

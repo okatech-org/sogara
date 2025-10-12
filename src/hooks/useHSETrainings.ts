@@ -1,381 +1,274 @@
-import { useCallback, useEffect, useState } from 'react';
-import { HSETraining, HSETrainingSession, HSEAttendance, HSENotification, UserRole } from '@/types';
-import { useApp } from '@/contexts/AppContext';
-import { repositories } from '@/services/repositories';
+import { useMemo, useCallback, useEffect, useState } from 'react';
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../convex/_generated/api";
+import { HSETraining, HSETrainingModule, HSETrainingProgress, HSETrainingSession, HSEAttendance } from '@/types';
 import { toast } from '@/hooks/use-toast';
-
-function generateId(): string {
-  return Math.random().toString(36).substring(2) + Date.now().toString(36);
-}
+import { Id } from "../../convex/_generated/dataModel";
+import { repositories } from '@/services/repositories';
 
 export function useHSETrainings() {
-  const { state, dispatch } = useApp();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [initialized, setInitialized] = useState(false);
+  // Queries Convex
+  const trainingsData = useQuery(api.hseTrainings.list);
 
-  // Initialiser les formations depuis le storage
-  const initializeTrainings = useCallback(async () => {
-    if (initialized || loading) return;
-    
-    try {
-      setLoading(true);
-      setError(null);
-      const trainings = await repositories.hseTrainings.getAll();
-      dispatch({ type: 'SET_HSE_TRAININGS', payload: trainings });
-      setInitialized(true);
-      console.log(`🎓 ${trainings.length} formations HSE chargées`);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erreur lors du chargement des formations';
-      setError(errorMessage);
-      console.error('❌ Erreur chargement formations HSE:', err);
-      toast({
-        title: "Erreur de chargement",
-        description: "Impossible de charger les formations HSE",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, [dispatch, initialized, loading]);
+  // Fallback local
+  const [fallbackTrainings, setFallbackTrainings] = useState<any[] | null>(null);
+  const [fallbackReady, setFallbackReady] = useState(false);
 
-  // Auto-initialiser au premier rendu
   useEffect(() => {
-    initializeTrainings();
-  }, [initializeTrainings]);
+    let cancelled = false;
+    if (trainingsData === undefined && !fallbackReady) {
+      (async () => {
+        try {
+          const list = await repositories.hseTrainings.getAll();
+          if (!cancelled) {
+            setFallbackTrainings(list as any[]);
+            setFallbackReady(true);
+          }
+        } catch (_) {
+          if (!cancelled) setFallbackReady(true);
+        }
+      })();
+    }
+    return () => { cancelled = true; };
+  }, [trainingsData, fallbackReady]);
 
-  const addTraining = useCallback(async (training: Omit<HSETraining, 'id' | 'createdAt' | 'updatedAt' | 'sessions'>) => {
+  // Mutations Convex
+  const createMutation = useMutation(api.hseTrainings.create);
+  const updateMutation = useMutation(api.hseTrainings.update);
+  const startTrainingMutation = useMutation(api.hseTrainings.startTraining);
+  const completeTrainingMutation = useMutation(api.hseTrainings.completeTraining);
+  const removeMutation = useMutation(api.hseTrainings.remove);
+
+  // Mapper les données (Convex si dispo, sinon fallback)
+  const trainings: HSETrainingModule[] = useMemo(() => (
+    (trainingsData || fallbackTrainings || []).map((t: any) => ({
+      id: t._id,
+      code: t.code,
+      title: t.title,
+      category: t.category,
+      description: t.description,
+      objectives: t.objectives,
+      duration: t.duration,
+      durationUnit: t.durationUnit,
+      validityMonths: t.validityMonths,
+      requiredForRoles: t.requiredForRoles,
+      prerequisites: t.prerequisites,
+      content: t.content,
+      certification: t.certification,
+      instructor: { qualificationRequired: '', minExperience: '' },
+      maxParticipants: t.maxParticipants,
+      language: t.language,
+      deliveryMethods: t.deliveryMethods,
+      refresherRequired: t.refresherRequired,
+      refresherFrequency: t.refresherFrequency,
+      // Fournir toujours un tableau de sessions utilisable par les composants
+      sessions: Array.isArray(t.sessions)
+        ? t.sessions.map((s: any) => ({
+            id: s.id || s._id || `${t._id}-sess-${Math.random().toString(36).slice(2)}`,
+            trainingId: s.trainingId || t._id,
+            date: s.date instanceof Date ? s.date : new Date(s.date),
+            instructor: s.instructor || '',
+            location: s.location || '',
+            maxParticipants: s.maxParticipants || (t.maxParticipants ?? 15),
+            attendance: Array.isArray(s.attendance) ? s.attendance : [],
+            status: s.status || 'scheduled',
+          }))
+        : [],
+    }))
+  ), [trainingsData, fallbackTrainings]);
+
+  const createTraining = async (trainingData: Omit<HSETrainingModule, 'id'>) => {
     try {
-      setLoading(true);
-      setError(null);
-      
-      const newTraining = await repositories.hseTrainings.create(training);
-      dispatch({ type: 'ADD_HSE_TRAINING', payload: newTraining });
+      await createMutation({
+        code: trainingData.code,
+        title: trainingData.title,
+        category: trainingData.category,
+        description: trainingData.description,
+        objectives: trainingData.objectives,
+        duration: trainingData.duration,
+        durationUnit: trainingData.durationUnit,
+        validityMonths: trainingData.validityMonths,
+        requiredForRoles: trainingData.requiredForRoles,
+        prerequisites: trainingData.prerequisites,
+        content: trainingData.content,
+        certification: trainingData.certification,
+        maxParticipants: trainingData.maxParticipants,
+        language: trainingData.language,
+        deliveryMethods: trainingData.deliveryMethods,
+        refresherRequired: trainingData.refresherRequired,
+        refresherFrequency: trainingData.refresherFrequency,
+      });
+
+      toast({
+        title: 'Formation créée',
+        description: `${trainingData.title} a été ajoutée au catalogue.`,
+      });
+
+      return { success: true };
+    } catch (error: any) {
+      toast({
+        title: 'Erreur',
+        description: error.message || 'Impossible de créer la formation.',
+        variant: 'destructive',
+      });
+      return { success: false, error: error.message };
+    }
+  };
+
+  const startTraining = async (employeeId: string, trainingId: string) => {
+    try {
+      await startTrainingMutation({
+        employeeId: employeeId as Id<"employees">,
+        trainingId: trainingId as Id<"hseTrainings">,
+      });
       
       toast({
-        title: "Formation créée",
-        description: `La formation "${newTraining.title}" a été ajoutée`,
-        variant: "default",
+        title: 'Formation démarrée',
+        description: 'La formation a été démarrée pour l\'employé.',
       });
-      
-      return newTraining;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erreur lors de la création de la formation';
-      setError(errorMessage);
-      console.error('❌ Erreur création formation:', err);
+
+      return { success: true };
+    } catch (error: any) {
       toast({
-        title: "Erreur",
-        description: "Impossible de créer la formation",
-        variant: "destructive",
+        title: 'Erreur',
+        description: error.message || 'Impossible de démarrer la formation.',
+        variant: 'destructive',
       });
-      throw err;
-    } finally {
-      setLoading(false);
+      return { success: false, error: error.message };
     }
-  }, [dispatch]);
+  };
 
-  const updateTraining = useCallback(async (id: string, updates: Partial<HSETraining>) => {
-    const updatedTraining = await repositories.hseTrainings.update(id, updates);
-    if (updatedTraining) {
-      dispatch({ type: 'UPDATE_HSE_TRAINING', payload: updatedTraining });
-    }
-    return updatedTraining;
-  }, [dispatch]);
-
-  const deleteTraining = useCallback(async (id: string) => {
-    const success = await repositories.hseTrainings.delete(id);
-    if (success) {
-      dispatch({ type: 'DELETE_HSE_TRAINING', payload: id });
-    }
-    return success;
-  }, [dispatch]);
-
-  const addSession = useCallback(async (trainingId: string, session: Omit<HSETrainingSession, 'id' | 'attendance'>) => {
-    const newSession = await repositories.hseTrainings.createSession(trainingId, session);
-    if (newSession) {
-      const training = state.hseTrainings.find(t => t.id === trainingId);
-      if (training) {
-        const updatedTraining = {
-          ...training,
-          sessions: [...training.sessions, newSession]
-        };
-        dispatch({ type: 'UPDATE_HSE_TRAINING', payload: updatedTraining });
-      }
-    }
-    return newSession;
-  }, [dispatch, state.hseTrainings]);
-
-  const registerEmployee = useCallback(async (sessionId: string, employeeId: string) => {
-    await repositories.hseTrainings.registerEmployee(sessionId, employeeId);
-    
-    // Recharger les formations pour avoir les données à jour
-    const trainings = await repositories.hseTrainings.getAll();
-    dispatch({ type: 'SET_HSE_TRAININGS', payload: trainings });
-  }, [dispatch]);
-
-  const markAttendance = useCallback(async (
-    sessionId: string, 
-    employeeId: string, 
-    status: HSEAttendance['status'],
-    score?: number,
-    notes?: string
-  ) => {
-    await repositories.hseTrainings.markAttendance(sessionId, employeeId, status);
-    
-    // Si la formation est complétée, calculer les dates de certification
-    if (status === 'completed') {
-      const training = getTrainingBySessionId(sessionId);
-      if (training) {
-        const certificationDate = new Date();
-        const expirationDate = new Date();
-        expirationDate.setMonth(expirationDate.getMonth() + training.validityMonths);
-        
-        // Mise à jour avec les dates de certification
-        for (const t of state.hseTrainings) {
-          const session = t.sessions.find(s => s.id === sessionId);
-          if (session) {
-            const attendance = session.attendance.find(a => a.employeeId === employeeId);
-            if (attendance) {
-              attendance.certificationDate = certificationDate;
-              attendance.expirationDate = expirationDate;
-              attendance.score = score;
-              attendance.notes = notes;
-            }
-          }
-        }
-      }
-    }
-    
-    // Recharger les formations
-    const trainings = await repositories.hseTrainings.getAll();
-    dispatch({ type: 'SET_HSE_TRAININGS', payload: trainings });
-  }, [dispatch, state.hseTrainings]);
-
-  // Utilitaires
-  const getTrainingBySessionId = useCallback((sessionId: string): HSETraining | undefined => {
-    return state.hseTrainings.find(training => 
-      training.sessions.some(session => session.id === sessionId)
-    );
-  }, [state.hseTrainings]);
-
-  const getSessionById = useCallback((sessionId: string): { training: HSETraining; session: HSETrainingSession } | undefined => {
-    for (const training of state.hseTrainings) {
-      const session = training.sessions.find(s => s.id === sessionId);
-      if (session) {
-        return { training, session };
-      }
-    }
-    return undefined;
-  }, [state.hseTrainings]);
-
-  // Requêtes et filtres
-  const getUpcomingSessions = useCallback((days: number = 30) => {
-    const cutoffDate = new Date();
-    cutoffDate.setDate(cutoffDate.getDate() + days);
-    
-    const upcomingSessions: Array<{ training: HSETraining; session: HSETrainingSession }> = [];
-    
-    state.hseTrainings.forEach(training => {
-      training.sessions.forEach(session => {
-        if (session.date <= cutoffDate && session.date >= new Date() && session.status === 'scheduled') {
-          upcomingSessions.push({ training, session });
-        }
+  const completeTraining = async (progressId: string, score: number) => {
+    try {
+      await completeTrainingMutation({
+        progressId: progressId as Id<"trainingProgress">,
+        score,
       });
-    });
-    
-    return upcomingSessions.sort((a, b) => a.session.date.getTime() - b.session.date.getTime());
-  }, [state.hseTrainings]);
 
-  const getTrainingsByRole = useCallback((role: UserRole) => {
-    return state.hseTrainings.filter(training => 
-      training.requiredForRoles.includes(role)
-    );
-  }, [state.hseTrainings]);
+      toast({
+        title: 'Formation terminée',
+        description: 'Le certificat a été généré avec succès.',
+      });
 
-  const getEmployeeTrainings = useCallback(async (employeeId: string) => {
-    return await repositories.hseTrainings.getEmployeeTrainings(employeeId);
-  }, []);
+      return { success: true };
+    } catch (error: any) {
+      toast({
+        title: 'Erreur',
+        description: error.message || 'Impossible de terminer la formation.',
+        variant: 'destructive',
+      });
+      return { success: false, error: error.message };
+    }
+  };
 
-  const getExpiredTrainings = useCallback((employeeId: string) => {
+  const getTrainingByCode = (code: string) => {
+    return trainings.find(t => t.code === code);
+  };
+
+  const getTrainingsByCategory = (category: string) => {
+    return trainings.filter(t => t.category === category);
+  };
+
+  const getStats = () => {
+    const total = trainings.length;
+    const byCategory = trainings.reduce<Record<string, number>>((acc, t) => {
+      const key = t.category || 'autre';
+      acc[key] = (acc[key] || 0) + 1;
+      return acc;
+    }, {});
+    const refresherRequired = trainings.filter(t => t.refresherRequired).length;
+    const totalSessions = trainings.reduce((sum, t: any) => {
+      const sessions = Array.isArray(t.sessions) ? t.sessions : [];
+      return sum + sessions.length;
+    }, 0);
+    return { total, byCategory, refresherRequired, totalSessions };
+  };
+
+  const getUpcomingSessions = (daysAhead: number) => {
     const now = new Date();
-    const expiredTrainings: Array<{ training: HSETraining; attendance: HSEAttendance }> = [];
-    
-    state.hseTrainings.forEach(training => {
-      training.sessions.forEach(session => {
-        const attendance = session.attendance.find(a => 
-          a.employeeId === employeeId && 
-          a.status === 'completed' &&
-          a.expirationDate &&
-          a.expirationDate < now
-        );
-        
-        if (attendance) {
-          expiredTrainings.push({ training, attendance });
+    const cutoff = new Date(now.getTime() + daysAhead * 24 * 60 * 60 * 1000);
+    const sessions: Array<{ training: any; session: any }> = [];
+    (trainingsData || fallbackTrainings || []).forEach((t: any) => {
+      const list = Array.isArray(t.sessions) ? t.sessions : [];
+      list.forEach((s: any) => {
+        const date = new Date(s.date);
+        if (date <= cutoff && date >= now) {
+          sessions.push({ training: t, session: { ...s, date } });
         }
       });
     });
-    
-    return expiredTrainings;
-  }, [state.hseTrainings]);
+    return sessions.sort((a, b) => a.session.date.getTime() - b.session.date.getTime());
+  };
 
-  const getExpiringTrainings = useCallback((employeeId: string, days: number = 30) => {
-    const cutoffDate = new Date();
-    cutoffDate.setDate(cutoffDate.getDate() + days);
-    const expiringTrainings: Array<{ training: HSETraining; attendance: HSEAttendance; daysUntilExpiry: number }> = [];
-    
-    state.hseTrainings.forEach(training => {
-      training.sessions.forEach(session => {
-        const attendance = session.attendance.find(a => 
-          a.employeeId === employeeId && 
-          a.status === 'completed' &&
-          a.expirationDate &&
-          a.expirationDate <= cutoffDate &&
-          a.expirationDate > new Date()
-        );
-        
-        if (attendance && attendance.expirationDate) {
-          const daysUntilExpiry = Math.ceil(
-            (attendance.expirationDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
-          );
-          expiringTrainings.push({ training, attendance, daysUntilExpiry });
+  // Fonctions complémentaires utilisées par useHSECompliance
+  const getExpiredTrainings = (employeeId: string) => {
+    const result: Array<{ trainingId: string; title: string; expiredOn: Date } > = [];
+    (trainings as any[]).forEach((t: any) => {
+      const sessions: HSETrainingSession[] = Array.isArray(t.sessions) ? t.sessions : [];
+      sessions.forEach((s) => {
+        const att = (s.attendance || []).find((a: HSEAttendance) => a.employeeId === employeeId && a.status === 'completed' && a.expirationDate);
+        if (att?.expirationDate && att.expirationDate < new Date()) {
+          result.push({ trainingId: t.id, title: t.title, expiredOn: att.expirationDate });
         }
       });
     });
-    
-    return expiringTrainings.sort((a, b) => a.daysUntilExpiry - b.daysUntilExpiry);
-  }, [state.hseTrainings]);
+    return result;
+  };
 
-  // Calcul de conformité
-  const getComplianceRate = useCallback((serviceOrRole?: string) => {
-    if (!state.employees.length) return 0;
-    
-    let targetEmployees = state.employees;
-    
-    if (serviceOrRole) {
-      // Filtrer par service ou par rôle
-      targetEmployees = state.employees.filter(emp => 
-        emp.service === serviceOrRole || emp.roles.includes(serviceOrRole as UserRole)
-      );
-    }
-    
-    if (targetEmployees.length === 0) return 100;
-    
-    let totalCompliant = 0;
-    
-    targetEmployees.forEach(employee => {
-      const requiredTrainings = state.hseTrainings.filter(training =>
-        training.requiredForRoles.some(role => employee.roles.includes(role))
-      );
-      
-      if (requiredTrainings.length === 0) {
-        totalCompliant++;
-        return;
-      }
-      
-      let employeeCompliant = true;
-      
-      for (const training of requiredTrainings) {
-        let hasValidCertification = false;
-        
-        for (const session of training.sessions) {
-          const attendance = session.attendance.find(a => 
-            a.employeeId === employee.id &&
-            a.status === 'completed' &&
-            a.expirationDate &&
-            a.expirationDate > new Date()
-          );
-          
-          if (attendance) {
-            hasValidCertification = true;
-            break;
-          }
+  const getExpiringTrainings = (employeeId: string, daysAhead: number) => {
+    const result: Array<{ trainingId: string; title: string; daysUntilExpiry: number } > = [];
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() + daysAhead);
+    (trainings as any[]).forEach((t: any) => {
+      const sessions: HSETrainingSession[] = Array.isArray(t.sessions) ? t.sessions : [];
+      sessions.forEach((s) => {
+        const att = (s.attendance || []).find((a: HSEAttendance) => a.employeeId === employeeId && a.status === 'completed' && a.expirationDate);
+        if (att?.expirationDate && att.expirationDate > new Date() && att.expirationDate <= cutoff) {
+          const daysUntilExpiry = Math.ceil((att.expirationDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+          result.push({ trainingId: t.id, title: t.title, daysUntilExpiry });
         }
-        
-        if (!hasValidCertification) {
-          employeeCompliant = false;
-          break;
-        }
-      }
-      
-      if (employeeCompliant) {
-        totalCompliant++;
-      }
+      });
     });
-    
-    return Math.round((totalCompliant / targetEmployees.length) * 100);
-  }, [state.hseTrainings, state.employees]);
+    return result.sort((a, b) => a.daysUntilExpiry - b.daysUntilExpiry);
+  };
 
-  // Génération d'alertes
-  const generateTrainingAlerts = useCallback(() => {
-    const alerts: HSENotification[] = [];
-    
-    state.employees.forEach(employee => {
-      const expiring = getExpiringTrainings(employee.id, 30);
-      
-      if (expiring.length > 0) {
-        alerts.push({
-          id: generateId(),
-          type: 'hse_training_expiring',
-          title: 'Formations à renouveler',
-          message: `${expiring.length} formation(s) expire(nt) bientôt pour ${employee.firstName} ${employee.lastName}`,
-          timestamp: new Date(),
-          read: false,
-          metadata: { 
-            employeeId: employee.id, 
-            daysUntilExpiry: Math.min(...expiring.map(e => e.daysUntilExpiry))
-          }
+  // Création d'une session (fallback local via repository)
+  const addSession = async (trainingId: string, session: Omit<HSETrainingSession, 'id' | 'attendance'>) => {
+    try {
+      const created = await repositories.hseTrainings.createSession(trainingId, session);
+      if (created) {
+        // Rafraîchir le fallback local en mémoire
+        setFallbackTrainings((prev) => {
+          if (!prev) return prev;
+          return prev.map((t: any) => t.id === trainingId || t._id === trainingId
+            ? { ...t, sessions: [...(t.sessions || []), created] }
+            : t
+          );
         });
       }
-    });
-    
-    return alerts;
-  }, [state.employees, getExpiringTrainings]);
+      return created;
+    } catch (e) {
+      return null;
+    }
+  };
 
-  // Statistiques
-  const getStats = useCallback(() => {
-    const upcoming = getUpcomingSessions(7);
-    const allSessions = state.hseTrainings.reduce((sum, t) => sum + t.sessions.length, 0);
-    const completedSessions = state.hseTrainings.reduce((sum, t) => 
-      sum + t.sessions.filter(s => s.status === 'completed').length, 0
-    );
-    const overallCompliance = getComplianceRate();
-    
-    return {
-      scheduled: upcoming.length,
-      completed: completedSessions,
-      compliance: overallCompliance,
-      totalTrainings: state.hseTrainings.length,
-      totalSessions: allSessions,
-      completionRate: allSessions > 0 ? Math.round((completedSessions / allSessions) * 100) : 0
-    };
-  }, [state.hseTrainings, getUpcomingSessions, getComplianceRate]);
+  const initializeTrainings = useCallback(async () => true, []);
 
   return {
-    // État
-    trainings: state.hseTrainings,
-    loading,
-    error,
-    initialized,
-    
-    // Actions
-    initializeTrainings,
-    addTraining,
-    updateTraining,
-    deleteTraining,
+    trainings,
+    loading: trainingsData === undefined && !fallbackReady,
+    error: null as string | null,
+    initialized: trainingsData !== undefined || fallbackReady,
+    createTraining,
+    startTraining,
+    completeTraining,
     addSession,
-    registerEmployee,
-    markAttendance,
-    
-    // Queries
-    getTrainingBySessionId,
-    getSessionById,
+    getTrainingByCode,
+    getTrainingsByCategory,
+    getStats,
     getUpcomingSessions,
-    getTrainingsByRole,
-    getEmployeeTrainings,
     getExpiredTrainings,
     getExpiringTrainings,
-    getComplianceRate,
-    generateTrainingAlerts,
-    getStats,
+    initializeTrainings,
   };
 }

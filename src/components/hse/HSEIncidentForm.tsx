@@ -145,7 +145,7 @@ export function HSEIncidentForm({ incident, onSubmit, onCancel }: HSEIncidentFor
                 </SelectTrigger>
                 <SelectContent>
                   {state.employees.length === 0 ? (
-                    <SelectItem value="" disabled>Aucun employé disponible</SelectItem>
+                    <SelectItem value="__none__" disabled>Aucun employé disponible</SelectItem>
                   ) : (
                     state.employees.map(employee => (
                       <SelectItem key={employee.id} value={employee.id}>

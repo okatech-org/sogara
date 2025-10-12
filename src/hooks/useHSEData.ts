@@ -25,8 +25,8 @@ export function useHSEData() {
         description: 'Casque de sécurité endommagé lors de la maintenance. Remplacé immédiatement.',
         location: 'Zone production',
         occurredAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-        reportedBy: 'Christian ELLA',
-        investigatedBy: 'Marie LAKIBI',
+        reportedBy: 'Pierre BEKALE',
+        investigatedBy: 'Marie-Claire NZIEGE',
         correctiveActions: 'Casque remplacé, vérification de tous les EPI de l\'équipe effectuée.'
       },
       {
@@ -36,7 +36,7 @@ export function useHSEData() {
         description: 'Glissade évitée de justesse à cause d\'une flaque d\'eau dans le couloir.',
         location: 'Bureau administratif',
         occurredAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-        reportedBy: 'Christian ELLA',
+        reportedBy: 'Pierre BEKALE',
       },
       {
         employeeId: '2',
@@ -46,7 +46,7 @@ export function useHSEData() {
         location: 'Entrée site',
         occurredAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
         reportedBy: 'Sylvie KOUMBA',
-        investigatedBy: 'Marie LAKIBI',
+        investigatedBy: 'Marie-Claire NZIEGE',
       }
     ];
 

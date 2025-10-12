@@ -63,6 +63,8 @@ export class EmployeeRepository {
     if (this.employees.length === 0) {
       this.seedData();
     } else {
+      // Migration de cohérence des comptes (corrige anciens jeux de données en cache)
+      this.migrateEmployees();
       // If storage was partially seeded in previous versions, ensure all demo accounts exist
       this.ensureDemoEmployees();
     }
@@ -73,13 +75,13 @@ export class EmployeeRepository {
       {
         id: '1',
         firstName: 'Pierre',
-        lastName: 'ANTCHOUET',
+        lastName: 'BEKALE',
         matricule: 'EMP001',
         service: 'Production',
         roles: ['EMPLOYE'],
         competences: ['Opérateur', 'Sécurité niveau 1'],
         habilitations: ['Conduite', 'EPI obligatoire'],
-        email: 'pierre.antchouet@sogara.com',
+        email: 'pierre.bekale@sogara.com',
         status: 'active',
         stats: { visitsReceived: 5, packagesReceived: 2, hseTrainingsCompleted: 3 },
         equipmentIds: ['eq1', 'eq2'],
@@ -91,10 +93,10 @@ export class EmployeeRepository {
         firstName: 'Sylvie',
         lastName: 'KOUMBA',
         matricule: 'REC001',
-        service: 'Accueil',
+        service: 'Sécurité',
         roles: ['RECEP'],
-        competences: ['Accueil visiteurs', 'Gestion colis'],
-        habilitations: ['Badge visiteurs', 'Système accès'],
+        competences: ['Gestion sécurité', 'Accueil visiteurs', 'Gestion colis'],
+        habilitations: ['Badge visiteurs', 'Système accès', 'Contrôle sécurité'],
         email: 'sylvie.koumba@sogara.com',
         status: 'active',
         stats: { visitsReceived: 15, packagesReceived: 8, hseTrainingsCompleted: 4 },
@@ -104,14 +106,14 @@ export class EmployeeRepository {
       },
       {
         id: '3',
-        firstName: 'Alain',
-        lastName: 'OBAME',
+        firstName: 'PELLEN',
+        lastName: 'Asted',
         matricule: 'ADM001',
-        service: 'Direction',
+        service: 'ORGANEUS Gabon',
         roles: ['ADMIN'],
-        competences: ['Gestion système', 'Administration', 'Supervision'],
+        competences: ['Administration systèmes', 'Sécurité informatique', 'Supervision'],
         habilitations: ['Accès total', 'Configuration système'],
-        email: 'alain.obame@sogara.com',
+        email: 'pellen.asted@organeus.ga',
         status: 'active',
         stats: { visitsReceived: 3, packagesReceived: 1, hseTrainingsCompleted: 8 },
         equipmentIds: [],
@@ -120,14 +122,14 @@ export class EmployeeRepository {
       },
       {
         id: '4',
-        firstName: 'Marie',
-        lastName: 'LAKIBI',
+        firstName: 'Marie-Claire',
+        lastName: 'NZIEGE',
         matricule: 'HSE001',
-        service: 'HSE',
-        roles: ['HSE'],
-        competences: ['Sécurité industrielle', 'Formation HSE', 'Audit conformité'],
-        habilitations: ['Inspection sécurité', 'Formation obligatoire', 'Incident management'],
-        email: 'marie.lakibi@sogara.com',
+        service: 'HSE et Conformité',
+        roles: ['HSE', 'COMPLIANCE', 'SECURITE'],
+        competences: ['Sécurité industrielle', 'Formation HSE', 'Audit conformité', 'Gestion sécurité', 'Conformité réglementaire'],
+        habilitations: ['Inspection sécurité', 'Formation obligatoire', 'Incident management', 'Gestion réception'],
+        email: 'marie-claire.nziege@sogara.com',
         status: 'active',
         stats: { visitsReceived: 8, packagesReceived: 3, hseTrainingsCompleted: 12 },
         equipmentIds: ['eq3'],
@@ -135,33 +137,49 @@ export class EmployeeRepository {
         updatedAt: new Date(),
       },
       {
-        id: '5',
-        firstName: 'Christian',
-        lastName: 'ELLA',
-        matricule: 'SUP001',
-        service: 'Production',
-        roles: ['SUPERVISEUR'],
-        competences: ['Management équipes', 'Planification', 'Contrôle qualité'],
-        habilitations: ['Supervision opérations', 'Validation processus'],
-        email: 'christian.ella@sogara.com',
+        id: '6',
+        firstName: 'Clarisse',
+        lastName: 'MBOUMBA',
+        matricule: 'COM001',
+        service: 'Communication',
+        roles: ['COMMUNICATION'],
+        competences: ['Communication interne', 'Rédaction', 'Réseaux sociaux', 'Relations presse', 'Gestion SOGARA Connect'],
+        habilitations: ['Diffusion information', 'Gestion événements', 'Gestion contenu'],
+        email: 'clarisse.mboumba@sogara.com',
         status: 'active',
-        stats: { visitsReceived: 12, packagesReceived: 6, hseTrainingsCompleted: 7 },
-        equipmentIds: ['eq4'],
+        stats: { visitsReceived: 4, packagesReceived: 2, hseTrainingsCompleted: 5 },
+        equipmentIds: [],
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        id: '6',
-        firstName: 'Aminata',
-        lastName: 'SECK',
-        matricule: 'COM001',
-        service: 'Communication',
-        roles: ['COMMUNICATION'],
-        competences: ['Communication interne', 'Rédaction', 'Réseaux sociaux', 'Relations presse'],
-        habilitations: ['Diffusion information', 'Gestion événements'],
-        email: 'aminata.seck@sogara.com',
+        id: '7',
+        firstName: 'Daniel',
+        lastName: 'MVOU',
+        matricule: 'DG001',
+        service: 'Direction Générale',
+        roles: ['DG', 'ADMIN'],
+        competences: ['Direction générale', 'Stratégie', 'Management', 'Pilotage entreprise', 'Relations institutionnelles'],
+        habilitations: ['Accès total', 'Décisions stratégiques', 'Représentation légale'],
+        email: 'daniel.mvou@sogara.com',
         status: 'active',
-        stats: { visitsReceived: 4, packagesReceived: 2, hseTrainingsCompleted: 5 },
+        stats: { visitsReceived: 10, packagesReceived: 5, hseTrainingsCompleted: 10 },
+        equipmentIds: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: '8',
+        firstName: 'Brigitte',
+        lastName: 'NGUEMA',
+        matricule: 'DRH001',
+        service: 'Ressources Humaines',
+        roles: ['DRH', 'ADMIN'],
+        competences: ['Gestion RH', 'Recrutement', 'Formation', 'Développement compétences', 'Relations sociales'],
+        habilitations: ['Gestion personnel', 'Validation formations', 'Administration RH'],
+        email: 'brigitte.nguema@sogara.com',
+        status: 'active',
+        stats: { visitsReceived: 7, packagesReceived: 4, hseTrainingsCompleted: 9 },
         equipmentIds: [],
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -172,19 +190,102 @@ export class EmployeeRepository {
     this.save();
   }
 
+  // Corrige les incohérences éventuelles dans le cache local (noms obsolètes, doublons, etc.)
+  private migrateEmployees(): void {
+    let changed = false;
+
+    // 1) Supprimer les comptes obsolètes/doublons
+    const before = this.employees.length;
+    this.employees = this.employees.filter(e => e.matricule !== 'COM002');
+    if (this.employees.length !== before) changed = true;
+
+    // 2) Canonicaliser les fiches par matricule
+    const canonicalByMatricule: Record<string, Partial<Employee>> = {
+      'COM001': {
+        firstName: 'Clarisse',
+        lastName: 'MBOUMBA',
+        service: 'Communication',
+        roles: ['COMMUNICATION'],
+        email: 'clarisse.mboumba@sogara.com'
+      },
+      'HSE001': {
+        firstName: 'Marie-Claire',
+        lastName: 'NZIEGE',
+        service: 'HSE et Conformité',
+        roles: ['HSE', 'COMPLIANCE', 'SECURITE'],
+        email: 'marie-claire.nziege@sogara.com'
+      },
+      'ADM001': {
+        firstName: 'PELLEN',
+        lastName: 'Asted',
+        service: 'ORGANEUS Gabon',
+        roles: ['ADMIN'],
+        email: 'pellen.asted@organeus.ga'
+      },
+      'EMP001': {
+        firstName: 'Pierre',
+        lastName: 'BEKALE',
+        service: 'Production',
+        roles: ['EMPLOYE'],
+        email: 'pierre.bekale@sogara.com'
+      },
+      'REC001': {
+        firstName: 'Sylvie',
+        lastName: 'KOUMBA',
+        service: 'Sécurité',
+        roles: ['RECEP'],
+        email: 'sylvie.koumba@sogara.com'
+      },
+      'DG001': {
+        firstName: 'Daniel',
+        lastName: 'MVOU',
+        service: 'Direction Générale',
+        roles: ['DG', 'ADMIN'],
+        email: 'daniel.mvou@sogara.com'
+      },
+      'DRH001': {
+        firstName: 'Brigitte',
+        lastName: 'NGUEMA',
+        service: 'Ressources Humaines',
+        roles: ['DRH', 'ADMIN'],
+        email: 'brigitte.nguema@sogara.com'
+      }
+    };
+
+    this.employees = this.employees.map(e => {
+      const canon = canonicalByMatricule[e.matricule];
+      if (canon) {
+        const updated: Employee = { ...e, ...canon } as Employee;
+        if (
+          updated.firstName !== e.firstName ||
+          updated.lastName !== e.lastName ||
+          updated.service !== e.service ||
+          updated.email !== e.email ||
+          JSON.stringify(updated.roles) !== JSON.stringify(e.roles)
+        ) {
+          changed = true;
+        }
+        return updated;
+      }
+      return e;
+    });
+
+    if (changed) this.save();
+  }
+
   // Ensure demo employees exist even if storage was partially seeded
   private ensureDemoEmployees(): void {
     const sampleEmployees: Employee[] = [
       {
         id: '1',
         firstName: 'Pierre',
-        lastName: 'ANTCHOUET',
+        lastName: 'BEKALE',
         matricule: 'EMP001',
         service: 'Production',
         roles: ['EMPLOYE'],
         competences: ['Opérateur', 'Sécurité niveau 1'],
         habilitations: ['Conduite', 'EPI obligatoire'],
-        email: 'pierre.antchouet@sogara.com',
+        email: 'pierre.bekale@sogara.com',
         status: 'active',
         stats: { visitsReceived: 5, packagesReceived: 2, hseTrainingsCompleted: 3 },
         equipmentIds: ['eq1', 'eq2'],
@@ -196,10 +297,10 @@ export class EmployeeRepository {
         firstName: 'Sylvie',
         lastName: 'KOUMBA',
         matricule: 'REC001',
-        service: 'Accueil',
+        service: 'Sécurité',
         roles: ['RECEP'],
-        competences: ['Accueil visiteurs', 'Gestion colis'],
-        habilitations: ['Badge visiteurs', 'Système accès'],
+        competences: ['Gestion sécurité', 'Accueil visiteurs', 'Gestion colis'],
+        habilitations: ['Badge visiteurs', 'Système accès', 'Contrôle sécurité'],
         email: 'sylvie.koumba@sogara.com',
         status: 'active',
         stats: { visitsReceived: 15, packagesReceived: 8, hseTrainingsCompleted: 4 },
@@ -209,14 +310,14 @@ export class EmployeeRepository {
       },
       {
         id: '3',
-        firstName: 'Alain',
-        lastName: 'OBAME',
+        firstName: 'PELLEN',
+        lastName: 'Asted',
         matricule: 'ADM001',
-        service: 'Direction',
+        service: 'ORGANEUS Gabon',
         roles: ['ADMIN'],
-        competences: ['Gestion système', 'Administration', 'Supervision'],
+        competences: ['Administration systèmes', 'Sécurité informatique', 'Supervision'],
         habilitations: ['Accès total', 'Configuration système'],
-        email: 'alain.obame@sogara.com',
+        email: 'pellen.asted@organeus.ga',
         status: 'active',
         stats: { visitsReceived: 3, packagesReceived: 1, hseTrainingsCompleted: 8 },
         equipmentIds: [],
@@ -225,14 +326,14 @@ export class EmployeeRepository {
       },
       {
         id: '4',
-        firstName: 'Marie',
-        lastName: 'LAKIBI',
+        firstName: 'Marie-Claire',
+        lastName: 'NZIEGE',
         matricule: 'HSE001',
-        service: 'HSE',
-        roles: ['HSE'],
-        competences: ['Sécurité industrielle', 'Formation HSE', 'Audit conformité'],
-        habilitations: ['Inspection sécurité', 'Formation obligatoire', 'Incident management'],
-        email: 'marie.lakibi@sogara.com',
+        service: 'HSE et Conformité',
+        roles: ['HSE', 'COMPLIANCE', 'SECURITE'],
+        competences: ['Sécurité industrielle', 'Formation HSE', 'Audit conformité', 'Gestion sécurité', 'Conformité réglementaire'],
+        habilitations: ['Inspection sécurité', 'Formation obligatoire', 'Incident management', 'Gestion réception'],
+        email: 'marie-claire.nziege@sogara.com',
         status: 'active',
         stats: { visitsReceived: 8, packagesReceived: 3, hseTrainingsCompleted: 12 },
         equipmentIds: ['eq3'],
@@ -240,18 +341,67 @@ export class EmployeeRepository {
         updatedAt: new Date(),
       },
       {
-        id: '5',
-        firstName: 'Christian',
-        lastName: 'ELLA',
-        matricule: 'SUP001',
-        service: 'Production',
-        roles: ['SUPERVISEUR'],
-        competences: ['Management équipes', 'Planification', 'Contrôle qualité'],
-        habilitations: ['Supervision opérations', 'Validation processus'],
-        email: 'christian.ella@sogara.com',
+        id: '6',
+        firstName: 'Clarisse',
+        lastName: 'MBOUMBA',
+        matricule: 'COM001',
+        service: 'Communication',
+        roles: ['COMMUNICATION'],
+        competences: ['Communication interne', 'Rédaction', 'Réseaux sociaux', 'Relations presse', 'Gestion SOGARA Connect'],
+        habilitations: ['Diffusion information', 'Gestion événements', 'Gestion contenu'],
+        email: 'clarisse.mboumba@sogara.com',
         status: 'active',
-        stats: { visitsReceived: 12, packagesReceived: 6, hseTrainingsCompleted: 7 },
-        equipmentIds: ['eq4'],
+        stats: { visitsReceived: 4, packagesReceived: 2, hseTrainingsCompleted: 5 },
+        equipmentIds: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: '7',
+        firstName: 'Daniel',
+        lastName: 'MVOU',
+        matricule: 'DG001',
+        service: 'Direction Générale',
+        roles: ['DG', 'ADMIN'],
+        competences: ['Direction générale', 'Stratégie', 'Management', 'Pilotage entreprise', 'Relations institutionnelles'],
+        habilitations: ['Accès total', 'Décisions stratégiques', 'Représentation légale'],
+        email: 'daniel.mvou@sogara.com',
+        status: 'active',
+        stats: { visitsReceived: 10, packagesReceived: 5, hseTrainingsCompleted: 10 },
+        equipmentIds: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: '8',
+        firstName: 'Brigitte',
+        lastName: 'NGUEMA',
+        matricule: 'DRH001',
+        service: 'Ressources Humaines',
+        roles: ['DRH', 'ADMIN'],
+        competences: ['Gestion RH', 'Recrutement', 'Formation', 'Développement compétences', 'Relations sociales'],
+        habilitations: ['Gestion personnel', 'Validation formations', 'Administration RH'],
+        email: 'brigitte.nguema@sogara.com',
+        status: 'active',
+        stats: { visitsReceived: 7, packagesReceived: 4, hseTrainingsCompleted: 9 },
+        equipmentIds: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: '10',
+        firstName: 'Jean-Luc',
+        lastName: 'BERNARD',
+        matricule: 'EXT001',
+        service: 'Total Energies Gabon',
+        roles: ['EXTERNE'],
+        competences: ['Maintenance compresseurs', 'Hydraulique', 'Automatisme'],
+        habilitations: [],
+        email: 'jl.bernard@totalenergies.com',
+        phone: '+241 06 12 34 56',
+        status: 'active',
+        stats: { visitsReceived: 0, packagesReceived: 0, hseTrainingsCompleted: 0 },
+        equipmentIds: [],
         createdAt: new Date(),
         updatedAt: new Date(),
       }

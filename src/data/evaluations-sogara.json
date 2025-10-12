@@ -1,0 +1,430 @@
+{
+  "evaluations": [
+    {
+      "id": "eval_h2s_001",
+      "title": "Test de Qualification H2S - Sulfure d'Hydrogène",
+      "description": "Évaluation des connaissances sur les risques H2S et les procédures d'urgence en raffinerie",
+      "type": "HABILITATION",
+      "category": "Sécurité Critique",
+      "duration": 30,
+      "passingScore": 90,
+      "totalPoints": 100,
+      "grantsHabilitation": "Qualification H2S - Opérateur Autorisé",
+      "habilitationCode": "HAB-H2S-OPR",
+      "validityMonths": 12,
+      "instructions": "Ce test évalue votre compréhension du risque H2S, gaz mortel présent dans les hydrocarbures. Score minimum: 90% (tolérance zéro sur sécurité).",
+      "questions": [
+        {
+          "id": "q1",
+          "type": "multiple_choice",
+          "question": "À quelle concentration le H2S devient-il mortel ?",
+          "points": 10,
+          "options": [
+            "10 ppm",
+            "100 ppm",
+            "700 ppm",
+            "1000 ppm"
+          ],
+          "correctAnswer": "700 ppm",
+          "explanation": "Le H2S est mortel à partir de 700 ppm. À 1000 ppm, la mort est quasi-instantanée.",
+          "requiresManualCorrection": false
+        },
+        {
+          "id": "q2",
+          "type": "multiple_choice",
+          "question": "Première action en cas d'alarme H2S ?",
+          "points": 15,
+          "options": [
+            "Mettre le masque ARI",
+            "Évacuer immédiatement vers point de rassemblement",
+            "Localiser la fuite",
+            "Appeler le superviseur"
+          ],
+          "correctAnswer": "Évacuer immédiatement vers point de rassemblement",
+          "explanation": "L'évacuation immédiate est vitale. Le H2S peut tuer en quelques secondes.",
+          "requiresManualCorrection": false
+        },
+        {
+          "id": "q3",
+          "type": "true_false",
+          "question": "Le H2S a une odeur d'œuf pourri détectable à faible concentration.",
+          "points": 5,
+          "options": ["Vrai", "Faux"],
+          "correctAnswer": "Vrai",
+          "explanation": "Vrai, mais à concentration élevée, le H2S paralyse l'odorat (danger !)",
+          "requiresManualCorrection": false
+        },
+        {
+          "id": "q4",
+          "type": "short_text",
+          "question": "Citez 3 symptômes d'exposition au H2S.",
+          "points": 15,
+          "requiresManualCorrection": true
+        },
+        {
+          "id": "q5",
+          "type": "long_text",
+          "question": "Décrivez la procédure complète d'intervention en cas de fuite H2S détectée dans votre zone.",
+          "points": 25,
+          "requiresManualCorrection": true
+        }
+      ]
+    },
+    {
+      "id": "eval_atex_001",
+      "title": "Test Zone ATEX - Atmosphères Explosives",
+      "description": "Connaissances sur le travail en zones à risque d'explosion",
+      "type": "HABILITATION",
+      "category": "Zone ATEX",
+      "duration": 25,
+      "passingScore": 85,
+      "totalPoints": 80,
+      "grantsHabilitation": "Travail en Zone ATEX Autorisé",
+      "habilitationCode": "HAB-ATEX-01",
+      "validityMonths": 12,
+      "questions": [
+        {
+          "id": "q1",
+          "type": "multiple_choice",
+          "question": "Que signifie ATEX ?",
+          "points": 10,
+          "options": [
+            "Atmosphère Explosive",
+            "Attention Explosion",
+            "Zone À Risque",
+            "Accès Technique Exclusif"
+          ],
+          "correctAnswer": "Atmosphère Explosive",
+          "requiresManualCorrection": false
+        },
+        {
+          "id": "q2",
+          "type": "true_false",
+          "question": "Les téléphones portables standards sont autorisés en zone ATEX.",
+          "points": 10,
+          "options": ["Vrai", "Faux"],
+          "correctAnswer": "Faux",
+          "explanation": "Seuls les appareils ATEX certifiés sont autorisés (risque étincelle).",
+          "requiresManualCorrection": false
+        },
+        {
+          "id": "q3",
+          "type": "short_text",
+          "question": "Quelle est la signalétique indiquant une zone ATEX ?",
+          "points": 15,
+          "requiresManualCorrection": true
+        },
+        {
+          "id": "q4",
+          "type": "long_text",
+          "question": "Expliquez les précautions à prendre avant toute intervention en zone ATEX.",
+          "points": 25,
+          "requiresManualCorrection": true
+        }
+      ]
+    },
+    {
+      "id": "eval_loto_001",
+      "title": "Test Consignation LOTO - Lock Out Tag Out",
+      "description": "Maîtrise des procédures de consignation/déconsignation",
+      "type": "QUALIFICATION",
+      "category": "Procédures",
+      "duration": 35,
+      "passingScore": 85,
+      "totalPoints": 100,
+      "grantsHabilitation": "Habilitation Consignation LOTO",
+      "habilitationCode": "HAB-LOTO-01",
+      "validityMonths": 24,
+      "questions": [
+        {
+          "id": "q1",
+          "type": "multiple_choice",
+          "question": "Que signifie LOTO ?",
+          "points": 5,
+          "options": [
+            "Lock Out Tag Out",
+            "Limite Of Technical Operation",
+            "Local Operation Tag",
+            "Lock Operation Test"
+          ],
+          "correctAnswer": "Lock Out Tag Out",
+          "requiresManualCorrection": false
+        },
+        {
+          "id": "q2",
+          "type": "multiple_choice",
+          "question": "Qui peut retirer un cadenas LOTO ?",
+          "points": 15,
+          "options": [
+            "N'importe quel technicien",
+            "Le superviseur de zone",
+            "Uniquement la personne qui l'a posé",
+            "Le responsable HSE"
+          ],
+          "correctAnswer": "Uniquement la personne qui l'a posé",
+          "explanation": "Principe fondamental: seul celui qui pose le cadenas peut le retirer.",
+          "requiresManualCorrection": false
+        },
+        {
+          "id": "q3",
+          "type": "long_text",
+          "question": "Décrivez les 7 étapes de la consignation LOTO avant intervention sur équipement électrique.",
+          "points": 40,
+          "requiresManualCorrection": true
+        },
+        {
+          "id": "q4",
+          "type": "short_text",
+          "question": "Quels sont les 3 types de vérification à effectuer après consignation ?",
+          "points": 20,
+          "requiresManualCorrection": true
+        }
+      ]
+    },
+    {
+      "id": "eval_incendie_001",
+      "title": "Test Équipier Première Intervention",
+      "description": "Formation lutte contre l'incendie et évacuation",
+      "type": "SAFETY_TEST",
+      "category": "Incendie",
+      "duration": 20,
+      "passingScore": 80,
+      "totalPoints": 70,
+      "grantsHabilitation": "Équipier Première Intervention (EPI)",
+      "habilitationCode": "HAB-EPI-INC",
+      "validityMonths": 12,
+      "questions": [
+        {
+          "id": "q1",
+          "type": "multiple_choice",
+          "question": "Quel extincteur pour un feu de classe B (hydrocarbures) ?",
+          "points": 10,
+          "options": [
+            "Extincteur à eau",
+            "Extincteur à poudre ou CO2",
+            "Extincteur à mousse",
+            "N'importe lequel"
+          ],
+          "correctAnswer": "Extincteur à poudre ou CO2",
+          "requiresManualCorrection": false
+        },
+        {
+          "id": "q2",
+          "type": "multiple_choice",
+          "question": "En cas d'incendie, la première action est :",
+          "points": 15,
+          "options": [
+            "Utiliser l'extincteur",
+            "Déclencher l'alarme et évacuer",
+            "Appeler les pompiers",
+            "Fermer les portes"
+          ],
+          "correctAnswer": "Déclencher l'alarme et évacuer",
+          "explanation": "L'alarme prévient tout le monde. La sécurité des personnes prime.",
+          "requiresManualCorrection": false
+        },
+        {
+          "id": "q3",
+          "type": "short_text",
+          "question": "Citez les 3 éléments du triangle du feu.",
+          "points": 15,
+          "requiresManualCorrection": true
+        },
+        {
+          "id": "q4",
+          "type": "long_text",
+          "question": "Décrivez la procédure d'évacuation en cas d'alarme incendie à la raffinerie.",
+          "points": 30,
+          "requiresManualCorrection": true
+        }
+      ]
+    },
+    {
+      "id": "eval_externe_001",
+      "title": "Test d'Habilitation Accès Raffinerie SOGARA",
+      "description": "Évaluation obligatoire pour personnel externe - Accès zones production",
+      "type": "EXTERNAL_ACCESS",
+      "category": "Sécurité Générale Raffinerie",
+      "duration": 45,
+      "passingScore": 80,
+      "totalPoints": 100,
+      "grantsHabilitation": "Accès Zones Production Autorisé",
+      "habilitationCode": "HAB-PROD-EXT-001",
+      "validityMonths": 12,
+      "instructions": "Test obligatoire pour tout personnel externe. Couvre sécurité générale, H2S, ATEX, EPI, procédures d'urgence.",
+      "questions": [
+        {
+          "id": "q1",
+          "type": "multiple_choice",
+          "question": "En cas de fuite H2S, vous devez :",
+          "points": 10,
+          "options": [
+            "Évacuer immédiatement vers point de rassemblement",
+            "Mettre votre masque et localiser la fuite",
+            "Appeler le superviseur",
+            "Ouvrir les fenêtres"
+          ],
+          "correctAnswer": "Évacuer immédiatement vers point de rassemblement",
+          "requiresManualCorrection": false
+        },
+        {
+          "id": "q2",
+          "type": "true_false",
+          "question": "Le port des EPI est obligatoire en permanence dans les zones de production.",
+          "points": 5,
+          "options": ["Vrai", "Faux"],
+          "correctAnswer": "Vrai",
+          "requiresManualCorrection": false
+        },
+        {
+          "id": "q3",
+          "type": "multiple_choice",
+          "question": "Avant intervention sur équipement électrique :",
+          "points": 10,
+          "options": [
+            "Éteindre l'équipement suffit",
+            "Obtenir permis de travail + consigner",
+            "Informer le superviseur",
+            "Mettre des gants isolants"
+          ],
+          "correctAnswer": "Obtenir permis de travail + consigner",
+          "requiresManualCorrection": false
+        },
+        {
+          "id": "q4",
+          "type": "short_text",
+          "question": "Citez 3 EPI obligatoires en zone de production.",
+          "points": 15,
+          "requiresManualCorrection": true
+        },
+        {
+          "id": "q5",
+          "type": "long_text",
+          "question": "Décrivez la procédure de consignation LOTO.",
+          "points": 20,
+          "requiresManualCorrection": true
+        },
+        {
+          "id": "q6",
+          "type": "multiple_choice",
+          "question": "En cas d'incendie, le premier réflexe :",
+          "points": 10,
+          "options": [
+            "Utiliser l'extincteur",
+            "Déclencher alarme et évacuer",
+            "Appeler pompiers",
+            "Fermer les portes"
+          ],
+          "correctAnswer": "Déclencher alarme et évacuer",
+          "requiresManualCorrection": false
+        },
+        {
+          "id": "q7",
+          "type": "true_false",
+          "question": "Vous pouvez utiliser votre téléphone portable en zone ATEX.",
+          "points": 5,
+          "options": ["Vrai", "Faux"],
+          "correctAnswer": "Faux",
+          "requiresManualCorrection": false
+        },
+        {
+          "id": "q8",
+          "type": "short_text",
+          "question": "Quelle signalétique indique une zone ATEX ?",
+          "points": 10,
+          "requiresManualCorrection": true
+        },
+        {
+          "id": "q9",
+          "type": "long_text",
+          "question": "Procédure d'évacuation générale de la raffinerie (alerte sonore).",
+          "points": 15,
+          "requiresManualCorrection": true
+        }
+      ]
+    }
+  ],
+  "certificationPaths": [
+    {
+      "id": "path_h2s_prod",
+      "title": "Parcours Qualification Opérateur Production H2S",
+      "description": "Parcours complet pour habilitation opérateur en zone production avec risque H2S",
+      "trainingModuleId": "HSE-015",
+      "trainingTitle": "Sensibilisation H2S",
+      "trainingDuration": 4,
+      "assessmentId": "eval_h2s_001",
+      "assessmentTitle": "Test Qualification H2S",
+      "daysBeforeAssessment": 7,
+      "assessmentDuration": 30,
+      "passingScore": 90,
+      "habilitationName": "Qualification H2S - Opérateur Autorisé",
+      "habilitationCode": "HAB-H2S-OPR",
+      "habilitationValidity": 12
+    },
+    {
+      "id": "path_atex_maint",
+      "title": "Parcours Travail Zone ATEX - Maintenance",
+      "description": "Qualification pour interventions en zones à atmosphère explosive",
+      "trainingModuleId": "HSE-006",
+      "trainingTitle": "Formation Zone ATEX",
+      "trainingDuration": 3,
+      "assessmentId": "eval_atex_001",
+      "assessmentTitle": "Test Zone ATEX",
+      "daysBeforeAssessment": 3,
+      "assessmentDuration": 25,
+      "passingScore": 85,
+      "habilitationName": "Travail en Zone ATEX Autorisé",
+      "habilitationCode": "HAB-ATEX-01",
+      "habilitationValidity": 12
+    },
+    {
+      "id": "path_loto_tech",
+      "title": "Parcours Consignation LOTO - Techniciens",
+      "description": "Habilitation consignation/déconsignation pour techniciens maintenance",
+      "trainingModuleId": "HSE-009",
+      "trainingTitle": "Formation Consignation LOTO",
+      "trainingDuration": 4,
+      "assessmentId": "eval_loto_001",
+      "assessmentTitle": "Test Consignation LOTO",
+      "daysBeforeAssessment": 5,
+      "assessmentDuration": 35,
+      "passingScore": 85,
+      "habilitationName": "Habilitation Consignation LOTO",
+      "habilitationCode": "HAB-LOTO-01",
+      "habilitationValidity": 24
+    },
+    {
+      "id": "path_epi_inc",
+      "title": "Parcours Équipier Première Intervention",
+      "description": "Formation et qualification lutte contre l'incendie",
+      "trainingModuleId": "HSE-003",
+      "trainingTitle": "Prévention et Lutte Incendie",
+      "trainingDuration": 6,
+      "assessmentId": "eval_incendie_001",
+      "assessmentTitle": "Test EPI Incendie",
+      "daysBeforeAssessment": 1,
+      "assessmentDuration": 20,
+      "passingScore": 80,
+      "habilitationName": "Équipier Première Intervention (EPI)",
+      "habilitationCode": "HAB-EPI-INC",
+      "habilitationValidity": 12
+    },
+    {
+      "id": "path_externe_standard",
+      "title": "Parcours Standard Personnel Externe",
+      "description": "Parcours obligatoire pour tout personnel externe accédant à la raffinerie",
+      "trainingModuleId": "HSE-001",
+      "trainingTitle": "Induction Sécurité Raffinerie",
+      "trainingDuration": 8,
+      "assessmentId": "eval_externe_001",
+      "assessmentTitle": "Test Habilitation Accès Raffinerie",
+      "daysBeforeAssessment": 7,
+      "assessmentDuration": 45,
+      "passingScore": 80,
+      "habilitationName": "Accès Zones Production Autorisé",
+      "habilitationCode": "HAB-PROD-EXT-001",
+      "habilitationValidity": 12
+    }
+  ]
+}
+

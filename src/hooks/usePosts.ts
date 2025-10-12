@@ -1,169 +1,214 @@
-import { useEffect } from 'react';
-import { useApp } from '@/contexts/AppContext';
-import { repositories } from '@/services/repositories';
-import { Post, PostComment } from '@/types';
+import { useEffect, useMemo, useState } from 'react';
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../convex/_generated/api";
+import { Post } from '@/types';
 import { toast } from '@/hooks/use-toast';
-import { convex, convexClientAvailable } from '@/lib/convexClient';
+import { Id } from "../../convex/_generated/dataModel";
+import { repositories } from '@/services/repositories';
 
 export function usePosts() {
-  const { state, dispatch } = useApp();
+  // Queries Convex
+  const postsData = useQuery(api.posts.list);
+
+  // Fallback local si Convex indisponible
+  const [fallbackPosts, setFallbackPosts] = useState<Post[] | null>(null);
+  const [fallbackReady, setFallbackReady] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
-    const load = async () => {
-      try {
-        if (convexClientAvailable) {
-          const res = await convex.query('posts:list', {});
-          if (!cancelled && Array.isArray(res)) {
-            const mapped = res.map((p: any) => ({
-              id: String(p._id ?? p.id),
-              title: p.title,
-              content: p.content,
-              excerpt: p.excerpt,
-              authorId: String(p.authorId),
-              category: p.category,
-              status: p.status,
-              featuredImage: p.featuredImage,
-              images: p.images,
-              tags: p.tags,
-              publishedAt: p.publishedAt ? new Date(p.publishedAt) : undefined,
-              createdAt: new Date(p.createdAt ?? Date.now()),
-              updatedAt: new Date(p.updatedAt ?? Date.now()),
-            })) as Post[];
-            dispatch({ type: 'SET_POSTS', payload: mapped });
-            return;
-          }
-        }
-      } catch (_) {}
-      const local = repositories.posts.getAll();
-      if (!cancelled) dispatch({ type: 'SET_POSTS', payload: local });
-    };
-    load();
-    return () => {
-      cancelled = true;
-    };
-  }, [dispatch]);
+    if (postsData === undefined && !fallbackReady) {
+      const list = repositories.posts.getAll();
+      if (!cancelled) {
+        setFallbackPosts(list);
+        setFallbackReady(true);
+      }
+    }
+    return () => { cancelled = true; };
+  }, [postsData, fallbackReady]);
+
+  // Mutations Convex
+  const createMutation = useMutation(api.posts.create);
+  const updateMutation = useMutation(api.posts.update);
+  const publishMutation = useMutation(api.posts.publish);
+  const incrementViewsMutation = useMutation(api.posts.incrementViews);
+  const incrementLikesMutation = useMutation(api.posts.incrementLikes);
+  const removeMutation = useMutation(api.posts.remove);
+
+  // Mapper les données (Convex si dispo, sinon fallback locales)
+  const posts: Post[] = useMemo(() => ((postsData || fallbackPosts || []).map((p: any) => ({
+    id: p._id,
+    title: p.title,
+    content: p.content,
+    excerpt: p.excerpt,
+    authorId: p.authorId,
+    category: p.category,
+    status: p.status,
+    featuredImage: p.featuredImage,
+    images: p.images,
+    videoUrl: p.videoUrl,
+    tags: p.tags,
+    publishedAt: p.publishedAt ? new Date(p.publishedAt) : undefined,
+    createdAt: p.createdAt ? new Date(p.createdAt) : new Date(p._creationTime),
+    updatedAt: p.updatedAt ? new Date(p.updatedAt) : new Date(p._creationTime),
+  }))), [postsData, fallbackPosts]);
 
   const createPost = async (postData: Omit<Post, 'id' | 'createdAt' | 'updatedAt'>) => {
     try {
-      if (convexClientAvailable) {
-        const created = await convex.mutation('posts:create', postData);
-        if (created) {
-          const mapped: Post = {
-            id: String(created._id ?? created.id),
-            title: created.title,
-            content: created.content,
-            excerpt: created.excerpt,
-            authorId: String(created.authorId),
-            category: created.category,
-            status: created.status,
-            featuredImage: created.featuredImage,
-            images: created.images,
-            tags: created.tags,
-            publishedAt: created.publishedAt ? new Date(created.publishedAt) : undefined,
-            createdAt: new Date(created.createdAt ?? Date.now()),
-            updatedAt: new Date(created.updatedAt ?? Date.now()),
-          };
-          dispatch({ type: 'ADD_POST', payload: mapped });
-          toast({ title: 'Publication créée', description: `La publication "${mapped.title}" a été créée avec succès.` });
-          return mapped;
-        }
+      await createMutation({
+        title: postData.title,
+        content: postData.content,
+        excerpt: postData.excerpt,
+        authorId: postData.authorId as Id<"employees">,
+        category: postData.category,
+        status: postData.status,
+        featuredImage: postData.featuredImage,
+        images: postData.images,
+        videoUrl: postData.videoUrl,
+        tags: postData.tags,
+      });
+
+      toast({
+        title: 'Article créé',
+        description: postData.status === 'published' ? 'L\'article a été publié.' : 'L\'article a été enregistré en brouillon.',
+      });
+
+      return { success: true };
+    } catch (error: any) {
+      try {
+        const created = repositories.posts.create({
+          ...postData,
+          status: postData.status,
+        } as any);
+        setFallbackPosts((prev) => prev ? [created, ...prev] : [created]);
+        toast({ title: 'Article créé (local)', description: 'Mode hors-ligne, enregistré localement.' });
+        return { success: true, offline: true } as any;
+      } catch (e: any) {
+        toast({ title: 'Erreur', description: e?.message || 'Impossible de créer l\'article.', variant: 'destructive' });
+        return { success: false, error: e?.message };
       }
-      const newPost = repositories.posts.create(postData);
-      dispatch({ type: 'ADD_POST', payload: newPost });
-      toast({ title: 'Publication créée', description: `La publication "${newPost.title}" a été créée avec succès.` });
-      return newPost;
-    } catch (error) {
-      toast({ title: 'Erreur', description: 'Impossible de créer la publication.', variant: 'destructive' });
-      throw error;
     }
   };
 
   const updatePost = async (id: string, updates: Partial<Post>) => {
     try {
-      if (convexClientAvailable) {
-        const updated = await convex.mutation('posts:update', { id, updates });
-        if (updated) {
-          const mapped: Post = {
-            id: String(updated._id ?? updated.id),
-            title: updated.title,
-            content: updated.content,
-            excerpt: updated.excerpt,
-            authorId: String(updated.authorId),
-            category: updated.category,
-            status: updated.status,
-            featuredImage: updated.featuredImage,
-            images: updated.images,
-            tags: updated.tags,
-            publishedAt: updated.publishedAt ? new Date(updated.publishedAt) : undefined,
-            createdAt: new Date(updated.createdAt ?? Date.now()),
-            updatedAt: new Date(updated.updatedAt ?? Date.now()),
-          };
-          dispatch({ type: 'UPDATE_POST', payload: mapped });
-          toast({ title: 'Publication mise à jour', description: 'Les modifications ont été sauvegardées.' });
-          return mapped;
+      await updateMutation({
+        id: id as Id<"posts">,
+        title: updates.title,
+        content: updates.content,
+        excerpt: updates.excerpt,
+        category: updates.category,
+        status: updates.status,
+        featuredImage: updates.featuredImage,
+        images: updates.images,
+        videoUrl: updates.videoUrl,
+        tags: updates.tags,
+      });
+
+      toast({
+        title: 'Article mis à jour',
+        description: 'Les modifications ont été sauvegardées.',
+      });
+
+      return { success: true };
+    } catch (error: any) {
+      try {
+        // Fallback mise à jour locale
+        const existing = (fallbackPosts || []).find(p => p.id === id);
+        if (existing) {
+          const updated: Post = { ...existing, ...updates, updatedAt: new Date() } as Post;
+          setFallbackPosts((prev) => prev ? prev.map(p => p.id === id ? updated : p) : [updated]);
+          toast({ title: 'Article mis à jour (local)', description: 'Modifications sauvegardées localement.' });
+          return { success: true, offline: true } as any;
         }
+        return { success: false };
+      } catch (e: any) {
+        toast({ title: 'Erreur', description: e?.message || 'Impossible de mettre à jour l\'article.', variant: 'destructive' });
+        return { success: false, error: e?.message };
       }
-      const updatedPost = repositories.posts.update(id, updates);
-      if (updatedPost) {
-        dispatch({ type: 'UPDATE_POST', payload: updatedPost });
-        toast({ title: 'Publication mise à jour', description: 'Les modifications ont été sauvegardées.' });
-      }
-      return updatedPost;
-    } catch (error) {
-      toast({ title: 'Erreur', description: 'Impossible de mettre à jour la publication.', variant: 'destructive' });
-      throw error;
+    }
+  };
+
+  const publishPost = async (id: string) => {
+    try {
+      await publishMutation({ id: id as Id<"posts"> });
+
+      toast({
+        title: 'Article publié',
+        description: 'L\'article est maintenant visible par tous.',
+      });
+
+      return { success: true };
+    } catch (error: any) {
+      toast({
+        title: 'Erreur',
+        description: error.message || 'Impossible de publier l\'article.',
+        variant: 'destructive',
+      });
+      return { success: false, error: error.message };
     }
   };
 
   const deletePost = async (id: string) => {
     try {
-      let success = false;
-      if (convexClientAvailable) {
-        const res = await convex.mutation('posts:delete', { id });
-        success = !!(res ?? true);
-      }
-      if (!convexClientAvailable) {
-        success = repositories.posts.delete(id);
-      }
-      if (success) {
-        dispatch({ type: 'DELETE_POST', payload: id });
-        toast({ title: 'Publication supprimée', description: 'La publication a été supprimée avec succès.' });
-      }
-      return success;
-    } catch (error) {
-      toast({ title: 'Erreur', description: 'Impossible de supprimer la publication.', variant: 'destructive' });
-      throw error;
+      await removeMutation({ id: id as Id<"posts"> });
+
+      toast({
+        title: 'Article supprimé',
+        description: 'L\'article a été supprimé.',
+      });
+
+      return { success: true };
+    } catch (error: any) {
+      toast({
+        title: 'Erreur',
+        description: error.message || 'Impossible de supprimer l\'article.',
+        variant: 'destructive',
+      });
+      return { success: false, error: error.message };
     }
   };
 
-  const publishPost = (id: string) => {
-    return updatePost(id, { 
-      status: 'published',
-      publishedAt: new Date()
-    });
+  const incrementViews = async (id: string) => {
+    try {
+      await incrementViewsMutation({ id: id as Id<"posts"> });
+      return { success: true };
+    } catch (error) {
+      return { success: false };
+    }
   };
 
-  const archivePost = (id: string) => {
-    return updatePost(id, { status: 'archived' });
-  };
-
-  const getPostsByCategory = (category: Post['category']) => {
-    return state.posts.filter(post => post.category === category);
+  const incrementLikes = async (id: string) => {
+    try {
+      await incrementLikesMutation({ id: id as Id<"posts"> });
+      return { success: true };
+    } catch (error) {
+      return { success: false };
+    }
   };
 
   const getPublishedPosts = () => {
-    return state.posts.filter(post => post.status === 'published');
+    return posts.filter(p => p.status === 'published');
+  };
+
+  const getPostsByCategory = (category: Post['category']) => {
+    return posts.filter(p => p.category === category);
+  };
+
+  const getPostById = (id: string) => {
+    return posts.find(p => p.id === id);
   };
 
   return {
-    posts: state.posts || [],
+    posts,
+    isLoading: postsData === undefined && !fallbackReady,
     createPost,
     updatePost,
-    deletePost,
     publishPost,
-    archivePost,
-    getPostsByCategory,
+    deletePost,
+    incrementViews,
+    incrementLikes,
     getPublishedPosts,
+    getPostsByCategory,
+    getPostById,
   };
 }

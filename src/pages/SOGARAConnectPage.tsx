@@ -305,8 +305,8 @@ export function SOGARAConnectPage() {
                     
                     {post.tags.length > 0 && (
                       <div className="flex flex-wrap gap-2">
-                        {post.tags.map((tag, index) => (
-                          <Badge key={index} variant="secondary" className="text-xs">
+                        {post.tags.map((tag, idx) => (
+                          <Badge key={`${post.id}-${idx}-${tag}`} variant="secondary" className="text-xs">
                             {tag}
                           </Badge>
                         ))}

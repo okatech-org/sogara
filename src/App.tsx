@@ -5,6 +5,20 @@ import { Layout } from '@/components/Layout/Layout';
 import { WelcomePage } from '@/components/WelcomePage';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { Dashboard } from '@/pages/Dashboard';
+import { AdminDashboard } from '@/pages/AdminDashboard';
+import { DirectionDashboard } from '@/pages/DirectionDashboard';
+import { RHDashboard } from '@/pages/RHDashboard';
+import { MesFormationsPage } from '@/pages/employee/MesFormationsPage';
+import { MesEquipementsPage } from '@/pages/employee/MesEquipementsPage';
+import { MesHabilitationsPage } from '@/pages/employee/MesHabilitationsPage';
+import { MonPlanningPage } from '@/pages/employee/MonPlanningPage';
+import { MaPaiePage } from '@/pages/employee/MaPaiePage';
+import { MesEvaluationsPage } from '@/pages/external/MesEvaluationsPage';
+import { MesFormationsExternePage } from '@/pages/external/MesFormationsExternePage';
+import { MesEvaluationsExternePage } from '@/pages/external/MesEvaluationsExternePage';
+import { MesHabilitationsExternePage } from '@/pages/external/MesHabilitationsExternePage';
+import { PlanningPage } from '@/pages/PlanningPage';
+import { PaiePage } from '@/pages/PaiePage';
 import { PersonnelPage } from '@/pages/PersonnelPage';
 import { VisitesPage } from '@/pages/VisitesPage';
 import { ColisCourrierPage } from '@/pages/ColisCourrierPage';
@@ -84,6 +98,55 @@ function AppRoutes() {
       >
         <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="dashboard" element={<Dashboard />} />
+        <Route 
+          path="admin" 
+          element={(
+            <RoleProtected roles={['ADMIN']}>
+              <AdminDashboard />
+            </RoleProtected>
+          )} 
+        />
+        <Route 
+          path="direction" 
+          element={(
+            <RoleProtected roles={['DG', 'ADMIN']}>
+              <DirectionDashboard />
+            </RoleProtected>
+          )} 
+        />
+        <Route 
+          path="rh" 
+          element={(
+            <RoleProtected roles={['DRH', 'ADMIN']}>
+              <RHDashboard />
+            </RoleProtected>
+          )} 
+        />
+        <Route path="mes-evaluations" element={<MesEvaluationsPage />} />
+        <Route path="formations-externes" element={<MesFormationsExternePage />} />
+        <Route path="evaluations-externes" element={<MesEvaluationsExternePage />} />
+        <Route path="habilitations-externes" element={<MesHabilitationsExternePage />} />
+        <Route path="mon-planning" element={<MonPlanningPage />} />
+        <Route path="ma-paie" element={<MaPaiePage />} />
+        <Route path="mes-formations" element={<MesFormationsPage />} />
+        <Route path="mes-equipements" element={<MesEquipementsPage />} />
+        <Route path="mes-habilitations" element={<MesHabilitationsPage />} />
+        <Route 
+          path="planning" 
+          element={(
+            <RoleProtected roles={['ADMIN', 'DRH', 'DG']}>
+              <PlanningPage />
+            </RoleProtected>
+          )} 
+        />
+        <Route 
+          path="paie" 
+          element={(
+            <RoleProtected roles={['ADMIN', 'DRH', 'DG']}>
+              <PaiePage />
+            </RoleProtected>
+          )} 
+        />
         <Route
           path="personnel"
           element={(

@@ -150,7 +150,7 @@ export function HSECertificateGenerator({
                 <div className="text-center">
                   <div className="h-16 border-b border-muted mb-2"></div>
                   <p className="text-sm font-medium">Responsable HSE</p>
-                  <p className="text-xs text-muted-foreground">Marie LAKIBI</p>
+                  <p className="text-xs text-muted-foreground">Marie-Claire NZIEGE</p>
                 </div>
                 <div className="text-center">
                   <div className="h-16 border-b border-muted mb-2"></div>

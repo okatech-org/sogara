@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useEffect, useReducer, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useReducer, ReactNode, useState } from 'react';
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
 import { Employee } from '@/types';
-import { authAPI, apiService } from '@/services/api.service';
-import { repositories } from '@/services/repositories';
 import { toast } from '@/hooks/use-toast';
 
 // Types pour le contexte d'authentification
@@ -104,152 +104,69 @@ const AuthContext = createContext<AuthContextType | null>(null);
 // Provider
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
+  const [matricule, setMatricule] = useState<string | null>(null);
 
-  // Vérifier la connectivité au démarrage
+  // Query Convex pour authentification
+  const employeeData = useQuery(
+    api.auth.login,
+    matricule ? { matricule } : "skip"
+  );
+
+  // Quand les données employé arrivent de Convex
   useEffect(() => {
-    checkConnectivity();
-    initializeAuth();
+    if (employeeData) {
+      const employee: Employee = {
+        id: employeeData._id,
+        firstName: employeeData.firstName,
+        lastName: employeeData.lastName,
+        matricule: employeeData.matricule,
+        service: employeeData.service,
+        roles: employeeData.roles,
+        competences: employeeData.competences,
+        habilitations: employeeData.habilitations,
+        email: employeeData.email,
+        phone: employeeData.phone,
+        status: employeeData.status,
+        stats: employeeData.stats,
+        equipmentIds: employeeData.equipmentIds || [],
+        createdAt: new Date(employeeData._creationTime),
+        updatedAt: new Date(employeeData._creationTime),
+      };
 
-    // Écouter les événements de déconnexion automatique
-    const handleAutoLogout = (event: CustomEvent) => {
-      console.warn('Déconnexion automatique:', event.detail);
-      handleLogout();
-    };
-
-    window.addEventListener('auth:logout' as any, handleAutoLogout);
-
-    return () => {
-      window.removeEventListener('auth:logout' as any, handleAutoLogout);
-    };
-  }, []);
-
-  // Vérifier la connectivité réseau
-  const checkConnectivity = async () => {
-    try {
-      const stats = await apiService.getApiStats();
-      dispatch({ type: 'SET_ONLINE_STATUS', payload: stats.connected });
-      
-      if (stats.connected) {
-        console.info(`✅ API connectée (${stats.responseTime}ms)`);
-      } else {
-        console.warn('⚠️ API non disponible, mode hors-ligne activé');
-      }
-    } catch (error) {
-      dispatch({ type: 'SET_ONLINE_STATUS', payload: false });
-      console.warn('⚠️ Vérification connectivité échouée:', error);
-    }
-  };
-
-  // Initialiser l'authentification au démarrage
-  const initializeAuth = async () => {
-    dispatch({ type: 'AUTH_START' });
-
-    try {
-      const storedToken = localStorage.getItem('accessToken');
-      
-      if (!storedToken) {
-        dispatch({ type: 'AUTH_FAILURE', payload: 'Aucun token trouvé' });
-        return;
-      }
-
-      // Configurer le token dans le service API
-      apiService.setToken(storedToken);
-
-      // Vérifier la validité du token via l'API
-      if (state.isOnline) {
-        const response = await authAPI.validateToken();
-        
-        if (response.success && response.data?.user) {
-          dispatch({ type: 'AUTH_SUCCESS', payload: response.data.user });
-          console.info('✅ Authentification restaurée depuis l\'API');
-          return;
-        }
-      }
-
-      // Fallback : chercher dans les données locales
-      const employees = repositories.employees.getAll();
-      const storedUserId = localStorage.getItem('userId');
-      const user = employees.find(emp => emp.id === storedUserId);
-
-      if (user) {
-        dispatch({ type: 'AUTH_SUCCESS', payload: user });
-        console.info('✅ Authentification restaurée depuis les données locales');
-      } else {
-        throw new Error('Utilisateur non trouvé');
-      }
-
-    } catch (error) {
-      console.error('❌ Erreur initialisation auth:', error);
-      
-      // Nettoyer le stockage en cas d'erreur
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('userId');
-      apiService.setToken(null);
-      
-      dispatch({ type: 'AUTH_FAILURE', payload: 'Session expirée' });
-    }
-  };
-
-  // Fonction de connexion
-  const login = async (matricule: string, password?: string): Promise<{ success: boolean; error?: string }> => {
-    dispatch({ type: 'AUTH_START' });
-
-    try {
-      // Tentative de connexion via API si en ligne
-      if (state.isOnline && password) {
-        try {
-          const response = await authAPI.login(matricule, password);
-          
-          if (response.success && response.data) {
-            const { user, accessToken, refreshToken } = response.data;
-            
-            // Stocker les tokens
-            localStorage.setItem('accessToken', accessToken);
-            localStorage.setItem('userId', user.id);
-            if (refreshToken) {
-              localStorage.setItem('refreshToken', refreshToken);
-            }
-            
-            // Configurer le service API
-            apiService.setToken(accessToken);
-            
-            dispatch({ type: 'AUTH_SUCCESS', payload: user });
-            
-            toast({
-              title: 'Connexion réussie',
-              description: `Bienvenue ${user.firstName} ${user.lastName}`
-            });
-            
-            return { success: true };
-          }
-        } catch (error) {
-          console.warn('⚠️ Connexion API échouée, tentative locale:', error);
-        }
-      }
-
-      // Fallback : connexion locale (pour démonstration)
-      const employees = repositories.employees.getAll();
-      const employee = employees.find(emp => 
-        emp.matricule.toLowerCase() === matricule.toLowerCase()
-      );
-
-      if (!employee) {
-        const errorMessage = 'Matricule non trouvé';
-        dispatch({ type: 'AUTH_FAILURE', payload: errorMessage });
-        return { success: false, error: errorMessage };
-      }
-
-      // Stocker l'ID utilisateur
+      // Sauvegarder dans localStorage pour persistance
       localStorage.setItem('userId', employee.id);
-      
+      localStorage.setItem('matricule', employee.matricule);
+
       dispatch({ type: 'AUTH_SUCCESS', payload: employee });
       
-      toast({
-        title: state.isOnline ? 'Connexion (démo locale)' : 'Connexion hors-ligne',
-        description: `Bienvenue ${employee.firstName} ${employee.lastName}`
-      });
-      
+      console.info('✅ Authentification réussie via Convex');
+    } else if (employeeData === null && matricule) {
+      // L'employé n'existe pas
+      dispatch({ type: 'AUTH_FAILURE', payload: 'Matricule non trouvé' });
+      setMatricule(null);
+    }
+  }, [employeeData, matricule]);
+
+  // Initialiser l'authentification au démarrage
+  useEffect(() => {
+    const storedMatricule = localStorage.getItem('matricule');
+    if (storedMatricule) {
+      setMatricule(storedMatricule);
+    } else {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  }, []);
+
+  // Fonction de connexion
+  const login = async (inputMatricule: string, password?: string): Promise<{ success: boolean; error?: string }> => {
+    dispatch({ type: 'AUTH_START' });
+
+    try {
+      // Déclencher la query Convex
+      setMatricule(inputMatricule.toUpperCase());
+
+      // La query s'exécute automatiquement via useEffect
+      // On retourne success immédiatement
       return { success: true };
 
     } catch (error) {
@@ -269,16 +186,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Fonction de déconnexion
   const logout = async (): Promise<void> => {
     try {
-      // Tentative de déconnexion via API si en ligne et authentifié
-      if (state.isOnline && state.isAuthenticated) {
-        try {
-          await authAPI.logout();
-        } catch (error) {
-          console.warn('⚠️ Erreur déconnexion API (continuons tout de même):', error);
-        }
-      }
-
-      handleLogout();
+      // Nettoyer le localStorage
+      localStorage.removeItem('userId');
+      localStorage.removeItem('matricule');
+      
+      // Réinitialiser le matricule (arrête la query Convex)
+      setMatricule(null);
+      
+      dispatch({ type: 'AUTH_LOGOUT' });
       
       toast({
         title: 'Déconnexion',
@@ -287,39 +202,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     } catch (error) {
       console.error('❌ Erreur lors de la déconnexion:', error);
-      // Forcer la déconnexion même en cas d'erreur
-      handleLogout();
     }
-  };
-
-  // Gérer la déconnexion (nettoyage)
-  const handleLogout = (): void => {
-    // Nettoyer le stockage local
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('userId');
-    
-    // Réinitialiser le service API
-    apiService.setToken(null);
-    
-    dispatch({ type: 'AUTH_LOGOUT' });
   };
 
   // Rafraîchir l'authentification
   const refreshAuth = async (): Promise<void> => {
-    if (!state.isOnline || !state.isAuthenticated) {
-      return;
-    }
-
-    try {
-      const response = await authAPI.getProfile();
-      
-      if (response.success && response.data?.user) {
-        dispatch({ type: 'AUTH_SUCCESS', payload: response.data.user });
-      }
-    } catch (error) {
-      console.error('❌ Erreur rafraîchissement profil:', error);
-    }
+    // Avec Convex, les données sont automatiquement mises à jour en temps réel
+    // Pas besoin de refresh manuel
+    console.info('✅ Convex gère automatiquement le refresh');
   };
 
   // Nettoyer l'erreur

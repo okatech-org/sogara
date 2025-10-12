@@ -67,21 +67,21 @@ export function WelcomePage({ onShowLogin }: WelcomePageProps) {
 
   const temoignages = [
     {
-      nom: 'Pierre ANTCHOUET',
-      poste: 'Technicien Production',
+      nom: 'Pierre BEKALE',
+      poste: 'Technicien Raffinage',
       temoignage: "SOGARA Access m'évite les paperasses. Je vois directement mes EPI et mes formations à jour.",
       image: techniciensImage
     },
     {
-      nom: 'Marie LAKIBI', 
-      poste: 'Responsable HSE',
+      nom: 'Marie-Claire NZIEGE', 
+      poste: 'Chef de Division HSE et Conformité',
       temoignage: "Enfin un système qui centralise tout ! Les rapports d'incidents et le suivi formation, tout y est.",
       image: ingenieurImage
     },
     {
-      nom: 'Christian ELLA',
-      poste: 'Superviseur',
-      temoignage: "Je pilote mon équipe plus facilement. Visibilité totale sur les affectations et la conformité.",
+      nom: 'Clarisse MBOUMBA',
+      poste: 'Directeur Communication',
+      temoignage: "SOGARA Connect simplifie la communication interne. Publication d'actualités en quelques clics !",
       image: superviseurImage
     }
   ];

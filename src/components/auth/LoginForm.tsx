@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -8,9 +9,10 @@ import { useAuth } from '@/contexts/AppContext';
 import { useEmployees } from '@/hooks/useEmployees';
 import { repositories } from '@/services/repositories';
 import { apiService } from '@/services/api.service';
-import { HardHat, ArrowLeft, ArrowRight, Settings, Shield, Users, Package } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { convex } from '@/lib/convexClient';
+import { demoAccounts } from '@/data/demoAccounts';
 
 interface LoginFormProps {
   onBackToHome: () => void;
@@ -21,54 +23,7 @@ export function LoginForm({ onBackToHome }: LoginFormProps) {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const { employees, getEmployeeById } = useEmployees();
-
-  const demoAccounts = [
-    {
-      id: '3',
-      matricule: 'ADM001',
-      name: 'Alain OBAME',
-      role: 'Administrateur',
-      description: 'Accès complet à tous les modules',
-      color: 'bg-destructive text-destructive-foreground',
-      icon: Settings,
-    },
-    {
-      id: '4', 
-      matricule: 'HSE001',
-      name: 'Marie LAKIBI',
-      role: 'Responsable HSE',
-      description: 'Gestion sécurité, incidents et formations',
-      color: 'bg-secondary text-secondary-foreground',
-      icon: Shield,
-    },
-    {
-      id: '5',
-      matricule: 'SUP001', 
-      name: 'Christian ELLA',
-      role: 'Superviseur',
-      description: 'Supervision et rapports',
-      color: 'bg-primary text-primary-foreground',
-      icon: Users,
-    },
-    {
-      id: '2',
-      matricule: 'REC001',
-      name: 'Sylvie KOUMBA', 
-      role: 'Réceptionniste',
-      description: 'Accueil visiteurs et gestion colis',
-      color: 'bg-accent text-accent-foreground',
-      icon: Package,
-    },
-    {
-      id: '1',
-      matricule: 'EMP001',
-      name: 'Pierre ANTCHOUET',
-      role: 'Employé',
-      description: 'Accès employé standard',
-      color: 'bg-secondary text-secondary-foreground',
-      icon: HardHat,
-    },
-  ];
+  const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -92,10 +47,11 @@ export function LoginForm({ onBackToHome }: LoginFormProps) {
           const defaultPasswords: Record<string, string> = {
             'ADM001': 'Admin123!',
             'HSE001': 'HSE123!',
-            'SUP001': 'Supervisor123!',
             'REC001': 'Reception123!',
             'COM001': 'Communication123!',
-            'EMP001': 'Employee123!'
+            'EMP001': 'Employee123!',
+            'DG001': 'DG123!',
+            'DRH001': 'DRH123!'
           };
           
           const password = defaultPasswords[matricule.toUpperCase()];
@@ -164,10 +120,23 @@ export function LoginForm({ onBackToHome }: LoginFormProps) {
       );
       if (employee) {
         login(employee);
+        
         toast({
           title: 'Connexion (démo locale)',
           description: `Bienvenue ${employee.firstName} ${employee.lastName}`,
         });
+
+        // Redirection basée sur le matricule
+        const account = demoAccounts.find(acc => acc.matricule === employee.matricule);
+        if (account?.defaultRoute) {
+          setTimeout(() => {
+            navigate(account.defaultRoute);
+          }, 200);
+        } else {
+          setTimeout(() => {
+            navigate('/app/dashboard');
+          }, 200);
+        }
         return;
       }
 
@@ -199,10 +168,23 @@ export function LoginForm({ onBackToHome }: LoginFormProps) {
 
     if (employee) {
       login(employee);
+      
       toast({
         title: 'Connexion démo',
         description: `Bienvenue ${employee.firstName} ${employee.lastName}`,
       });
+
+      // Redirection vers la route par défaut du compte
+      const account = demoAccounts.find(acc => acc.id === accountId);
+      if (account?.defaultRoute) {
+        setTimeout(() => {
+          navigate(account.defaultRoute);
+        }, 200);
+      } else {
+        setTimeout(() => {
+          navigate('/app/dashboard');
+        }, 200);
+      }
     } else {
       toast({
         title: 'Erreur',
@@ -299,24 +281,24 @@ export function LoginForm({ onBackToHome }: LoginFormProps) {
                 return (
                   <div
                     key={account.id}
-                    className={`p-4 rounded-lg border border-border bg-card transition-all group cursor-pointer ${employees.length === 0 ? 'pointer-events-none opacity-60' : 'hover:bg-muted/30'}`}
+                    className={`p-4 rounded-lg border border-border bg-card transition-all group cursor-pointer hover:bg-muted/30`}
                     onClick={() => handleDemoLogin(account.id)}
                   >
                     <div className="flex items-center gap-4">
-                      <div className={`w-12 h-12 ${account.color} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                      <div className={`w-12 h-12 ${account.colorClass} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform`}>
                         <Icon className="w-6 h-6" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <h3 className="font-medium text-foreground">
-                            {account.name}
+                            {account.fullName}
                           </h3>
                           <Badge variant="outline" className="text-xs">
                             {account.matricule}
                           </Badge>
                         </div>
                         <p className="text-sm font-medium text-primary mb-1">
-                          {account.role}
+                          {account.jobTitle}
                         </p>
                         <p className="text-xs text-muted-foreground">
                           {account.description}

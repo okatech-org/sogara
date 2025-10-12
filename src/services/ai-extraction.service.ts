@@ -33,8 +33,33 @@ export class AIExtractionService {
   private cache: Map<string, ExtractionResult>;
 
   constructor(config?: Partial<AIConfig>) {
-    const provider = (import.meta.env.VITE_AI_PROVIDER || config?.provider || 'mock') as AIConfig['provider'];
-    const apiKey = import.meta.env.VITE_OPENAI_API_KEY || import.meta.env.VITE_GEMINI_API_KEY || config?.apiKey;
+    const envProvider = import.meta.env.VITE_AI_PROVIDER;
+    const openaiKey = import.meta.env.VITE_OPENAI_API_KEY;
+    const geminiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    
+    console.log('🔍 Détection configuration IA:', {
+      envProvider,
+      hasOpenAIKey: !!openaiKey,
+      hasGeminiKey: !!geminiKey
+    });
+    
+    let provider: AIConfig['provider'];
+    let apiKey: string | undefined;
+    
+    if (openaiKey && (!envProvider || envProvider === 'openai')) {
+      provider = 'openai';
+      apiKey = openaiKey;
+    } else if (geminiKey && envProvider === 'google') {
+      provider = 'google';
+      apiKey = geminiKey;
+    } else if (config?.provider && config?.apiKey) {
+      provider = config.provider;
+      apiKey = config.apiKey;
+    } else {
+      console.warn('⚠️ Aucune clé API détectée - Mode Mock activé');
+      provider = 'mock';
+      apiKey = undefined;
+    }
     
     this.config = {
       provider,
@@ -52,7 +77,7 @@ export class AIExtractionService {
     };
     this.cache = new Map();
     
-    console.log(`🤖 AI Service initialisé - Provider: ${this.config.provider}, Model: ${this.config.model}`);
+    console.log(`🤖 AI Service initialisé - Provider: ${this.config.provider}, Model: ${this.config.model}, API Key présente: ${!!this.config.apiKey}`);
   }
 
   async extractIdentityDocument(
@@ -275,14 +300,63 @@ Répondez UNIQUEMENT avec le JSON, sans texte supplémentaire.`;
 
   private async preprocessImage(imageData: string | File): Promise<string> {
     if (typeof imageData === 'string') {
+      // Si c'est déjà une data URL
+      if (imageData.startsWith('data:')) {
+        // Vérifier si c'est un PDF
+        if (imageData.startsWith('data:application/pdf')) {
+          console.log('📄 PDF détecté, conversion en image...');
+          const { pdfConverter } = await import('./pdf-converter.service');
+          const arrayBuffer = this.dataURLToArrayBuffer(imageData);
+          const imageResult = await pdfConverter.convertFirstPageToImage(arrayBuffer);
+          return imageResult;
+        }
+        return imageData;
+      }
       return imageData;
     }
     
+    // Si c'est un fichier
+    if (imageData.type === 'application/pdf') {
+      console.log('📄 Fichier PDF détecté, conversion en image...');
+      const { pdfConverter } = await import('./pdf-converter.service');
+      const arrayBuffer = await this.fileToArrayBuffer(imageData);
+      const imageResult = await pdfConverter.convertFirstPageToImage(arrayBuffer);
+      return imageResult;
+    }
+    
+    // Pour les images, conversion normale en data URL
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => resolve(reader.result as string);
       reader.onerror = reject;
       reader.readAsDataURL(imageData);
+    });
+  }
+  
+  private dataURLToArrayBuffer(dataURL: string): ArrayBuffer {
+    const base64 = dataURL.split(',')[1];
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    
+    return bytes.buffer;
+  }
+  
+  private fileToArrayBuffer(file: File): Promise<ArrayBuffer> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target?.result instanceof ArrayBuffer) {
+          resolve(e.target.result);
+        } else {
+          reject(new Error('Échec de la lecture du fichier'));
+        }
+      };
+      reader.onerror = reject;
+      reader.readAsArrayBuffer(file);
     });
   }
 
@@ -420,6 +494,8 @@ Répondez UNIQUEMENT avec le JSON, sans texte supplémentaire.`;
       throw new Error('Clé API OpenAI manquante');
     }
     
+    console.log('🌐 Envoi requête à OpenAI GPT-4o...');
+    
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -429,6 +505,10 @@ Répondez UNIQUEMENT avec le JSON, sans texte supplémentaire.`;
       body: JSON.stringify({
         model: this.config.model,
         messages: [
+          {
+            role: 'system',
+            content: 'Tu es un expert en extraction de données depuis des documents. Tu dois répondre UNIQUEMENT avec du JSON valide, sans texte supplémentaire avant ou après.'
+          },
           {
             role: 'user',
             content: [
@@ -446,8 +526,9 @@ Répondez UNIQUEMENT avec le JSON, sans texte supplémentaire.`;
             ]
           }
         ],
-        max_tokens: 500,
-        temperature: 0.1
+        max_tokens: 800,
+        temperature: 0.1,
+        response_format: { type: "json_object" }
       })
     });
 
@@ -457,17 +538,47 @@ Répondez UNIQUEMENT avec le JSON, sans texte supplémentaire.`;
     }
 
     const result = await response.json();
-    const content = result.choices[0].message.content;
-    
-    const jsonMatch = content.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      throw new Error('Aucun JSON trouvé dans la réponse');
+    let rawContent: any = result?.choices?.[0]?.message?.content ?? null;
+
+    // Normaliser les réponses éventuelles en blocs (certains modèles retournent un tableau de blocs)
+    if (Array.isArray(rawContent)) {
+      const textBlock = rawContent.find((block: any) =>
+        typeof block?.text === 'string' || block?.type === 'text'
+      );
+      rawContent = textBlock?.text ?? null;
     }
-    
-    const data = JSON.parse(jsonMatch[0]);
-    const confidence = this.calculateConfidence(data);
-    
-    return { data, confidence };
+
+    // Fallback: certains retours peuvent utiliser des tool_calls avec des arguments JSON
+    if ((rawContent === null || rawContent === undefined || (typeof rawContent === 'string' && rawContent.trim() === '')) &&
+        result?.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments) {
+      const args = result.choices[0].message.tool_calls[0].function.arguments;
+      try {
+        const data = typeof args === 'string' ? JSON.parse(args) : args;
+        const confidence = this.calculateConfidence(data);
+        return { data, confidence };
+      } catch {}
+    }
+
+    if (typeof rawContent !== 'string' || rawContent.trim() === '') {
+      throw new Error('Réponse du modèle vide ou non textuelle');
+    }
+
+    console.log('📝 Réponse OpenAI brute:', rawContent);
+
+    // Tenter un parsing direct, sinon extraire le JSON avec regex
+    try {
+      const directData = JSON.parse(rawContent);
+      const directConfidence = this.calculateConfidence(directData);
+      return { data: directData, confidence: directConfidence };
+    } catch {
+      const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        throw new Error(`Aucun JSON trouvé dans la réponse. Contenu reçu: ${rawContent.substring(0, 200)}`);
+      }
+      const data = JSON.parse(jsonMatch[0]);
+      const confidence = this.calculateConfidence(data);
+      return { data, confidence };
+    }
   }
 
   private async callGemini(imageData: string, prompt: string): Promise<{ data: any; confidence: number }> {
@@ -737,13 +848,23 @@ Répondez UNIQUEMENT avec le JSON, sans texte supplémentaire.`;
 }
 
 const getDefaultAIConfig = (): AIConfig => {
-  const provider = (import.meta.env.VITE_AI_PROVIDER || 'openai') as AIConfig['provider'];
-  const apiKey = import.meta.env.VITE_OPENAI_API_KEY || import.meta.env.VITE_GEMINI_API_KEY;
+  const openaiKey = import.meta.env.VITE_OPENAI_API_KEY;
+  const geminiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const envProvider = import.meta.env.VITE_AI_PROVIDER;
   
-  if (provider !== 'mock' && !apiKey) {
-    console.warn('⚠️ Aucune clé API configurée - Passage en mode Mock');
+  console.log('🔍 Configuration détectée:', {
+    envProvider,
+    openaiKeyLength: openaiKey?.length || 0,
+    geminiKeyLength: geminiKey?.length || 0,
+    import_meta_env: import.meta.env
+  });
+  
+  if (openaiKey && openaiKey.startsWith('sk-')) {
+    console.log('✅ Clé OpenAI détectée - Activation mode OPENAI');
     return {
-      provider: 'mock',
+      provider: 'openai',
+      apiKey: openaiKey,
+      model: 'gpt-4o',
       maxRetries: 3,
       timeout: 30000,
       confidence: {
@@ -754,10 +875,27 @@ const getDefaultAIConfig = (): AIConfig => {
     };
   }
   
+  if (geminiKey && geminiKey.startsWith('AIza')) {
+    console.log('✅ Clé Gemini détectée - Activation mode GOOGLE');
+    return {
+      provider: 'google',
+      apiKey: geminiKey,
+      model: 'gemini-1.5-flash',
+      maxRetries: 3,
+      timeout: 30000,
+      confidence: {
+        minimum: 0.7,
+        warning: 0.85,
+        verification: 0.95
+      }
+    };
+  }
+  
+  console.warn('⚠️ Aucune clé API configurée - Mode Mock actif');
+  console.warn('💡 Pour activer l\'API réelle, ajoutez VITE_OPENAI_API_KEY dans .env.local et redémarrez');
+  
   return {
-    provider,
-    apiKey,
-    model: provider === 'google' ? 'gemini-1.5-flash' : 'gpt-4o',
+    provider: 'mock',
     maxRetries: 3,
     timeout: 30000,
     confidence: {
@@ -768,5 +906,10 @@ const getDefaultAIConfig = (): AIConfig => {
   };
 };
 
-export const aiExtractionService = new AIExtractionService(getDefaultAIConfig());
+// Charger depuis le fichier de config en priorité (garantit l'activation)
+import { getAIConfig } from '@/config/ai-config';
+
+const aiConfig = getAIConfig();
+
+export const aiExtractionService = new AIExtractionService(aiConfig);
 

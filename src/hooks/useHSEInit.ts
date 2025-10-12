@@ -34,8 +34,8 @@ export function useHSEInit() {
             location: 'Zone production',
             occurredAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
             status: 'resolved',
-            reportedBy: 'Christian ELLA',
-            investigatedBy: 'Marie LAKIBI',
+            reportedBy: 'Pierre BEKALE',
+            investigatedBy: 'Marie-Claire NZIEGE',
             correctiveActions: 'Casque remplacé, vérification de tous les EPI de l\'équipe effectuée.'
           },
           {
@@ -46,8 +46,8 @@ export function useHSEInit() {
             location: 'Bureau administratif',
             occurredAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
             status: 'investigating',
-            reportedBy: 'Christian ELLA',
-            investigatedBy: 'Marie LAKIBI'
+            reportedBy: 'Pierre BEKALE',
+            investigatedBy: 'Marie-Claire NZIEGE'
           },
           {
             employeeId: '2',

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { AlertTriangle, BookOpen, Shield, Plus, Calendar, FileText, Users, TrendingUp, Loader2, RefreshCw, GraduationCap } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -23,13 +23,18 @@ import { HSEDataImportTools } from './HSEDataImportTools';
 import { HSEMaintenanceTools } from './HSEMaintenanceTools';
 import { HSEAnalyticsDashboard } from './HSEAnalyticsDashboard';
 import { HSEAdvancedSearch } from './HSEAdvancedSearch';
+import { HSEEmployeeManager } from './HSEEmployeeManager';
+import { HSENotificationCenter } from './HSENotificationCenter';
+import { HSETrainingAssignmentSystem } from './HSETrainingAssignmentSystem';
+import { HSEContentHub } from './HSEContentHub';
 import { useAuth } from '@/contexts/AppContext';
+import { useEmployees } from '@/hooks/useEmployees';
 import { useHSEIncidents } from '@/hooks/useHSEIncidents';
 import { useHSETrainings } from '@/hooks/useHSETrainings';
 import { useHSECompliance } from '@/hooks/useHSECompliance';
 import { useHSEInit } from '@/hooks/useHSEInit';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { HSEIncident, HSETraining, HSETrainingSession } from '@/types';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { HSEIncident, HSETraining, HSETrainingSession, HSENotification } from '@/types';
 import { HSESystemValidator } from '@/utils/hse-system-validator';
 import { HSEWelcomeTour } from './HSEWelcomeTour';
 
@@ -39,6 +44,10 @@ export function HSEDashboard() {
   
   // État pour la navigation entre onglets
   const [activeTab, setActiveTab] = useState('overview');
+  
+  // Charger les employés depuis le hook
+  const { employees: allEmployees } = useEmployees();
+  
   const { 
     incidents, 
     addIncident, 
@@ -73,8 +82,10 @@ export function HSEDashboard() {
   const [showSessionScheduler, setShowSessionScheduler] = useState<HSETraining | null>(null);
   
   // États pour les filtres et recherche
-  const [filteredIncidents, setFilteredIncidents] = useState<HSEIncident[]>([]);
   const [searchFilters, setSearchFilters] = useState<any>({});
+  
+  // États pour les notifications HSE
+  const [notifications, setNotifications] = useState<HSENotification[]>([]);
   
   const canManageHSE = hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR']);
   const canViewHSE = hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR', 'EMPLOYE']);
@@ -100,31 +111,27 @@ export function HSEDashboard() {
     }
   }, [isFullyInitialized]);
 
-  // Filtrer les incidents
-  useEffect(() => {
-    let filtered = [...incidents];
-    
-    if (searchFilters.searchTerm) {
+  // Filtrage mémoïsé pour éviter les boucles de rendu
+  const filteredIncidents = useMemo(() => {
+    let filtered = incidents;
+    const term = searchFilters.searchTerm?.toLowerCase?.();
+    if (term) {
       filtered = filtered.filter(incident => 
-        incident.type.toLowerCase().includes(searchFilters.searchTerm.toLowerCase()) ||
-        incident.description.toLowerCase().includes(searchFilters.searchTerm.toLowerCase()) ||
-        incident.location.toLowerCase().includes(searchFilters.searchTerm.toLowerCase())
+        incident.type.toLowerCase().includes(term) ||
+        incident.description.toLowerCase().includes(term) ||
+        incident.location.toLowerCase().includes(term)
       );
     }
-    
     if (searchFilters.severity) {
       filtered = filtered.filter(incident => incident.severity === searchFilters.severity);
     }
-    
     if (searchFilters.status) {
       filtered = filtered.filter(incident => incident.status === searchFilters.status);
     }
-    
     if (searchFilters.type) {
       filtered = filtered.filter(incident => incident.type === searchFilters.type);
     }
-    
-    setFilteredIncidents(filtered);
+    return filtered;
   }, [incidents, searchFilters]);
 
   // Récupérer les statistiques (seulement si initialisé)
@@ -154,6 +161,27 @@ export function HSEDashboard() {
     if (training) {
       setShowSessionScheduler(training);
     }
+  };
+
+  // Gestionnaires pour les nouvelles fonctionnalités HSE
+  const handleAssignTraining = (employeeId: string, trainingId: string) => {
+    console.log('Attribution formation:', { employeeId, trainingId });
+    // Logique d'attribution à implémenter
+  };
+
+  const handleSendNotification = (notification: Omit<HSENotification, 'id' | 'timestamp'>) => {
+    const newNotification: HSENotification = {
+      ...notification,
+      id: `notif_${Date.now()}`,
+      timestamp: new Date()
+    };
+    setNotifications(prev => [newNotification, ...prev]);
+  };
+
+  const handleMarkNotificationAsRead = (notificationId: string) => {
+    setNotifications(prev => prev.map(n => 
+      n.id === notificationId ? { ...n, read: true } : n
+    ));
   };
 
   const runSystemValidation = async () => {
@@ -466,13 +494,17 @@ export function HSEDashboard() {
 
       {/* Contenu principal par onglets */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="grid w-full grid-cols-10">
           <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
+          <TabsTrigger value="send">📤 Centre d'Envoi</TabsTrigger>
           <TabsTrigger value="incidents">Incidents</TabsTrigger>
-          <TabsTrigger value="formations">Formations & Modules</TabsTrigger>
-          <TabsTrigger value="compliance">Conformité & EPI</TabsTrigger>
-          <TabsTrigger value="status">Système & Outils</TabsTrigger>
-          <TabsTrigger value="analytics">Analyses & Rapports</TabsTrigger>
+          <TabsTrigger value="formations">Formations</TabsTrigger>
+          <TabsTrigger value="employees">Collaborateurs</TabsTrigger>
+          <TabsTrigger value="notifications">Notifications</TabsTrigger>
+          <TabsTrigger value="assignment">Attribution</TabsTrigger>
+          <TabsTrigger value="compliance">Conformité</TabsTrigger>
+          <TabsTrigger value="status">Système</TabsTrigger>
+          <TabsTrigger value="analytics">Rapports</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -481,7 +513,6 @@ export function HSEDashboard() {
             onCreateIncident={() => setShowIncidentForm(true)}
             onScheduleTraining={() => {
               setActiveTab('formations');
-              // Pour la démo, on peut utiliser la première formation disponible
               if (trainings.length > 0) {
                 setShowSessionScheduler(trainings[0]);
               }
@@ -498,6 +529,10 @@ export function HSEDashboard() {
             {renderRecentIncidents()}
             {renderUpcomingTrainings()}
           </div>
+        </TabsContent>
+
+        <TabsContent value="send" className="space-y-6">
+          <HSEContentHub employees={allEmployees || []} />
         </TabsContent>
 
         <TabsContent value="incidents" className="space-y-4">
@@ -666,6 +701,35 @@ export function HSEDashboard() {
           </Tabs>
         </TabsContent>
 
+        <TabsContent value="employees" className="space-y-6">
+          <HSEEmployeeManager 
+            employees={allEmployees || []}
+            onAssignTraining={handleAssignTraining}
+            onSendNotification={handleSendNotification}
+          />
+        </TabsContent>
+
+        <TabsContent value="notifications" className="space-y-6">
+          <HSENotificationCenter
+            employees={allEmployees || []}
+            notifications={notifications}
+            onSendNotification={handleSendNotification}
+            onMarkAsRead={handleMarkNotificationAsRead}
+          />
+        </TabsContent>
+
+        <TabsContent value="assignment" className="space-y-6">
+          <HSETrainingAssignmentSystem
+            employees={allEmployees || []}
+            onAssignTraining={(assignments) => {
+              console.log('Attributions automatiques:', assignments);
+            }}
+            onUpdateRules={(rules) => {
+              console.log('Mise à jour des règles:', rules);
+            }}
+          />
+        </TabsContent>
+
         <TabsContent value="compliance" className="space-y-6">
           {/* Interface unifiée conformité et EPI */}
           <Tabs defaultValue="dashboard" className="space-y-4">
@@ -734,7 +798,7 @@ export function HSEDashboard() {
           <HSEAnalyticsDashboard 
             incidents={incidents}
             trainings={trainings}
-            employees={state.employees || []}
+            employees={allEmployees || []}
           />
         </TabsContent>
       </Tabs>
@@ -742,6 +806,9 @@ export function HSEDashboard() {
       {/* Dialogs */}
       <Dialog open={showIncidentForm} onOpenChange={setShowIncidentForm}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Déclarer un incident</DialogTitle>
+          </DialogHeader>
           <HSEIncidentForm 
             onSubmit={handleIncidentSubmit}
             onCancel={() => setShowIncidentForm(false)}
@@ -751,6 +818,9 @@ export function HSEDashboard() {
 
       <Dialog open={!!showIncidentDetails} onOpenChange={() => setShowIncidentDetails(null)}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Détails de l'incident</DialogTitle>
+          </DialogHeader>
           {showIncidentDetails && (
             <HSEIncidentTimeline 
               incident={showIncidentDetails}
@@ -762,6 +832,9 @@ export function HSEDashboard() {
 
       <Dialog open={!!showTrainingSession} onOpenChange={() => setShowTrainingSession(null)}>
         <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Session de formation</DialogTitle>
+          </DialogHeader>
           {showTrainingSession && (
             <Card>
               <CardHeader>
@@ -809,6 +882,9 @@ export function HSEDashboard() {
 
       <Dialog open={!!showSessionScheduler} onOpenChange={() => setShowSessionScheduler(null)}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Planifier une session</DialogTitle>
+          </DialogHeader>
           {showSessionScheduler && (
             <HSESessionScheduler
               training={showSessionScheduler}

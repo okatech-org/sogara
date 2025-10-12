@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, ReactNode } from 'react';
+import { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
 import { 
   Employee, 
   Visitor, 
@@ -238,6 +238,32 @@ const AppContext = createContext<{
 export function AppProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
+  // Persister currentUser dans localStorage
+  useEffect(() => {
+    if (state.currentUser) {
+      localStorage.setItem('sogara_current_user', JSON.stringify(state.currentUser));
+    }
+  }, [state.currentUser]);
+
+  // Restaurer currentUser au chargement
+  useEffect(() => {
+    const storedUser = localStorage.getItem('sogara_current_user');
+    if (storedUser && !state.currentUser) {
+      try {
+        const user = JSON.parse(storedUser, (key, value) => {
+          if (key.includes('At') || key.includes('Date')) {
+            return new Date(value);
+          }
+          return value;
+        });
+        dispatch({ type: 'SET_CURRENT_USER', payload: user });
+      } catch (error) {
+        console.error('Erreur restauration utilisateur:', error);
+        localStorage.removeItem('sogara_current_user');
+      }
+    }
+  }, []);
+
   return (
     <AppContext.Provider value={{ state, dispatch }}>
       {children}
@@ -262,6 +288,7 @@ export function useAuth() {
 
   const logout = () => {
     dispatch({ type: 'SET_CURRENT_USER', payload: null });
+    localStorage.removeItem('sogara_current_user');
   };
 
   const hasRole = (role: UserRole): boolean => {

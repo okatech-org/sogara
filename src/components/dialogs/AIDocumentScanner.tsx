@@ -5,8 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ExtractionResult } from '@/services/ai-extraction.service';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { ExtractionResult, aiExtractionService } from '@/services/ai-extraction.service';
 
 interface AIDocumentScannerProps {
   title: string;
@@ -61,42 +61,45 @@ export function AIDocumentScanner({
       await simulateProgress(20, 'Préparation de l\'image...');
       
       setCurrentStep('Analyse par IA...');
-      await simulateProgress(50, 'Analyse par IA...');
+      await simulateProgress(40, 'Analyse par IA...');
       
-      const mockResult: ExtractionResult = {
-        success: true,
-        confidence: 0.92,
-        data: generateMockData(documentType),
-        warnings: [],
-        requiresVerification: false,
-        processingTime: 1500,
-        aiProvider: 'mock',
-        extractedFields: ['firstName', 'lastName', 'idNumber'],
-        metadata: {
-          documentType: documentType,
-          qualityScore: 0.92,
-          enhancementsApplied: ['contrast', 'denoising']
-        }
-      };
+      // Utiliser le service IA réel au lieu des données mockées
+      let result: ExtractionResult;
+      console.log(`🔧 Extraction du document type: ${documentType}`);
+      
+      if (documentType === 'identity') {
+        console.log('📷 Appel extraction identité avec image...');
+        result = await aiExtractionService.extractIdentityDocument(previewUrl);
+      } else if (documentType === 'package') {
+        console.log('📦 Appel extraction colis avec image...');
+        result = await aiExtractionService.extractPackageLabel(previewUrl);
+      } else if (documentType === 'mail') {
+        console.log('✉️ Appel extraction courrier avec image...');
+        result = await aiExtractionService.extractMailDocument(previewUrl);
+      } else {
+        throw new Error('Type de document non supporté');
+      }
+      
+      console.log('📊 Résultat extraction:', result);
       
       setCurrentStep('Validation des données...');
       await simulateProgress(80, 'Validation des données...');
       
       await simulateProgress(100, 'Terminé !');
       
-      setExtractionResult(mockResult);
+      setExtractionResult(result);
       
       setTimeout(() => {
-        onExtracted(mockResult);
+        onExtracted(result);
       }, 500);
       
-    } catch (error) {
-      console.error('Erreur extraction:', error);
+    } catch (error: any) {
+      console.error('❌ Erreur extraction:', error);
       setExtractionResult({
         success: false,
         confidence: 0,
         data: {},
-        warnings: ['Erreur lors de l\'extraction'],
+        warnings: [`Erreur lors de l'extraction: ${error.message || 'Erreur inconnue'}`],
         requiresVerification: true
       });
     } finally {
@@ -166,9 +169,9 @@ export function AIDocumentScanner({
             <Sparkles className="w-5 h-5 text-primary" />
             {title}
           </DialogTitle>
-          <p className="text-sm text-muted-foreground">
+          <DialogDescription>
             Scannez ou téléchargez un document pour extraction automatique des données
-          </p>
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
@@ -241,11 +244,30 @@ export function AIDocumentScanner({
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="relative rounded-lg overflow-hidden border">
-                  <img
-                    src={previewUrl}
-                    alt="Document preview"
-                    className="w-full h-auto max-h-96 object-contain bg-muted"
-                  />
+                  {selectedFile?.type === 'application/pdf' ? (
+                    <div className="flex flex-col items-center justify-center p-8 bg-muted h-96">
+                      <div className="text-center space-y-4">
+                        <div className="w-24 h-24 mx-auto bg-red-100 rounded-lg flex items-center justify-center">
+                          <svg className="w-12 h-12 text-red-600" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20M10,19L12,15H13L15,19H13L11.5,16L10,19M8,11V19H10V13H11C11.6,13 12,12.6 12,12V11C12,10.4 11.6,10 11,10H8M10,11H11V12H10V11Z" />
+                          </svg>
+                        </div>
+                        <div>
+                          <p className="font-medium text-lg">Document PDF</p>
+                          <p className="text-sm text-muted-foreground mt-1">{selectedFile.name}</p>
+                          <p className="text-xs text-muted-foreground mt-2">
+                            La première page sera analysée par l'IA
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <img
+                      src={previewUrl}
+                      alt="Document preview"
+                      className="w-full h-auto max-h-96 object-contain bg-muted"
+                    />
+                  )}
                   {isExtracting && (
                     <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                       <div className="bg-white rounded-lg p-6 text-center space-y-4 max-w-sm">

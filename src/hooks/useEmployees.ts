@@ -1,155 +1,159 @@
-import { useEffect } from 'react';
-import { useApp } from '@/contexts/AppContext';
-import { repositories } from '@/services/repositories';
+import { useEffect, useMemo, useState } from 'react';
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../convex/_generated/api";
 import { Employee, UserRole } from '@/types';
 import { toast } from '@/hooks/use-toast';
-import { convex, convexClientAvailable } from '@/lib/convexClient';
+import { Id } from "../../convex/_generated/dataModel";
+import { repositories } from '@/services/repositories';
 
 export function useEmployees() {
-  const { state, dispatch } = useApp();
+  // Utiliser useQuery pour récupérer la liste des employés en temps réel
+  const employeesData = useQuery(api.employees.list);
+
+  // Fallback local si Convex n'est pas disponible
+  const [fallbackEmployees, setFallbackEmployees] = useState<Employee[] | null>(null);
+  const [fallbackReady, setFallbackReady] = useState(false);
 
   useEffect(() => {
-    let cancelled = false;
-    const load = async () => {
-      try {
-        if (convexClientAvailable) {
-          const result = await convex.query('employees:list', {});
-          if (!cancelled && Array.isArray(result)) {
-            const mapped = result.map((e: any) => ({
-              id: String(e._id ?? e.id),
-              firstName: e.firstName,
-              lastName: e.lastName,
-              matricule: e.matricule,
-              service: e.service,
-              roles: e.roles || [],
-              competences: e.competences || [],
-              habilitations: e.habilitations || [],
-              email: e.email,
-              status: e.status ?? 'active',
-              stats: e.stats ?? { visitsReceived: 0, packagesReceived: 0, hseTrainingsCompleted: 0 },
-              equipmentIds: e.equipmentIds ?? [],
-              createdAt: new Date(e.createdAt ?? Date.now()),
-              updatedAt: new Date(e.updatedAt ?? Date.now()),
-            })) as Employee[];
-            dispatch({ type: 'SET_EMPLOYEES', payload: mapped });
-            return;
-          }
-        }
-      } catch (_) {}
-      const local = repositories.employees.getAll();
-      if (!cancelled) dispatch({ type: 'SET_EMPLOYEES', payload: local });
-    };
-    load();
-    return () => {
-      cancelled = true;
-    };
-  }, [dispatch]);
+    if (employeesData === undefined && !fallbackReady) {
+      const list = repositories.employees.getAll();
+      setFallbackEmployees(list);
+      setFallbackReady(true);
+    }
+  }, [employeesData, fallbackReady]);
+
+  // Mutations Convex
+  const createMutation = useMutation(api.employees.create);
+  const updateMutation = useMutation(api.employees.update);
+  const removeMutation = useMutation(api.employees.remove);
+
+  // Mapper les données (Convex si dispo, sinon fallback local)
+  const employees: Employee[] = useMemo(() => {
+    if (employeesData) {
+      return (employeesData as any[]).map((e: any) => ({
+        id: e._id,
+        firstName: e.firstName,
+        lastName: e.lastName,
+        matricule: e.matricule,
+        service: e.service,
+        roles: e.roles || [],
+        competences: e.competences || [],
+        habilitations: e.habilitations || [],
+        email: e.email,
+        phone: e.phone,
+        status: e.status,
+        stats: e.stats,
+        equipmentIds: e.equipmentIds || [],
+        createdAt: new Date(e._creationTime),
+        updatedAt: new Date(e._creationTime),
+      }));
+    }
+    return fallbackEmployees || [];
+  }, [employeesData, fallbackEmployees]);
 
   const createEmployee = async (employeeData: Omit<Employee, 'id' | 'createdAt' | 'updatedAt'>) => {
     try {
-      if (convexClientAvailable) {
-        const created = await convex.mutation('employees:create', employeeData);
-        if (created) {
-          const mapped: Employee = {
-            id: String(created._id ?? created.id),
-            firstName: created.firstName,
-            lastName: created.lastName,
-            matricule: created.matricule,
-            service: created.service,
-            roles: created.roles || [],
-            competences: created.competences || [],
-            habilitations: created.habilitations || [],
-            email: created.email,
-            status: created.status ?? 'active',
-            stats: created.stats ?? { visitsReceived: 0, packagesReceived: 0, hseTrainingsCompleted: 0 },
-            equipmentIds: created.equipmentIds ?? [],
-            createdAt: new Date(created.createdAt ?? Date.now()),
-            updatedAt: new Date(created.updatedAt ?? Date.now()),
-          };
-          dispatch({ type: 'ADD_EMPLOYEE', payload: mapped });
-          toast({ title: 'Employé créé', description: `${mapped.firstName} ${mapped.lastName} a été ajouté avec succès.` });
-          return mapped;
-        }
+      await createMutation({
+        firstName: employeeData.firstName,
+        lastName: employeeData.lastName,
+        matricule: employeeData.matricule,
+        service: employeeData.service,
+        roles: employeeData.roles,
+        competences: employeeData.competences || [],
+        habilitations: employeeData.habilitations || [],
+        email: employeeData.email,
+        phone: employeeData.phone,
+        status: employeeData.status || "active",
+      });
+
+      toast({
+        title: 'Employé créé',
+        description: `${employeeData.firstName} ${employeeData.lastName} a été ajouté avec succès.`,
+      });
+
+      return { success: true };
+    } catch (error: any) {
+      try {
+        const created = repositories.employees.create(employeeData as any);
+        setFallbackEmployees((prev) => prev ? [created, ...prev] : [created]);
+        toast({ title: 'Employé créé (local)', description: 'Ajout enregistré localement.' });
+        return { success: true, offline: true } as any;
+      } catch (e: any) {
+        toast({ title: 'Erreur', description: e?.message || 'Impossible de créer l\'employé.', variant: 'destructive' });
+        return { success: false, error: e?.message };
       }
-      const fallback = repositories.employees.create(employeeData);
-      dispatch({ type: 'ADD_EMPLOYEE', payload: fallback });
-      toast({ title: 'Employé créé', description: `${fallback.firstName} ${fallback.lastName} a été ajouté avec succès.` });
-      return fallback;
-    } catch (error) {
-      toast({ title: 'Erreur', description: 'Impossible de créer l\'employé.', variant: 'destructive' });
-      throw error;
     }
   };
 
   const updateEmployee = async (id: string, updates: Partial<Employee>) => {
     try {
-      if (convexClientAvailable) {
-        const updated = await convex.mutation('employees:update', { id, updates });
+      await updateMutation({
+        id: id as Id<"employees">,
+        firstName: updates.firstName,
+        lastName: updates.lastName,
+        service: updates.service,
+        roles: updates.roles,
+        competences: updates.competences,
+        habilitations: updates.habilitations,
+        email: updates.email,
+        phone: updates.phone,
+        status: updates.status,
+      });
+
+      toast({
+        title: 'Employé mis à jour',
+        description: 'Les informations ont été sauvegardées.',
+      });
+
+      return { success: true };
+    } catch (error: any) {
+      try {
+        const updated = repositories.employees.update(id, updates as any);
         if (updated) {
-          const mapped: Employee = {
-            id: String(updated._id ?? updated.id),
-            firstName: updated.firstName,
-            lastName: updated.lastName,
-            matricule: updated.matricule,
-            service: updated.service,
-            roles: updated.roles || [],
-            competences: updated.competences || [],
-            habilitations: updated.habilitations || [],
-            email: updated.email,
-            status: updated.status ?? 'active',
-            stats: updated.stats ?? { visitsReceived: 0, packagesReceived: 0, hseTrainingsCompleted: 0 },
-            equipmentIds: updated.equipmentIds ?? [],
-            createdAt: new Date(updated.createdAt ?? Date.now()),
-            updatedAt: new Date(updated.updatedAt ?? Date.now()),
-          };
-          dispatch({ type: 'UPDATE_EMPLOYEE', payload: mapped });
-          toast({ title: 'Employé mis à jour', description: 'Les informations ont été sauvegardées.' });
-          return mapped;
+          setFallbackEmployees((prev) => prev ? prev.map(e => e.id === id ? updated : e) : [updated]);
+          toast({ title: 'Employé mis à jour (local)', description: 'Modifications sauvegardées localement.' });
+          return { success: true, offline: true } as any;
         }
+        return { success: false };
+      } catch (e: any) {
+        toast({ title: 'Erreur', description: e?.message || 'Impossible de mettre à jour l\'employé.', variant: 'destructive' });
+        return { success: false, error: e?.message };
       }
-      const local = repositories.employees.update(id, updates);
-      if (local) {
-        dispatch({ type: 'UPDATE_EMPLOYEE', payload: local });
-        toast({ title: 'Employé mis à jour', description: 'Les informations ont été sauvegardées.' });
-      }
-      return local;
-    } catch (error) {
-      toast({ title: 'Erreur', description: 'Impossible de mettre à jour l\'employé.', variant: 'destructive' });
-      throw error;
     }
   };
 
   const deleteEmployee = async (id: string) => {
     try {
-      let success = false;
-      if (convexClientAvailable) {
-        const res = await convex.mutation('employees:delete', { id });
-        success = !!(res ?? true);
+      await removeMutation({ id: id as Id<"employees"> });
+
+      toast({
+        title: 'Employé supprimé',
+        description: 'L\'employé a été retiré du système.',
+      });
+
+      return { success: true };
+    } catch (error: any) {
+      const ok = repositories.employees.delete(id);
+      if (ok) {
+        setFallbackEmployees((prev) => prev ? prev.filter(e => e.id !== id) : []);
+        toast({ title: 'Employé supprimé (local)', description: 'Suppression effectuée localement.' });
+        return { success: true, offline: true } as any;
       }
-      if (!convexClientAvailable) {
-        success = repositories.employees.delete(id);
-      }
-      if (success) {
-        dispatch({ type: 'DELETE_EMPLOYEE', payload: id });
-        toast({ title: 'Employé supprimé', description: 'L\'employé a été retiré du système.' });
-      }
-      return success;
-    } catch (error) {
-      toast({ title: 'Erreur', description: 'Impossible de supprimer l\'employé.', variant: 'destructive' });
-      throw error;
+      return { success: false, error: error?.message };
     }
   };
 
   const getEmployeesByRole = (role: UserRole) => {
-    return state.employees.filter(emp => emp.roles.includes(role));
+    return employees.filter(emp => emp.roles.includes(role));
   };
 
   const getEmployeeById = (id: string) => {
-    return state.employees.find(emp => emp.id === id);
+    return employees.find(emp => emp.id === id);
   };
 
   return {
-    employees: state.employees,
+    employees,
+    isLoading: employeesData === undefined && !fallbackReady,
     createEmployee,
     updateEmployee,
     deleteEmployee,
