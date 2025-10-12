@@ -183,6 +183,23 @@ export class EmployeeRepository {
         equipmentIds: [],
         createdAt: new Date(),
         updatedAt: new Date(),
+      },
+      {
+        id: '10',
+        firstName: 'Jean-Luc',
+        lastName: 'BERNARD',
+        matricule: 'EXT001',
+        service: 'Total Energies Gabon',
+        roles: ['EXTERNE'],
+        competences: ['Maintenance compresseurs', 'Hydraulique', 'Automatisme'],
+        habilitations: [],
+        email: 'jl.bernard@totalenergies.com',
+        phone: '+241 06 12 34 56',
+        status: 'active',
+        stats: { visitsReceived: 0, packagesReceived: 0, hseTrainingsCompleted: 0 },
+        equipmentIds: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
       }
     ];
 
