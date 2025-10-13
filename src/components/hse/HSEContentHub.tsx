@@ -101,7 +101,7 @@ export function HSEContentHub({ employees }: HSEContentHubProps) {
     }
 
     switch (activeTab) {
-      case 'training':
+      case 'training': {
         if (!selectedTraining) {
           toast({
             title: 'Erreur',
@@ -124,6 +124,7 @@ export function HSEContentHub({ employees }: HSEContentHubProps) {
           ...baseContent,
         })
         break
+      }
 
       case 'alert':
         if (!alertTitle || !alertMessage) {
@@ -240,30 +241,30 @@ export function HSEContentHub({ employees }: HSEContentHubProps) {
     setAssigningPath(true)
 
     try {
-      let successCount = 0
+      const internalCount = Object.values(candidateTypes).filter(t => t === 'employee').length
+      const externalCount = Object.values(candidateTypes).filter(t => t === 'external').length
 
-      // Assigner le parcours à chaque candidat sélectionné
-      for (const candidateId of selectedCandidates) {
+      // Assigner tous les parcours en parallèle pour éviter la boucle
+      const assignmentPromises = selectedCandidates.map(async candidateId => {
         const candidateType = candidateTypes[candidateId] || 'employee'
+        return assignPath(selectedCertificationPath, candidateId, candidateType, currentUser.id)
+      })
 
-        await assignPath(selectedCertificationPath, candidateId, candidateType, currentUser.id)
+      const results = await Promise.all(assignmentPromises)
+      const successCount = results.filter(r => r?.success).length
+      const offlineCount = results.filter(r => r?.offline).length
 
-        successCount++
-      }
-
-      // Reset
+      // Reset après succès
       setSelectedCertificationPath('')
       setSelectedCandidates([])
       setCandidateTypes({})
 
-      const internalCount = Object.values(candidateTypes).filter(t => t === 'employee').length
-      const externalCount = Object.values(candidateTypes).filter(t => t === 'external').length
-
       toast({
         title: '✅ Parcours assignés avec succès',
-        description: `${successCount} candidat(s) inscrit(s) au parcours (${internalCount} interne${internalCount > 1 ? 's' : ''}, ${externalCount} externe${externalCount > 1 ? 's' : ''})`,
+        description: `${successCount} candidat(s) inscrit(s) au parcours (${internalCount} interne${internalCount > 1 ? 's' : ''}, ${externalCount} externe${externalCount > 1 ? 's' : ''})${offlineCount > 0 ? ` • ${offlineCount} hors ligne` : ''}`,
       })
     } catch (error: any) {
+      console.error('❌ Erreur assignation parcours:', error)
       toast({
         title: 'Erreur',
         description: error.message || "Erreur lors de l'assignation",

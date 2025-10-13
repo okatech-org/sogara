@@ -178,19 +178,15 @@ export function useCertificationPaths() {
     assignedBy: string,
   ) => {
     try {
-      await assignMutation({
+      const result = await assignMutation({
         pathId: pathId as Id<'certificationPaths'>,
         candidateId,
         candidateType,
         assignedBy: assignedBy as Id<'employees'>,
       })
 
-      toast({
-        title: 'Parcours assigné',
-        description: "Le candidat recevra la formation et l'évaluation.",
-      })
+      return { success: true, result }
     } catch (error: any) {
-      // Fallback local: enregistrer une progression en localStorage
       const local = loadLocalProgress()
       const now = new Date()
       const localProgress = {
@@ -207,10 +203,7 @@ export function useCertificationPaths() {
       local.push(localProgress)
       saveLocalProgress(local)
 
-      toast({
-        title: 'Parcours assigné (hors ligne)',
-        description: 'Aucune connexion au serveur, sauvegarde locale réalisée.',
-      })
+      return { success: true, result: localProgress.id, offline: true }
     }
   }
 
