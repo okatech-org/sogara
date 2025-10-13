@@ -106,7 +106,7 @@ export function HSENotificationCenter(props: Partial<HSENotificationCenterProps>
     onMarkAsRead,
     compact = false,
   } = props
-  const { hasAnyRole, user } = useAuth()
+  const { hasAnyRole, currentUser } = useAuth()
   const [activeTab, setActiveTab] = useState('received')
   const [showSendDialog, setShowSendDialog] = useState(false)
   const [selectedTemplate, setSelectedTemplate] = useState<string>('')

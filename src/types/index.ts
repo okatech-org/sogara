@@ -28,6 +28,7 @@ export interface Employee {
   habilitations: string[]
   email?: string
   phone?: string
+  photo?: string
   status: 'active' | 'inactive'
   stats: {
     visitsReceived: number

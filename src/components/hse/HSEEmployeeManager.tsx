@@ -60,7 +60,7 @@ export function HSEEmployeeManager({
   onAssignTraining,
   onSendNotification,
 }: HSEEmployeeManagerProps) {
-  const { hasAnyRole, user } = useAuth()
+  const { hasAnyRole, currentUser } = useAuth()
   const { trainings, getExpiredTrainings, getExpiringTrainings } = useHSETrainings()
 
   const [searchTerm, setSearchTerm] = useState('')
