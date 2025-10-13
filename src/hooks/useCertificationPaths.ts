@@ -178,12 +178,17 @@ export function useCertificationPaths() {
     assignedBy: string,
   ) => {
     try {
-      const result = await assignMutation({
-        pathId: pathId as Id<'certificationPaths'>,
-        candidateId,
-        candidateType,
-        assignedBy: assignedBy as Id<'employees'>,
-      })
+      // Time-out rapide si Convex est hors-ligne (WebSocket indisponible)
+      const timeoutMs = 2000
+      const result = await Promise.race([
+        assignMutation({
+          pathId: pathId as Id<'certificationPaths'>,
+          candidateId,
+          candidateType,
+          assignedBy: assignedBy as Id<'employees'>,
+        }),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), timeoutMs)),
+      ])
 
       return { success: true, result }
     } catch (error: any) {
