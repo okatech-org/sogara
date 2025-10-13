@@ -7,7 +7,7 @@ import { useCertificationPaths } from '@/hooks/useCertificationPaths'
 
 export function MesHabilitationsExternePage() {
   const { currentUser } = useAuth()
-  const { getMyProgress } = useCertificationPaths()
+  const { getMyProgress, paths } = useCertificationPaths()
 
   const myProgress = getMyProgress(currentUser?.id || '')
   const habilitationsObtained = myProgress.filter(p => p.habilitationGrantedAt)
@@ -17,6 +17,10 @@ export function MesHabilitationsExternePage() {
       (p.habilitationExpiryDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
     return daysUntilExpiry <= 30 && daysUntilExpiry > 0
   })
+
+  const getPathData = (pathId: string) => {
+    return paths.find(p => p.id === pathId)
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -123,6 +127,7 @@ export function MesHabilitationsExternePage() {
               const isExpiringSoon = habilitationsExpiringSoon.some(h => h.id === progress.id)
               const isExpired =
                 progress.habilitationExpiryDate && progress.habilitationExpiryDate < new Date()
+              const pathData = getPathData(progress.pathId)
 
               return (
                 <Card
@@ -172,9 +177,11 @@ export function MesHabilitationsExternePage() {
                           </div>
 
                           <h3 className="font-semibold text-lg mb-1">
-                            Opérateur Qualifié Zone Production
+                            {pathData?.habilitationName || 'Habilitation Professionnelle'}
                           </h3>
-                          <p className="text-sm text-muted-foreground mb-2">Code: OPQ-PROD-H2S</p>
+                          <p className="text-sm text-muted-foreground mb-2">
+                            Code: {pathData?.habilitationCode || 'N/A'}
+                          </p>
 
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
                             <div className="flex items-center gap-1">

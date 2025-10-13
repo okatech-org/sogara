@@ -13,7 +13,7 @@ import { HSEAssignment } from '@/types'
 
 export function MesFormationsExternePage() {
   const { currentUser } = useAuth()
-  const { getMyProgress, startTraining, completeTraining } = useCertificationPaths()
+  const { getMyProgress, startTraining, completeTraining, paths } = useCertificationPaths()
   const { getAssignmentsByEmployee, getContentForAssignment, updateAssignmentStatus } =
     useHSEContent()
 
@@ -21,6 +21,10 @@ export function MesFormationsExternePage() {
   const directAssignments = getAssignmentsByEmployee(currentUser?.id || '').filter(
     a => a.contentType === 'training',
   )
+
+  const getPathData = (pathId: string) => {
+    return paths.find(p => p.id === pathId)
+  }
 
   const [activeTraining, setActiveTraining] = useState<HSEAssignment | null>(null)
 
@@ -191,88 +195,95 @@ export function MesFormationsExternePage() {
             })}
 
             {/* Formations des parcours certification */}
-            {myProgress.map(progress => (
-              <Card key={progress.id} className="industrial-card border-purple-200">
-                <CardContent className="p-5">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Badge className="bg-purple-600">🎓 Parcours Certifiant</Badge>
-                        {progress.trainingCompletedAt ? (
-                          <Badge className="bg-green-500">
-                            <CheckCircle className="w-3 h-3 mr-1" />
-                            Complétée
-                          </Badge>
-                        ) : progress.trainingStartedAt ? (
-                          <Badge className="bg-blue-500">
-                            <Clock className="w-3 h-3 mr-1" />
-                            En cours
-                          </Badge>
-                        ) : (
-                          <Badge variant="secondary">À faire</Badge>
+            {myProgress.map(progress => {
+              const pathData = getPathData(progress.pathId)
+
+              return (
+                <Card key={progress.id} className="industrial-card border-purple-200">
+                  <CardContent className="p-5">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Badge className="bg-purple-600">🎓 Parcours Certifiant</Badge>
+                          {progress.trainingCompletedAt ? (
+                            <Badge className="bg-green-500">
+                              <CheckCircle className="w-3 h-3 mr-1" />
+                              Complétée
+                            </Badge>
+                          ) : progress.trainingStartedAt ? (
+                            <Badge className="bg-blue-500">
+                              <Clock className="w-3 h-3 mr-1" />
+                              En cours
+                            </Badge>
+                          ) : (
+                            <Badge variant="secondary">À faire</Badge>
+                          )}
+                        </div>
+
+                        <h3 className="font-semibold text-lg mb-1">
+                          {pathData?.trainingTitle || 'Formation de certification'}
+                        </h3>
+                        <p className="text-sm text-muted-foreground mb-2">
+                          Durée: {pathData?.trainingDuration || 4} heures • Module{' '}
+                          {pathData?.trainingModuleId} • Suivi d'une évaluation
+                        </p>
+
+                        {progress.trainingCompletedAt && (
+                          <div className="flex items-center gap-4 text-sm">
+                            <div className="flex items-center gap-1">
+                              <CheckCircle className="w-4 h-4 text-green-600" />
+                              <span>
+                                Complétée le{' '}
+                                {progress.trainingCompletedAt.toLocaleDateString('fr-FR')}
+                              </span>
+                            </div>
+                            {progress.trainingScore && (
+                              <div className="flex items-center gap-1">
+                                <Award className="w-4 h-4 text-purple-600" />
+                                <span>Score: {progress.trainingScore}%</span>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {progress.evaluationAvailableDate && !progress.trainingCompletedAt && (
+                          <div className="mt-2 p-2 bg-purple-50 rounded text-sm text-purple-800">
+                            ⏭️ Évaluation disponible 7 jours après complétion
+                          </div>
                         )}
                       </div>
 
-                      <h3 className="font-semibold text-lg mb-1">Formation Sensibilisation H2S</h3>
-                      <p className="text-sm text-muted-foreground mb-2">
-                        Durée: 4 heures • Module obligatoire • Suivi d'une évaluation
-                      </p>
-
-                      {progress.trainingCompletedAt && (
-                        <div className="flex items-center gap-4 text-sm">
-                          <div className="flex items-center gap-1">
-                            <CheckCircle className="w-4 h-4 text-green-600" />
-                            <span>
-                              Complétée le{' '}
-                              {progress.trainingCompletedAt.toLocaleDateString('fr-FR')}
-                            </span>
-                          </div>
-                          {progress.trainingScore && (
-                            <div className="flex items-center gap-1">
-                              <Award className="w-4 h-4 text-purple-600" />
-                              <span>Score: {progress.trainingScore}%</span>
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                      {progress.evaluationAvailableDate && !progress.trainingCompletedAt && (
-                        <div className="mt-2 p-2 bg-purple-50 rounded text-sm text-purple-800">
-                          ⏭️ Évaluation disponible 7 jours après complétion
-                        </div>
-                      )}
+                      <div>
+                        {!progress.trainingStartedAt && (
+                          <Button
+                            className="gap-2"
+                            onClick={() => handleStartCertifTraining(progress)}
+                          >
+                            <Play className="w-4 h-4" />
+                            Commencer
+                          </Button>
+                        )}
+                        {progress.trainingStartedAt && !progress.trainingCompletedAt && (
+                          <Button
+                            variant="outline"
+                            className="gap-2"
+                            onClick={() => handleCompleteCertifTraining(progress)}
+                          >
+                            <CheckCircle className="w-4 h-4" />
+                            Terminer
+                          </Button>
+                        )}
+                        {progress.trainingCompletedAt && (
+                          <Button variant="ghost" size="sm">
+                            Revoir
+                          </Button>
+                        )}
+                      </div>
                     </div>
-
-                    <div>
-                      {!progress.trainingStartedAt && (
-                        <Button
-                          className="gap-2"
-                          onClick={() => handleStartCertifTraining(progress)}
-                        >
-                          <Play className="w-4 h-4" />
-                          Commencer
-                        </Button>
-                      )}
-                      {progress.trainingStartedAt && !progress.trainingCompletedAt && (
-                        <Button
-                          variant="outline"
-                          className="gap-2"
-                          onClick={() => handleCompleteCertifTraining(progress)}
-                        >
-                          <CheckCircle className="w-4 h-4" />
-                          Terminer
-                        </Button>
-                      )}
-                      {progress.trainingCompletedAt && (
-                        <Button variant="ghost" size="sm">
-                          Revoir
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              )
+            })}
           </div>
         )}
       </div>

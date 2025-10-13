@@ -9,12 +9,22 @@ import { useCertificationPaths } from '@/hooks/useCertificationPaths'
 
 export function MesEvaluationsExternePage() {
   const { currentUser } = useAuth()
-  const { getMyProgress, startTraining, completeTraining, startEvaluation, completeEvaluation } =
-    useCertificationPaths()
+  const {
+    getMyProgress,
+    startTraining,
+    completeTraining,
+    startEvaluation,
+    completeEvaluation,
+    paths,
+  } = useCertificationPaths()
   const { getAssignmentsByEmployee } = useHSEContent()
 
   const myProgress = getMyProgress(currentUser?.id || '')
   const myAssignments = getAssignmentsByEmployee(currentUser?.id || '')
+
+  const getPathData = (pathId: string) => {
+    return paths.find(p => p.id === pathId)
+  }
 
   const getEvaluationStatus = (progress: any) => {
     if (progress.evaluationPassed === true) return 'passed'
@@ -161,6 +171,7 @@ export function MesEvaluationsExternePage() {
               const daysUntil = progress.evaluationAvailableDate
                 ? getDaysUntilAvailable(progress.evaluationAvailableDate)
                 : 0
+              const pathData = getPathData(progress.pathId)
 
               return (
                 <Card key={progress.id} className="industrial-card">
@@ -203,16 +214,19 @@ export function MesEvaluationsExternePage() {
                           )}
                         </div>
 
-                        <h3 className="font-semibold text-lg mb-1">Test Qualification H2S</h3>
+                        <h3 className="font-semibold text-lg mb-1">
+                          {pathData?.assessmentTitle || 'Test de Qualification'}
+                        </h3>
                         <p className="text-sm text-muted-foreground mb-2">
-                          Durée: 30 minutes • Score minimum: 85%
+                          Durée: {pathData?.assessmentDuration || 30} minutes • Score minimum:{' '}
+                          {pathData?.passingScore || 85}%
                         </p>
 
                         {/* Formation prerequisite */}
-                        {!progress.trainingCompletedAt && (
+                        {!progress.trainingCompletedAt && pathData && (
                           <div className="p-3 bg-yellow-50 rounded text-sm text-yellow-800">
                             <Lock className="w-4 h-4 inline mr-1" />
-                            Complétez d'abord la formation "Sensibilisation H2S"
+                            Complétez d'abord la formation "{pathData.trainingTitle}"
                           </div>
                         )}
 
@@ -321,13 +335,17 @@ export function MesEvaluationsExternePage() {
             • <strong>Prérequis:</strong> Complétez la formation avant de passer l'évaluation
           </p>
           <p>
-            • <strong>Délai:</strong> L'évaluation est disponible 7 jours après la formation
+            • <strong>Délai:</strong> Variable selon le parcours (généralement 7 jours après la
+            formation)
           </p>
           <p>
-            • <strong>Score:</strong> Minimum 85% requis pour valider
+            • <strong>Score:</strong> Minimum variable selon le parcours (70-85%)
           </p>
           <p>
             • <strong>Correction:</strong> Les réponses libres sont corrigées par le HSE (24-48h)
+          </p>
+          <p>
+            • <strong>Habilitation:</strong> Délivrée automatiquement en cas de réussite
           </p>
         </CardContent>
       </Card>
