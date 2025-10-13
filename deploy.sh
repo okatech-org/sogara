@@ -57,7 +57,7 @@ echo "┌─────────┬─────────────�
 echo "│ Matricule│ Nom                   │ Rôle            │"
 echo "├─────────┼───────────────────────┼─────────────────┤"
 echo "│ ADM001  │ PELLEN Asted          │ Administrateur  │"
-echo "│ HSE001  │ Marie-Claire NZIEGE   │ Responsable HSE │"
+echo "│ HSE001  │ Lié Orphée BOURDES    │ Chef HSE        │"
 echo "│ REC001  │ Sylvie KOUMBA         │ Sécurité        │"
 echo "│ COM001  │ Clarisse MBOUMBA      │ Communication   │"
 echo "│ EMP001  │ Pierre BEKALE         │ Employé         │"
