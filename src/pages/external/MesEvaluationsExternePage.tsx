@@ -8,7 +8,8 @@ import { useCertificationPaths } from '@/hooks/useCertificationPaths'
 
 export function MesEvaluationsExternePage() {
   const { currentUser } = useAuth()
-  const { getMyProgress } = useCertificationPaths()
+  const { getMyProgress, startTraining, completeTraining, startEvaluation, completeEvaluation } =
+    useCertificationPaths()
 
   const myProgress = getMyProgress(currentUser?.id || '')
 
@@ -29,6 +30,26 @@ export function MesEvaluationsExternePage() {
     const now = new Date()
     const diff = date.getTime() - now.getTime()
     return Math.ceil(diff / (1000 * 60 * 60 * 24))
+  }
+
+  const handleStartTraining = async (progress: any) => {
+    await startTraining(progress.id, `assign_${progress.pathId}_${currentUser?.id}`)
+  }
+
+  const handleCompleteTraining = async (progress: any) => {
+    // Démo: score fixe 90, délai 7 jours avant évaluation
+    await completeTraining(progress.id, 90, 7)
+  }
+
+  const handleStartEvaluation = async (progress: any) => {
+    await startEvaluation(progress.id)
+  }
+
+  const handleSubmitEvaluation = async (progress: any) => {
+    // Démo: score aléatoire 75-95, réussite si >= 85
+    const score = Math.round(75 + Math.random() * 20)
+    const passed = score >= 85
+    await completeEvaluation(progress.id, progress.pathId, `sub_${Date.now()}`, score, passed)
   }
 
   return (
@@ -209,17 +230,41 @@ export function MesEvaluationsExternePage() {
                       </div>
 
                       {/* Actions */}
-                      <div>
+                      <div className="flex gap-2 flex-wrap">
+                        {!progress.trainingStartedAt && (
+                          <Button
+                            variant="outline"
+                            className="gap-2"
+                            onClick={() => handleStartTraining(progress)}
+                          >
+                            <Play className="w-4 h-4" />
+                            Démarrer formation
+                          </Button>
+                        )}
+                        {progress.trainingStartedAt && !progress.trainingCompletedAt && (
+                          <Button
+                            className="gap-2"
+                            onClick={() => handleCompleteTraining(progress)}
+                          >
+                            <CheckCircle className="w-4 h-4" />
+                            Terminer formation
+                          </Button>
+                        )}
+
                         {evalStatus === 'available' && (
-                          <Button className="gap-2">
+                          <Button className="gap-2" onClick={() => handleStartEvaluation(progress)}>
                             <Play className="w-4 h-4" />
                             Passer le test
                           </Button>
                         )}
                         {evalStatus === 'in_progress' && (
-                          <Button variant="outline" className="gap-2">
-                            <Play className="w-4 h-4" />
-                            Continuer
+                          <Button
+                            variant="outline"
+                            className="gap-2"
+                            onClick={() => handleSubmitEvaluation(progress)}
+                          >
+                            <FileCheck className="w-4 h-4" />
+                            Soumettre
                           </Button>
                         )}
                         {evalStatus === 'locked' && (

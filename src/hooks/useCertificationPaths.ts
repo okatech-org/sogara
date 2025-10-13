@@ -253,12 +253,100 @@ export function useCertificationPaths() {
     }
   }
 
+  const startTraining = async (progressId: string, trainingAssignmentId: string) => {
+    try {
+      await startTrainingMutation({
+        progressId: progressId as Id<'certificationPathProgress'>,
+        trainingAssignmentId,
+      })
+    } catch (error: any) {
+      const items = loadLocalProgress()
+      const idx = items.findIndex((p: any) => p.id === progressId)
+      if (idx !== -1) {
+        const now = new Date()
+        items[idx] = {
+          ...items[idx],
+          status: 'training_in_progress',
+          trainingAssignmentId,
+          trainingStartedAt: now.toISOString(),
+          updatedAt: now.toISOString(),
+        }
+        saveLocalProgress(items)
+      }
+    }
+  }
+
+  const startEvaluation = async (progressId: string) => {
+    try {
+      // Pas de mutation serveur dédiée: mise à jour locale immédiate
+      const items = loadLocalProgress()
+      const idx = items.findIndex((p: any) => p.id === progressId)
+      const now = new Date()
+      if (idx !== -1) {
+        items[idx] = {
+          ...items[idx],
+          status: 'evaluation_in_progress',
+          evaluationStartedAt: now.toISOString(),
+          updatedAt: now.toISOString(),
+        }
+        saveLocalProgress(items)
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+
+  const completeEvaluation = async (
+    progressId: string,
+    pathId: string,
+    submissionId: string,
+    evaluationScore: number,
+    evaluationPassed: boolean,
+  ) => {
+    try {
+      await completeEvaluationMutation({
+        progressId: progressId as Id<'certificationPathProgress'>,
+        evaluationSubmissionId: submissionId,
+        evaluationScore,
+        evaluationPassed,
+      })
+    } catch (error: any) {
+      const items = loadLocalProgress()
+      const idx = items.findIndex((p: any) => p.id === progressId)
+      if (idx !== -1) {
+        const now = new Date()
+        const pathMeta = (paths || []).find(p => p.id === pathId)
+        const updated: any = {
+          ...items[idx],
+          evaluationSubmittedAt: now.toISOString(),
+          evaluationScore,
+          evaluationPassed,
+          evaluationCorrectedAt: now.toISOString(),
+          updatedAt: now.toISOString(),
+          status: evaluationPassed ? 'completed_passed' : 'completed_failed',
+        }
+        if (evaluationPassed && pathMeta) {
+          const grant = now.getTime()
+          const expiry = grant + (pathMeta.habilitationValidity || 0) * 30 * 24 * 60 * 60 * 1000
+          updated.habilitationGrantedAt = new Date(grant).toISOString()
+          updated.habilitationExpiryDate = new Date(expiry).toISOString()
+          updated.certificateUrl = `cert_path_${progressId}_${Date.now()}.pdf`
+        }
+        items[idx] = updated
+        saveLocalProgress(items)
+      }
+    }
+  }
+
   return {
     paths,
     loading: pathsData === undefined,
     createPath,
     assignToCandidate,
     getMyProgress,
+    startTraining,
     completeTraining,
+    startEvaluation,
+    completeEvaluation,
   }
 }
