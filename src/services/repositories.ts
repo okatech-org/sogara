@@ -6,6 +6,7 @@ import {
   Equipment,
   HSEIncident,
   HSETraining,
+  HSETrainingSession,
   Notification,
   DashboardStats,
   UserRole,
@@ -1258,7 +1259,7 @@ export class HSETrainingRepository {
   async createSession(
     trainingId: string,
     session: Omit<HSETrainingSession, 'id' | 'attendance'>,
-  ): Promise<HSETrainingSession> {
+  ): Promise<HSETrainingSession | null> {
     const training = await this.getById(trainingId)
     if (!training) return null
 
