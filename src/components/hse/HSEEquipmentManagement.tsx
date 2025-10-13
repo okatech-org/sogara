@@ -76,8 +76,8 @@ export function HSEEquipmentManagement() {
   const filteredEquipment = equipment.filter(eq => {
     const matchesSearch =
       searchTerm === '' ||
-      eq.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      eq.serialNumber.toLowerCase().includes(searchTerm.toLowerCase())
+      eq.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (eq.serialNumber && eq.serialNumber.toLowerCase().includes(searchTerm.toLowerCase()))
 
     const matchesStatus = statusFilter === 'all' || eq.status === statusFilter
     const matchesType = typeFilter === 'all' || eq.type === typeFilter
@@ -88,12 +88,11 @@ export function HSEEquipmentManagement() {
   // Statistiques EPI
   const getEPIStats = () => {
     const total = equipment.length
-    const available = equipment.filter(eq => eq.status === 'available').length
-    const assigned = equipment.filter(eq => eq.status === 'assigned').length
+    const operational = equipment.filter(eq => eq.status === 'operational').length
     const maintenance = equipment.filter(eq => eq.status === 'maintenance').length
-    const expired = equipment.filter(eq => eq.status === 'expired').length
+    const outOfService = equipment.filter(eq => eq.status === 'out_of_service').length
 
-    return { total, available, assigned, maintenance, expired }
+    return { total, operational, maintenance, outOfService }
   }
 
   const stats = getEPIStats()

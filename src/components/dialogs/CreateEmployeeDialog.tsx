@@ -39,6 +39,12 @@ export function CreateEmployeeDialog({ trigger, onSuccess }: CreateEmployeeDialo
         email: data.email || undefined,
         phone: data.phone || undefined,
         status: data.status,
+        stats: {
+          visitsReceived: 0,
+          packagesReceived: 0,
+          hseTrainingsCompleted: 0,
+        },
+        equipmentIds: [],
       })
 
       setIsOpen(false)

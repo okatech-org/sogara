@@ -123,7 +123,7 @@ export function HSENotificationCenter(props: Partial<HSENotificationCenterProps>
   // Filtrer les notifications reçues
   const filteredNotifications = useMemo(() => {
     let filtered = notifications.filter(
-      n => !n.metadata?.employeeId || n.metadata.employeeId === user?.id,
+      n => !n.metadata?.employeeId || n.metadata.employeeId === currentUser?.id,
     )
 
     if (filterType !== 'all') {
@@ -136,15 +136,15 @@ export function HSENotificationCenter(props: Partial<HSENotificationCenterProps>
     }
 
     return filtered.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
-  }, [notifications, user?.id, filterType, filterRead])
+  }, [notifications, currentUser?.id, filterType, filterRead])
 
   // Notifications envoyées (pour les HSE)
   const sentNotifications = useMemo(() => {
     if (!isHSE) return []
     return notifications
-      .filter(n => n.metadata?.sentBy === user?.id)
+      .filter(n => n.metadata?.sentBy === currentUser?.id)
       .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
-  }, [notifications, user?.id, isHSE])
+  }, [notifications, currentUser?.id, isHSE])
 
   const handleTemplateSelect = (templateId: string) => {
     const template = NOTIFICATION_TEMPLATES.find(t => t.id === templateId)
@@ -188,7 +188,7 @@ export function HSENotificationCenter(props: Partial<HSENotificationCenterProps>
         read: false,
         metadata: {
           employeeId,
-          sentBy: user?.id,
+          sentBy: currentUser?.id,
         },
       }
 

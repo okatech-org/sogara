@@ -284,15 +284,22 @@ export interface HSEAttendance {
   notes?: string
 }
 
-export interface Notification {
+export interface HSENotification {
   id: string
   type: NotificationType
   title: string
   message: string
   timestamp: Date
   read: boolean
-  actions?: NotificationAction[]
-  metadata?: Record<string, any>
+  metadata?: {
+    employeeId?: string
+    trainingId?: string
+    incidentId?: string
+    equipmentId?: string
+    daysUntilExpiry?: number
+    complianceRate?: number
+    sentBy?: string
+  }
 }
 
 export interface NotificationAction {

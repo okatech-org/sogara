@@ -220,6 +220,7 @@ export class PackageManagementService {
 
   getPackageStats() {
     const today = new Date().toDateString()
+    const aiScannedCount = this.packages.filter(p => p.aiScanned === true).length
 
     return {
       total: this.packages.length,
@@ -231,6 +232,7 @@ export class PackageManagementService {
         .length,
       urgents: this.packages.filter(p => p.priority === 'urgent' && p.status !== 'livre').length,
       fragiles: this.packages.filter(p => p.category === 'fragile').length,
+      aiScanned: aiScannedCount,
       parDepartement: this.groupPackagesByDepartment(),
       parCategorie: this.groupPackagesByCategory(),
       parEmplacement: this.groupPackagesByLocation(),
