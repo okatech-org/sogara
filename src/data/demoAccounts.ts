@@ -1,9 +1,8 @@
 import type { LucideIcon } from 'lucide-react'
-import { Settings, Shield, Users, Package, HardHat, Megaphone, Crown, UserCog } from 'lucide-react'
+import { Shield, Users, Package, HardHat, Megaphone, Crown, UserCog } from 'lucide-react'
 import type { UserRole } from '@/types'
 
 export type DemoAccountSlug =
-  | 'adm001'
   | 'hse001'
   | 'rec001'
   | 'emp001'
@@ -30,30 +29,6 @@ export interface DemoAccount {
 }
 
 export const demoAccounts: DemoAccount[] = [
-  {
-    id: '3',
-    slug: 'adm001',
-    matricule: 'ADM001',
-    fullName: 'PELLEN Asted',
-    jobTitle: 'Administrateur Systèmes & Informatique',
-    roles: ['ADMIN'],
-    featuredModule: 'Administration système et supervision',
-    description:
-      'Administrateur ORGANEUS Gabon — Informatique et systèmes. Supervision, sécurité et configuration.',
-    responsibilities: [
-      'Supervision générale des modules',
-      'Gestion des utilisateurs et permissions',
-      'Configuration et paramètres avancés',
-      'Validation des processus critiques',
-      'Analyse des rapports stratégiques',
-      'Pilotage de la documentation technique',
-    ],
-    accessSummary: 'Accès complet à tous les modules',
-    defaultRoute: '/app/admin',
-    loginHint: 'Mot de passe démo : Admin123!',
-    colorClass: 'bg-destructive text-destructive-foreground',
-    icon: Settings,
-  },
   {
     id: '7',
     slug: 'dg001',

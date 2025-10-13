@@ -29,6 +29,8 @@ import efficaciteImage from '@/assets/efficacite-quotidienne.jpg'
 import { Badge } from '@/components/ui/badge'
 import { useAuth } from '@/contexts/AppContext'
 import { demoAccounts } from '@/data/demoAccounts'
+import { SuperAdminLock } from '@/components/auth/SuperAdminLogin'
+
 interface WelcomePageProps {
   onShowLogin: () => void
 }
@@ -428,6 +430,7 @@ export function WelcomePage({ onShowLogin }: WelcomePageProps) {
               </div>
               <span className="font-semibold text-foreground">SOGARA Access</span>
               <span className="text-muted-foreground">- Pour le personnel, par le personnel</span>
+              <SuperAdminLock className="ml-2" />
             </div>
             <div className="text-center md:text-right">
               <Button variant="ghost" size="sm" className="mt-2" onClick={onShowLogin}>

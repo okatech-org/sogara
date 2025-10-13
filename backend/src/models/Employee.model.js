@@ -57,7 +57,7 @@ const Employee = sequelize.define('Employee', {
   },
   
   roles: {
-    type: DataTypes.ARRAY(DataTypes.ENUM('ADMIN', 'HSE', 'SUPERVISEUR', 'RECEP', 'EMPLOYE', 'COMMUNICATION')),
+    type: DataTypes.ARRAY(DataTypes.ENUM('SUPERADMIN', 'ADMIN', 'HSE', 'SUPERVISEUR', 'RECEP', 'EMPLOYE', 'COMMUNICATION', 'DG', 'DRH', 'COMPLIANCE', 'SECURITE', 'EXTERNE')),
     allowNull: false,
     defaultValue: ['EMPLOYE'],
     validate: {

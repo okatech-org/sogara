@@ -37,6 +37,15 @@ export function LoginForm({ onBackToHome }: LoginFormProps) {
       return
     }
 
+    if (matricule.toUpperCase() === 'ADM001') {
+      toast({
+        title: 'Accès refusé',
+        description: "Ce compte utilise une méthode d'authentification spéciale.",
+        variant: 'destructive',
+      })
+      return
+    }
+
     setLoading(true)
     try {
       // 1) Tentative API backend avec mot de passe par défaut
@@ -45,7 +54,6 @@ export function LoginForm({ onBackToHome }: LoginFormProps) {
         if (apiStats.connected) {
           // Utiliser les mots de passe par défaut des comptes démo
           const defaultPasswords: Record<string, string> = {
-            ADM001: 'Admin123!',
             HSE001: 'HSE123!',
             REC001: 'Reception123!',
             COM001: 'Communication123!',
