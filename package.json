@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "dev:convex": "bun convex dev",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
+    "build:strict": "tsc -b && vite build",
     "build:dev": "vite build --mode development",
     "preview": "vite preview --strictPort --port 4173",
     "typecheck": "tsc --noEmit",
