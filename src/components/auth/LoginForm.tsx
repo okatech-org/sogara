@@ -70,7 +70,7 @@ export function LoginForm({ onBackToHome }: LoginFormProps) {
               { skipAuth: true },
             )
             if (response.success && response.data && typeof response.data === 'object' && 'user' in response.data) {
-              const user = (response.data as any).user as Employee
+              const user = (response.data as any).user
               login({
                 id: user.id,
                 firstName: user.firstName,

@@ -48,7 +48,7 @@ export function useVisits() {
 
   const createVisitor = async (visitorData: Omit<Visitor, 'id' | 'createdAt'>) => {
     try {
-      await createVisitorMutation({
+      const newId = await createVisitorMutation({
         firstName: visitorData.firstName,
         lastName: visitorData.lastName,
         company: visitorData.company,
@@ -66,20 +66,24 @@ export function useVisits() {
         description: `${visitorData.firstName} ${visitorData.lastName} a été ajouté.`,
       })
 
-      return { success: true }
+      return { 
+        id: newId,
+        ...visitorData,
+        createdAt: new Date()
+      }
     } catch (error: any) {
       toast({
         title: 'Erreur',
         description: error.message || 'Impossible de créer le visiteur.',
         variant: 'destructive',
       })
-      return { success: false, error: error.message }
+      throw error
     }
   }
 
   const createVisit = async (visitData: Omit<Visit, 'id' | 'createdAt' | 'updatedAt'>) => {
     try {
-      await createVisitMutation({
+      const newId = await createVisitMutation({
         visitorId: visitData.visitorId as Id<'visitors'>,
         hostEmployeeId: visitData.hostEmployeeId as Id<'employees'>,
         scheduledAt: visitData.scheduledAt.getTime(),
@@ -93,21 +97,27 @@ export function useVisits() {
         description: 'La visite a été enregistrée avec succès.',
       })
 
-      return { success: true }
+      return {
+        id: newId,
+        ...visitData,
+        status: 'expected' as VisitStatus,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
     } catch (error: any) {
       toast({
         title: 'Erreur',
         description: error.message || 'Impossible de créer la visite.',
         variant: 'destructive',
       })
-      return { success: false, error: error.message }
+      throw error
     }
   }
 
-  const updateVisitStatus = async (visitId: string, status: VisitStatus) => {
+  const updateVisitStatus = async (visitId: string, status: VisitStatus, additionalData?: any) => {
     try {
       if (status === 'in_progress') {
-        await checkInMutation({ id: visitId as Id<'visits'> })
+        await checkInMutation({ id: visitId as Id<'visits'>, badgeNumber: additionalData?.badgeNumber })
       } else if (status === 'checked_out') {
         await checkOutMutation({ id: visitId as Id<'visits'> })
       } else {
@@ -129,14 +139,25 @@ export function useVisits() {
         description: statusMessages[status],
       })
 
-      return { success: true }
+      // Return the updated visit
+      const visit = visits.find(v => v.id === visitId)
+      if (visit) {
+        return {
+          ...visit,
+          status,
+          ...(status === 'in_progress' && additionalData?.badgeNumber ? { badgeNumber: additionalData.badgeNumber, checkedInAt: new Date() } : {}),
+          ...(status === 'checked_out' ? { checkedOutAt: new Date() } : {}),
+          updatedAt: new Date()
+        }
+      }
+      throw new Error('Visit not found')
     } catch (error: any) {
       toast({
         title: 'Erreur',
         description: error.message || 'Impossible de mettre à jour le statut.',
         variant: 'destructive',
       })
-      return { success: false, error: error.message }
+      throw error
     }
   }
 

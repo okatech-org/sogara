@@ -172,8 +172,8 @@ export function HSEEquipmentManagement() {
         <Card className="industrial-card">
           <CardContent className="pt-6">
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">{stats.available}</div>
-              <div className="text-sm text-muted-foreground">Disponibles</div>
+              <div className="text-2xl font-bold text-green-600">{stats.operational}</div>
+              <div className="text-sm text-muted-foreground">Opérationnels</div>
             </div>
           </CardContent>
         </Card>
@@ -181,7 +181,7 @@ export function HSEEquipmentManagement() {
         <Card className="industrial-card">
           <CardContent className="pt-6">
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">{stats.assigned}</div>
+              <div className="text-2xl font-bold text-blue-600">{equipment.filter(e => e.holderEmployeeId).length}</div>
               <div className="text-sm text-muted-foreground">Assignés</div>
             </div>
           </CardContent>
@@ -199,8 +199,8 @@ export function HSEEquipmentManagement() {
         <Card className="industrial-card">
           <CardContent className="pt-6">
             <div className="text-center">
-              <div className="text-2xl font-bold text-red-600">{stats.expired}</div>
-              <div className="text-sm text-muted-foreground">Expirés</div>
+              <div className="text-2xl font-bold text-red-600">{stats.outOfService}</div>
+              <div className="text-sm text-muted-foreground">Hors service</div>
             </div>
           </CardContent>
         </Card>
