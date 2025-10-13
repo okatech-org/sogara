@@ -190,6 +190,13 @@ export function useHSEContent() {
     [assignments],
   )
 
+  const getContentForAssignment = useCallback(
+    (assignment: HSEAssignment) => {
+      return content.find(c => c.id === assignment.contentId)
+    },
+    [content],
+  )
+
   const updateAssignmentStatus = useCallback(
     (
       assignmentId: string,
@@ -229,6 +236,7 @@ export function useHSEContent() {
     getContentByType,
     getSentHistory,
     getAssignmentsByEmployee,
+    getContentForAssignment,
     updateAssignmentStatus,
     stats: getStats,
   }
