@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { FileCheck, Play, Clock, Lock, CheckCircle, XCircle } from 'lucide-react'
+import { useHSEContent } from '@/hooks/useHSEContent'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -10,8 +11,10 @@ export function MesEvaluationsExternePage() {
   const { currentUser } = useAuth()
   const { getMyProgress, startTraining, completeTraining, startEvaluation, completeEvaluation } =
     useCertificationPaths()
+  const { getAssignmentsByEmployee } = useHSEContent()
 
   const myProgress = getMyProgress(currentUser?.id || '')
+  const myAssignments = getAssignmentsByEmployee(currentUser?.id || '')
 
   const getEvaluationStatus = (progress: any) => {
     if (progress.evaluationPassed === true) return 'passed'
@@ -109,6 +112,34 @@ export function MesEvaluationsExternePage() {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Mes contenus envoyés via Centre d'Envoi */}
+      <div className="space-y-3">
+        <h2 className="text-xl font-semibold">Mes contenus reçus</h2>
+        {myAssignments.length === 0 ? (
+          <Card className="industrial-card">
+            <CardContent className="py-6 text-sm text-muted-foreground">
+              Aucun contenu reçu depuis le Centre d'Envoi.
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {myAssignments.map(a => (
+              <Card key={a.id} className="industrial-card">
+                <CardContent className="p-4 text-sm flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">{a.metadata?.trainingId || a.contentType}</p>
+                    <p className="text-muted-foreground">
+                      Assigné le {a.assignedAt.toLocaleDateString('fr-FR')}
+                    </p>
+                  </div>
+                  <Badge variant="outline">{a.contentType}</Badge>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Liste des évaluations */}
