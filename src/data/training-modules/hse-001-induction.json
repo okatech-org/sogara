@@ -185,7 +185,7 @@
             "type": "multiple_choice",
             "options": [
               "Hygiène, Sécurité et Environnement",
-              "Haute Sécurité Energétique", 
+              "Haute Sécurité Energétique",
               "Habilitation Spéciale Electricité"
             ],
             "correctAnswer": "Hygiène, Sécurité et Environnement",

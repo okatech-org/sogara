@@ -1,127 +1,150 @@
-import { useState, useMemo } from 'react';
-import { Package, Mail, Search, Plus, Filter, Sparkles, Download, Eye, Archive, Send, Clock, CheckCircle, AlertTriangle, Loader2, Lock } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { StatusBadge } from '@/components/ui/status-badge';
-import { useAuth } from '@/contexts/AppContext';
-import { RegisterPackageWithAI } from '@/components/dialogs/RegisterPackageWithAI';
-import { RegisterMailWithAI } from '@/components/dialogs/RegisterMailWithAI';
-import { packageService, PackageItem } from '@/services/package-management.service';
-import { mailService, Mail as MailType } from '@/services/mail-management.service';
-import { toast } from '@/hooks/use-toast';
+import { useState, useMemo } from 'react'
+import {
+  Package,
+  Mail,
+  Search,
+  Plus,
+  Filter,
+  Sparkles,
+  Download,
+  Eye,
+  Archive,
+  Send,
+  Clock,
+  CheckCircle,
+  AlertTriangle,
+  Loader2,
+  Lock,
+} from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { StatusBadge } from '@/components/ui/status-badge'
+import { useAuth } from '@/contexts/AppContext'
+import { RegisterPackageWithAI } from '@/components/dialogs/RegisterPackageWithAI'
+import { RegisterMailWithAI } from '@/components/dialogs/RegisterMailWithAI'
+import { packageService, PackageItem } from '@/services/package-management.service'
+import { mailService, Mail as MailType } from '@/services/mail-management.service'
+import { toast } from '@/hooks/use-toast'
 
 export function ColisCourrierPage() {
-  const { hasAnyRole } = useAuth();
-  const [activeTab, setActiveTab] = useState('colis');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showPackageDialog, setShowPackageDialog] = useState(false);
-  const [showMailDialog, setShowMailDialog] = useState(false);
-  const [packages, setPackages] = useState<PackageItem[]>(packageService.getAll());
-  const [mails, setMails] = useState<MailType[]>(mailService.getAll());
-  const [packageFilter, setPackageFilter] = useState<'all' | PackageItem['status']>('all');
-  const [mailFilter, setMailFilter] = useState<'all' | MailType['status']>('all');
+  const { hasAnyRole } = useAuth()
+  const [activeTab, setActiveTab] = useState('colis')
+  const [searchTerm, setSearchTerm] = useState('')
+  const [showPackageDialog, setShowPackageDialog] = useState(false)
+  const [showMailDialog, setShowMailDialog] = useState(false)
+  const [packages, setPackages] = useState<PackageItem[]>(packageService.getAll())
+  const [mails, setMails] = useState<MailType[]>(mailService.getAll())
+  const [packageFilter, setPackageFilter] = useState<'all' | PackageItem['status']>('all')
+  const [mailFilter, setMailFilter] = useState<'all' | MailType['status']>('all')
 
-  const canManage = hasAnyRole(['ADMIN', 'RECEP', 'SUPERVISEUR']);
+  const canManage = hasAnyRole(['ADMIN', 'RECEP', 'SUPERVISEUR'])
 
-  const packageStats = useMemo(() => packageService.getPackageStats(), [packages]);
-  const mailStats = useMemo(() => mailService.getMailStats(), [mails]);
+  const packageStats = useMemo(() => packageService.getPackageStats(), [packages])
+  const mailStats = useMemo(() => mailService.getMailStats(), [mails])
 
   const filteredPackages = useMemo(() => {
-    const searchLower = searchTerm.toLowerCase();
+    const searchLower = searchTerm.toLowerCase()
     return packages.filter(pkg => {
-      const matchesSearch = 
+      const matchesSearch =
         pkg.trackingNumber.toLowerCase().includes(searchLower) ||
         pkg.senderName.toLowerCase().includes(searchLower) ||
         pkg.recipientName.toLowerCase().includes(searchLower) ||
-        pkg.recipientDepartment.toLowerCase().includes(searchLower);
-      
-      const matchesFilter = packageFilter === 'all' || pkg.status === packageFilter;
-      
-      return matchesSearch && matchesFilter;
-    });
-  }, [packages, searchTerm, packageFilter]);
+        pkg.recipientDepartment.toLowerCase().includes(searchLower)
+
+      const matchesFilter = packageFilter === 'all' || pkg.status === packageFilter
+
+      return matchesSearch && matchesFilter
+    })
+  }, [packages, searchTerm, packageFilter])
 
   const filteredMails = useMemo(() => {
-    const searchLower = searchTerm.toLowerCase();
+    const searchLower = searchTerm.toLowerCase()
     return mails.filter(mail => {
-      const matchesSearch = 
+      const matchesSearch =
         mail.referenceNumber.toLowerCase().includes(searchLower) ||
         mail.senderName.toLowerCase().includes(searchLower) ||
         mail.recipientName.toLowerCase().includes(searchLower) ||
-        mail.keywords?.some(k => k.toLowerCase().includes(searchLower));
-      
-      const matchesFilter = mailFilter === 'all' || mail.status === mailFilter;
-      
-      return matchesSearch && matchesFilter;
-    });
-  }, [mails, searchTerm, mailFilter]);
+        mail.keywords?.some(k => k.toLowerCase().includes(searchLower))
+
+      const matchesFilter = mailFilter === 'all' || mail.status === mailFilter
+
+      return matchesSearch && matchesFilter
+    })
+  }, [mails, searchTerm, mailFilter])
 
   const handlePackageRegistered = (pkg: PackageItem) => {
-    setPackages(prev => [pkg, ...prev]);
-    setShowPackageDialog(false);
+    setPackages(prev => [pkg, ...prev])
+    setShowPackageDialog(false)
     toast({
       title: 'Colis enregistré',
       description: `Le colis ${pkg.trackingNumber} a été enregistré`,
-    });
-  };
+    })
+  }
 
   const handleMailRegistered = (mail: MailType) => {
-    setMails(prev => [mail, ...prev]);
-    setShowMailDialog(false);
+    setMails(prev => [mail, ...prev])
+    setShowMailDialog(false)
     toast({
       title: 'Courrier enregistré',
       description: `Le courrier ${mail.referenceNumber} a été enregistré`,
-    });
-  };
+    })
+  }
 
   const handlePackageStatusUpdate = async (pkgId: string, newStatus: PackageItem['status']) => {
     try {
-      await packageService.updatePackageStatus(pkgId, newStatus);
-      setPackages(packageService.getAll());
+      await packageService.updatePackageStatus(pkgId, newStatus)
+      setPackages(packageService.getAll())
       toast({
         title: 'Statut mis à jour',
         description: 'Le statut du colis a été modifié',
-      });
+      })
     } catch (error) {
       toast({
         title: 'Erreur',
         description: 'Impossible de mettre à jour le statut',
-        variant: 'destructive'
-      });
+        variant: 'destructive',
+      })
     }
-  };
+  }
 
   const handleMailAction = async (mailId: string, action: 'send' | 'read' | 'archive') => {
     try {
       switch (action) {
-        case 'send':
-          const mail = mails.find(m => m.id === mailId);
-          if (mail) await mailService.sendMailToRecipient(mail);
-          break;
+        case 'send': {
+          const mail = mails.find(m => m.id === mailId)
+          if (mail) await mailService.sendMailToRecipient(mail)
+          break
+        }
         case 'read':
-          await mailService.markAsRead(mailId, 'user');
-          break;
+          await mailService.markAsRead(mailId, 'user')
+          break
         case 'archive':
-          await mailService.archiveMail(mailId);
-          break;
+          await mailService.archiveMail(mailId)
+          break
       }
-      setMails(mailService.getAll());
+      setMails(mailService.getAll())
       toast({
         title: 'Action effectuée',
-        description: 'L\'opération a été réalisée avec succès',
-      });
+        description: "L'opération a été réalisée avec succès",
+      })
     } catch (error) {
       toast({
         title: 'Erreur',
-        description: 'Impossible d\'effectuer l\'action',
-        variant: 'destructive'
-      });
+        description: "Impossible d'effectuer l'action",
+        variant: 'destructive',
+      })
     }
-  };
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -208,11 +231,14 @@ export function ColisCourrierPage() {
                   <Input
                     placeholder="Rechercher par numéro, expéditeur, destinataire..."
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={e => setSearchTerm(e.target.value)}
                     className="pl-10"
                   />
                 </div>
-                <Select value={packageFilter} onValueChange={(value: any) => setPackageFilter(value)}>
+                <Select
+                  value={packageFilter}
+                  onValueChange={(value: any) => setPackageFilter(value)}
+                >
                   <SelectTrigger className="w-full sm:w-48">
                     <SelectValue />
                   </SelectTrigger>
@@ -271,31 +297,56 @@ export function ColisCourrierPage() {
                               </Badge>
                             )}
                           </div>
-                          
+
                           <div className="text-sm text-muted-foreground space-y-1">
-                            <p><strong>De:</strong> {pkg.senderName} {pkg.senderOrganization && `(${pkg.senderOrganization})`}</p>
-                            <p><strong>Pour:</strong> {pkg.recipientName} - {pkg.recipientDepartment}</p>
-                            {pkg.weight && <p><strong>Poids:</strong> {pkg.weight} kg</p>}
-                            {pkg.storageLocation && <p><strong>Emplacement:</strong> {pkg.storageLocation}</p>}
+                            <p>
+                              <strong>De:</strong> {pkg.senderName}{' '}
+                              {pkg.senderOrganization && `(${pkg.senderOrganization})`}
+                            </p>
+                            <p>
+                              <strong>Pour:</strong> {pkg.recipientName} - {pkg.recipientDepartment}
+                            </p>
+                            {pkg.weight && (
+                              <p>
+                                <strong>Poids:</strong> {pkg.weight} kg
+                              </p>
+                            )}
+                            {pkg.storageLocation && (
+                              <p>
+                                <strong>Emplacement:</strong> {pkg.storageLocation}
+                              </p>
+                            )}
                             {pkg.notes && <p className="text-xs italic">{pkg.notes}</p>}
                           </div>
                         </div>
 
                         <div className="flex flex-col items-end gap-2">
                           <StatusBadge
-                            status={pkg.status === 'reception' ? 'Réception' : 
-                                   pkg.status === 'stockage' ? 'Stockage' :
-                                   pkg.status === 'en_attente_retrait' ? 'Attente retrait' :
-                                   pkg.status === 'livre' ? 'Livré' : 'Retourné'}
-                            variant={pkg.status === 'livre' ? 'success' : 
-                                    pkg.status === 'reception' ? 'info' : 'warning'}
+                            status={
+                              pkg.status === 'reception'
+                                ? 'Réception'
+                                : pkg.status === 'stockage'
+                                  ? 'Stockage'
+                                  : pkg.status === 'en_attente_retrait'
+                                    ? 'Attente retrait'
+                                    : pkg.status === 'livre'
+                                      ? 'Livré'
+                                      : 'Retourné'
+                            }
+                            variant={
+                              pkg.status === 'livre'
+                                ? 'success'
+                                : pkg.status === 'reception'
+                                  ? 'info'
+                                  : 'warning'
+                            }
                           />
-                          
+
                           {canManage && pkg.status !== 'livre' && (
                             <div className="flex gap-2">
                               {pkg.status === 'reception' && (
-                                <Button 
-                                  size="sm" 
+                                <Button
+                                  size="sm"
                                   variant="outline"
                                   onClick={() => handlePackageStatusUpdate(pkg.id, 'stockage')}
                                 >
@@ -303,7 +354,7 @@ export function ColisCourrierPage() {
                                 </Button>
                               )}
                               {(pkg.status === 'stockage' || pkg.status === 'reception') && (
-                                <Button 
+                                <Button
                                   size="sm"
                                   onClick={() => handlePackageStatusUpdate(pkg.id, 'livre')}
                                 >
@@ -367,7 +418,9 @@ export function ColisCourrierPage() {
             <Card>
               <CardContent className="pt-6">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-green-600">{mailStats.scannesAujourdhui}</div>
+                  <div className="text-3xl font-bold text-green-600">
+                    {mailStats.scannesAujourdhui}
+                  </div>
                   <div className="text-sm text-muted-foreground">Scannés aujourd'hui</div>
                 </div>
               </CardContent>
@@ -383,7 +436,7 @@ export function ColisCourrierPage() {
                   <Input
                     placeholder="Rechercher par référence, expéditeur, mots-clés..."
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={e => setSearchTerm(e.target.value)}
                     className="pl-10"
                   />
                 </div>
@@ -423,43 +476,51 @@ export function ColisCourrierPage() {
                         <div className="flex-1 space-y-2">
                           <div className="flex flex-wrap items-center gap-2">
                             <h3 className="font-semibold">{mail.referenceNumber}</h3>
-                            
+
                             {mail.aiExtracted && (
                               <Badge variant="outline" className="gap-1 text-xs">
                                 <Sparkles className="w-3 h-3" />
                                 IA {Math.round((mail.aiConfidence || 0) * 100)}%
                               </Badge>
                             )}
-                            
+
                             {mail.confidentiality !== 'normal' && (
                               <Badge variant="destructive" className="gap-1 text-xs">
                                 <Lock className="w-3 h-3" />
-                                {mail.confidentiality === 'tres_confidentiel' ? 'Très confidentiel' : 'Confidentiel'}
+                                {mail.confidentiality === 'tres_confidentiel'
+                                  ? 'Très confidentiel'
+                                  : 'Confidentiel'}
                               </Badge>
                             )}
-                            
+
                             {mail.urgency === 'urgent' && (
                               <Badge variant="destructive" className="gap-1 text-xs">
                                 <AlertTriangle className="w-3 h-3" />
                                 Urgent
                               </Badge>
                             )}
-                            
+
                             <Badge variant="outline" className="text-xs">
                               {mail.type}
                             </Badge>
                           </div>
-                          
+
                           <div className="text-sm space-y-1">
-                            <p><strong>De:</strong> {mail.senderName} {mail.senderOrganization && `(${mail.senderOrganization})`}</p>
-                            <p><strong>Pour:</strong> {mail.recipientName} - {mail.recipientDepartment}</p>
-                            
+                            <p>
+                              <strong>De:</strong> {mail.senderName}{' '}
+                              {mail.senderOrganization && `(${mail.senderOrganization})`}
+                            </p>
+                            <p>
+                              <strong>Pour:</strong> {mail.recipientName} -{' '}
+                              {mail.recipientDepartment}
+                            </p>
+
                             {mail.summary && (
                               <p className="text-muted-foreground italic mt-2 text-xs">
                                 📝 {mail.summary}
                               </p>
                             )}
-                            
+
                             {mail.keywords && mail.keywords.length > 0 && (
                               <div className="flex flex-wrap gap-1 mt-2">
                                 {mail.keywords.map((keyword, i) => (
@@ -474,7 +535,9 @@ export function ColisCourrierPage() {
                               <div className="flex items-center gap-2 mt-2">
                                 <Clock className="w-3 h-3 text-orange-600" />
                                 <span className="text-xs text-orange-600">
-                                  Réponse requise {mail.responseDeadline && `avant le ${new Date(mail.responseDeadline).toLocaleDateString('fr-FR')}`}
+                                  Réponse requise{' '}
+                                  {mail.responseDeadline &&
+                                    `avant le ${new Date(mail.responseDeadline).toLocaleDateString('fr-FR')}`}
                                 </span>
                               </div>
                             )}
@@ -483,15 +546,28 @@ export function ColisCourrierPage() {
 
                         <div className="flex flex-col items-end gap-2">
                           <StatusBadge
-                            status={mail.status === 'recu' ? 'Reçu' :
-                                   mail.status === 'scanne' ? 'Scanné' :
-                                   mail.status === 'envoye' ? 'Envoyé' :
-                                   mail.status === 'lu' ? 'Lu' : 'Archivé'}
-                            variant={mail.status === 'archive' ? 'operational' :
-                                    mail.status === 'lu' ? 'success' :
-                                    mail.status === 'envoye' ? 'info' : 'warning'}
+                            status={
+                              mail.status === 'recu'
+                                ? 'Reçu'
+                                : mail.status === 'scanne'
+                                  ? 'Scanné'
+                                  : mail.status === 'envoye'
+                                    ? 'Envoyé'
+                                    : mail.status === 'lu'
+                                      ? 'Lu'
+                                      : 'Archivé'
+                            }
+                            variant={
+                              mail.status === 'archive'
+                                ? 'operational'
+                                : mail.status === 'lu'
+                                  ? 'success'
+                                  : mail.status === 'envoye'
+                                    ? 'info'
+                                    : 'warning'
+                            }
                           />
-                          
+
                           {canManage && (
                             <div className="flex flex-wrap gap-2 justify-end">
                               {mail.scanned && mail.documentUrl && (
@@ -500,10 +576,10 @@ export function ColisCourrierPage() {
                                   Voir
                                 </Button>
                               )}
-                              
+
                               {mail.status === 'scanne' && mail.recipientEmail && (
-                                <Button 
-                                  size="sm" 
+                                <Button
+                                  size="sm"
                                   variant="outline"
                                   onClick={() => handleMailAction(mail.id, 'send')}
                                   className="gap-1 text-xs"
@@ -512,9 +588,9 @@ export function ColisCourrierPage() {
                                   Envoyer
                                 </Button>
                               )}
-                              
+
                               {mail.status === 'envoye' && (
-                                <Button 
+                                <Button
                                   size="sm"
                                   onClick={() => handleMailAction(mail.id, 'read')}
                                   className="gap-1 text-xs"
@@ -523,10 +599,10 @@ export function ColisCourrierPage() {
                                   Marquer lu
                                 </Button>
                               )}
-                              
+
                               {mail.status !== 'archive' && (
-                                <Button 
-                                  size="sm" 
+                                <Button
+                                  size="sm"
                                   variant="ghost"
                                   onClick={() => handleMailAction(mail.id, 'archive')}
                                   className="gap-1 text-xs"
@@ -572,6 +648,5 @@ export function ColisCourrierPage() {
         />
       )}
     </div>
-  );
+  )
 }
-

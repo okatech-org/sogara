@@ -1,13 +1,13 @@
-import { Award, CheckCircle, Calendar, Shield } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { useAuth } from '@/contexts/AppContext';
+import { Award, CheckCircle, Calendar, Shield } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { useAuth } from '@/contexts/AppContext'
 
 export function MesHabilitationsPage() {
-  const { currentUser } = useAuth();
+  const { currentUser } = useAuth()
 
-  const habilitations = currentUser?.habilitations || [];
-  const competences = currentUser?.competences || [];
+  const habilitations = currentUser?.habilitations || []
+  const competences = currentUser?.competences || []
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -143,6 +143,5 @@ export function MesHabilitationsPage() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }
-

@@ -1,148 +1,162 @@
-import { useState, useEffect } from 'react';
-import { 
-  BookOpen, 
-  Clock, 
-  Target, 
-  Users, 
-  Award, 
-  CheckCircle, 
-  Play, 
+import { useState, useEffect } from 'react'
+import {
+  BookOpen,
+  Clock,
+  Target,
+  Users,
+  Award,
+  CheckCircle,
+  Play,
   Download,
   FileText,
   AlertTriangle,
   ChevronRight,
   ChevronLeft,
-  RotateCcw
-} from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { HSETrainingModule as TrainingModule, HSETrainingProgress, HSEContentModule } from '@/types';
-import { hseTrainingService } from '@/services/hse-training.service';
-import { HSEModuleContent } from './HSEModuleContent';
-import { HSEAssessmentComponent } from './HSEAssessmentComponent';
-import { HSECertificateGenerator } from './HSECertificateGenerator';
+  RotateCcw,
+} from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Separator } from '@/components/ui/separator'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { HSETrainingModule as TrainingModule, HSETrainingProgress, HSEContentModule } from '@/types'
+import { hseTrainingService } from '@/services/hse-training.service'
+import { HSEModuleContent } from './HSEModuleContent'
+import { HSEAssessmentComponent } from './HSEAssessmentComponent'
+import { HSECertificateGenerator } from './HSECertificateGenerator'
 
 interface HSETrainingModuleProps {
-  module: TrainingModule;
-  employeeId: string;
-  onComplete?: (progress: HSETrainingProgress) => void;
-  onExit?: () => void;
+  module: TrainingModule
+  employeeId: string
+  onComplete?: (progress: HSETrainingProgress) => void
+  onExit?: () => void
 }
 
-export function HSETrainingModule({ module, employeeId, onComplete, onExit }: HSETrainingModuleProps) {
-  const [progress, setProgress] = useState<HSETrainingProgress | null>(null);
-  const [currentModuleIndex, setCurrentModuleIndex] = useState(0);
-  const [showAssessment, setShowAssessment] = useState(false);
-  const [showCertificate, setShowCertificate] = useState(false);
-  const [isModuleCompleted, setIsModuleCompleted] = useState(false);
+export function HSETrainingModule({
+  module,
+  employeeId,
+  onComplete,
+  onExit,
+}: HSETrainingModuleProps) {
+  const [progress, setProgress] = useState<HSETrainingProgress | null>(null)
+  const [currentModuleIndex, setCurrentModuleIndex] = useState(0)
+  const [showAssessment, setShowAssessment] = useState(false)
+  const [showCertificate, setShowCertificate] = useState(false)
+  const [isModuleCompleted, setIsModuleCompleted] = useState(false)
 
   useEffect(() => {
     // Charger ou créer la progression
-    const existingProgress = hseTrainingService.getOrCreateProgress(employeeId, module.id);
-    setProgress(existingProgress);
+    const existingProgress = hseTrainingService.getOrCreateProgress(employeeId, module.id)
+    setProgress(existingProgress)
 
     // Si la formation n'est pas commencée, la démarrer
     if (existingProgress.status === 'not_started') {
-      const startedProgress = hseTrainingService.startTraining(employeeId, module.id);
-      setProgress(startedProgress);
+      const startedProgress = hseTrainingService.startTraining(employeeId, module.id)
+      setProgress(startedProgress)
     }
 
     // Déterminer le module actuel
     if (existingProgress.currentModule) {
-      const moduleIndex = module.content.modules.findIndex(m => m.id === existingProgress.currentModule);
+      const moduleIndex = module.content.modules.findIndex(
+        m => m.id === existingProgress.currentModule,
+      )
       if (moduleIndex >= 0) {
-        setCurrentModuleIndex(moduleIndex);
+        setCurrentModuleIndex(moduleIndex)
       }
     }
-  }, [employeeId, module.id]);
+  }, [employeeId, module.id])
 
-  const currentModule = module.content.modules[currentModuleIndex];
-  const totalModules = module.content.modules.length;
-  const completionRate = progress ? (progress.completedModules.length / totalModules) * 100 : 0;
+  const currentModule = module.content.modules[currentModuleIndex]
+  const totalModules = module.content.modules.length
+  const completionRate = progress ? (progress.completedModules.length / totalModules) * 100 : 0
 
   const handleModuleComplete = () => {
-    if (!progress || !currentModule) return;
+    if (!progress || !currentModule) return
 
     // Marquer le module comme terminé
     const updatedProgress = hseTrainingService.completeModule(
-      employeeId, 
-      module.id, 
-      currentModule.id
-    );
+      employeeId,
+      module.id,
+      currentModule.id,
+    )
 
-    setProgress(updatedProgress);
-    setIsModuleCompleted(true);
+    setProgress(updatedProgress)
+    setIsModuleCompleted(true)
 
     // Vérifier si c'est le dernier module
     if (updatedProgress.completedModules.length === totalModules) {
       // Tous les modules terminés, proposer l'évaluation
-      setShowAssessment(true);
+      setShowAssessment(true)
     }
-  };
+  }
 
   const handleNextModule = () => {
     if (currentModuleIndex < totalModules - 1) {
-      setCurrentModuleIndex(currentModuleIndex + 1);
-      setIsModuleCompleted(false);
+      setCurrentModuleIndex(currentModuleIndex + 1)
+      setIsModuleCompleted(false)
     }
-  };
+  }
 
   const handlePreviousModule = () => {
     if (currentModuleIndex > 0) {
-      setCurrentModuleIndex(currentModuleIndex - 1);
-      setIsModuleCompleted(progress?.completedModules.includes(module.content.modules[currentModuleIndex - 1].id) || false);
+      setCurrentModuleIndex(currentModuleIndex - 1)
+      setIsModuleCompleted(
+        progress?.completedModules.includes(module.content.modules[currentModuleIndex - 1].id) ||
+          false,
+      )
     }
-  };
+  }
 
   const handleAssessmentComplete = (assessmentResult: any) => {
-    if (!progress) return;
+    if (!progress) return
 
     // Enregistrer le résultat
     const updatedProgress = hseTrainingService.recordAssessmentResult(
       employeeId,
       module.id,
-      assessmentResult
-    );
+      assessmentResult,
+    )
 
-    setProgress(updatedProgress);
+    setProgress(updatedProgress)
 
     // Si l'évaluation est réussie, finaliser la formation
     if (assessmentResult.passed) {
       const completedProgress = hseTrainingService.completeTraining(
         employeeId,
         module.id,
-        module.validityMonths
-      );
-      setProgress(completedProgress);
-      setShowAssessment(false);
-      setShowCertificate(true);
-      onComplete?.(completedProgress);
+        module.validityMonths,
+      )
+      setProgress(completedProgress)
+      setShowAssessment(false)
+      setShowCertificate(true)
+      onComplete?.(completedProgress)
     }
-  };
+  }
 
   const resetTraining = () => {
-    const resetProgress = hseTrainingService.resetTraining(employeeId, module.id);
-    setProgress(resetProgress);
-    setCurrentModuleIndex(0);
-    setIsModuleCompleted(false);
-    setShowAssessment(false);
-    setShowCertificate(false);
-  };
+    const resetProgress = hseTrainingService.resetTraining(employeeId, module.id)
+    setProgress(resetProgress)
+    setCurrentModuleIndex(0)
+    setIsModuleCompleted(false)
+    setShowAssessment(false)
+    setShowCertificate(false)
+  }
 
   const getCategoryBadgeVariant = (category: string) => {
     switch (category) {
-      case 'Critique': return 'destructive';
-      case 'Obligatoire': return 'default';
-      case 'Spécialisée': return 'secondary';
-      default: return 'outline';
+      case 'Critique':
+        return 'destructive'
+      case 'Obligatoire':
+        return 'default'
+      case 'Spécialisée':
+        return 'secondary'
+      default:
+        return 'outline'
     }
-  };
+  }
 
   if (!progress) {
     return (
@@ -152,7 +166,7 @@ export function HSETrainingModule({ module, employeeId, onComplete, onExit }: HS
           <p className="text-muted-foreground">Chargement de la formation...</p>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -163,12 +177,8 @@ export function HSETrainingModule({ module, employeeId, onComplete, onExit }: HS
           <div className="flex items-center justify-between">
             <div className="space-y-2">
               <div className="flex items-center gap-3">
-                <Badge variant={getCategoryBadgeVariant(module.category)}>
-                  {module.category}
-                </Badge>
-                <Badge variant="outline">
-                  {module.code}
-                </Badge>
+                <Badge variant={getCategoryBadgeVariant(module.category)}>{module.category}</Badge>
+                <Badge variant="outline">{module.code}</Badge>
               </div>
               <CardTitle className="text-2xl">{module.title}</CardTitle>
               <p className="text-muted-foreground">{module.description}</p>
@@ -199,7 +209,9 @@ export function HSETrainingModule({ module, employeeId, onComplete, onExit }: HS
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span>Modules complétés</span>
-                  <span>{progress.completedModules.length}/{totalModules}</span>
+                  <span>
+                    {progress.completedModules.length}/{totalModules}
+                  </span>
                 </div>
                 <Progress value={completionRate} className="h-2" />
                 <p className="text-xs text-muted-foreground">
@@ -231,11 +243,15 @@ export function HSETrainingModule({ module, employeeId, onComplete, onExit }: HS
                 </div>
                 <div className="flex justify-between">
                   <span>Prérequis:</span>
-                  <span>{module.prerequisites.length > 0 ? module.prerequisites.join(', ') : 'Aucun'}</span>
+                  <span>
+                    {module.prerequisites.length > 0 ? module.prerequisites.join(', ') : 'Aucun'}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span>Recyclage:</span>
-                  <span>{module.refresherRequired ? `${module.refresherFrequency} mois` : 'Non requis'}</span>
+                  <span>
+                    {module.refresherRequired ? `${module.refresherFrequency} mois` : 'Non requis'}
+                  </span>
                 </div>
               </div>
             </div>
@@ -287,7 +303,7 @@ export function HSETrainingModule({ module, employeeId, onComplete, onExit }: HS
             </div>
           </CardHeader>
           <CardContent>
-            <HSEModuleContent 
+            <HSEModuleContent
               module={currentModule}
               onComplete={handleModuleComplete}
               isCompleted={progress.completedModules.includes(currentModule.id)}
@@ -313,8 +329,8 @@ export function HSETrainingModule({ module, employeeId, onComplete, onExit }: HS
                       index === currentModuleIndex
                         ? 'bg-primary'
                         : progress.completedModules.includes(module.content.modules[index].id)
-                        ? 'bg-success'
-                        : 'bg-muted'
+                          ? 'bg-success'
+                          : 'bg-muted'
                     }`}
                   />
                 ))}
@@ -355,7 +371,7 @@ export function HSETrainingModule({ module, employeeId, onComplete, onExit }: HS
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {module.content.resources.map((resource) => (
+              {module.content.resources.map(resource => (
                 <div
                   key={resource.id}
                   className="flex items-center gap-3 p-3 border rounded-lg hover:bg-muted/50 transition-colors"
@@ -420,5 +436,5 @@ export function HSETrainingModule({ module, employeeId, onComplete, onExit }: HS
         </DialogContent>
       </Dialog>
     </div>
-  );
+  )
 }

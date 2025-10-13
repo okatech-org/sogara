@@ -10,15 +10,15 @@
 
 ## 🏢 Comptes SOGARA (7 Internes)
 
-| Matricule | Nom | Poste | Rôle | URL | Password |
-|-----------|-----|-------|------|-----|----------|
-| ADM001 | PELLEN Asted | Admin Systèmes | ADMIN | `/app/admin` | Admin123! |
-| DG001 | Daniel MVOU | Directeur Général | DG, ADMIN | `/app/direction` | DG123! |
-| DRH001 | Brigitte NGUEMA | Directrice RH | DRH, ADMIN | `/app/rh` | DRH123! |
-| COM001 | Clarisse MBOUMBA | Directeur Communication | COMMUNICATION | `/app/connect` | Communication123! |
-| HSE001 | Marie-Claire NZIEGE | Chef Division HSE | HSE, COMPLIANCE, SECURITE | `/app/hse` | HSE123! |
-| REC001 | Sylvie KOUMBA | Responsable Sécurité | RECEP | `/app/visites` | Reception123! |
-| EMP001 | Pierre BEKALE | Technicien Raffinage | EMPLOYE | `/app/dashboard` | Employee123! |
+| Matricule | Nom                 | Poste                   | Rôle                      | URL              | Password          |
+| --------- | ------------------- | ----------------------- | ------------------------- | ---------------- | ----------------- |
+| ADM001    | PELLEN Asted        | Admin Systèmes          | ADMIN                     | `/app/admin`     | Admin123!         |
+| DG001     | Daniel MVOU         | Directeur Général       | DG, ADMIN                 | `/app/direction` | DG123!            |
+| DRH001    | Brigitte NGUEMA     | Directrice RH           | DRH, ADMIN                | `/app/rh`        | DRH123!           |
+| COM001    | Clarisse MBOUMBA    | Directeur Communication | COMMUNICATION             | `/app/connect`   | Communication123! |
+| HSE001    | Marie-Claire NZIEGE | Chef Division HSE       | HSE, COMPLIANCE, SECURITE | `/app/hse`       | HSE123!           |
+| REC001    | Sylvie KOUMBA       | Responsable Sécurité    | RECEP                     | `/app/visites`   | Reception123!     |
+| EMP001    | Pierre BEKALE       | Technicien Raffinage    | EMPLOYE                   | `/app/dashboard` | Employee123!      |
 
 ---
 
@@ -27,19 +27,19 @@
 ### EXT001 - Jean-Luc BERNARD ⭐ NOUVEAU
 
 ```yaml
-Matricule:     EXT001
-Nom complet:   Jean-Luc BERNARD
-Société:       Total Energies Gabon
-Poste:         Technicien Maintenance Spécialisé
-Rôle:          EXTERNE
-Email:         jl.bernard@totalenergies.com
-Téléphone:     +241 06 12 34 56
-Mot de passe:  External123!
-URL dédiée:    /app/mes-evaluations
+Matricule: EXT001
+Nom complet: Jean-Luc BERNARD
+Société: Total Energies Gabon
+Poste: Technicien Maintenance Spécialisé
+Rôle: EXTERNE
+Email: jl.bernard@totalenergies.com
+Téléphone: +241 06 12 34 56
+Mot de passe: External123!
+URL dédiée: /app/mes-evaluations
 
-Mission:       Maintenance compresseur haute pression Zone Production A
-Durée:         2 semaines
-Statut:        En attente habilitation
+Mission: Maintenance compresseur haute pression Zone Production A
+Durée: 2 semaines
+Statut: En attente habilitation
 
 Compétences:
   - Maintenance compresseurs
@@ -48,8 +48,7 @@ Compétences:
 
 Habilitations: Aucune (à obtenir via tests)
 
-Navigation visible:
-  🏠 Tableau de bord
+Navigation visible: 🏠 Tableau de bord
   📰 SOGARA Connect (lecture)
   📝 Mes Évaluations
 
@@ -61,6 +60,7 @@ Dashboard: ExternalDashboard
 ## 📋 Navigation Complète par Rôle
 
 ### EXTERNE (Jean-Luc)
+
 ```
 📝 Mes Évaluations       ← Principal
 🏠 Tableau de bord
@@ -68,6 +68,7 @@ Dashboard: ExternalDashboard
 ```
 
 ### EMPLOYE (Pierre)
+
 ```
 📅 Mon Planning
 💰 Ma Paie
@@ -79,6 +80,7 @@ Dashboard: ExternalDashboard
 ```
 
 ### HSE (Marie-Claire)
+
 ```
 🛡️  HSE (10 onglets dont Évaluations)
 👥 Personnel
@@ -89,6 +91,7 @@ Dashboard: ExternalDashboard
 ```
 
 ### DRH (Brigitte)
+
 ```
 👥 Personnel
 📅 Planning Global

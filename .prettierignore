@@ -1,0 +1,9 @@
+dist
+node_modules
+backend
+convex/_generated
+*.lockb
+package-lock.json
+*.log
+.git
+

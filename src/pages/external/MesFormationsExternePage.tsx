@@ -1,17 +1,17 @@
-import { useState } from 'react';
-import { BookOpen, Play, CheckCircle, Clock, Award } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { useAuth } from '@/contexts/AppContext';
-import { useCertificationPaths } from '@/hooks/useCertificationPaths';
+import { useState } from 'react'
+import { BookOpen, Play, CheckCircle, Clock, Award } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
+import { useAuth } from '@/contexts/AppContext'
+import { useCertificationPaths } from '@/hooks/useCertificationPaths'
 
 export function MesFormationsExternePage() {
-  const { currentUser } = useAuth();
-  const { getMyProgress } = useCertificationPaths();
+  const { currentUser } = useAuth()
+  const { getMyProgress } = useCertificationPaths()
 
-  const myProgress = getMyProgress(currentUser?.id || '');
+  const myProgress = getMyProgress(currentUser?.id || '')
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -63,7 +63,7 @@ export function MesFormationsExternePage() {
       {/* Liste des formations */}
       <div>
         <h2 className="text-xl font-semibold mb-4">Formations Assignées</h2>
-        
+
         {myProgress.length === 0 ? (
           <Card className="industrial-card">
             <CardContent className="text-center py-16">
@@ -76,7 +76,7 @@ export function MesFormationsExternePage() {
           </Card>
         ) : (
           <div className="space-y-4">
-            {myProgress.map((progress) => (
+            {myProgress.map(progress => (
               <Card key={progress.id} className="industrial-card">
                 <CardContent className="p-5">
                   <div className="flex items-start justify-between mb-4">
@@ -96,10 +96,8 @@ export function MesFormationsExternePage() {
                           <Badge variant="secondary">À faire</Badge>
                         )}
                       </div>
-                      
-                      <h3 className="font-semibold text-lg mb-1">
-                        Formation Sensibilisation H2S
-                      </h3>
+
+                      <h3 className="font-semibold text-lg mb-1">Formation Sensibilisation H2S</h3>
                       <p className="text-sm text-muted-foreground mb-2">
                         Durée: 4 heures • Module obligatoire
                       </p>
@@ -108,7 +106,10 @@ export function MesFormationsExternePage() {
                         <div className="flex items-center gap-4 text-sm">
                           <div className="flex items-center gap-1">
                             <CheckCircle className="w-4 h-4 text-green-600" />
-                            <span>Complétée le {progress.trainingCompletedAt.toLocaleDateString('fr-FR')}</span>
+                            <span>
+                              Complétée le{' '}
+                              {progress.trainingCompletedAt.toLocaleDateString('fr-FR')}
+                            </span>
                           </div>
                           {progress.trainingScore && (
                             <div className="flex items-center gap-1">
@@ -153,6 +154,5 @@ export function MesFormationsExternePage() {
         )}
       </div>
     </div>
-  );
+  )
 }
-

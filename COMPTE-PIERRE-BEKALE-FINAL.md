@@ -3,6 +3,7 @@
 ## 📋 Profil Complet
 
 ### Identification
+
 ```
 Matricule:     EMP001
 Nom complet:   Pierre BEKALE
@@ -14,6 +15,7 @@ Mot de passe:  Employee123!
 ```
 
 ### Responsabilités
+
 1. Consultation des informations de service
 2. Suivi des indicateurs personnels
 3. Lecture des actualités internes
@@ -22,6 +24,7 @@ Mot de passe:  Employee123!
 6. Visualisation des équipements affectés
 
 ### Accès
+
 - ✅ Dashboard Personnel (personnalisé)
 - ✅ SOGARA Connect (lecture)
 - ✅ Mon Espace HSE (inbox personnel)
@@ -37,6 +40,7 @@ Mot de passe:  Employee123!
 **Composant**: `EmployeeDashboard.tsx` (CRÉÉ)
 
 #### En-tête Personnalisé
+
 ```
 ┌────────────────────────────────────────────────────┐
 │ ┌──┐                                               │
@@ -47,6 +51,7 @@ Mot de passe:  Employee123!
 ```
 
 **Fonctionnalités**:
+
 - Avatar avec initiales (PB)
 - Nom, poste, service
 - Conformité HSE en gros (85%)
@@ -54,6 +59,7 @@ Mot de passe:  Employee123!
 - Responsive (colonnes sur mobile, ligne sur desktop)
 
 #### KPIs Personnels (Grid 2x2 mobile, 4 cols desktop)
+
 ```
 ┌─────────┬─────────┬─────────┬─────────┐
 │    0    │    2    │    2    │    1    │
@@ -63,12 +69,14 @@ Mot de passe:  Employee123!
 ```
 
 **Indicateurs**:
+
 - ✅ Formations complétées (vert)
 - ✅ Équipements affectés (bleu)
 - ✅ Habilitations actives (purple)
 - ✅ Nouveaux HSE (orange + point animé si > 0)
 
 #### Mon Espace HSE (Card Prioritaire - Col-span-2 sur desktop)
+
 ```
 ┌────────────────────────────────────────────────────┐
 │ 🛡️ Mon Espace HSE          [1 nouveau 🔴]          │
@@ -88,6 +96,7 @@ Mot de passe:  Employee123!
 ```
 
 **Alertes visuelles**:
+
 - Bordure bleue (2px) si nouveau contenu
 - Badge rouge "1 nouveau" avec pulse
 - Point rouge animé (ping)
@@ -95,6 +104,7 @@ Mot de passe:  Employee123!
 - Compteur sur bouton
 
 #### Mes Informations (Card avec onglets)
+
 ```
 ┌────────────────────────────────────┐
 │ 👤 Mes Informations                │
@@ -108,11 +118,13 @@ Mot de passe:  Employee123!
 ```
 
 **3 onglets**:
+
 - **Profil**: Matricule, Service, Email, Statut
 - **Compét.**: Liste compétences (icône Briefcase)
 - **Habil.**: Liste habilitations (icône CheckCircle)
 
 #### Mes Équipements EPI
+
 ```
 ┌────────────────────────────────────────────────────┐
 │ ⛑️ Mes Équipements de Protection        [2]        │
@@ -127,12 +139,14 @@ Mot de passe:  Employee123!
 ```
 
 **Grid responsive** (1 col mobile, 2 cols desktop):
+
 - Nom équipement
 - Type + numéro série
 - Statut (OK/Maintenance/HS)
 - Prochain contrôle
 
 #### Mes Indicateurs
+
 ```
 ┌────────────────────────────────────┐
 │ 📊 Mes Indicateurs                 │
@@ -144,6 +158,7 @@ Mot de passe:  Employee123!
 ```
 
 #### Accès Rapides (Grid 2x2 mobile, 3 cols desktop)
+
 ```
 ┌─────────┬─────────┬─────────┐
 │   🛡️    │   📄    │   📅    │
@@ -153,6 +168,7 @@ Mot de passe:  Employee123!
 ```
 
 **Boutons carrés** avec:
+
 - Icône
 - Label
 - Badge si nécessaire
@@ -162,6 +178,7 @@ Mot de passe:  Employee123!
 ## 📱 Responsive Design
 
 ### Mobile (< 768px)
+
 ```
 ┌─────────────────────┐
 │ PB  Bonjour Pierre! │
@@ -192,6 +209,7 @@ Mot de passe:  Employee123!
 ```
 
 ### Tablet (768-1023px)
+
 ```
 ┌────────────────────────────────────┐
 │ PB  Bonjour Pierre!      85% ⚠️    │
@@ -206,6 +224,7 @@ Mot de passe:  Employee123!
 ```
 
 ### Desktop (≥ 1024px)
+
 ```
 ┌─────────────────────────────────────────────────────┐
 │ PB  Bonjour Pierre!    Production      85% ⚠️       │
@@ -228,6 +247,7 @@ Mot de passe:  Employee123!
 ### Menu Simplifié pour EMPLOYE
 
 **Items visibles**:
+
 1. ✅ **Tableau de bord** (Home) - Toujours
 2. ✅ **SOGARA Connect** (Newspaper) - Lecture actualités
 3. ❌ Personnel - Masqué (pas de permission)
@@ -238,12 +258,14 @@ Mot de passe:  Employee123!
 8. ❌ Projet - Masqué
 
 **Badge sur "SOGARA Connect"**:
+
 - Si unreadCount > 0 dans HSE Inbox
 - Badge orange avec nombre
 
 ### Navigation Mobile ✅
 
 **Bouton flottant** (bottom-right):
+
 ```
 [🍔] ← Position fixed, z-50
       Background primary
@@ -252,6 +274,7 @@ Mot de passe:  Employee123!
 ```
 
 **Drawer** (slide from left):
+
 ```
 ┌────────────────┐
 │ Navigation     │
@@ -262,6 +285,7 @@ Mot de passe:  Employee123!
 ```
 
 **Comportements**:
+
 - Clic bouton → Drawer s'ouvre
 - Clic overlay → Drawer se ferme
 - Clic lien → Navigation + fermeture
@@ -273,6 +297,7 @@ Mot de passe:  Employee123!
 ### Étape 1: Envoi par HSE
 
 **HSE (Marie-Claire)** envoie formation EPI:
+
 ```
 Centre d'Envoi → Formation HSE-002
 → Destinataire: Pierre BEKALE
@@ -294,6 +319,7 @@ HSEAssignment créé:
 **Dashboard Pierre** (`/app/dashboard`):
 
 **Indicateurs visuels**:
+
 1. ✅ Card "Mon Espace HSE" - Bordure bleue 2px
 2. ✅ Badge rouge "1 nouveau" avec pulse
 3. ✅ Point rouge animé (ping)
@@ -301,6 +327,7 @@ HSEAssignment créé:
 5. ✅ Alerte jaune en haut si formations en attente
 
 **Si Pierre est sur mobile**:
+
 - Bouton menu flottant visible
 - Badge sur icône Shield dans KPIs
 - Alerte jaune pleine largeur
@@ -310,10 +337,12 @@ HSEAssignment créé:
 **Clic** sur card "Mon Espace HSE":
 
 **Dialog s'ouvre** (responsive):
+
 - Mobile: max-w-[95vw] (plein écran)
 - Desktop: max-w-5xl
 
 **Inbox affiché**:
+
 ```
 Mon Espace HSE Personnel
 
@@ -340,6 +369,7 @@ Mon Espace HSE Personnel
 **Clic "Démarrer"**:
 
 **Actions automatiques**:
+
 ```typescript
 1. markAsRead(assignment.id)
    → status: 'sent' → 'read'
@@ -353,6 +383,7 @@ Mon Espace HSE Personnel
 ```
 
 **Module s'affiche** (responsive):
+
 ```
 ┌────────────────────────────────────────┐
 │ Module de Formation Interactive  [X]   │
@@ -379,6 +410,7 @@ Mon Espace HSE Personnel
 ```
 
 **Navigation**:
+
 - Étape 1 → Clic "Suivant" → 25%
 - Étape 2 → Clic "Suivant" → 50%
 - Étape 3 → Clic "Suivant" → 75%
@@ -387,6 +419,7 @@ Mon Espace HSE Personnel
 ### Étape 5: Évaluation (Quiz)
 
 **Quiz 3 questions**:
+
 ```
 ┌────────────────────────────────────────┐
 │ Évaluation Finale                      │
@@ -409,6 +442,7 @@ Mon Espace HSE Personnel
 ```
 
 **Après validation**:
+
 - Score calculé (ex: 100%)
 - Si ≥ 85% → Certificat généré
 - Si < 85% → Affichage réponses + Réessayer
@@ -416,6 +450,7 @@ Mon Espace HSE Personnel
 ### Étape 6: Certificat
 
 **Si réussite**:
+
 ```
 ┌────────────────────────────────────────┐
 │          ┌────┐                        │
@@ -443,6 +478,7 @@ Mon Espace HSE Personnel
 **Retour** `/app/dashboard`:
 
 **Card "Mon Espace HSE" mise à jour**:
+
 - Badge "1 nouveau" → Disparaît
 - Conformité: 75% → 85%
 - Icône Shield: Rouge → Jaune
@@ -454,11 +490,13 @@ Mon Espace HSE Personnel
 ## 🎯 Fonctionnalités Spécifiques Employé
 
 ### 1. Dashboard Personnalisé ✅
+
 - Vue centrée sur ses données personnelles
 - Pas de stats globales (visites site, etc.)
 - Focus: HSE, formations, équipements, infos perso
 
 ### 2. Module de Formation Interactif ✅
+
 - Navigation par étapes (objectifs pédagogiques)
 - Progression trackée en temps réel
 - Quiz d'évaluation
@@ -466,18 +504,21 @@ Mon Espace HSE Personnel
 - Possibilité réessayer si échec
 
 ### 3. Inbox HSE Personnel ✅
+
 - Formations assignées avec statuts
 - Alertes sécurité avec accusé réception
 - Documents téléchargeables
 - Indicateurs visuels (badges, couleurs)
 
 ### 4. Navigation Mobile ✅
+
 - Bouton menu flottant (hamburger)
 - Drawer slide-in
 - Overlay backdrop
 - Fermeture auto après navigation
 
 ### 5. Équipements Personnels ✅
+
 - Liste EPI affectés
 - Statuts (Opérationnel/Maintenance/HS)
 - Dates prochains contrôles
@@ -488,6 +529,7 @@ Mon Espace HSE Personnel
 ## 📊 Comparaison Avant/Après
 
 ### AVANT (Dashboard Générique)
+
 ```
 - KPIs globaux (visites site, colis globaux)
 - Infos non pertinentes pour un employé
@@ -498,6 +540,7 @@ Mon Espace HSE Personnel
 ```
 
 ### APRÈS (EmployeeDashboard)
+
 ```
 ✅ KPIs personnels (mes formations, mes EPI)
 ✅ Vue HSE prioritaire (card large)
@@ -516,11 +559,13 @@ Mon Espace HSE Personnel
 ## 🔧 Composants Créés/Modifiés
 
 ### Nouveaux Composants (3)
+
 1. ✅ `src/pages/EmployeeDashboard.tsx` - Dashboard employé complet
 2. ✅ `src/components/employee/HSETrainingModulePlayer.tsx` - Lecteur formation
 3. ✅ `src/components/ui/radio-group.tsx` - UI pour quiz
 
 ### Composants Modifiés (3)
+
 4. ✅ `src/pages/Dashboard.tsx` - Routing conditionnel
 5. ✅ `src/components/Layout/Navigation.tsx` - Navigation mobile
 6. ✅ `src/components/employee/EmployeeHSEInbox.tsx` - Intégration player
@@ -530,6 +575,7 @@ Mon Espace HSE Personnel
 ## ✅ Checklist Fonctionnalités
 
 ### Interface
+
 - [x] Dashboard personnalisé pour EMPLOYE
 - [x] En-tête avec avatar et conformité
 - [x] KPIs pertinents (4 cards)
@@ -542,6 +588,7 @@ Mon Espace HSE Personnel
 - [x] Responsive mobile/tablet/desktop
 
 ### Navigation
+
 - [x] Menu adapté au rôle (filtrage permissions)
 - [x] Bouton menu mobile flottant
 - [x] Drawer slide-in avec overlay
@@ -549,6 +596,7 @@ Mon Espace HSE Personnel
 - [x] Fermeture auto après navigation
 
 ### Formation
+
 - [x] Réception dans inbox
 - [x] Badge notification dashboard
 - [x] Module interactif avec navigation
@@ -561,6 +609,7 @@ Mon Espace HSE Personnel
 - [x] Mise à jour conformité
 
 ### UX/UI
+
 - [x] Animations (pulse, ping, transitions)
 - [x] Couleurs contextuelles (vert/jaune/rouge)
 - [x] Badges compteurs
@@ -636,21 +685,25 @@ Retour /app/dashboard
 ## 📱 Optimisations Mobile
 
 ### Touch Targets
+
 - Boutons min height: 44px (Apple guidelines)
 - Zones clickables généreuses (padding)
 - Pas d'interactions hover-only
 
 ### Layout
+
 - Grid 1 col sur mobile (< 768px)
 - Grid 2 cols sur tablet (768-1023px)
 - Grid 3-4 cols sur desktop (≥ 1024px)
 
 ### Navigation
+
 - Menu hamburger accessible (thumb zone)
 - Drawer fullscreen
 - Swipe pour fermer (à venir)
 
 ### Performance
+
 - Lazy loading dialogs
 - Images optimisées
 - Animations CSS (pas JS)
@@ -675,6 +728,7 @@ Status: PRODUCTION READY 🚀
 ```
 
 Pierre BEKALE peut maintenant:
+
 - ✅ Voir un dashboard adapté à son rôle
 - ✅ Recevoir ses formations HSE
 - ✅ Compléter les modules de manière interactive

@@ -1,16 +1,26 @@
-import { Crown, TrendingUp, Users, Shield, DollarSign, BarChart3, Target, Award, Activity } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { useAuth } from '@/contexts/AppContext';
-import { useNavigate } from 'react-router-dom';
-import { useDashboard } from '@/hooks/useDashboard';
+import {
+  Crown,
+  TrendingUp,
+  Users,
+  Shield,
+  DollarSign,
+  BarChart3,
+  Target,
+  Award,
+  Activity,
+} from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
+import { useAuth } from '@/contexts/AppContext'
+import { useNavigate } from 'react-router-dom'
+import { useDashboard } from '@/hooks/useDashboard'
 
 export function DirectionDashboard() {
-  const { currentUser, state } = useAuth();
-  const navigate = useNavigate();
-  const { stats } = useDashboard();
+  const { currentUser, state } = useAuth()
+  const navigate = useNavigate()
+  const { stats } = useDashboard()
 
   const kpis = [
     {
@@ -45,7 +55,7 @@ export function DirectionDashboard() {
       color: 'text-purple-600',
       bgColor: 'bg-purple-100',
     },
-  ];
+  ]
 
   const strategicAreas = [
     {
@@ -83,7 +93,7 @@ export function DirectionDashboard() {
     },
     {
       title: 'Communication Interne',
-      description: 'SOGARA Connect et vie de l\'entreprise',
+      description: "SOGARA Connect et vie de l'entreprise",
       icon: Award,
       route: '/app/connect',
       color: 'bg-purple-500',
@@ -92,7 +102,7 @@ export function DirectionDashboard() {
         { label: 'Engagement', value: 'Élevé' },
       ],
     },
-  ];
+  ]
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -106,7 +116,8 @@ export function DirectionDashboard() {
             Tableau de Bord Direction Générale
           </h1>
           <p className="text-muted-foreground mt-2">
-            Vue stratégique et pilotage - {currentUser?.fullName || `${currentUser?.firstName} ${currentUser?.lastName}`}
+            Vue stratégique et pilotage -{' '}
+            {currentUser?.fullName || `${currentUser?.firstName} ${currentUser?.lastName}`}
           </p>
         </div>
         <div className="flex gap-2">
@@ -121,8 +132,8 @@ export function DirectionDashboard() {
 
       {/* KPIs Stratégiques */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {kpis.map((kpi) => {
-          const Icon = kpi.icon;
+        {kpis.map(kpi => {
+          const Icon = kpi.icon
           return (
             <Card key={kpi.title} className="industrial-card">
               <CardHeader className="pb-2">
@@ -138,7 +149,7 @@ export function DirectionDashboard() {
                 <p className="text-xs text-muted-foreground mt-1">{kpi.trend}</p>
               </CardContent>
             </Card>
-          );
+          )
         })}
       </div>
 
@@ -146,17 +157,19 @@ export function DirectionDashboard() {
       <div>
         <h2 className="text-xl font-semibold mb-4">Pilotage par Domaine</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {strategicAreas.map((area) => {
-            const Icon = area.icon;
+          {strategicAreas.map(area => {
+            const Icon = area.icon
             return (
-              <Card 
-                key={area.title} 
+              <Card
+                key={area.title}
                 className="industrial-card hover:shadow-lg transition-all cursor-pointer group"
                 onClick={() => navigate(area.route)}
               >
                 <CardHeader>
                   <div className="flex items-start justify-between">
-                    <div className={`w-14 h-14 ${area.color} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                    <div
+                      className={`w-14 h-14 ${area.color} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform`}
+                    >
                       <Icon className="w-7 h-7 text-white" />
                     </div>
                   </div>
@@ -172,12 +185,16 @@ export function DirectionDashboard() {
                       </div>
                     ))}
                   </div>
-                  <Button variant="ghost" size="sm" className="w-full group-hover:bg-primary group-hover:text-primary-foreground">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full group-hover:bg-primary group-hover:text-primary-foreground"
+                  >
                     Consulter →
                   </Button>
                 </CardContent>
               </Card>
-            );
+            )
           })}
         </div>
       </div>
@@ -243,5 +260,5 @@ export function DirectionDashboard() {
         </Card>
       </div>
     </div>
-  );
+  )
 }

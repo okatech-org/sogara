@@ -1,102 +1,120 @@
-import { useState, useEffect, useMemo } from 'react';
-import { Users, BookOpen, AlertTriangle, Award, Clock, Bell, Search, Filter, Plus } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { StatusBadge } from '@/components/ui/status-badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { useAuth } from '@/contexts/AppContext';
-import { useHSETrainings } from '@/hooks/useHSETrainings';
-import { Employee, HSETrainingModule, UserRole } from '@/types';
-import hseModulesData from '@/data/hse-training-modules.json';
+import { useState, useEffect, useMemo } from 'react'
+import {
+  Users,
+  BookOpen,
+  AlertTriangle,
+  Award,
+  Clock,
+  Bell,
+  Search,
+  Filter,
+  Plus,
+} from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { StatusBadge } from '@/components/ui/status-badge'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { useAuth } from '@/contexts/AppContext'
+import { useHSETrainings } from '@/hooks/useHSETrainings'
+import { Employee, HSETrainingModule, UserRole } from '@/types'
+import hseModulesData from '@/data/hse-training-modules.json'
 
 interface HSEEmployeeManagerProps {
-  employees: Employee[];
-  onAssignTraining?: (employeeId: string, trainingId: string) => void;
-  onSendNotification?: (employeeId: string, type: string, message: string) => void;
+  employees: Employee[]
+  onAssignTraining?: (employeeId: string, trainingId: string) => void
+  onSendNotification?: (employeeId: string, type: string, message: string) => void
 }
 
 interface EmployeeTrainingStatus {
-  employeeId: string;
-  requiredTrainings: string[];
-  completedTrainings: string[];
-  expiredTrainings: string[];
-  upcomingTrainings: string[];
-  complianceRate: number;
+  employeeId: string
+  requiredTrainings: string[]
+  completedTrainings: string[]
+  expiredTrainings: string[]
+  upcomingTrainings: string[]
+  complianceRate: number
 }
 
 interface TrainingAssignment {
-  employeeId: string;
-  trainingId: string;
-  assignedAt: Date;
-  dueDate: Date;
-  priority: 'low' | 'medium' | 'high';
-  status: 'pending' | 'in_progress' | 'completed' | 'overdue';
+  employeeId: string
+  trainingId: string
+  assignedAt: Date
+  dueDate: Date
+  priority: 'low' | 'medium' | 'high'
+  status: 'pending' | 'in_progress' | 'completed' | 'overdue'
 }
 
-export function HSEEmployeeManager({ 
-  employees, 
-  onAssignTraining, 
-  onSendNotification 
+export function HSEEmployeeManager({
+  employees,
+  onAssignTraining,
+  onSendNotification,
 }: HSEEmployeeManagerProps) {
-  const { hasAnyRole, user } = useAuth();
-  const { trainings, getExpiredTrainings, getExpiringTrainings } = useHSETrainings();
-  
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedService, setSelectedService] = useState<string>('all');
-  const [selectedRole, setSelectedRole] = useState<string>('all');
-  const [activeTab, setActiveTab] = useState('overview');
-  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
-  const [showAssignDialog, setShowAssignDialog] = useState(false);
-  const [selectedTrainingToAssign, setSelectedTrainingToAssign] = useState<string>('');
+  const { hasAnyRole, user } = useAuth()
+  const { trainings, getExpiredTrainings, getExpiringTrainings } = useHSETrainings()
 
-  const canManageHSE = hasAnyRole(['ADMIN', 'HSE']);
-  const trainingModules = hseModulesData.hseTrainingModules as HSETrainingModule[];
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedService, setSelectedService] = useState<string>('all')
+  const [selectedRole, setSelectedRole] = useState<string>('all')
+  const [activeTab, setActiveTab] = useState('overview')
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null)
+  const [showAssignDialog, setShowAssignDialog] = useState(false)
+  const [selectedTrainingToAssign, setSelectedTrainingToAssign] = useState<string>('')
+
+  const canManageHSE = hasAnyRole(['ADMIN', 'HSE'])
+  const trainingModules = hseModulesData.hseTrainingModules as HSETrainingModule[]
 
   // Calculer les formations requises selon le poste/rôle
   const getRequiredTrainingsForEmployee = (employee: Employee): string[] => {
-    const requiredTrainings: string[] = [];
-    
+    const requiredTrainings: string[] = []
+
     trainingModules.forEach(module => {
-      const hasRequiredRole = employee.roles.some(role => 
-        module.requiredForRoles.includes(role)
-      );
-      
+      const hasRequiredRole = employee.roles.some(role => module.requiredForRoles.includes(role))
+
       if (hasRequiredRole) {
-        requiredTrainings.push(module.id);
+        requiredTrainings.push(module.id)
       }
-    });
+    })
 
     // Formations spécifiques selon le service
     if (employee.service === 'Production') {
-      requiredTrainings.push('HSE-015', 'HSE-006', 'HSE-004'); // H2S, Chimiques, Espace confiné
-    }
-    
-    if (employee.service === 'Maintenance') {
-      requiredTrainings.push('HSE-005', 'HSE-007'); // Travail en hauteur, Permis
+      requiredTrainings.push('HSE-015', 'HSE-006', 'HSE-004') // H2S, Chimiques, Espace confiné
     }
 
-    return [...new Set(requiredTrainings)];
-  };
+    if (employee.service === 'Maintenance') {
+      requiredTrainings.push('HSE-005', 'HSE-007') // Travail en hauteur, Permis
+    }
+
+    return [...new Set(requiredTrainings)]
+  }
 
   // Calculer le statut de formation pour chaque employé
   const employeesTrainingStatus = useMemo(() => {
     return employees.map(employee => {
-      const requiredTrainings = getRequiredTrainingsForEmployee(employee);
-      const expiredTrainings = getExpiredTrainings(employee.id);
-      const expiringTrainings = getExpiringTrainings(employee.id, 30);
-      
+      const requiredTrainings = getRequiredTrainingsForEmployee(employee)
+      const expiredTrainings = getExpiredTrainings(employee.id)
+      const expiringTrainings = getExpiringTrainings(employee.id, 30)
+
       // Simuler les formations complétées (dans une vraie app, cela viendrait de la DB)
-      const completedTrainings = requiredTrainings.slice(0, Math.floor(Math.random() * requiredTrainings.length));
-      
-      const complianceRate = requiredTrainings.length > 0 
-        ? Math.round((completedTrainings.length / requiredTrainings.length) * 100)
-        : 100;
+      const completedTrainings = requiredTrainings.slice(
+        0,
+        Math.floor(Math.random() * requiredTrainings.length),
+      )
+
+      const complianceRate =
+        requiredTrainings.length > 0
+          ? Math.round((completedTrainings.length / requiredTrainings.length) * 100)
+          : 100
 
       return {
         employeeId: employee.id,
@@ -104,75 +122,83 @@ export function HSEEmployeeManager({
         completedTrainings,
         expiredTrainings: expiredTrainings.map(t => t.trainingId),
         upcomingTrainings: expiringTrainings.map(t => t.trainingId),
-        complianceRate
-      };
-    });
-  }, [employees, trainings]);
+        complianceRate,
+      }
+    })
+  }, [employees, trainings])
 
   // Filtrer les employés
   const filteredEmployees = useMemo(() => {
     return employees.filter(employee => {
-      const matchesSearch = searchTerm === '' || 
-        `${employee.firstName} ${employee.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      const matchesSearch =
+        searchTerm === '' ||
+        `${employee.firstName} ${employee.lastName}`
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
         employee.matricule.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        employee.service.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchesService = selectedService === 'all' || employee.service === selectedService;
-      const matchesRole = selectedRole === 'all' || employee.roles.includes(selectedRole as UserRole);
-      
-      return matchesSearch && matchesService && matchesRole;
-    });
-  }, [employees, searchTerm, selectedService, selectedRole]);
+        employee.service.toLowerCase().includes(searchTerm.toLowerCase())
+
+      const matchesService = selectedService === 'all' || employee.service === selectedService
+      const matchesRole =
+        selectedRole === 'all' || employee.roles.includes(selectedRole as UserRole)
+
+      return matchesSearch && matchesService && matchesRole
+    })
+  }, [employees, searchTerm, selectedService, selectedRole])
 
   // Obtenir les services uniques
-  const services = [...new Set(employees.map(e => e.service))];
-  const roles: UserRole[] = ['EMPLOYE', 'SUPERVISEUR', 'HSE', 'ADMIN'];
+  const services = [...new Set(employees.map(e => e.service))]
+  const roles: UserRole[] = ['EMPLOYE', 'SUPERVISEUR', 'HSE', 'ADMIN']
 
   const handleAssignTraining = (employeeId: string) => {
-    setSelectedEmployee(employees.find(e => e.id === employeeId) || null);
-    setShowAssignDialog(true);
-  };
+    setSelectedEmployee(employees.find(e => e.id === employeeId) || null)
+    setShowAssignDialog(true)
+  }
 
   const confirmAssignTraining = () => {
     if (selectedEmployee && selectedTrainingToAssign) {
-      onAssignTraining?.(selectedEmployee.id, selectedTrainingToAssign);
-      setShowAssignDialog(false);
-      setSelectedTrainingToAssign('');
-      setSelectedEmployee(null);
+      onAssignTraining?.(selectedEmployee.id, selectedTrainingToAssign)
+      setShowAssignDialog(false)
+      setSelectedTrainingToAssign('')
+      setSelectedEmployee(null)
     }
-  };
+  }
 
   const sendTrainingReminder = (employeeId: string, trainingTitle: string) => {
-    const message = `Rappel : Votre formation "${trainingTitle}" arrive à expiration. Veuillez programmer votre session de recyclage.`;
-    onSendNotification?.(employeeId, 'training_reminder', message);
-  };
+    const message = `Rappel : Votre formation "${trainingTitle}" arrive à expiration. Veuillez programmer votre session de recyclage.`
+    onSendNotification?.(employeeId, 'training_reminder', message)
+  }
 
   const getComplianceColor = (rate: number) => {
-    if (rate >= 90) return 'text-green-600';
-    if (rate >= 70) return 'text-yellow-600';
-    return 'text-red-600';
-  };
+    if (rate >= 90) return 'text-green-600'
+    if (rate >= 70) return 'text-yellow-600'
+    return 'text-red-600'
+  }
 
-  const getComplianceVariant = (rate: number): "success" | "warning" | "urgent" => {
-    if (rate >= 90) return 'success';
-    if (rate >= 70) return 'warning';
-    return 'urgent';
-  };
+  const getComplianceVariant = (rate: number): 'success' | 'warning' | 'urgent' => {
+    if (rate >= 90) return 'success'
+    if (rate >= 70) return 'warning'
+    return 'urgent'
+  }
 
   const renderEmployeeCard = (employee: Employee) => {
-    const status = employeesTrainingStatus.find(s => s.employeeId === employee.id);
-    if (!status) return null;
+    const status = employeesTrainingStatus.find(s => s.employeeId === employee.id)
+    if (!status) return null
 
-    const hasExpiredTrainings = status.expiredTrainings.length > 0;
-    const hasUpcomingRenewals = status.upcomingTrainings.length > 0;
+    const hasExpiredTrainings = status.expiredTrainings.length > 0
+    const hasUpcomingRenewals = status.upcomingTrainings.length > 0
 
     return (
       <Card key={employee.id} className="cursor-pointer hover:bg-muted/50 transition-colors">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div>
-              <h3 className="font-semibold">{employee.firstName} {employee.lastName}</h3>
-              <p className="text-sm text-muted-foreground">{employee.matricule} • {employee.service}</p>
+              <h3 className="font-semibold">
+                {employee.firstName} {employee.lastName}
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                {employee.matricule} • {employee.service}
+              </p>
               <div className="flex flex-wrap gap-1 mt-2">
                 {employee.roles.map(role => (
                   <Badge key={role} variant="outline" className="text-xs">
@@ -189,16 +215,18 @@ export function HSEEmployeeManager({
             </div>
           </div>
         </CardHeader>
-        
+
         <CardContent className="space-y-4">
           {/* Barre de progression */}
           <div>
             <div className="flex justify-between text-sm mb-2">
               <span>Formations</span>
-              <span>{status.completedTrainings.length}/{status.requiredTrainings.length}</span>
+              <span>
+                {status.completedTrainings.length}/{status.requiredTrainings.length}
+              </span>
             </div>
-            <Progress 
-              value={status.complianceRate} 
+            <Progress
+              value={status.complianceRate}
               className={`h-2 ${status.complianceRate < 70 ? 'bg-red-100' : status.complianceRate < 90 ? 'bg-yellow-100' : 'bg-green-100'}`}
             />
           </div>
@@ -224,17 +252,17 @@ export function HSEEmployeeManager({
           {/* Actions */}
           {canManageHSE && (
             <div className="flex gap-2 pt-2 border-t">
-              <Button 
-                size="sm" 
-                variant="outline" 
+              <Button
+                size="sm"
+                variant="outline"
                 onClick={() => setSelectedEmployee(employee)}
                 className="flex-1"
               >
                 <BookOpen className="w-4 h-4 mr-1" />
                 Détails
               </Button>
-              <Button 
-                size="sm" 
+              <Button
+                size="sm"
                 onClick={() => handleAssignTraining(employee.id)}
                 className="flex-1"
               >
@@ -245,34 +273,40 @@ export function HSEEmployeeManager({
           )}
         </CardContent>
       </Card>
-    );
-  };
+    )
+  }
 
   const renderEmployeeDetails = (employee: Employee) => {
-    const status = employeesTrainingStatus.find(s => s.employeeId === employee.id);
-    if (!status) return null;
+    const status = employeesTrainingStatus.find(s => s.employeeId === employee.id)
+    if (!status) return null
 
-    const requiredModules = trainingModules.filter(m => status.requiredTrainings.includes(m.id));
-    const completedModules = trainingModules.filter(m => status.completedTrainings.includes(m.id));
-    const expiredModules = trainingModules.filter(m => status.expiredTrainings.includes(m.id));
-    const upcomingModules = trainingModules.filter(m => status.upcomingTrainings.includes(m.id));
+    const requiredModules = trainingModules.filter(m => status.requiredTrainings.includes(m.id))
+    const completedModules = trainingModules.filter(m => status.completedTrainings.includes(m.id))
+    const expiredModules = trainingModules.filter(m => status.expiredTrainings.includes(m.id))
+    const upcomingModules = trainingModules.filter(m => status.upcomingTrainings.includes(m.id))
 
     return (
       <div className="space-y-6">
         {/* En-tête employé */}
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-2xl font-bold">{employee.firstName} {employee.lastName}</h2>
-            <p className="text-muted-foreground">{employee.matricule} • {employee.service}</p>
+            <h2 className="text-2xl font-bold">
+              {employee.firstName} {employee.lastName}
+            </h2>
+            <p className="text-muted-foreground">
+              {employee.matricule} • {employee.service}
+            </p>
             <div className="flex flex-wrap gap-2 mt-2">
               {employee.roles.map(role => (
-                <Badge key={role} variant="secondary">{role}</Badge>
+                <Badge key={role} variant="secondary">
+                  {role}
+                </Badge>
               ))}
             </div>
           </div>
           <div className="text-right">
-            <StatusBadge 
-              status={`${status.complianceRate}% conforme`} 
+            <StatusBadge
+              status={`${status.complianceRate}% conforme`}
               variant={getComplianceVariant(status.complianceRate)}
             />
           </div>
@@ -288,31 +322,37 @@ export function HSEEmployeeManager({
               <div className="text-2xl font-bold">{status.requiredTrainings.length}</div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm">Complétées</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">{status.completedTrainings.length}</div>
+              <div className="text-2xl font-bold text-green-600">
+                {status.completedTrainings.length}
+              </div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm">Expirées</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-red-600">{status.expiredTrainings.length}</div>
+              <div className="text-2xl font-bold text-red-600">
+                {status.expiredTrainings.length}
+              </div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm">À renouveler</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-yellow-600">{status.upcomingTrainings.length}</div>
+              <div className="text-2xl font-bold text-yellow-600">
+                {status.upcomingTrainings.length}
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -336,7 +376,9 @@ export function HSEEmployeeManager({
                     <div className="flex items-center justify-between">
                       <div>
                         <h4 className="font-medium">{module.title}</h4>
-                        <p className="text-sm text-muted-foreground">{module.code} • {module.category}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {module.code} • {module.category}
+                        </p>
                       </div>
                       <div className="flex gap-2">
                         <Badge variant="outline">{module.duration}h</Badge>
@@ -360,7 +402,9 @@ export function HSEEmployeeManager({
                   <div className="flex items-center justify-between">
                     <div>
                       <h4 className="font-medium">{module.title}</h4>
-                      <p className="text-sm text-muted-foreground">{module.code} • Valide jusqu'au...</p>
+                      <p className="text-sm text-muted-foreground">
+                        {module.code} • Valide jusqu'au...
+                      </p>
                     </div>
                     <Badge variant="secondary">Complétée</Badge>
                   </div>
@@ -381,8 +425,8 @@ export function HSEEmployeeManager({
                     <div className="flex gap-2">
                       <Badge variant="destructive">Expirée</Badge>
                       {canManageHSE && (
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           variant="outline"
                           onClick={() => sendTrainingReminder(employee.id, module.title)}
                         >
@@ -404,7 +448,9 @@ export function HSEEmployeeManager({
                   <div className="flex items-center justify-between">
                     <div>
                       <h4 className="font-medium text-yellow-600">{module.title}</h4>
-                      <p className="text-sm text-muted-foreground">{module.code} • À renouveler dans...</p>
+                      <p className="text-sm text-muted-foreground">
+                        {module.code} • À renouveler dans...
+                      </p>
                     </div>
                     <div className="flex gap-2">
                       <Badge variant="secondary">Bientôt</Badge>
@@ -421,8 +467,8 @@ export function HSEEmployeeManager({
           </TabsContent>
         </Tabs>
       </div>
-    );
-  };
+    )
+  }
 
   if (!canManageHSE) {
     return (
@@ -433,7 +479,7 @@ export function HSEEmployeeManager({
           Seuls les responsables HSE peuvent accéder à cette fonctionnalité.
         </p>
       </div>
-    );
+    )
   }
 
   return (
@@ -480,13 +526,16 @@ export function HSEEmployeeManager({
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-yellow-500" />
-                À surveiller (70-89%)
+                <AlertTriangle className="w-4 h-4 text-yellow-500" />À surveiller (70-89%)
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-yellow-600">
-                {employeesTrainingStatus.filter(s => s.complianceRate >= 70 && s.complianceRate < 90).length}
+                {
+                  employeesTrainingStatus.filter(
+                    s => s.complianceRate >= 70 && s.complianceRate < 90,
+                  ).length
+                }
               </div>
             </CardContent>
           </Card>
@@ -515,11 +564,11 @@ export function HSEEmployeeManager({
                 <Input
                   placeholder="Rechercher un employé..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={e => setSearchTerm(e.target.value)}
                   className="pl-10"
                 />
               </div>
-              
+
               <Select value={selectedService} onValueChange={setSelectedService}>
                 <SelectTrigger className="w-full sm:w-[200px]">
                   <SelectValue placeholder="Service" />
@@ -533,7 +582,7 @@ export function HSEEmployeeManager({
                   ))}
                 </SelectContent>
               </Select>
-              
+
               <Select value={selectedRole} onValueChange={setSelectedRole}>
                 <SelectTrigger className="w-full sm:w-[200px]">
                   <SelectValue placeholder="Rôle" />
@@ -589,10 +638,11 @@ export function HSEEmployeeManager({
             <div>
               <p className="text-sm text-muted-foreground mb-2">Employé:</p>
               <p className="font-medium">
-                {selectedEmployee?.firstName} {selectedEmployee?.lastName} ({selectedEmployee?.matricule})
+                {selectedEmployee?.firstName} {selectedEmployee?.lastName} (
+                {selectedEmployee?.matricule})
               </p>
             </div>
-            
+
             <div>
               <label className="text-sm font-medium">Formation à assigner:</label>
               <Select value={selectedTrainingToAssign} onValueChange={setSelectedTrainingToAssign}>
@@ -608,15 +658,12 @@ export function HSEEmployeeManager({
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setShowAssignDialog(false)}>
                 Annuler
               </Button>
-              <Button 
-                onClick={confirmAssignTraining}
-                disabled={!selectedTrainingToAssign}
-              >
+              <Button onClick={confirmAssignTraining} disabled={!selectedTrainingToAssign}>
                 Assigner
               </Button>
             </div>
@@ -624,5 +671,5 @@ export function HSEEmployeeManager({
         </DialogContent>
       </Dialog>
     </>
-  );
+  )
 }

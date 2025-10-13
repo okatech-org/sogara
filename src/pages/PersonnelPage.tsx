@@ -1,28 +1,29 @@
-import { useState } from 'react';
-import { Search, Plus, Filter, Edit, Trash2, HardHat, Shield } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { useEmployees } from '@/hooks/useEmployees';
-import { useAuth } from '@/contexts/AppContext';
-import { Employee } from '@/types';
-import { StatusBadge } from '@/components/ui/status-badge';
+import { useState } from 'react'
+import { Search, Plus, Filter, Edit, Trash2, HardHat, Shield } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
+import { useEmployees } from '@/hooks/useEmployees'
+import { useAuth } from '@/contexts/AppContext'
+import { Employee } from '@/types'
+import { StatusBadge } from '@/components/ui/status-badge'
 
 export function PersonnelPage() {
-  const { employees } = useEmployees();
-  const { hasAnyRole } = useAuth();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
+  const { employees } = useEmployees()
+  const { hasAnyRole } = useAuth()
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null)
 
-  const canManagePersonnel = hasAnyRole(['ADMIN', 'SUPERVISEUR']);
+  const canManagePersonnel = hasAnyRole(['ADMIN', 'SUPERVISEUR'])
 
-  const filteredEmployees = employees.filter(employee => 
-    employee.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    employee.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    employee.matricule.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    employee.service.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredEmployees = employees.filter(
+    employee =>
+      employee.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      employee.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      employee.matricule.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      employee.service.toLowerCase().includes(searchTerm.toLowerCase()),
+  )
 
   const roleColors = {
     ADMIN: 'destructive',
@@ -30,16 +31,14 @@ export function PersonnelPage() {
     SUPERVISEUR: 'default',
     RECEP: 'secondary',
     EMPLOYE: 'outline',
-  } as const;
+  } as const
 
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Personnel</h1>
-          <p className="text-muted-foreground">
-            Gestion des employés et de leurs habilitations
-          </p>
+          <p className="text-muted-foreground">Gestion des employés et de leurs habilitations</p>
         </div>
         {canManagePersonnel && (
           <Button className="gap-2 gradient-primary">
@@ -55,7 +54,7 @@ export function PersonnelPage() {
           <Input
             placeholder="Rechercher par nom, matricule ou service..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={e => setSearchTerm(e.target.value)}
             className="pl-10"
           />
         </div>
@@ -75,12 +74,12 @@ export function PersonnelPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {filteredEmployees.map((employee) => (
+                {filteredEmployees.map(employee => (
                   <div
                     key={employee.id}
                     className={`p-4 rounded-lg border transition-all cursor-pointer hover:shadow-md ${
-                      selectedEmployee?.id === employee.id 
-                        ? 'border-primary bg-primary/5 shadow-md' 
+                      selectedEmployee?.id === employee.id
+                        ? 'border-primary bg-primary/5 shadow-md'
                         : 'border-border bg-card hover:bg-muted/30'
                     }`}
                     onClick={() => setSelectedEmployee(employee)}
@@ -88,7 +87,8 @@ export function PersonnelPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-sm font-medium">
-                          {employee.firstName[0]}{employee.lastName[0]}
+                          {employee.firstName[0]}
+                          {employee.lastName[0]}
                         </div>
                         <div>
                           <h3 className="font-medium text-foreground">
@@ -102,8 +102,8 @@ export function PersonnelPage() {
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <StatusBadge 
-                          status={employee.status === 'active' ? 'Actif' : 'Inactif'} 
+                        <StatusBadge
+                          status={employee.status === 'active' ? 'Actif' : 'Inactif'}
                           variant={employee.status === 'active' ? 'success' : 'warning'}
                         />
                         {canManagePersonnel && (
@@ -119,7 +119,7 @@ export function PersonnelPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2 mt-3">
-                      {employee.roles.map((role) => (
+                      {employee.roles.map(role => (
                         <Badge key={role} variant={roleColors[role]}>
                           {role}
                         </Badge>
@@ -143,14 +143,13 @@ export function PersonnelPage() {
           {selectedEmployee ? (
             <Card className="industrial-card">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  Détails de l'employé
-                </CardTitle>
+                <CardTitle className="flex items-center gap-2">Détails de l'employé</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="text-center pb-4 border-b">
                   <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center text-lg font-medium mx-auto mb-3">
-                    {selectedEmployee.firstName[0]}{selectedEmployee.lastName[0]}
+                    {selectedEmployee.firstName[0]}
+                    {selectedEmployee.lastName[0]}
                   </div>
                   <h3 className="font-semibold text-lg">
                     {selectedEmployee.firstName} {selectedEmployee.lastName}
@@ -163,7 +162,7 @@ export function PersonnelPage() {
                 <div>
                   <h4 className="font-medium mb-2">Rôles</h4>
                   <div className="flex flex-wrap gap-2">
-                    {selectedEmployee.roles.map((role) => (
+                    {selectedEmployee.roles.map(role => (
                       <Badge key={role} variant={roleColors[role]}>
                         {role}
                       </Badge>
@@ -175,7 +174,10 @@ export function PersonnelPage() {
                   <h4 className="font-medium mb-2">Compétences</h4>
                   <div className="space-y-1">
                     {selectedEmployee.competences.map((comp, index) => (
-                      <div key={index} className="text-sm text-muted-foreground flex items-center gap-2">
+                      <div
+                        key={index}
+                        className="text-sm text-muted-foreground flex items-center gap-2"
+                      >
                         <div className="w-1 h-1 bg-primary rounded-full" />
                         {comp}
                       </div>
@@ -187,7 +189,10 @@ export function PersonnelPage() {
                   <h4 className="font-medium mb-2">Habilitations</h4>
                   <div className="space-y-1">
                     {selectedEmployee.habilitations.map((hab, index) => (
-                      <div key={index} className="text-sm text-muted-foreground flex items-center gap-2">
+                      <div
+                        key={index}
+                        className="text-sm text-muted-foreground flex items-center gap-2"
+                      >
                         <Shield className="w-3 h-3 text-success" />
                         {hab}
                       </div>
@@ -219,9 +224,7 @@ export function PersonnelPage() {
 
                 {canManagePersonnel && (
                   <div className="pt-4 border-t">
-                    <Button className="w-full gradient-primary">
-                      Modifier l'employé
-                    </Button>
+                    <Button className="w-full gradient-primary">Modifier l'employé</Button>
                   </div>
                 )}
               </CardContent>
@@ -241,5 +244,5 @@ export function PersonnelPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }

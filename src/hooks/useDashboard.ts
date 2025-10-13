@@ -1,19 +1,19 @@
-import { useEffect } from 'react';
-import { useApp } from '@/contexts/AppContext';
-import { repositories } from '@/services/repositories';
-import { DashboardStats } from '@/types';
+import { useEffect } from 'react'
+import { useApp } from '@/contexts/AppContext'
+import { repositories } from '@/services/repositories'
+import { DashboardStats } from '@/types'
 
 export function useDashboard() {
-  const { state, dispatch } = useApp();
+  const { state, dispatch } = useApp()
 
   useEffect(() => {
-    updateDashboardStats();
-  }, [state.visits, state.packages, state.equipment]);
+    updateDashboardStats()
+  }, [state.visits, state.packages, state.equipment])
 
   const updateDashboardStats = () => {
-    const visitsStats = repositories.visits.getTodaysStats();
-    const packageStats = repositories.packages.getStats();
-    const equipmentStats = repositories.equipment.getStats();
+    const visitsStats = repositories.visits.getTodaysStats()
+    const packageStats = repositories.packages.getStats()
+    const equipmentStats = repositories.equipment.getStats()
 
     const dashboardStats: DashboardStats = {
       visitsToday: visitsStats,
@@ -24,22 +24,20 @@ export function useDashboard() {
         trainingsThisWeek: 0,
         complianceRate: 95,
       },
-    };
+    }
 
-    dispatch({ type: 'UPDATE_DASHBOARD_STATS', payload: dashboardStats });
-  };
+    dispatch({ type: 'UPDATE_DASHBOARD_STATS', payload: dashboardStats })
+  }
 
   const getRecentNotifications = () => {
-    return state.notifications
-      .filter(n => !n.read)
-      .slice(0, 5);
-  };
+    return state.notifications.filter(n => !n.read).slice(0, 5)
+  }
 
   const markNotificationAsRead = (notificationId: string) => {
-    repositories.notifications.markAsRead(notificationId);
-    const updatedNotifications = repositories.notifications.getAll();
-    dispatch({ type: 'SET_NOTIFICATIONS', payload: updatedNotifications });
-  };
+    repositories.notifications.markAsRead(notificationId)
+    const updatedNotifications = repositories.notifications.getAll()
+    dispatch({ type: 'SET_NOTIFICATIONS', payload: updatedNotifications })
+  }
 
   return {
     stats: state.dashboardStats,
@@ -47,5 +45,5 @@ export function useDashboard() {
     recentNotifications: getRecentNotifications(),
     updateDashboardStats,
     markNotificationAsRead,
-  };
+  }
 }

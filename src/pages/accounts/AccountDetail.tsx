@@ -1,15 +1,15 @@
-import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, LogIn, ArrowRight } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { demoAccounts, getAccountBySlug } from '@/data/demoAccounts';
+import { useNavigate, useParams } from 'react-router-dom'
+import { ArrowLeft, LogIn, ArrowRight } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { demoAccounts, getAccountBySlug } from '@/data/demoAccounts'
 
 export default function AccountDetail() {
-  const { slug } = useParams();
-  const navigate = useNavigate();
+  const { slug } = useParams()
+  const navigate = useNavigate()
 
-  const account = slug ? getAccountBySlug(slug) : undefined;
+  const account = slug ? getAccountBySlug(slug) : undefined
 
   if (!account) {
     return (
@@ -17,17 +17,19 @@ export default function AccountDetail() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">Compte introuvable</h1>
-            <p className="text-muted-foreground">Le profil demandé n’existe pas. Sélectionnez un compte valide.</p>
+            <p className="text-muted-foreground">
+              Le profil demandé n’existe pas. Sélectionnez un compte valide.
+            </p>
           </div>
           <Button variant="outline" onClick={() => navigate('/app/accounts')}>
             Retour au catalogue
           </Button>
         </div>
       </div>
-    );
+    )
   }
 
-  const Icon = account.icon;
+  const Icon = account.icon
 
   return (
     <div className="space-y-6">
@@ -56,7 +58,9 @@ export default function AccountDetail() {
         <Card className="industrial-card">
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className={`w-12 h-12 ${account.colorClass} rounded-lg flex items-center justify-center`}>
+              <div
+                className={`w-12 h-12 ${account.colorClass} rounded-lg flex items-center justify-center`}
+              >
                 <Icon className="w-6 h-6" />
               </div>
               <div>
@@ -69,7 +73,7 @@ export default function AccountDetail() {
             <div>
               <h4 className="font-semibold text-sm text-foreground">Responsabilités principales</h4>
               <ul className="mt-2 space-y-2 pl-4 text-sm text-muted-foreground list-disc">
-                {account.responsibilities.map((item) => (
+                {account.responsibilities.map(item => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
@@ -100,11 +104,20 @@ export default function AccountDetail() {
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
-              <Button variant="outline" className="gap-2" onClick={() => navigate(account.defaultRoute)}>
+              <Button
+                variant="outline"
+                className="gap-2"
+                onClick={() => navigate(account.defaultRoute)}
+              >
                 Accéder au module de référence
                 <ArrowRight className="w-4 h-4" />
               </Button>
-              <Button variant="ghost" size="sm" className="gap-2" onClick={() => navigate('/app/accounts')}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-2"
+                onClick={() => navigate('/app/accounts')}
+              >
                 Voir les autres comptes
               </Button>
             </div>
@@ -118,9 +131,9 @@ export default function AccountDetail() {
           </CardHeader>
           <CardContent className="space-y-3">
             {demoAccounts
-              .filter((item) => item.slug !== account.slug)
+              .filter(item => item.slug !== account.slug)
               .slice(0, 3)
-              .map((item) => (
+              .map(item => (
                 <Button
                   key={item.id}
                   variant="outline"
@@ -138,6 +151,5 @@ export default function AccountDetail() {
         </Card>
       </div>
     </div>
-  );
+  )
 }
-

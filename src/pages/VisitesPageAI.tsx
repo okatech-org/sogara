@@ -1,105 +1,137 @@
-import { useState, useMemo } from 'react';
-import { Users, Search, Plus, Sparkles, QrCode, Clock, CheckCircle, AlertTriangle, Loader2, RefreshCw, Eye, LogOut } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { StatusBadge } from '@/components/ui/status-badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { useAuth } from '@/contexts/AppContext';
-import { RegisterVisitorWithAI } from '@/components/dialogs/RegisterVisitorWithAI';
-import { visitorService, VisitorExtended } from '@/services/visitor-management.service';
-import { toast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
+import { useState, useMemo } from 'react'
+import {
+  Users,
+  Search,
+  Plus,
+  Sparkles,
+  QrCode,
+  Clock,
+  CheckCircle,
+  AlertTriangle,
+  Loader2,
+  RefreshCw,
+  Eye,
+  LogOut,
+} from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
+import { StatusBadge } from '@/components/ui/status-badge'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { useAuth } from '@/contexts/AppContext'
+import { RegisterVisitorWithAI } from '@/components/dialogs/RegisterVisitorWithAI'
+import { visitorService, VisitorExtended } from '@/services/visitor-management.service'
+import { toast } from '@/hooks/use-toast'
+import { cn } from '@/lib/utils'
 
 export function VisitesPageAI() {
-  const { hasAnyRole, currentUser } = useAuth();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showRegisterDialog, setShowRegisterDialog] = useState(false);
-  const [visitors, setVisitors] = useState<VisitorExtended[]>(visitorService.getAll());
-  const [statusFilter, setStatusFilter] = useState<'all' | VisitorExtended['status']>('all');
-  const [selectedVisitor, setSelectedVisitor] = useState<VisitorExtended | null>(null);
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const { hasAnyRole, currentUser } = useAuth()
+  const [searchTerm, setSearchTerm] = useState('')
+  const [showRegisterDialog, setShowRegisterDialog] = useState(false)
+  const [visitors, setVisitors] = useState<VisitorExtended[]>(visitorService.getAll())
+  const [statusFilter, setStatusFilter] = useState<'all' | VisitorExtended['status']>('all')
+  const [selectedVisitor, setSelectedVisitor] = useState<VisitorExtended | null>(null)
+  const [isRefreshing, setIsRefreshing] = useState(false)
 
-  const canManage = hasAnyRole(['ADMIN', 'RECEP', 'SUPERVISEUR']);
+  const canManage = hasAnyRole(['ADMIN', 'RECEP', 'SUPERVISEUR'])
 
-  const visitorStats = useMemo(() => visitorService.getVisitorStats(), [visitors]);
+  const visitorStats = useMemo(() => visitorService.getVisitorStats(), [visitors])
 
   const filteredVisitors = useMemo(() => {
-    const searchLower = searchTerm.toLowerCase();
+    const searchLower = searchTerm.toLowerCase()
     return visitors.filter(visitor => {
-      const matchesSearch = 
+      const matchesSearch =
         visitor.firstName.toLowerCase().includes(searchLower) ||
         visitor.lastName.toLowerCase().includes(searchLower) ||
         visitor.company?.toLowerCase().includes(searchLower) ||
         visitor.badgeNumber.toLowerCase().includes(searchLower) ||
-        visitor.employeeToVisit.toLowerCase().includes(searchLower);
-      
-      const matchesFilter = statusFilter === 'all' || visitor.status === statusFilter;
-      
-      return matchesSearch && matchesFilter;
-    });
-  }, [visitors, searchTerm, statusFilter]);
+        visitor.employeeToVisit.toLowerCase().includes(searchLower)
+
+      const matchesFilter = statusFilter === 'all' || visitor.status === statusFilter
+
+      return matchesSearch && matchesFilter
+    })
+  }, [visitors, searchTerm, statusFilter])
 
   const handleVisitorRegistered = (visitor: VisitorExtended) => {
-    setVisitors(prev => [visitor, ...prev]);
-    setShowRegisterDialog(false);
+    setVisitors(prev => [visitor, ...prev])
+    setShowRegisterDialog(false)
     toast({
       title: 'Visiteur enregistré',
       description: `${visitor.firstName} ${visitor.lastName} - Badge ${visitor.badgeNumber}`,
-    });
-  };
+    })
+  }
 
   const handleCheckOut = async (visitorId: string) => {
     try {
-      await visitorService.checkOutVisitor(visitorId);
-      setVisitors(visitorService.getAll());
+      await visitorService.checkOutVisitor(visitorId)
+      setVisitors(visitorService.getAll())
       toast({
         title: 'Sortie enregistrée',
         description: 'Le visiteur a été désenregistré avec succès',
-      });
+      })
     } catch (error) {
       toast({
         title: 'Erreur',
-        description: 'Impossible d\'enregistrer la sortie',
-        variant: 'destructive'
-      });
+        description: "Impossible d'enregistrer la sortie",
+        variant: 'destructive',
+      })
     }
-  };
+  }
 
   const handleRefresh = () => {
-    setIsRefreshing(true);
+    setIsRefreshing(true)
     setTimeout(() => {
-      setVisitors(visitorService.getAll());
-      setIsRefreshing(false);
+      setVisitors(visitorService.getAll())
+      setIsRefreshing(false)
       toast({
         title: 'Données actualisées',
         description: 'Liste des visiteurs rechargée',
-      });
-    }, 500);
-  };
+      })
+    }, 500)
+  }
 
   const getStatusColor = (status: VisitorExtended['status']) => {
     switch (status) {
-      case 'present': return 'bg-green-500';
-      case 'completed': return 'bg-gray-500';
-      case 'overdue': return 'bg-red-500';
-      case 'emergency_exit': return 'bg-orange-500';
-      default: return 'bg-gray-500';
+      case 'present':
+        return 'bg-green-500'
+      case 'completed':
+        return 'bg-gray-500'
+      case 'overdue':
+        return 'bg-red-500'
+      case 'emergency_exit':
+        return 'bg-orange-500'
+      default:
+        return 'bg-gray-500'
     }
-  };
+  }
 
   const getUrgencyBadge = (level: VisitorExtended['urgencyLevel']) => {
     switch (level) {
       case 'vip':
-        return <Badge variant="destructive" className="gap-1 text-xs">⭐ VIP</Badge>;
+        return (
+          <Badge variant="destructive" className="gap-1 text-xs">
+            ⭐ VIP
+          </Badge>
+        )
       case 'high':
-        return <Badge variant="secondary" className="gap-1 text-xs">Prioritaire</Badge>;
+        return (
+          <Badge variant="secondary" className="gap-1 text-xs">
+            Prioritaire
+          </Badge>
+        )
       default:
-        return null;
+        return null
     }
-  };
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -123,8 +155,13 @@ export function VisitesPageAI() {
               <Plus className="w-4 h-4" />
               Nouveau visiteur
             </Button>
-            <Button variant="outline" onClick={handleRefresh} disabled={isRefreshing} className="gap-2">
-              <RefreshCw className={cn("w-4 h-4", isRefreshing && "animate-spin")} />
+            <Button
+              variant="outline"
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="gap-2"
+            >
+              <RefreshCw className={cn('w-4 h-4', isRefreshing && 'animate-spin')} />
               Actualiser
             </Button>
           </div>
@@ -191,7 +228,7 @@ export function VisitesPageAI() {
               <Input
                 placeholder="Rechercher par nom, société, badge..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={e => setSearchTerm(e.target.value)}
                 className="pl-10"
               />
             </div>
@@ -229,16 +266,19 @@ export function VisitesPageAI() {
         <CardContent>
           <div className="space-y-3">
             {filteredVisitors.map(visitor => {
-              const isPresent = visitor.status === 'present';
-              const isOverdue = visitor.status === 'overdue' || 
-                (isPresent && visitor.expectedCheckOut && new Date(visitor.expectedCheckOut) < new Date());
-              
+              const isPresent = visitor.status === 'present'
+              const isOverdue =
+                visitor.status === 'overdue' ||
+                (isPresent &&
+                  visitor.expectedCheckOut &&
+                  new Date(visitor.expectedCheckOut) < new Date())
+
               return (
-                <Card 
-                  key={visitor.id} 
+                <Card
+                  key={visitor.id}
                   className={cn(
-                    "hover:shadow-md transition-all cursor-pointer",
-                    isOverdue && "border-red-300 bg-red-50"
+                    'hover:shadow-md transition-all cursor-pointer',
+                    isOverdue && 'border-red-300 bg-red-50',
                   )}
                   onClick={() => setSelectedVisitor(visitor)}
                 >
@@ -248,12 +288,15 @@ export function VisitesPageAI() {
                         {/* Avatar */}
                         <div className="relative">
                           <div className="w-14 h-14 bg-gradient-to-br from-primary to-primary/70 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md">
-                            {visitor.firstName[0]}{visitor.lastName[0]}
+                            {visitor.firstName[0]}
+                            {visitor.lastName[0]}
                           </div>
-                          <div className={cn(
-                            "absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white",
-                            getStatusColor(visitor.status)
-                          )} />
+                          <div
+                            className={cn(
+                              'absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white',
+                              getStatusColor(visitor.status),
+                            )}
+                          />
                         </div>
 
                         {/* Informations */}
@@ -262,16 +305,16 @@ export function VisitesPageAI() {
                             <h3 className="font-semibold text-lg">
                               {visitor.firstName} {visitor.lastName}
                             </h3>
-                            
+
                             {visitor.aiExtracted && (
                               <Badge variant="outline" className="gap-1 text-xs">
                                 <Sparkles className="w-3 h-3" />
                                 IA {Math.round((visitor.aiConfidence || 0) * 100)}%
                               </Badge>
                             )}
-                            
+
                             {getUrgencyBadge(visitor.urgencyLevel)}
-                            
+
                             <Badge variant="outline" className="text-xs">
                               {visitor.badgeNumber}
                             </Badge>
@@ -286,13 +329,18 @@ export function VisitesPageAI() {
                             )}
                             <div className="flex items-center gap-2">
                               <Clock className="w-3 h-3" />
-                              Arrivé {new Date(visitor.checkInTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                              Arrivé{' '}
+                              {new Date(visitor.checkInTime).toLocaleTimeString('fr-FR', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
                             </div>
                             <div>
                               <strong>Objet:</strong> {visitor.purposeOfVisit}
                             </div>
                             <div>
-                              <strong>Rendez-vous:</strong> {visitor.employeeToVisit || visitor.department}
+                              <strong>Rendez-vous:</strong>{' '}
+                              {visitor.employeeToVisit || visitor.department}
                             </div>
                           </div>
 
@@ -308,20 +356,31 @@ export function VisitesPageAI() {
                       {/* Actions */}
                       <div className="flex flex-col gap-2">
                         <StatusBadge
-                          status={visitor.status === 'present' ? 'Présent' :
-                                 visitor.status === 'completed' ? 'Sorti' :
-                                 visitor.status === 'overdue' ? 'En retard' : 'Sortie urgence'}
-                          variant={visitor.status === 'present' ? 'success' :
-                                  visitor.status === 'overdue' ? 'urgent' : 'operational'}
+                          status={
+                            visitor.status === 'present'
+                              ? 'Présent'
+                              : visitor.status === 'completed'
+                                ? 'Sorti'
+                                : visitor.status === 'overdue'
+                                  ? 'En retard'
+                                  : 'Sortie urgence'
+                          }
+                          variant={
+                            visitor.status === 'present'
+                              ? 'success'
+                              : visitor.status === 'overdue'
+                                ? 'urgent'
+                                : 'operational'
+                          }
                         />
-                        
+
                         {canManage && isPresent && (
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleCheckOut(visitor.id);
+                            onClick={e => {
+                              e.stopPropagation()
+                              handleCheckOut(visitor.id)
                             }}
                             className="gap-2"
                           >
@@ -357,7 +416,7 @@ export function VisitesPageAI() {
                     )}
                   </CardContent>
                 </Card>
-              );
+              )
             })}
 
             {filteredVisitors.length === 0 && (
@@ -365,7 +424,9 @@ export function VisitesPageAI() {
                 <Users className="w-16 h-16 mx-auto mb-4 opacity-30" />
                 <p>Aucun visiteur trouvé</p>
                 <p className="text-sm mt-2">
-                  {searchTerm ? 'Essayez de modifier votre recherche' : 'Aucun visiteur enregistré aujourd\'hui'}
+                  {searchTerm
+                    ? 'Essayez de modifier votre recherche'
+                    : "Aucun visiteur enregistré aujourd'hui"}
                 </p>
               </div>
             )}
@@ -389,7 +450,8 @@ export function VisitesPageAI() {
             <div className="space-y-6">
               <div className="flex items-start gap-4">
                 <div className="w-20 h-20 bg-gradient-to-br from-primary to-primary/70 rounded-full flex items-center justify-center text-white font-bold text-2xl shadow-lg">
-                  {selectedVisitor.firstName[0]}{selectedVisitor.lastName[0]}
+                  {selectedVisitor.firstName[0]}
+                  {selectedVisitor.lastName[0]}
                 </div>
                 <div className="flex-1">
                   <h2 className="text-2xl font-bold">
@@ -397,7 +459,9 @@ export function VisitesPageAI() {
                   </h2>
                   <div className="flex flex-wrap gap-2 mt-2">
                     <Badge variant="outline">{selectedVisitor.badgeNumber}</Badge>
-                    {selectedVisitor.company && <Badge variant="secondary">{selectedVisitor.company}</Badge>}
+                    {selectedVisitor.company && (
+                      <Badge variant="secondary">{selectedVisitor.company}</Badge>
+                    )}
                     {getUrgencyBadge(selectedVisitor.urgencyLevel)}
                   </div>
                 </div>
@@ -416,7 +480,9 @@ export function VisitesPageAI() {
                 )}
                 <div>
                   <div className="font-medium">Pièce d'identité</div>
-                  <div className="text-muted-foreground">{selectedVisitor.idType} - {selectedVisitor.idNumber}</div>
+                  <div className="text-muted-foreground">
+                    {selectedVisitor.idType} - {selectedVisitor.idNumber}
+                  </div>
                 </div>
                 <div>
                   <div className="font-medium">Nationalité</div>
@@ -455,8 +521,8 @@ export function VisitesPageAI() {
                 <Button
                   className="w-full gap-2"
                   onClick={() => {
-                    handleCheckOut(selectedVisitor.id);
-                    setSelectedVisitor(null);
+                    handleCheckOut(selectedVisitor.id)
+                    setSelectedVisitor(null)
                   }}
                 >
                   <LogOut className="w-4 h-4" />
@@ -468,6 +534,5 @@ export function VisitesPageAI() {
         </Dialog>
       )}
     </div>
-  );
+  )
 }
-

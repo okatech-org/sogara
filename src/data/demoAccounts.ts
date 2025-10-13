@@ -1,24 +1,32 @@
-import type { LucideIcon } from 'lucide-react';
-import { Settings, Shield, Users, Package, HardHat, Megaphone, Crown, UserCog } from 'lucide-react';
-import type { UserRole } from '@/types';
+import type { LucideIcon } from 'lucide-react'
+import { Settings, Shield, Users, Package, HardHat, Megaphone, Crown, UserCog } from 'lucide-react'
+import type { UserRole } from '@/types'
 
-export type DemoAccountSlug = 'adm001' | 'hse001' | 'rec001' | 'emp001' | 'com001' | 'dg001' | 'drh001' | 'ext001';
+export type DemoAccountSlug =
+  | 'adm001'
+  | 'hse001'
+  | 'rec001'
+  | 'emp001'
+  | 'com001'
+  | 'dg001'
+  | 'drh001'
+  | 'ext001'
 
 export interface DemoAccount {
-  id: string;
-  slug: DemoAccountSlug;
-  matricule: string;
-  fullName: string;
-  jobTitle: string;
-  roles: UserRole[];
-  featuredModule: string;
-  description: string;
-  responsibilities: string[];
-  accessSummary: string;
-  defaultRoute: string;
-  loginHint?: string;
-  colorClass: string;
-  icon: LucideIcon;
+  id: string
+  slug: DemoAccountSlug
+  matricule: string
+  fullName: string
+  jobTitle: string
+  roles: UserRole[]
+  featuredModule: string
+  description: string
+  responsibilities: string[]
+  accessSummary: string
+  defaultRoute: string
+  loginHint?: string
+  colorClass: string
+  icon: LucideIcon
 }
 
 export const demoAccounts: DemoAccount[] = [
@@ -30,14 +38,15 @@ export const demoAccounts: DemoAccount[] = [
     jobTitle: 'Administrateur Systèmes & Informatique',
     roles: ['ADMIN'],
     featuredModule: 'Administration système et supervision',
-    description: 'Administrateur ORGANEUS Gabon — Informatique et systèmes. Supervision, sécurité et configuration.',
+    description:
+      'Administrateur ORGANEUS Gabon — Informatique et systèmes. Supervision, sécurité et configuration.',
     responsibilities: [
       'Supervision générale des modules',
       'Gestion des utilisateurs et permissions',
       'Configuration et paramètres avancés',
       'Validation des processus critiques',
       'Analyse des rapports stratégiques',
-      'Pilotage de la documentation technique'
+      'Pilotage de la documentation technique',
     ],
     accessSummary: 'Accès complet à tous les modules',
     defaultRoute: '/app/admin',
@@ -53,9 +62,10 @@ export const demoAccounts: DemoAccount[] = [
     jobTitle: 'Directeur Général',
     roles: ['DG', 'ADMIN'],
     featuredModule: 'Vision stratégique et pilotage',
-    description: 'Direction générale de SOGARA, pilotage stratégique et supervision de tous les départements.',
+    description:
+      'Direction générale de SOGARA, pilotage stratégique et supervision de tous les départements.',
     responsibilities: [
-      'Direction générale de l\'entreprise',
+      "Direction générale de l'entreprise",
       'Pilotage stratégique global',
       'Supervision de tous les départements',
       'Validation des décisions critiques',
@@ -63,7 +73,7 @@ export const demoAccounts: DemoAccount[] = [
       'Pilotage de la performance globale',
       'Vision et orientation stratégique',
       'Prise de décisions stratégiques',
-      'Représentation de l\'entreprise'
+      "Représentation de l'entreprise",
     ],
     accessSummary: 'Accès complet à tous les modules et tableaux de bord stratégiques',
     defaultRoute: '/app/direction',
@@ -79,7 +89,8 @@ export const demoAccounts: DemoAccount[] = [
     jobTitle: 'Directrice des Ressources Humaines',
     roles: ['DRH', 'ADMIN'],
     featuredModule: 'Gestion des ressources humaines',
-    description: 'Direction des ressources humaines, gestion du personnel, formations et développement des compétences.',
+    description:
+      'Direction des ressources humaines, gestion du personnel, formations et développement des compétences.',
     responsibilities: [
       'Direction des ressources humaines',
       'Gestion du personnel et des carrières',
@@ -89,7 +100,7 @@ export const demoAccounts: DemoAccount[] = [
       'Relations sociales',
       'Gestion de la paie et administration du personnel',
       'Élaboration de la politique RH',
-      'Suivi des indicateurs RH'
+      'Suivi des indicateurs RH',
     ],
     accessSummary: 'Accès : Personnel, Formations, HSE, Tableaux de bord RH',
     defaultRoute: '/app/rh',
@@ -105,7 +116,8 @@ export const demoAccounts: DemoAccount[] = [
     jobTitle: 'Directeur Communication',
     roles: ['COMMUNICATION'],
     featuredModule: 'SOGARA Connect et contenus internes',
-    description: 'Direction de la communication, gestion complète de SOGARA Connect et animation de la communication interne.',
+    description:
+      'Direction de la communication, gestion complète de SOGARA Connect et animation de la communication interne.',
     responsibilities: [
       'Direction de la communication',
       'Gestion complète de SOGARA Connect',
@@ -115,7 +127,7 @@ export const demoAccounts: DemoAccount[] = [
       'Gestion des annonces officielles',
       'Animation de la vie sociale',
       'Relations publiques internes',
-      'Stratégie de communication interne'
+      'Stratégie de communication interne',
     ],
     accessSummary: 'Accès : SOGARA Connect (édition complète)',
     defaultRoute: '/app/connect',
@@ -131,7 +143,8 @@ export const demoAccounts: DemoAccount[] = [
     jobTitle: 'Chef de Division HSE et Conformité',
     roles: ['HSE', 'COMPLIANCE', 'SECURITE'],
     featuredModule: 'Sécurité, Conformité et HSE',
-    description: 'Direction de la division HSE, supervision de la conformité réglementaire et gestion de la sécurité incluant la réception.',
+    description:
+      'Direction de la division HSE, supervision de la conformité réglementaire et gestion de la sécurité incluant la réception.',
     responsibilities: [
       'Direction de la division HSE et Conformité',
       'Gestion des incidents de sécurité',
@@ -142,7 +155,7 @@ export const demoAccounts: DemoAccount[] = [
       'Inspection des équipements de sécurité',
       'Validation des habilitations critiques',
       'Production des rapports sécurité et conformité',
-      'Coordination avec les responsables HSE, Conformité et Sécurité'
+      'Coordination avec les responsables HSE, Conformité et Sécurité',
     ],
     accessSummary: 'Accès : Personnel, Équipements, HSE, Conformité, Sécurité, Réception',
     defaultRoute: '/app/hse',
@@ -158,15 +171,16 @@ export const demoAccounts: DemoAccount[] = [
     jobTitle: 'Responsable Sécurité',
     roles: ['RECEP'],
     featuredModule: 'Gestion visiteurs et colis',
-    description: 'Gestion de la sécurité, de l\'accueil physique, du contrôle badges et du courrier entrant.',
+    description:
+      "Gestion de la sécurité, de l'accueil physique, du contrôle badges et du courrier entrant.",
     responsibilities: [
       'Gestion de la sécurité du site',
       'Enregistrement des visiteurs',
       'Gestion des badges et check-in/out',
       'Réception des colis et courriers',
       'Distribution aux destinataires',
-      'Gestion du registre d\'entrées',
-      'Premier contact sécuritaire'
+      "Gestion du registre d'entrées",
+      'Premier contact sécuritaire',
     ],
     accessSummary: 'Accès : Visites, Colis & Courriers',
     defaultRoute: '/app/visites',
@@ -189,7 +203,7 @@ export const demoAccounts: DemoAccount[] = [
       'Lecture des actualités internes',
       'Participation aux événements',
       'Suivi des formations planifiées',
-      'Visualisation des équipements affectés'
+      'Visualisation des équipements affectés',
     ],
     accessSummary: 'Accès : Dashboard, SOGARA Connect (lecture)',
     defaultRoute: '/app/dashboard',
@@ -204,22 +218,22 @@ export const demoAccounts: DemoAccount[] = [
     fullName: 'Jean-Luc BERNARD',
     jobTitle: 'Technicien Maintenance - Total Energies',
     roles: ['EXTERNE'],
-    featuredModule: 'Passage de tests d\'habilitation',
-    description: 'Candidat externe Total Energies Gabon. Passage de tests d\'habilitation pour accès zones de production.',
+    featuredModule: "Passage de tests d'habilitation",
+    description:
+      "Candidat externe Total Energies Gabon. Passage de tests d'habilitation pour accès zones de production.",
     responsibilities: [
-      'Passage des tests d\'habilitation requis',
+      "Passage des tests d'habilitation requis",
       'Consultation des résultats et certificats',
       'Validation des procédures de sécurité',
-      'Accès temporaire zones autorisées'
+      'Accès temporaire zones autorisées',
     ],
-    accessSummary: 'Accès : Tests d\'habilitation, Résultats, Certificats',
+    accessSummary: "Accès : Tests d'habilitation, Résultats, Certificats",
     defaultRoute: '/app/formations-externes',
     loginHint: 'Mot de passe démo : External123!',
     colorClass: 'bg-orange-500 text-white',
     icon: Users,
   },
-];
+]
 
 export const getAccountBySlug = (slug: string) =>
-  demoAccounts.find((account) => account.slug === slug.toLowerCase());
-
+  demoAccounts.find(account => account.slug === slug.toLowerCase())

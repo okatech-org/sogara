@@ -1,10 +1,10 @@
-import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { v } from 'convex/values'
+import { mutation, query } from './_generated/server'
 
 // CREATE or UPDATE Payslip
 export const upsert = mutation({
   args: {
-    employeeId: v.id("employees"),
+    employeeId: v.id('employees'),
     month: v.number(),
     year: v.number(),
     periodStart: v.number(),
@@ -29,63 +29,63 @@ export const upsert = mutation({
   handler: async (ctx, args) => {
     // Chercher une fiche de paie existante
     const existing = await ctx.db
-      .query("payslips")
-      .filter((q) => 
+      .query('payslips')
+      .filter(q =>
         q.and(
-          q.eq(q.field("employeeId"), args.employeeId),
-          q.eq(q.field("month"), args.month),
-          q.eq(q.field("year"), args.year)
-        )
+          q.eq(q.field('employeeId'), args.employeeId),
+          q.eq(q.field('month'), args.month),
+          q.eq(q.field('year'), args.year),
+        ),
       )
-      .first();
+      .first()
 
     if (existing) {
       // Mise à jour
       await ctx.db.patch(existing._id, {
         ...args,
         status: args.status || 'DRAFT',
-      });
-      return existing._id;
+      })
+      return existing._id
     } else {
       // Création
-      const payslipId = await ctx.db.insert("payslips", {
+      const payslipId = await ctx.db.insert('payslips', {
         ...args,
         status: args.status || 'DRAFT',
         isValidated: false,
-      });
-      return payslipId;
+      })
+      return payslipId
     }
   },
-});
+})
 
 // GET Payslip
 export const getByEmployeeAndPeriod = query({
   args: {
-    employeeId: v.id("employees"),
+    employeeId: v.id('employees'),
     month: v.number(),
     year: v.number(),
   },
   handler: async (ctx, args) => {
     return await ctx.db
-      .query("payslips")
-      .filter((q) =>
+      .query('payslips')
+      .filter(q =>
         q.and(
-          q.eq(q.field("employeeId"), args.employeeId),
-          q.eq(q.field("month"), args.month),
-          q.eq(q.field("year"), args.year)
-        )
+          q.eq(q.field('employeeId'), args.employeeId),
+          q.eq(q.field('month'), args.month),
+          q.eq(q.field('year'), args.year),
+        ),
       )
-      .first();
+      .first()
   },
-});
+})
 
 // LIST all Payslips
 export const list = query({
   args: {},
-  handler: async (ctx) => {
-    return await ctx.db.query("payslips").collect();
+  handler: async ctx => {
+    return await ctx.db.query('payslips').collect()
   },
-});
+})
 
 // LIST by Month/Year
 export const listByPeriod = query({
@@ -95,22 +95,17 @@ export const listByPeriod = query({
   },
   handler: async (ctx, args) => {
     return await ctx.db
-      .query("payslips")
-      .filter((q) =>
-        q.and(
-          q.eq(q.field("month"), args.month),
-          q.eq(q.field("year"), args.year)
-        )
-      )
-      .collect();
+      .query('payslips')
+      .filter(q => q.and(q.eq(q.field('month'), args.month), q.eq(q.field('year'), args.year)))
+      .collect()
   },
-});
+})
 
 // VALIDATE Payslip
 export const validate = mutation({
   args: {
-    id: v.id("payslips"),
-    validatedBy: v.id("employees"),
+    id: v.id('payslips'),
+    validatedBy: v.id('employees'),
   },
   handler: async (ctx, args) => {
     await ctx.db.patch(args.id, {
@@ -118,18 +113,17 @@ export const validate = mutation({
       isValidated: true,
       validatedBy: args.validatedBy,
       validatedAt: Date.now(),
-    });
+    })
   },
-});
+})
 
 // MARK as PAID
 export const markAsPaid = mutation({
-  args: { id: v.id("payslips") },
+  args: { id: v.id('payslips') },
   handler: async (ctx, args) => {
     await ctx.db.patch(args.id, {
       status: 'PAID',
       paidAt: Date.now(),
-    });
+    })
   },
-});
-
+})

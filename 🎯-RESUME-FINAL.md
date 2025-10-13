@@ -7,6 +7,7 @@
 ## 📦 36 FICHIERS LIVRÉS
 
 ### Backend Convex (13)
+
 - ✅ `convex.json`
 - ✅ `convex/schema.ts` (8 tables, 20 index)
 - ✅ `convex/employees.ts` (8 fonctions)
@@ -22,6 +23,7 @@
 - ✅ `convex/storage.ts`
 
 ### Frontend (9)
+
 - ✅ `src/hooks/useEmployees.ts`
 - ✅ `src/hooks/useVisits.ts`
 - ✅ `src/hooks/usePackages.ts`
@@ -33,6 +35,7 @@
 - ✅ `src/contexts/AuthContext.tsx`
 
 ### Documentation (14)
+
 - ✅ `⚡-START-NOW.md` ⭐
 - ✅ `🚀-INSTRUCTIONS-FINALES.md` ⭐
 - ✅ `📖-GUIDE-DEMARRAGE-IMMEDIAT.md`
@@ -53,10 +56,11 @@
 ## 🎯 DANS VOTRE TERMINAL
 
 **Vous voyez** :
+
 ```
 ? Welcome to Convex! Would you like to login to your account?
-❯ Start without an account (run Convex locally) 
-  Login or create an account 
+❯ Start without an account (run Convex locally)
+  Login or create an account
 ```
 
 **SÉLECTIONNEZ** : Login or create an account
@@ -67,20 +71,21 @@
 
 ## ⏱️ TEMPS NÉCESSAIRE
 
-| Étape | Temps |
-|-------|-------|
-| Se connecter à Convex | 2 min |
-| Génération types | 30 sec |
-| Seed data | 30 sec |
-| Lancer app | 30 sec |
-| Tester | 2 min |
-| **TOTAL** | **6 minutes** ⚡ |
+| Étape                 | Temps            |
+| --------------------- | ---------------- |
+| Se connecter à Convex | 2 min            |
+| Génération types      | 30 sec           |
+| Seed data             | 30 sec           |
+| Lancer app            | 30 sec           |
+| Tester                | 2 min            |
+| **TOTAL**             | **6 minutes** ⚡ |
 
 ---
 
 ## ✅ RÉSULTAT
 
 **Après 6 minutes, vous aurez** :
+
 - ✅ Backend Convex opérationnel
 - ✅ 6 employés en base
 - ✅ Application full-stack fonctionnelle
@@ -99,4 +104,3 @@
 ---
 
 _Résumé final - 9 Octobre 2025_
-

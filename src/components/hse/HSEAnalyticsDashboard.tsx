@@ -1,8 +1,8 @@
-import { useState, useMemo } from 'react';
-import { 
-  BarChart3, 
-  PieChart, 
-  TrendingUp, 
+import { useState, useMemo } from 'react'
+import {
+  BarChart3,
+  PieChart,
+  TrendingUp,
   TrendingDown,
   Calendar,
   Users,
@@ -10,84 +10,103 @@ import {
   Award,
   Download,
   Filter,
-  Plus
-} from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { HSEIncident, HSETraining, Employee } from '@/types';
+  Plus,
+} from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { HSEIncident, HSETraining, Employee } from '@/types'
 
 interface HSEAnalyticsDashboardProps {
-  incidents: HSEIncident[];
-  trainings: HSETraining[];
-  employees: Employee[];
+  incidents: HSEIncident[]
+  trainings: HSETraining[]
+  employees: Employee[]
 }
 
-export function HSEAnalyticsDashboard({ incidents, trainings, employees }: HSEAnalyticsDashboardProps) {
-  const [timeRange, setTimeRange] = useState('last-12-months');
-  const [analysisType, setAnalysisType] = useState('overview');
+export function HSEAnalyticsDashboard({
+  incidents,
+  trainings,
+  employees,
+}: HSEAnalyticsDashboardProps) {
+  const [timeRange, setTimeRange] = useState('last-12-months')
+  const [analysisType, setAnalysisType] = useState('overview')
 
   // Calculer les métriques
   const analytics = useMemo(() => {
-    const now = new Date();
-    const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
-    const lastYear = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
+    const now = new Date()
+    const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate())
+    const lastYear = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate())
 
     // Incidents par sévérité
     const incidentsBySeverity = {
       low: incidents.filter(i => i.severity === 'low').length,
       medium: incidents.filter(i => i.severity === 'medium').length,
-      high: incidents.filter(i => i.severity === 'high').length
-    };
+      high: incidents.filter(i => i.severity === 'high').length,
+    }
 
     // Incidents par mois (12 derniers mois)
-    const incidentsByMonth = [];
+    const incidentsByMonth = []
     for (let i = 11; i >= 0; i--) {
-      const monthDate = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthDate = new Date(now.getFullYear(), now.getMonth() - i, 1)
       const monthIncidents = incidents.filter(incident => {
-        const incidentDate = incident.occurredAt;
-        return incidentDate.getMonth() === monthDate.getMonth() && 
-               incidentDate.getFullYear() === monthDate.getFullYear();
-      });
+        const incidentDate = incident.occurredAt
+        return (
+          incidentDate.getMonth() === monthDate.getMonth() &&
+          incidentDate.getFullYear() === monthDate.getFullYear()
+        )
+      })
       incidentsByMonth.push({
         month: monthDate.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' }),
-        count: monthIncidents.length
-      });
+        count: monthIncidents.length,
+      })
     }
 
     // Formations par statut (robuste si `sessions` absent)
-    const trainingsByStatus = trainings.reduce((acc, training: any) => {
-      const sessions = Array.isArray(training?.sessions) ? training.sessions : [];
-      sessions.forEach((session: any) => {
-        const status = session?.status || 'scheduled';
-        acc[status] = (acc[status] || 0) + 1;
-      });
-      return acc;
-    }, {} as Record<string, number>);
+    const trainingsByStatus = trainings.reduce(
+      (acc, training: any) => {
+        const sessions = Array.isArray(training?.sessions) ? training.sessions : []
+        sessions.forEach((session: any) => {
+          const status = session?.status || 'scheduled'
+          acc[status] = (acc[status] || 0) + 1
+        })
+        return acc
+      },
+      {} as Record<string, number>,
+    )
 
     // Conformité par service
-    const complianceByService = employees.reduce((acc, emp) => {
-      const service = emp.service;
-      if (!acc[service]) {
-        acc[service] = { total: 0, compliant: 0 };
-      }
-      acc[service].total++;
-      // Simuler conformité (dans la vraie app, calculer basé sur formations)
-      if (Math.random() > 0.2) {
-        acc[service].compliant++;
-      }
-      return acc;
-    }, {} as Record<string, { total: number; compliant: number }>);
+    const complianceByService = employees.reduce(
+      (acc, emp) => {
+        const service = emp.service
+        if (!acc[service]) {
+          acc[service] = { total: 0, compliant: 0 }
+        }
+        acc[service].total++
+        // Simuler conformité (dans la vraie app, calculer basé sur formations)
+        if (Math.random() > 0.2) {
+          acc[service].compliant++
+        }
+        return acc
+      },
+      {} as Record<string, { total: number; compliant: number }>,
+    )
 
     // Tendances
-    const currentMonthIncidents = incidents.filter(i => i.occurredAt >= lastMonth).length;
-    const previousMonthIncidents = incidents.filter(i => 
-      i.occurredAt >= new Date(now.getFullYear(), now.getMonth() - 2, now.getDate()) &&
-      i.occurredAt < lastMonth
-    ).length;
-    
-    const incidentTrend = currentMonthIncidents - previousMonthIncidents;
+    const currentMonthIncidents = incidents.filter(i => i.occurredAt >= lastMonth).length
+    const previousMonthIncidents = incidents.filter(
+      i =>
+        i.occurredAt >= new Date(now.getFullYear(), now.getMonth() - 2, now.getDate()) &&
+        i.occurredAt < lastMonth,
+    ).length
+
+    const incidentTrend = currentMonthIncidents - previousMonthIncidents
 
     return {
       incidentsBySeverity,
@@ -96,15 +115,15 @@ export function HSEAnalyticsDashboard({ incidents, trainings, employees }: HSEAn
       complianceByService,
       incidentTrend,
       totalIncidents: incidents.length,
-      totalTrainingSessions: Object.values(trainingsByStatus).reduce((a, b) => a + b, 0)
-    };
-  }, [incidents, trainings, employees, timeRange]);
+      totalTrainingSessions: Object.values(trainingsByStatus).reduce((a, b) => a + b, 0),
+    }
+  }, [incidents, trainings, employees, timeRange])
 
   const exportAnalytics = () => {
     // Simuler l'export des analytics
-    console.log('Export analytics...');
-    alert('Export des analyses HSE en cours de développement');
-  };
+    console.log('Export analytics...')
+    alert('Export des analyses HSE en cours de développement')
+  }
 
   return (
     <div className="space-y-6">
@@ -169,9 +188,7 @@ export function HSEAnalyticsDashboard({ incidents, trainings, employees }: HSEAn
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{analytics.totalTrainingSessions}</div>
-            <p className="text-xs text-muted-foreground">
-              Toutes sessions confondues
-            </p>
+            <p className="text-xs text-muted-foreground">Toutes sessions confondues</p>
           </CardContent>
         </Card>
 
@@ -182,9 +199,7 @@ export function HSEAnalyticsDashboard({ incidents, trainings, employees }: HSEAn
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{employees.length}</div>
-            <p className="text-xs text-muted-foreground">
-              Personnel suivi
-            </p>
+            <p className="text-xs text-muted-foreground">Personnel suivi</p>
           </CardContent>
         </Card>
 
@@ -196,14 +211,16 @@ export function HSEAnalyticsDashboard({ incidents, trainings, employees }: HSEAn
           <CardContent>
             <div className="text-2xl font-bold">
               {Math.round(
-                Object.values(analytics.complianceByService)
-                  .reduce((sum, service) => sum + (service.compliant / service.total), 0) /
-                Math.max(Object.keys(analytics.complianceByService).length, 1) * 100
-              )}%
+                (Object.values(analytics.complianceByService).reduce(
+                  (sum, service) => sum + service.compliant / service.total,
+                  0,
+                ) /
+                  Math.max(Object.keys(analytics.complianceByService).length, 1)) *
+                  100,
+              )}
+              %
             </div>
-            <p className="text-xs text-muted-foreground">
-              Tous services
-            </p>
+            <p className="text-xs text-muted-foreground">Tous services</p>
           </CardContent>
         </Card>
       </div>
@@ -228,7 +245,11 @@ export function HSEAnalyticsDashboard({ incidents, trainings, employees }: HSEAn
                 <div className="flex items-center gap-2">
                   <span className="font-medium">{analytics.incidentsBySeverity.low}</span>
                   <Badge variant="outline">
-                    {Math.round((analytics.incidentsBySeverity.low / Math.max(analytics.totalIncidents, 1)) * 100)}%
+                    {Math.round(
+                      (analytics.incidentsBySeverity.low / Math.max(analytics.totalIncidents, 1)) *
+                        100,
+                    )}
+                    %
                   </Badge>
                 </div>
               </div>
@@ -240,7 +261,12 @@ export function HSEAnalyticsDashboard({ incidents, trainings, employees }: HSEAn
                 <div className="flex items-center gap-2">
                   <span className="font-medium">{analytics.incidentsBySeverity.medium}</span>
                   <Badge variant="outline">
-                    {Math.round((analytics.incidentsBySeverity.medium / Math.max(analytics.totalIncidents, 1)) * 100)}%
+                    {Math.round(
+                      (analytics.incidentsBySeverity.medium /
+                        Math.max(analytics.totalIncidents, 1)) *
+                        100,
+                    )}
+                    %
                   </Badge>
                 </div>
               </div>
@@ -252,7 +278,11 @@ export function HSEAnalyticsDashboard({ incidents, trainings, employees }: HSEAn
                 <div className="flex items-center gap-2">
                   <span className="font-medium">{analytics.incidentsBySeverity.high}</span>
                   <Badge variant="outline">
-                    {Math.round((analytics.incidentsBySeverity.high / Math.max(analytics.totalIncidents, 1)) * 100)}%
+                    {Math.round(
+                      (analytics.incidentsBySeverity.high / Math.max(analytics.totalIncidents, 1)) *
+                        100,
+                    )}
+                    %
                   </Badge>
                 </div>
               </div>
@@ -271,7 +301,7 @@ export function HSEAnalyticsDashboard({ incidents, trainings, employees }: HSEAn
           <CardContent>
             <div className="space-y-4">
               {Object.entries(analytics.complianceByService).map(([service, data]) => {
-                const rate = Math.round((data.compliant / data.total) * 100);
+                const rate = Math.round((data.compliant / data.total) * 100)
                 return (
                   <div key={service}>
                     <div className="flex justify-between items-center mb-2">
@@ -281,16 +311,15 @@ export function HSEAnalyticsDashboard({ incidents, trainings, employees }: HSEAn
                       </span>
                     </div>
                     <div className="w-full bg-muted rounded-full h-2">
-                      <div 
+                      <div
                         className={`h-2 rounded-full ${
-                          rate >= 90 ? 'bg-green-500' : 
-                          rate >= 70 ? 'bg-orange-500' : 'bg-red-500'
+                          rate >= 90 ? 'bg-green-500' : rate >= 70 ? 'bg-orange-500' : 'bg-red-500'
                         }`}
                         style={{ width: `${rate}%` }}
                       />
                     </div>
                   </div>
-                );
+                )
               })}
             </div>
           </CardContent>
@@ -308,13 +337,13 @@ export function HSEAnalyticsDashboard({ incidents, trainings, employees }: HSEAn
         <CardContent>
           <div className="h-64 flex items-end justify-between gap-2 border-b border-l pl-4 pb-4">
             {analytics.incidentsByMonth.map((month, index) => {
-              const maxHeight = Math.max(...analytics.incidentsByMonth.map(m => m.count), 1);
-              const height = (month.count / maxHeight) * 200;
-              
+              const maxHeight = Math.max(...analytics.incidentsByMonth.map(m => m.count), 1)
+              const height = (month.count / maxHeight) * 200
+
               return (
                 <div key={index} className="flex flex-col items-center gap-2">
                   <div className="text-xs font-medium">{month.count}</div>
-                  <div 
+                  <div
                     className="bg-blue-500 rounded-t min-h-[4px] w-8"
                     style={{ height: `${height}px` }}
                   />
@@ -322,7 +351,7 @@ export function HSEAnalyticsDashboard({ incidents, trainings, employees }: HSEAn
                     {month.month}
                   </div>
                 </div>
-              );
+              )
             })}
           </div>
           <div className="mt-4 text-sm text-muted-foreground">
@@ -343,27 +372,27 @@ export function HSEAnalyticsDashboard({ incidents, trainings, employees }: HSEAn
                 title: 'Rapport Mensuel HSE',
                 description: 'Synthèse complète du mois',
                 type: 'monthly',
-                icon: <Calendar className="w-5 h-5" />
+                icon: <Calendar className="w-5 h-5" />,
               },
               {
                 title: 'Analyse des Incidents',
                 description: 'Tendances et causes principales',
                 type: 'incidents',
-                icon: <AlertTriangle className="w-5 h-5" />
+                icon: <AlertTriangle className="w-5 h-5" />,
               },
               {
                 title: 'Suivi des Formations',
                 description: 'Progression et certifications',
                 type: 'trainings',
-                icon: <Award className="w-5 h-5" />
+                icon: <Award className="w-5 h-5" />,
               },
               {
                 title: 'Conformité Réglementaire',
                 description: 'État de conformité global',
                 type: 'compliance',
-                icon: <BarChart3 className="w-5 h-5" />
-              }
-            ].map((report) => (
+                icon: <BarChart3 className="w-5 h-5" />,
+              },
+            ].map(report => (
               <Card key={report.type} className="border hover:bg-muted/50 transition-colors">
                 <CardContent className="pt-6">
                   <div className="flex items-start gap-4">
@@ -403,11 +432,9 @@ export function HSEAnalyticsDashboard({ incidents, trainings, employees }: HSEAn
               <div className="text-3xl font-bold text-green-600">
                 {Math.max(0, 365 - analytics.totalIncidents * 10)}
               </div>
-              <div className="text-sm text-muted-foreground mt-1">
-                Jours sans accident grave
-              </div>
+              <div className="text-sm text-muted-foreground mt-1">Jours sans accident grave</div>
             </div>
-            
+
             <div className="text-center">
               <div className="text-3xl font-bold text-blue-600">
                 {analytics.totalTrainingSessions}
@@ -416,18 +443,20 @@ export function HSEAnalyticsDashboard({ incidents, trainings, employees }: HSEAn
                 Sessions de formation réalisées
               </div>
             </div>
-            
+
             <div className="text-center">
               <div className="text-3xl font-bold text-purple-600">
                 {Math.round(
-                  Object.values(analytics.complianceByService)
-                    .reduce((sum, service) => sum + (service.compliant / service.total), 0) /
-                  Math.max(Object.keys(analytics.complianceByService).length, 1) * 100
-                )}%
+                  (Object.values(analytics.complianceByService).reduce(
+                    (sum, service) => sum + service.compliant / service.total,
+                    0,
+                  ) /
+                    Math.max(Object.keys(analytics.complianceByService).length, 1)) *
+                    100,
+                )}
+                %
               </div>
-              <div className="text-sm text-muted-foreground mt-1">
-                Taux de conformité global
-              </div>
+              <div className="text-sm text-muted-foreground mt-1">Taux de conformité global</div>
             </div>
           </div>
         </CardContent>
@@ -452,5 +481,5 @@ export function HSEAnalyticsDashboard({ incidents, trainings, employees }: HSEAn
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

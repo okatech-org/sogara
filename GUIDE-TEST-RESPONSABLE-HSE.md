@@ -3,6 +3,7 @@
 ## 👤 Compte de Test
 
 ### Identification
+
 - **Matricule**: `HSE001`
 - **Nom complet**: Marie-Claire NZIEGE
 - **Poste**: Chef de Division HSE et Conformité
@@ -11,6 +12,7 @@
 - **Rôles**: HSE, COMPLIANCE, SECURITE
 
 ### Route d'accès directe
+
 ```
 /app/hse
 ```
@@ -22,6 +24,7 @@
 **Accès**: `/app/hse`
 
 #### Vue d'ensemble (Overview)
+
 - [x] **KPIs en temps réel**
   - Incidents ouverts avec badge sévérité élevée
   - Formations cette semaine
@@ -47,6 +50,7 @@
   - Barre de progression inscription
 
 #### Onglet Incidents
+
 - [x] **Recherche avancée** (HSEAdvancedSearch)
   - Par terme de recherche
   - Par sévérité (low/medium/high)
@@ -70,6 +74,7 @@
   - Clic pour voir détails
 
 #### Onglet Formations & Modules ⭐
+
 - [x] **Sous-onglet "Modules Interactifs"**
   - HSETrainerDashboard complet
   - Gestion des modules de formation
@@ -91,6 +96,7 @@
 **Accès**: Onglet "Collaborateurs" dans `/app/hse`
 
 #### Tableau de bord global
+
 - [x] **4 KPIs de conformité**
   - Total Employés (count)
   - Conformes ≥90% (vert)
@@ -103,6 +109,7 @@
   - Filtre par rôle (EMPLOYE, SUPERVISEUR, etc.)
 
 #### Cartes employés
+
 - [x] **Pour chaque employé**
   - Nom, matricule, service
   - Badges des rôles
@@ -113,6 +120,7 @@
   - Boutons "Détails" et "Assigner"
 
 #### Vue détaillée employé
+
 - [x] **En-tête**
   - Nom complet, matricule, service
   - Badges rôles
@@ -135,6 +143,7 @@
 **Accès**: Onglet "Notifications" dans `/app/hse`
 
 #### Vue globale
+
 - [x] **Bouton "Envoyer une notification"** (HSE uniquement)
 - [x] **4 KPIs notifications**
   - Total reçues
@@ -143,6 +152,7 @@
   - Envoyées (bleu, HSE only)
 
 #### Onglet "Notifications reçues"
+
 - [x] **Filtres**
   - Par type (Formations/Incidents/Équipements/Conformité)
   - Par statut (Toutes/Non lues/Lues)
@@ -157,11 +167,13 @@
   - Expéditeur affiché
 
 #### Onglet "Notifications envoyées" (HSE)
+
 - [x] **Historique envois**
   - Liste complète avec destinataires
   - Statut de lecture (si trackable)
 
 #### Dialog envoi notification
+
 - [x] **Sélection modèle prédéfini**
   - 5 modèles disponibles:
     - Rappel de formation
@@ -187,6 +199,7 @@
 **Accès**: Onglet "Attribution Auto" dans `/app/hse`
 
 #### Vue principale
+
 - [x] **Bouton "Lancer l'attribution"**
   - Animation pendant traitement
   - Toast de confirmation avec nombre
@@ -198,6 +211,7 @@
   - En attente de traitement (jaune)
 
 #### Onglet "Règles d'attribution"
+
 - [x] **6 règles par défaut**
   1. Induction obligatoire (tous nouveaux)
   2. Formation H2S (Production) - CRITIQUE
@@ -219,12 +233,14 @@
   - Bouton "Détails"
 
 #### Onglet "Attributions générées"
+
 - [x] **Table complète**
   - Colonnes: Employé, Formation, Règle, Priorité, Échéance, Statut
   - Tri et filtrage
   - Status badges (pending/notified/accepted/completed/rejected)
 
 #### Onglet "Matrice de conformité"
+
 - [x] **Vue par service**
   - Regroupement par service (Production, Maintenance, etc.)
   - Cartes formations requises
@@ -234,6 +250,7 @@
 ### 5. Autres Onglets Existants
 
 #### Conformité & EPI
+
 - [x] **Sous-onglet "Tableau de Bord"**
   - HSEComplianceDashboard
   - Taux conformité global
@@ -250,6 +267,7 @@
   - Résultats et rapports
 
 #### Système & Outils
+
 - [x] **Sous-onglet "État Système"**
   - HSESystemStatus
   - Validation système HSE
@@ -266,6 +284,7 @@
   - Optimisations
 
 #### Analyses & Rapports
+
 - [x] **HSEAnalyticsDashboard**
   - Graphiques incidents (tendances)
   - Graphiques formations (completion rate)
@@ -418,21 +437,25 @@
 ## 📊 Indicateurs de Succès
 
 ### Conformité
+
 - [ ] Taux global ≥ 90% (vert)
 - [ ] Aucun employé <70% en Production/Maintenance
 - [ ] Formations critiques (H2S, Espace confiné) = 100%
 
 ### Réactivité
+
 - [ ] Incidents HIGH traités en <24h
 - [ ] Notifications envoyées en <5 min
 - [ ] Sessions programmées dans les 7 jours suivant attribution
 
 ### Traçabilité
+
 - [ ] Tous incidents documentés avec photos
 - [ ] Historique complet formations par employé
 - [ ] Preuves notifications envoyées (timestamps)
 
 ### Automatisation
+
 - [ ] 6 règles d'attribution actives
 - [ ] Attribution automatique fonctionne (toast confirmation)
 - [ ] Rappels automatiques avant expiration (si implémenté)
@@ -440,6 +463,7 @@
 ## 🚨 Points d'Attention
 
 ### Formations Critiques SOGARA
+
 Ces formations nécessitent une attention particulière (priorité HIGH):
 
 1. **HSE-015 (H2S)** - Personnel Production
@@ -458,6 +482,7 @@ Ces formations nécessitent une attention particulière (priorité HIGH):
    - Ancrage certifié
 
 ### Conformité Réglementaire
+
 - **ISO 45001:2018** (Santé et sécurité)
 - **ISO 14001:2015** (Management environnemental)
 - **Code du Travail Gabonais**
@@ -465,7 +490,9 @@ Ces formations nécessitent une attention particulière (priorité HIGH):
 - **API** (American Petroleum Institute)
 
 ### Communication d'Urgence
+
 En cas d'incident critique:
+
 1. Déclaration immédiate dans système
 2. Notification "hse_incident_high" → tous concernés
 3. Briefing sécurité si nécessaire
@@ -474,6 +501,7 @@ En cas d'incident critique:
 ## 🎓 Formations par Poste (Référence Rapide)
 
 ### Production (Techniciens)
+
 - ✅ HSE-001 : Induction obligatoire
 - ⚠️ HSE-015 : H2S (CRITIQUE)
 - ✅ HSE-002 : EPI avancé
@@ -483,6 +511,7 @@ En cas d'incident critique:
 - ✅ HSE-008 : SST
 
 ### Maintenance
+
 - ✅ HSE-001 : Induction obligatoire
 - ✅ HSE-002 : EPI avancé
 - ✅ HSE-003 : Incendie
@@ -491,12 +520,14 @@ En cas d'incident critique:
 - ✅ HSE-008 : SST
 
 ### Superviseurs
+
 - ✅ HSE-001 : Induction obligatoire
 - ✅ HSE-007 : Permis de travail (émetteur)
 - ✅ HSE-008 : SST (obligatoire)
 - ✅ Toutes formations des équipes supervisées
 
 ### Administratif
+
 - ✅ HSE-001 : Induction obligatoire
 - ✅ HSE-003 : Incendie (évacuation)
 - ⭕ HSE-008 : SST (recommandé)
@@ -506,6 +537,7 @@ En cas d'incident critique:
 ## 🎯 Prochaines Étapes (Post-Test)
 
 ### Optimisations Possibles
+
 - [ ] Rappels automatiques email (à J-30, J-15, J-7)
 - [ ] Dashboard mobile pour superviseurs terrain
 - [ ] Signature électronique attestations
@@ -514,6 +546,7 @@ En cas d'incident critique:
 - [ ] Gamification (badges, classements services)
 
 ### Reporting Avancé
+
 - [ ] Export Excel conformité par service
 - [ ] Génération automatique rapports mensuels
 - [ ] Tableaux de bord PowerBI/Tableau

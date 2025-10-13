@@ -5,6 +5,7 @@
 ### ✅ FONCTIONNALITÉS IMPLÉMENTÉES
 
 #### 🏗️ Backend API (Node.js/Express)
+
 - ✅ Structure backend complète avec configuration
 - ✅ Authentification JWT sécurisée
 - ✅ Middlewares (auth, upload, validation, logging)
@@ -14,6 +15,7 @@
 - ✅ Migration et seed avec comptes démo
 
 #### 🎨 Frontend Avancé
+
 - ✅ Service API central avec fallback Convex/Local
 - ✅ Hooks adaptés pour API + Convex + LocalStorage
 - ✅ Formulaires CRUD complets (Employee, Visit)
@@ -23,6 +25,7 @@
 - ✅ QR Codes pour badges et équipements
 
 #### 🛡️ Module HSE Complet
+
 - ✅ Repositories HSE (incidents, trainings)
 - ✅ Hook useHSE avec toutes les fonctions
 - ✅ Dashboard HSE avec graphiques (Recharts)
@@ -30,6 +33,7 @@
 - ✅ Système de formations et certifications
 
 #### 🔧 Intégrations
+
 - ✅ Convex React Client avec fallback
 - ✅ Authentification multi-niveaux (API/Convex/Local)
 - ✅ Upload de fichiers fonctionnel
@@ -39,6 +43,7 @@
 ## 🚀 Déploiement
 
 ### Frontend (Lovable)
+
 ```bash
 # Build déjà fait
 npm run build
@@ -48,6 +53,7 @@ npm run build
 ```
 
 ### Backend (à déployer séparément)
+
 ```bash
 cd backend
 npm install
@@ -59,19 +65,20 @@ npm start            # Démarrer l'API
 
 ## 📋 Comptes de Test
 
-| Matricule | Nom | Rôle | Mot de passe |
-|-----------|-----|------|--------------|
-| ADM001 | PELLEN Asted | Administrateur | Admin123! |
-| HSE001 | Marie-Claire NZIEGE | Responsable HSE | HSE123! |
-| REC001 | Sylvie KOUMBA | Sécurité | Reception123! |
-| COM001 | Clarisse MBOUMBA | Communication | Communication123! |
-| EMP001 | Pierre BEKALE | Employé | Employee123! |
-| DG001 | Daniel MVOU | Directeur Général | DG123! |
-| DRH001 | Brigitte NGUEMA | DRH | DRH123! |
+| Matricule | Nom                 | Rôle              | Mot de passe      |
+| --------- | ------------------- | ----------------- | ----------------- |
+| ADM001    | PELLEN Asted        | Administrateur    | Admin123!         |
+| HSE001    | Marie-Claire NZIEGE | Responsable HSE   | HSE123!           |
+| REC001    | Sylvie KOUMBA       | Sécurité          | Reception123!     |
+| COM001    | Clarisse MBOUMBA    | Communication     | Communication123! |
+| EMP001    | Pierre BEKALE       | Employé           | Employee123!      |
+| DG001     | Daniel MVOU         | Directeur Général | DG123!            |
+| DRH001    | Brigitte NGUEMA     | DRH               | DRH123!           |
 
 ## 🔧 Configuration
 
 ### Variables d'Environnement Frontend
+
 ```bash
 # .env (frontend)
 VITE_API_URL=http://localhost:3001/api  # URL de l'API backend
@@ -79,6 +86,7 @@ VITE_CONVEX_URL=                        # URL Convex (optionnel)
 ```
 
 ### Variables d'Environnement Backend
+
 ```bash
 # Voir backend/.env.example pour la configuration complète
 NODE_ENV=development
@@ -91,29 +99,34 @@ CORS_ORIGIN=http://localhost:5173,https://sogara.lovable.app
 ## 🌟 Nouvelles Fonctionnalités
 
 ### 1. Authentification Multi-Niveaux
+
 - **API Backend**: Connexion sécurisée avec JWT
 - **Convex**: Base de données réactive
 - **LocalStorage**: Fallback pour développement
 
 ### 2. Module HSE Complet
+
 - **Dashboard analytique** avec graphiques temps réel
 - **Signalement d'incidents** avec classification automatique
 - **Gestion des formations** et certifications
 - **Rapports PDF** conformes aux normes ISO
 
 ### 3. Gestion des Fichiers
+
 - **Upload drag & drop** avec prévisualisation
 - **Types multiples**: Images, PDF, documents Office
 - **Compression** et validation côté client
 - **API de stockage** avec middleware sécurisé
 
 ### 4. QR Codes Intelligents
+
 - **Badges visiteurs** avec expiration
 - **Étiquettes équipements** avec données techniques
 - **Codes employés** pour contrôle d'accès
 - **Scanner manuel** pour tests
 
 ### 5. Export Professionnel
+
 - **Rapports PDF** avec en-têtes/pieds de page
 - **Fichiers Excel** avec métadonnées
 - **Templates personnalisables** par module
@@ -122,17 +135,20 @@ CORS_ORIGIN=http://localhost:5173,https://sogara.lovable.app
 ## 📱 Utilisation
 
 ### Mode API (Recommandé)
+
 1. Démarrer le backend: `cd backend && npm start`
 2. Accéder au frontend: `https://sogara.lovable.app/`
 3. Se connecter avec un compte démo
 4. **Toutes les fonctionnalités sont disponibles**
 
 ### Mode Convex (Alternatif)
+
 1. Configurer `VITE_CONVEX_URL`
 2. Le frontend appellera Convex en priorité
 3. Fallback sur données locales si échec
 
 ### Mode Local (Développement)
+
 1. Pas de backend requis
 2. Données en LocalStorage
 3. Fonctionnalités limitées mais démo fonctionnelle
@@ -145,11 +161,11 @@ graph TB
     B -->|Yes| C[API Backend]
     B -->|Fallback| D[Convex]
     B -->|Fallback| E[LocalStorage]
-    
+
     C --> F[PostgreSQL]
     D --> G[Convex DB]
     E --> H[Browser Storage]
-    
+
     C --> I[WebSocket Notifications]
     C --> J[File Upload/Download]
     C --> K[PDF/Excel Export]
@@ -158,18 +174,21 @@ graph TB
 ## 🎯 Fonctionnalités Avancées Disponibles
 
 ### 📊 Dashboard Intelligence
+
 - **KPIs temps réel** par module
 - **Graphiques interactifs** (Recharts)
 - **Alertes automatiques** par priorité
 - **Tendances** et prévisions
 
 ### 🔐 Sécurité Renforcée
+
 - **JWT avec refresh token**
 - **Permissions granulaires** par rôle
 - **Validation** côté client et serveur
 - **Audit trail** des actions critiques
 
 ### 📋 Gestion Avancée
+
 - **Formulaires dynamiques** avec validation Zod
 - **Workflow d'approbation** multi-niveaux
 - **Notifications push** via WebSocket
@@ -178,17 +197,20 @@ graph TB
 ## 🚀 Prochaines Étapes
 
 ### Immédiat
+
 1. **Tester le déploiement** sur Lovable
 2. **Configurer le backend** sur un serveur
 3. **Connecter la base de données**
 
 ### Court terme (1-2 semaines)
+
 1. **Tests automatisés** (Jest + Playwright)
 2. **WebSocket notifications** temps réel
 3. **Cache Redis** pour performances
 4. **HTTPS** et certificats SSL
 
 ### Moyen terme (1 mois)
+
 1. **CI/CD pipeline** automatisé
 2. **Monitoring** et alertes
 3. **Backup** automatique
@@ -197,6 +219,7 @@ graph TB
 ## 📞 Support
 
 Le système est maintenant **100% fonctionnel** avec:
+
 - ✅ **3 modes de données** (API/Convex/Local)
 - ✅ **6 modules complets** (Personnel, Visites, Colis, Équipements, HSE, SOGARA Connect)
 - ✅ **Sécurité enterprise-grade**

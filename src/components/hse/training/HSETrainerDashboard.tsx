@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
-import { 
-  BookOpen, 
-  Users, 
-  Award, 
-  Calendar, 
-  TrendingUp, 
+import { useState, useEffect } from 'react'
+import {
+  BookOpen,
+  Users,
+  Award,
+  Calendar,
+  TrendingUp,
   AlertTriangle,
   Shield,
   Plus,
@@ -14,56 +14,70 @@ import {
   FileText,
   Eye,
   Edit,
-  Play
-} from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Progress } from '@/components/ui/progress';
-import { HSETrainingModule as TrainingModuleType, HSETrainingProgress, Employee } from '@/types';
-import { hseTrainingService } from '@/services/hse-training.service';
-import { HSETrainingModule as TrainingModuleComponent } from './HSETrainingModule';
-import { HSEQuickStartGuide } from './HSEQuickStartGuide';
-import { HSEEmployeeSelector } from './HSEEmployeeSelector';
-import { PDFGeneratorService } from '@/services/pdf-generator.service';
-import { useAuth } from '@/contexts/AppContext';
+  Play,
+} from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Input } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Progress } from '@/components/ui/progress'
+import { HSETrainingModule as TrainingModuleType, HSETrainingProgress, Employee } from '@/types'
+import { hseTrainingService } from '@/services/hse-training.service'
+import { HSETrainingModule as TrainingModuleComponent } from './HSETrainingModule'
+import { HSEQuickStartGuide } from './HSEQuickStartGuide'
+import { HSEEmployeeSelector } from './HSEEmployeeSelector'
+import { PDFGeneratorService } from '@/services/pdf-generator.service'
+import { useAuth } from '@/contexts/AppContext'
 
 // Import des modules de formation
-import inductionModule from '@/data/training-modules/hse-001-induction.json';
-import h2sModule from '@/data/training-modules/hse-015-h2s.json';
-import epiModule from '@/data/training-modules/hse-002-epi.json';
-import fireModule from '@/data/training-modules/hse-003-incendie.json';
-import confinedSpaceModule from '@/data/training-modules/hse-004-espace-confine.json';
-import heightModule from '@/data/training-modules/hse-005-travail-hauteur.json';
-import chemModule from '@/data/training-modules/hse-006-produits-chimiques.json';
-import permitModule from '@/data/training-modules/hse-007-permis-travail.json';
-import sstModule from '@/data/training-modules/hse-008-sst.json';
-import lockoutModule from '@/data/training-modules/hse-009-consignation.json';
-import envModule from '@/data/training-modules/hse-010-environnement.json';
-import elecModule from '@/data/training-modules/hse-011-habilitation-electrique.json';
-import investigationModule from '@/data/training-modules/hse-012-investigation-incidents.json';
-import drivingModule from '@/data/training-modules/hse-013-conduite-defensive.json';
-import ergonomicsModule from '@/data/training-modules/hse-014-gestes-postures.json';
+import inductionModule from '@/data/training-modules/hse-001-induction.json'
+import h2sModule from '@/data/training-modules/hse-015-h2s.json'
+import epiModule from '@/data/training-modules/hse-002-epi.json'
+import fireModule from '@/data/training-modules/hse-003-incendie.json'
+import confinedSpaceModule from '@/data/training-modules/hse-004-espace-confine.json'
+import heightModule from '@/data/training-modules/hse-005-travail-hauteur.json'
+import chemModule from '@/data/training-modules/hse-006-produits-chimiques.json'
+import permitModule from '@/data/training-modules/hse-007-permis-travail.json'
+import sstModule from '@/data/training-modules/hse-008-sst.json'
+import lockoutModule from '@/data/training-modules/hse-009-consignation.json'
+import envModule from '@/data/training-modules/hse-010-environnement.json'
+import elecModule from '@/data/training-modules/hse-011-habilitation-electrique.json'
+import investigationModule from '@/data/training-modules/hse-012-investigation-incidents.json'
+import drivingModule from '@/data/training-modules/hse-013-conduite-defensive.json'
+import ergonomicsModule from '@/data/training-modules/hse-014-gestes-postures.json'
 
 interface HSETrainerDashboardProps {
-  canManage?: boolean;
+  canManage?: boolean
 }
 
 export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardProps) {
-  const { currentUser, state } = useAuth();
-  const [selectedModule, setSelectedModule] = useState<TrainingModuleType | null>(null);
-  const [selectedEmployee, setSelectedEmployee] = useState<string>('');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterCategory, setFilterCategory] = useState<string>('all');
-  const [showModuleCreator, setShowModuleCreator] = useState(false);
-  const [showEmployeeSelector, setShowEmployeeSelector] = useState<TrainingModuleType | null>(null);
-  const [notifications, setNotifications] = useState<Array<{id: string, message: string, type: 'success' | 'error'}>>([]);
+  const { currentUser, state } = useAuth()
+  const [selectedModule, setSelectedModule] = useState<TrainingModuleType | null>(null)
+  const [selectedEmployee, setSelectedEmployee] = useState<string>('')
+  const [searchTerm, setSearchTerm] = useState('')
+  const [filterCategory, setFilterCategory] = useState<string>('all')
+  const [showModuleCreator, setShowModuleCreator] = useState(false)
+  const [showEmployeeSelector, setShowEmployeeSelector] = useState<TrainingModuleType | null>(null)
+  const [notifications, setNotifications] = useState<
+    Array<{ id: string; message: string; type: 'success' | 'error' }>
+  >([])
 
   // Gestion du cas où state n'est pas encore initialisé
   if (!state || !state.employees) {
@@ -74,123 +88,129 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
           <p className="text-gray-600">Chargement du tableau de bord des formations...</p>
         </div>
       </div>
-    );
+    )
   }
 
   // Modules de formation disponibles (ordre logique de progression)
   const trainingModules: TrainingModuleType[] = [
-    inductionModule as TrainingModuleType,           // HSE-001 - Base obligatoire
-    epiModule as TrainingModuleType,                 // HSE-002 - EPI de base
-    fireModule as TrainingModuleType,                // HSE-003 - Incendie
-    confinedSpaceModule as TrainingModuleType,       // HSE-004 - Espace confiné
-    heightModule as TrainingModuleType,              // HSE-005 - Travail hauteur
-    chemModule as TrainingModuleType,                // HSE-006 - Produits chimiques
-    permitModule as TrainingModuleType,              // HSE-007 - Permis (management)
-    sstModule as TrainingModuleType,                 // HSE-008 - Secourisme
-    lockoutModule as TrainingModuleType,             // HSE-009 - Consignation
-    envModule as TrainingModuleType,                 // HSE-010 - Environnement
-    elecModule as TrainingModuleType,                // HSE-011 - Électricité
-    investigationModule as TrainingModuleType,       // HSE-012 - Investigation incidents
-    drivingModule as TrainingModuleType,             // HSE-013 - Conduite défensive
-    ergonomicsModule as TrainingModuleType,          // HSE-014 - Gestes et postures
-    h2sModule as TrainingModuleType,                 // HSE-015 - H2S (critique en fin)
-  ];
+    inductionModule as TrainingModuleType, // HSE-001 - Base obligatoire
+    epiModule as TrainingModuleType, // HSE-002 - EPI de base
+    fireModule as TrainingModuleType, // HSE-003 - Incendie
+    confinedSpaceModule as TrainingModuleType, // HSE-004 - Espace confiné
+    heightModule as TrainingModuleType, // HSE-005 - Travail hauteur
+    chemModule as TrainingModuleType, // HSE-006 - Produits chimiques
+    permitModule as TrainingModuleType, // HSE-007 - Permis (management)
+    sstModule as TrainingModuleType, // HSE-008 - Secourisme
+    lockoutModule as TrainingModuleType, // HSE-009 - Consignation
+    envModule as TrainingModuleType, // HSE-010 - Environnement
+    elecModule as TrainingModuleType, // HSE-011 - Électricité
+    investigationModule as TrainingModuleType, // HSE-012 - Investigation incidents
+    drivingModule as TrainingModuleType, // HSE-013 - Conduite défensive
+    ergonomicsModule as TrainingModuleType, // HSE-014 - Gestes et postures
+    h2sModule as TrainingModuleType, // HSE-015 - H2S (critique en fin)
+  ]
 
-  const employees = state.employees || [];
+  const employees = state.employees || []
 
   // Fonction pour ajouter une notification
   const addNotification = (message: string, type: 'success' | 'error' = 'success') => {
-    const id = Math.random().toString(36).substring(7);
-    setNotifications(prev => [...prev, { id, message, type }]);
-    
+    const id = Math.random().toString(36).substring(7)
+    setNotifications(prev => [...prev, { id, message, type }])
+
     // Auto-supprimer après 5 secondes
     setTimeout(() => {
-      setNotifications(prev => prev.filter(n => n.id !== id));
-    }, 5000);
-  };
+      setNotifications(prev => prev.filter(n => n.id !== id))
+    }, 5000)
+  }
 
   // Statistiques des formations
   const getTrainingStats = () => {
-    const allProgress = employees.flatMap(emp => 
-      trainingModules.map(module => 
-        hseTrainingService.getOrCreateProgress(emp.id, module.id)
-      )
-    );
+    const allProgress = employees.flatMap(emp =>
+      trainingModules.map(module => hseTrainingService.getOrCreateProgress(emp.id, module.id)),
+    )
 
-    const completed = allProgress.filter(p => p.status === 'completed').length;
-    const inProgress = allProgress.filter(p => p.status === 'in_progress').length;
-    const notStarted = allProgress.filter(p => p.status === 'not_started').length;
+    const completed = allProgress.filter(p => p.status === 'completed').length
+    const inProgress = allProgress.filter(p => p.status === 'in_progress').length
+    const notStarted = allProgress.filter(p => p.status === 'not_started').length
 
     return {
       total: allProgress.length,
       completed,
       inProgress,
       notStarted,
-      complianceRate: allProgress.length > 0 ? Math.round((completed / allProgress.length) * 100) : 0
-    };
-  };
+      complianceRate:
+        allProgress.length > 0 ? Math.round((completed / allProgress.length) * 100) : 0,
+    }
+  }
 
-  const stats = getTrainingStats();
+  const stats = getTrainingStats()
 
   // Filtrer les modules
   const filteredModules = trainingModules.filter(module => {
-    const matchesSearch = searchTerm === '' || 
+    const matchesSearch =
+      searchTerm === '' ||
       module.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      module.description.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesCategory = filterCategory === 'all' || module.category === filterCategory;
-    
-    return matchesSearch && matchesCategory;
-  });
+      module.description.toLowerCase().includes(searchTerm.toLowerCase())
+
+    const matchesCategory = filterCategory === 'all' || module.category === filterCategory
+
+    return matchesSearch && matchesCategory
+  })
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'Critique': return 'destructive';
-      case 'Obligatoire': return 'default';
-      case 'Spécialisée': return 'secondary';
-      case 'Management': return 'outline';
-      case 'Prévention': return 'outline';
-      default: return 'outline';
+      case 'Critique':
+        return 'destructive'
+      case 'Obligatoire':
+        return 'default'
+      case 'Spécialisée':
+        return 'secondary'
+      case 'Management':
+        return 'outline'
+      case 'Prévention':
+        return 'outline'
+      default:
+        return 'outline'
     }
-  };
+  }
 
   const getProgressForModule = (moduleId: string) => {
     return employees.map(emp => {
-      const progress = hseTrainingService.getOrCreateProgress(emp.id, moduleId);
-      return { employee: emp, progress };
-    });
-  };
+      const progress = hseTrainingService.getOrCreateProgress(emp.id, moduleId)
+      return { employee: emp, progress }
+    })
+  }
 
   if (selectedModule && selectedEmployee) {
     return (
       <TrainingModuleComponent
         module={selectedModule}
         employeeId={selectedEmployee}
-        onComplete={(progress) => {
+        onComplete={progress => {
           try {
-            const employee = employees.find(emp => emp.id === progress.employeeId);
-            const module = trainingModules.find(mod => mod.id === progress.trainingModuleId);
-            
+            const employee = employees.find(emp => emp.id === progress.employeeId)
+            const module = trainingModules.find(mod => mod.id === progress.trainingModuleId)
+
             if (employee && module) {
               addNotification(
                 `🎉 Félicitations ! ${employee.firstName} ${employee.lastName} a terminé la formation "${module.title}" avec succès.`,
-                'success'
-              );
+                'success',
+              )
             }
-            
-            setSelectedModule(null);
-            setSelectedEmployee('');
+
+            setSelectedModule(null)
+            setSelectedEmployee('')
           } catch (error) {
-            console.error('Erreur fin de formation:', error);
-            addNotification('Erreur lors de la finalisation de la formation', 'error');
+            console.error('Erreur fin de formation:', error)
+            addNotification('Erreur lors de la finalisation de la formation', 'error')
           }
         }}
         onExit={() => {
-          setSelectedModule(null);
-          setSelectedEmployee('');
+          setSelectedModule(null)
+          setSelectedEmployee('')
         }}
       />
-    );
+    )
   }
 
   return (
@@ -198,8 +218,8 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
       {/* Notifications */}
       {notifications.length > 0 && (
         <div className="fixed top-4 right-4 z-50 space-y-2">
-          {notifications.map((notification) => (
-            <Alert 
+          {notifications.map(notification => (
+            <Alert
               key={notification.id}
               variant={notification.type === 'error' ? 'destructive' : 'default'}
               className="w-96 animate-in slide-in-from-right"
@@ -222,13 +242,13 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
         <div className="flex gap-2">
           {/* Test rapide avec utilisateur actuel */}
           {currentUser && (
-            <Button 
+            <Button
               variant="outline"
               onClick={() => {
                 // Utiliser la première formation pour test
-                const testModule = trainingModules[0];
-                setSelectedModule(testModule);
-                setSelectedEmployee(currentUser.id);
+                const testModule = trainingModules[0]
+                setSelectedModule(testModule)
+                setSelectedEmployee(currentUser.id)
               }}
               className="gap-2"
             >
@@ -267,9 +287,7 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">{stats.completed}</div>
-            <p className="text-xs text-muted-foreground">
-              Certificats délivrés
-            </p>
+            <p className="text-xs text-muted-foreground">Certificats délivrés</p>
           </CardContent>
         </Card>
 
@@ -280,9 +298,7 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600">{stats.inProgress}</div>
-            <p className="text-xs text-muted-foreground">
-              Formations démarrées
-            </p>
+            <p className="text-xs text-muted-foreground">Formations démarrées</p>
           </CardContent>
         </Card>
 
@@ -308,7 +324,7 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
                 <Input
                   placeholder="Rechercher une formation..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={e => setSearchTerm(e.target.value)}
                   className="pl-10"
                 />
               </div>
@@ -340,12 +356,12 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
 
         {/* Onglet Guide de démarrage */}
         <TabsContent value="guide">
-          <HSEQuickStartGuide 
-            onStartTraining={(moduleId) => {
-              const module = trainingModules.find(m => m.id === moduleId);
+          <HSEQuickStartGuide
+            onStartTraining={moduleId => {
+              const module = trainingModules.find(m => m.id === moduleId)
               if (module) {
-                setSelectedModule(module);
-                setSelectedEmployee(currentUser?.id || employees[0]?.id || '');
+                setSelectedModule(module)
+                setSelectedEmployee(currentUser?.id || employees[0]?.id || '')
               }
             }}
           />
@@ -354,18 +370,20 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
         {/* Onglet Modules */}
         <TabsContent value="modules">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredModules.map((module) => {
-              const moduleProgress = getProgressForModule(module.id);
-              const completedCount = moduleProgress.filter(p => p.progress.status === 'completed').length;
-              const inProgressCount = moduleProgress.filter(p => p.progress.status === 'in_progress').length;
+            {filteredModules.map(module => {
+              const moduleProgress = getProgressForModule(module.id)
+              const completedCount = moduleProgress.filter(
+                p => p.progress.status === 'completed',
+              ).length
+              const inProgressCount = moduleProgress.filter(
+                p => p.progress.status === 'in_progress',
+              ).length
 
               return (
                 <Card key={module.id} className="industrial-card hover:shadow-lg transition-shadow">
                   <CardHeader>
                     <div className="flex items-start justify-between">
-                      <Badge variant={getCategoryColor(module.category)}>
-                        {module.category}
-                      </Badge>
+                      <Badge variant={getCategoryColor(module.category)}>{module.category}</Badge>
                       <Badge variant="outline" className="text-xs">
                         {module.code}
                       </Badge>
@@ -438,18 +456,23 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
                                       ))}
                                     </ul>
                                   </div>
-                                  
+
                                   <div>
                                     <h3 className="font-semibold mb-2">Modules du contenu</h3>
                                     <div className="space-y-2">
                                       {module.content.modules.map((contentModule, index) => (
-                                        <div key={contentModule.id} className="flex items-center gap-3 p-2 border rounded">
+                                        <div
+                                          key={contentModule.id}
+                                          className="flex items-center gap-3 p-2 border rounded"
+                                        >
                                           <span className="w-6 h-6 bg-primary/10 text-primary rounded-full flex items-center justify-center text-xs font-bold">
                                             {index + 1}
                                           </span>
                                           <div className="flex-1">
                                             <div className="font-medium">{contentModule.title}</div>
-                                            <div className="text-sm text-muted-foreground">{contentModule.description}</div>
+                                            <div className="text-sm text-muted-foreground">
+                                              {contentModule.description}
+                                            </div>
                                           </div>
                                           <Badge variant="outline">{contentModule.duration}h</Badge>
                                         </div>
@@ -460,12 +483,16 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
                                   <div>
                                     <h3 className="font-semibold mb-2">Évaluations</h3>
                                     <div className="space-y-2">
-                                      {module.content.assessments.map((assessment) => (
-                                        <div key={assessment.id} className="flex items-center justify-between p-2 border rounded">
+                                      {module.content.assessments.map(assessment => (
+                                        <div
+                                          key={assessment.id}
+                                          className="flex items-center justify-between p-2 border rounded"
+                                        >
                                           <div>
                                             <div className="font-medium">{assessment.title}</div>
                                             <div className="text-sm text-muted-foreground">
-                                              {assessment.questions.length} questions • {assessment.duration} min
+                                              {assessment.questions.length} questions •{' '}
+                                              {assessment.duration} min
                                             </div>
                                           </div>
                                           <Badge>Score min: {assessment.passingScore}%</Badge>
@@ -479,17 +506,18 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
                           </DialogContent>
                         </Dialog>
 
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
+                        <Button
+                          variant="outline"
+                          size="sm"
                           className="gap-2"
                           onClick={async () => {
                             try {
-                              const pdfBlob = await PDFGeneratorService.generateTrainingManualPDF(module);
-                              const filename = `formation-${module.code}.pdf`;
-                              await PDFGeneratorService.downloadPDF(pdfBlob, filename);
+                              const pdfBlob =
+                                await PDFGeneratorService.generateTrainingManualPDF(module)
+                              const filename = `formation-${module.code}.pdf`
+                              await PDFGeneratorService.downloadPDF(pdfBlob, filename)
                             } catch (error) {
-                              console.error('Erreur génération PDF:', error);
+                              console.error('Erreur génération PDF:', error)
                             }
                           }}
                         >
@@ -497,10 +525,10 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
                           PDF
                         </Button>
 
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           onClick={() => {
-                            setShowEmployeeSelector(module);
+                            setShowEmployeeSelector(module)
                           }}
                           className="flex-1 gap-2"
                         >
@@ -511,7 +539,7 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
                     </div>
                   </CardContent>
                 </Card>
-              );
+              )
             })}
           </div>
         </TabsContent>
@@ -524,21 +552,25 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {employees.map((employee) => {
+                {employees.map(employee => {
                   const employeeProgress = trainingModules.map(module => ({
                     module,
-                    progress: hseTrainingService.getOrCreateProgress(employee.id, module.id)
-                  }));
+                    progress: hseTrainingService.getOrCreateProgress(employee.id, module.id),
+                  }))
 
-                  const completedCount = employeeProgress.filter(p => p.progress.status === 'completed').length;
-                  const complianceRate = Math.round((completedCount / trainingModules.length) * 100);
+                  const completedCount = employeeProgress.filter(
+                    p => p.progress.status === 'completed',
+                  ).length
+                  const complianceRate = Math.round((completedCount / trainingModules.length) * 100)
 
                   return (
                     <Card key={employee.id} className="border">
                       <CardContent className="pt-6">
                         <div className="flex items-center justify-between mb-4">
                           <div>
-                            <h3 className="font-medium">{employee.firstName} {employee.lastName}</h3>
+                            <h3 className="font-medium">
+                              {employee.firstName} {employee.lastName}
+                            </h3>
                             <p className="text-sm text-muted-foreground">
                               {employee.service} • {employee.roles.join(', ')}
                             </p>
@@ -548,26 +580,32 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
                             <div className="text-sm text-muted-foreground">Conformité</div>
                           </div>
                         </div>
-                        
+
                         <Progress value={complianceRate} className="mb-4" />
-                        
+
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                           {employeeProgress.map(({ module, progress }) => (
-                            <div 
+                            <div
                               key={`${employee.id}-${module.id}`}
                               className="flex items-center gap-2 p-2 rounded border"
                             >
-                              <div className={`w-3 h-3 rounded-full ${
-                                progress.status === 'completed' ? 'bg-green-500' :
-                                progress.status === 'in_progress' ? 'bg-blue-500' :
-                                'bg-gray-300'
-                              }`} />
+                              <div
+                                className={`w-3 h-3 rounded-full ${
+                                  progress.status === 'completed'
+                                    ? 'bg-green-500'
+                                    : progress.status === 'in_progress'
+                                      ? 'bg-blue-500'
+                                      : 'bg-gray-300'
+                                }`}
+                              />
                               <div className="flex-1 min-w-0">
                                 <div className="text-sm font-medium truncate">{module.title}</div>
                                 <div className="text-xs text-muted-foreground">
-                                  {progress.status === 'completed' ? 'Terminé' :
-                                   progress.status === 'in_progress' ? 'En cours' :
-                                   'Non démarré'}
+                                  {progress.status === 'completed'
+                                    ? 'Terminé'
+                                    : progress.status === 'in_progress'
+                                      ? 'En cours'
+                                      : 'Non démarré'}
                                 </div>
                               </div>
                               <div className="flex gap-1">
@@ -575,8 +613,8 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
                                   size="sm"
                                   variant="ghost"
                                   onClick={() => {
-                                    setSelectedModule(module);
-                                    setSelectedEmployee(employee.id);
+                                    setSelectedModule(module)
+                                    setSelectedEmployee(employee.id)
                                   }}
                                   title="Voir/Continuer formation"
                                 >
@@ -594,7 +632,11 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
                                     variant="ghost"
                                     onClick={() => {
                                       // Générer certificat pour cet employé
-                                      console.log('Générer certificat pour:', employee.firstName, module.title);
+                                      console.log(
+                                        'Générer certificat pour:',
+                                        employee.firstName,
+                                        module.title,
+                                      )
                                     }}
                                     title="Certificat"
                                   >
@@ -607,7 +649,7 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
                         </div>
                       </CardContent>
                     </Card>
-                  );
+                  )
                 })}
               </div>
             </CardContent>
@@ -622,9 +664,9 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {trainingModules.map((module) => {
-                  const moduleProgress = getProgressForModule(module.id);
-                  const certificates = moduleProgress.filter(p => p.progress.status === 'completed');
+                {trainingModules.map(module => {
+                  const moduleProgress = getProgressForModule(module.id)
+                  const certificates = moduleProgress.filter(p => p.progress.status === 'completed')
 
                   return (
                     <Card key={module.id} className="border">
@@ -636,16 +678,17 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
                               {certificates.length} certificats délivrés
                             </p>
                           </div>
-                          <Button 
-                            variant="outline" 
+                          <Button
+                            variant="outline"
                             className="gap-2"
                             onClick={async () => {
                               try {
-                                const pdfBlob = await PDFGeneratorService.generateTrainingManualPDF(module);
-                                const filename = `manuel-${module.code}-${module.title.replace(/\s+/g, '-').toLowerCase()}.pdf`;
-                                await PDFGeneratorService.downloadPDF(pdfBlob, filename);
+                                const pdfBlob =
+                                  await PDFGeneratorService.generateTrainingManualPDF(module)
+                                const filename = `manuel-${module.code}-${module.title.replace(/\s+/g, '-').toLowerCase()}.pdf`
+                                await PDFGeneratorService.downloadPDF(pdfBlob, filename)
                               } catch (error) {
-                                console.error('Erreur génération PDF:', error);
+                                console.error('Erreur génération PDF:', error)
                               }
                             }}
                           >
@@ -662,11 +705,16 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
                         ) : (
                           <div className="space-y-2">
                             {certificates.map(({ employee, progress }) => (
-                              <div key={`${employee.id}-${module.id}`} className="flex items-center justify-between p-2 border rounded">
+                              <div
+                                key={`${employee.id}-${module.id}`}
+                                className="flex items-center justify-between p-2 border rounded"
+                              >
                                 <div>
-                                  <div className="font-medium">{employee.firstName} {employee.lastName}</div>
+                                  <div className="font-medium">
+                                    {employee.firstName} {employee.lastName}
+                                  </div>
                                   <div className="text-sm text-muted-foreground">
-                                    Obtenu le {progress.completedAt?.toLocaleDateString('fr-FR')} • 
+                                    Obtenu le {progress.completedAt?.toLocaleDateString('fr-FR')} •
                                     Expire le {progress.expiresAt?.toLocaleDateString('fr-FR')}
                                   </div>
                                 </div>
@@ -684,7 +732,7 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
                         )}
                       </CardContent>
                     </Card>
-                  );
+                  )
                 })}
               </div>
             </CardContent>
@@ -720,28 +768,28 @@ export function HSETrainerDashboard({ canManage = true }: HSETrainerDashboardPro
             id: showEmployeeSelector.id,
             title: showEmployeeSelector.title,
             code: showEmployeeSelector.code,
-            requiredForRoles: showEmployeeSelector.requiredForRoles
+            requiredForRoles: showEmployeeSelector.requiredForRoles,
           }}
-          onSelectEmployee={(employeeId) => {
+          onSelectEmployee={employeeId => {
             try {
-              const employee = employees.find(emp => emp.id === employeeId);
+              const employee = employees.find(emp => emp.id === employeeId)
               if (employee && showEmployeeSelector) {
-                setSelectedModule(showEmployeeSelector);
-                setSelectedEmployee(employeeId);
-                setShowEmployeeSelector(null);
+                setSelectedModule(showEmployeeSelector)
+                setSelectedEmployee(employeeId)
+                setShowEmployeeSelector(null)
                 addNotification(
                   `Formation "${showEmployeeSelector.title}" démarrée pour ${employee.firstName} ${employee.lastName}`,
-                  'success'
-                );
+                  'success',
+                )
               }
             } catch (error) {
-              console.error('Erreur démarrage formation:', error);
-              addNotification('Erreur lors du démarrage de la formation', 'error');
+              console.error('Erreur démarrage formation:', error)
+              addNotification('Erreur lors du démarrage de la formation', 'error')
             }
           }}
           onCancel={() => setShowEmployeeSelector(null)}
         />
       )}
     </div>
-  );
+  )
 }

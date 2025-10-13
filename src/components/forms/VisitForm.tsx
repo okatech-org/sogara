@@ -1,23 +1,23 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { format, addDays } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import React, { useState, useEffect, useMemo } from 'react'
+import { useForm, Controller } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { format, addDays } from 'date-fns'
+import { fr } from 'date-fns/locale'
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { Separator } from '@/components/ui/separator'
+import { Badge } from '@/components/ui/badge'
+import { Calendar } from '@/components/ui/calendar'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 
-import { Visit, Visitor, Employee } from '@/types';
-import { CalendarIcon, User, Save, X, Search, Plus } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Visit, Visitor, Employee } from '@/types'
+import { CalendarIcon, User, Save, X, Search, Plus } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 // Schéma de validation
 const visitFormSchema = z.object({
@@ -26,55 +26,56 @@ const visitFormSchema = z.object({
     firstName: z.string().min(2, 'Prénom requis'),
     lastName: z.string().min(2, 'Nom requis'),
     company: z.string().min(2, 'Société requise'),
-    idDocument: z.string().min(5, 'Document d\'identité requis'),
+    idDocument: z.string().min(5, "Document d'identité requis"),
     documentType: z.enum(['cin', 'passport', 'other']),
     phone: z.string().optional(),
-    email: z.string().email().optional().or(z.literal(''))
+    email: z.string().email().optional().or(z.literal('')),
   }),
-  
-  hostEmployeeId: z.string().min(1, 'Hôte requis'),
-  
-  scheduledAt: z.date({
-    required_error: 'Date et heure requises'
-  }),
-  
-  purpose: z.string()
-    .min(5, 'L\'objet de la visite doit contenir au moins 5 caractères')
-    .max(500, 'L\'objet ne peut pas dépasser 500 caractères'),
-  
-  notes: z.string().max(1000).optional(),
-  
-  badgeNumber: z.string().max(20).optional()
-});
 
-type VisitFormData = z.infer<typeof visitFormSchema>;
+  hostEmployeeId: z.string().min(1, 'Hôte requis'),
+
+  scheduledAt: z.date({
+    required_error: 'Date et heure requises',
+  }),
+
+  purpose: z
+    .string()
+    .min(5, "L'objet de la visite doit contenir au moins 5 caractères")
+    .max(500, "L'objet ne peut pas dépasser 500 caractères"),
+
+  notes: z.string().max(1000).optional(),
+
+  badgeNumber: z.string().max(20).optional(),
+})
+
+type VisitFormData = z.infer<typeof visitFormSchema>
 
 interface VisitFormProps {
-  visit?: Visit;
-  visitor?: Visitor;
-  employees: Employee[];
-  visitors: Visitor[];
+  visit?: Visit
+  visitor?: Visitor
+  employees: Employee[]
+  visitors: Visitor[]
   onSubmit: (data: {
-    visitData: Omit<Visit, 'id' | 'createdAt' | 'updatedAt'>;
-    visitorData?: Omit<Visitor, 'id' | 'createdAt'>;
-  }) => Promise<void>;
-  onCancel: () => void;
-  isLoading?: boolean;
+    visitData: Omit<Visit, 'id' | 'createdAt' | 'updatedAt'>
+    visitorData?: Omit<Visitor, 'id' | 'createdAt'>
+  }) => Promise<void>
+  onCancel: () => void
+  isLoading?: boolean
 }
 
-export function VisitForm({ 
-  visit, 
-  visitor, 
-  employees, 
+export function VisitForm({
+  visit,
+  visitor,
+  employees,
   visitors,
-  onSubmit, 
-  onCancel, 
-  isLoading = false 
+  onSubmit,
+  onCancel,
+  isLoading = false,
 }: VisitFormProps) {
-  const [selectedVisitor, setSelectedVisitor] = useState<Visitor | null>(visitor || null);
-  const [visitorSearchTerm, setVisitorSearchTerm] = useState('');
-  const [showVisitorSearch, setShowVisitorSearch] = useState(!visitor && !visit);
-  const [isCreatingNewVisitor, setIsCreatingNewVisitor] = useState(false);
+  const [selectedVisitor, setSelectedVisitor] = useState<Visitor | null>(visitor || null)
+  const [visitorSearchTerm, setVisitorSearchTerm] = useState('')
+  const [showVisitorSearch, setShowVisitorSearch] = useState(!visitor && !visit)
+  const [isCreatingNewVisitor, setIsCreatingNewVisitor] = useState(false)
 
   const {
     register,
@@ -83,7 +84,7 @@ export function VisitForm({
     formState: { errors, isSubmitting },
     setValue,
     watch,
-    reset
+    reset,
   } = useForm<VisitFormData>({
     resolver: zodResolver(visitFormSchema),
     defaultValues: {
@@ -94,39 +95,43 @@ export function VisitForm({
         idDocument: visitor?.idDocument || '',
         documentType: visitor?.documentType || 'cin',
         phone: visitor?.phone || '',
-        email: visitor?.email || ''
+        email: visitor?.email || '',
       },
       hostEmployeeId: visit?.hostEmployeeId || '',
       scheduledAt: visit?.scheduledAt || addDays(new Date(), 1),
       purpose: visit?.purpose || '',
       notes: visit?.notes || '',
-      badgeNumber: visit?.badgeNumber || ''
-    }
-  });
+      badgeNumber: visit?.badgeNumber || '',
+    },
+  })
 
-  const watchedDate = watch('scheduledAt');
+  const watchedDate = watch('scheduledAt')
 
   // Filtrer les employés qui peuvent être des hôtes
-  const availableHosts = useMemo(() => (
-    employees.filter(emp => 
-      emp.roles.some(role => ['ADMIN', 'HSE', 'SUPERVISEUR', 'RECEP'].includes(role)) &&
-      emp.status === 'active'
-    )
-  ), [employees]);
+  const availableHosts = useMemo(
+    () =>
+      employees.filter(
+        emp =>
+          emp.roles.some(role => ['ADMIN', 'HSE', 'SUPERVISEUR', 'RECEP'].includes(role)) &&
+          emp.status === 'active',
+      ),
+    [employees],
+  )
 
   const visitorResults = useMemo(() => {
-    const term = visitorSearchTerm.trim().toLowerCase();
+    const term = visitorSearchTerm.trim().toLowerCase()
     const base = term
-      ? visitors.filter(v =>
-          v.firstName.toLowerCase().includes(term) ||
-          v.lastName.toLowerCase().includes(term) ||
-          v.company.toLowerCase().includes(term) ||
-          v.idDocument.toLowerCase().includes(term)
+      ? visitors.filter(
+          v =>
+            v.firstName.toLowerCase().includes(term) ||
+            v.lastName.toLowerCase().includes(term) ||
+            v.company.toLowerCase().includes(term) ||
+            v.idDocument.toLowerCase().includes(term),
         )
-      : visitors;
+      : visitors
 
-    return base.slice(0, 20);
-  }, [visitorSearchTerm, visitors]);
+    return base.slice(0, 20)
+  }, [visitorSearchTerm, visitors])
 
   // Soumission du formulaire
   const onFormSubmit = async (data: VisitFormData) => {
@@ -138,11 +143,11 @@ export function VisitForm({
         status: 'expected' as const,
         purpose: data.purpose,
         notes: data.notes,
-        badgeNumber: data.badgeNumber
-      };
+        badgeNumber: data.badgeNumber,
+      }
 
-      let visitorData = undefined;
-      
+      let visitorData = undefined
+
       // Si pas de visiteur sélectionné, créer un nouveau visiteur
       if (!selectedVisitor) {
         visitorData = {
@@ -152,53 +157,52 @@ export function VisitForm({
           idDocument: data.visitor.idDocument,
           documentType: data.visitor.documentType,
           phone: data.visitor.phone,
-          email: data.visitor.email
-        };
+          email: data.visitor.email,
+        }
       }
 
-      await onSubmit({ visitData, visitorData });
-      
+      await onSubmit({ visitData, visitorData })
     } catch (error) {
-      console.error('Erreur soumission visite:', error);
+      console.error('Erreur soumission visite:', error)
     }
-  };
+  }
 
   // Sélectionner un visiteur existant
   const selectExistingVisitor = (visitor: Visitor) => {
-    setSelectedVisitor(visitor);
-    setValue('visitor.firstName', visitor.firstName);
-    setValue('visitor.lastName', visitor.lastName);
-    setValue('visitor.company', visitor.company);
-    setValue('visitor.idDocument', visitor.idDocument);
-    setValue('visitor.documentType', visitor.documentType);
-    setValue('visitor.phone', visitor.phone || '');
-    setValue('visitor.email', visitor.email || '');
-    setShowVisitorSearch(false);
-  };
+    setSelectedVisitor(visitor)
+    setValue('visitor.firstName', visitor.firstName)
+    setValue('visitor.lastName', visitor.lastName)
+    setValue('visitor.company', visitor.company)
+    setValue('visitor.idDocument', visitor.idDocument)
+    setValue('visitor.documentType', visitor.documentType)
+    setValue('visitor.phone', visitor.phone || '')
+    setValue('visitor.email', visitor.email || '')
+    setShowVisitorSearch(false)
+  }
 
   // Créer un nouveau visiteur
   const createNewVisitor = () => {
-    setSelectedVisitor(null);
-    setIsCreatingNewVisitor(true);
-    setShowVisitorSearch(false);
-    
+    setSelectedVisitor(null)
+    setIsCreatingNewVisitor(true)
+    setShowVisitorSearch(false)
+
     // Reset les champs visiteur
-    setValue('visitor.firstName', '');
-    setValue('visitor.lastName', '');
-    setValue('visitor.company', '');
-    setValue('visitor.idDocument', '');
-    setValue('visitor.documentType', 'cin');
-    setValue('visitor.phone', '');
-    setValue('visitor.email', '');
-  };
+    setValue('visitor.firstName', '')
+    setValue('visitor.lastName', '')
+    setValue('visitor.company', '')
+    setValue('visitor.idDocument', '')
+    setValue('visitor.documentType', 'cin')
+    setValue('visitor.phone', '')
+    setValue('visitor.email', '')
+  }
 
   useEffect(() => {
     if (visitor) {
-      setSelectedVisitor(visitor);
-      setIsCreatingNewVisitor(false);
-      setShowVisitorSearch(false);
+      setSelectedVisitor(visitor)
+      setIsCreatingNewVisitor(false)
+      setShowVisitorSearch(false)
     }
-  }, [visitor]);
+  }, [visitor])
 
   return (
     <Card className="w-full max-w-4xl mx-auto">
@@ -208,14 +212,14 @@ export function VisitForm({
           {visit ? 'Modifier la visite' : 'Nouvelle visite'}
         </CardTitle>
       </CardHeader>
-      
+
       <CardContent>
         <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
           {/* Sélection/Création visiteur */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-medium">Visiteur</h3>
-              
+
               {!visit && (
                 <div className="flex gap-2">
                   <Button
@@ -227,12 +231,7 @@ export function VisitForm({
                     <Search className="w-4 h-4 mr-2" />
                     Rechercher
                   </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={createNewVisitor}
-                  >
+                  <Button type="button" variant="outline" size="sm" onClick={createNewVisitor}>
                     <Plus className="w-4 h-4 mr-2" />
                     Nouveau
                   </Button>
@@ -246,15 +245,15 @@ export function VisitForm({
                   <Input
                     placeholder="Rechercher par nom, société ou document..."
                     value={visitorSearchTerm}
-                    onChange={(e) => setVisitorSearchTerm(e.target.value)}
+                    onChange={e => setVisitorSearchTerm(e.target.value)}
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
                     onClick={() => {
-                      setShowVisitorSearch(false);
-                      setVisitorSearchTerm('');
+                      setShowVisitorSearch(false)
+                      setVisitorSearchTerm('')
                     }}
                   >
                     Fermer
@@ -266,7 +265,7 @@ export function VisitForm({
                       Aucun visiteur trouvé. Créez un nouveau visiteur.
                     </div>
                   )}
-                  {visitorResults.map((result) => (
+                  {visitorResults.map(result => (
                     <button
                       key={result.id}
                       type="button"
@@ -306,8 +305,8 @@ export function VisitForm({
                     variant="ghost"
                     size="sm"
                     onClick={() => {
-                      setSelectedVisitor(null);
-                      setIsCreatingNewVisitor(true);
+                      setSelectedVisitor(null)
+                      setIsCreatingNewVisitor(true)
                     }}
                   >
                     Modifier
@@ -411,7 +410,7 @@ export function VisitForm({
           {/* Détails de la visite */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Détails de la visite</h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="hostEmployeeId">Hôte *</Label>
@@ -448,31 +447,29 @@ export function VisitForm({
                         <Button
                           variant="outline"
                           className={cn(
-                            "w-full justify-start text-left font-normal",
-                            !field.value && "text-muted-foreground"
+                            'w-full justify-start text-left font-normal',
+                            !field.value && 'text-muted-foreground',
                           )}
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
-                          {field.value ? (
-                            format(field.value, "PPP à HH:mm", { locale: fr })
-                          ) : (
-                            "Sélectionner une date"
-                          )}
+                          {field.value
+                            ? format(field.value, 'PPP à HH:mm', { locale: fr })
+                            : 'Sélectionner une date'}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                           mode="single"
                           selected={field.value}
-                          onSelect={(date) => {
+                          onSelect={date => {
                             if (date) {
                               // Garder l'heure si elle existe, sinon définir à 9h00
-                              const currentTime = field.value || new Date();
-                              date.setHours(currentTime.getHours(), currentTime.getMinutes());
-                              field.onChange(date);
+                              const currentTime = field.value || new Date()
+                              date.setHours(currentTime.getHours(), currentTime.getMinutes())
+                              field.onChange(date)
                             }
                           }}
-                          disabled={(date) => date < new Date()}
+                          disabled={date => date < new Date()}
                           initialFocus
                         />
                         <div className="p-3 border-t">
@@ -481,12 +478,12 @@ export function VisitForm({
                             id="time"
                             type="time"
                             value={field.value ? format(field.value, 'HH:mm') : '09:00'}
-                            onChange={(e) => {
+                            onChange={e => {
                               if (field.value && e.target.value) {
-                                const [hours, minutes] = e.target.value.split(':');
-                                const newDate = new Date(field.value);
-                                newDate.setHours(parseInt(hours), parseInt(minutes));
-                                field.onChange(newDate);
+                                const [hours, minutes] = e.target.value.split(':')
+                                const newDate = new Date(field.value)
+                                newDate.setHours(parseInt(hours), parseInt(minutes))
+                                field.onChange(newDate)
                               }
                             }}
                             className="mt-1"
@@ -518,11 +515,7 @@ export function VisitForm({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="badgeNumber">Numéro de badge</Label>
-                <Input
-                  id="badgeNumber"
-                  {...register('badgeNumber')}
-                  placeholder="Ex: B001"
-                />
+                <Input id="badgeNumber" {...register('badgeNumber')} placeholder="Ex: B001" />
                 {errors.badgeNumber && (
                   <p className="text-sm text-destructive">{errors.badgeNumber.message}</p>
                 )}
@@ -536,9 +529,7 @@ export function VisitForm({
                   placeholder="Notes additionnelles..."
                   rows={2}
                 />
-                {errors.notes && (
-                  <p className="text-sm text-destructive">{errors.notes.message}</p>
-                )}
+                {errors.notes && <p className="text-sm text-destructive">{errors.notes.message}</p>}
               </div>
             </div>
           </div>
@@ -550,14 +541,18 @@ export function VisitForm({
                 <h4 className="font-medium mb-2">Résumé de la visite</h4>
                 <div className="text-sm space-y-1">
                   <p>
-                    <strong>Visiteur:</strong> {watch('visitor.firstName')} {watch('visitor.lastName')}
+                    <strong>Visiteur:</strong> {watch('visitor.firstName')}{' '}
+                    {watch('visitor.lastName')}
                     {watch('visitor.company') && ` (${watch('visitor.company')})`}
                   </p>
                   <p>
-                    <strong>Hôte:</strong> {availableHosts.find(emp => emp.id === watch('hostEmployeeId'))?.firstName} {availableHosts.find(emp => emp.id === watch('hostEmployeeId'))?.lastName}
+                    <strong>Hôte:</strong>{' '}
+                    {availableHosts.find(emp => emp.id === watch('hostEmployeeId'))?.firstName}{' '}
+                    {availableHosts.find(emp => emp.id === watch('hostEmployeeId'))?.lastName}
                   </p>
                   <p>
-                    <strong>Date:</strong> {format(watchedDate, "EEEE d MMMM yyyy 'à' HH:mm", { locale: fr })}
+                    <strong>Date:</strong>{' '}
+                    {format(watchedDate, "EEEE d MMMM yyyy 'à' HH:mm", { locale: fr })}
                   </p>
                   <p>
                     <strong>Objet:</strong> {watch('purpose')}
@@ -578,12 +573,8 @@ export function VisitForm({
               <X className="w-4 h-4 mr-2" />
               Annuler
             </Button>
-            
-            <Button
-              type="submit"
-              disabled={isSubmitting || isLoading}
-              className="gap-2"
-            >
+
+            <Button type="submit" disabled={isSubmitting || isLoading} className="gap-2">
               <Save className="w-4 h-4" />
               {visit ? 'Mettre à jour' : 'Programmer la visite'}
             </Button>
@@ -591,5 +582,5 @@ export function VisitForm({
         </form>
       </CardContent>
     </Card>
-  );
+  )
 }

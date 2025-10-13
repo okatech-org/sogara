@@ -1,88 +1,117 @@
-import { useState } from 'react';
-import { Calendar, Clock, Users, MapPin, BookOpen, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { HSETraining, HSETrainingSession } from '@/types';
-import { StatusBadge } from '@/components/ui/status-badge';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth, addMonths, subMonths } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useState } from 'react'
+import {
+  Calendar,
+  Clock,
+  Users,
+  MapPin,
+  BookOpen,
+  Plus,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { HSETraining, HSETrainingSession } from '@/types'
+import { StatusBadge } from '@/components/ui/status-badge'
+import {
+  format,
+  startOfMonth,
+  endOfMonth,
+  eachDayOfInterval,
+  isSameDay,
+  isSameMonth,
+  addMonths,
+  subMonths,
+} from 'date-fns'
+import { fr } from 'date-fns/locale'
 
 interface HSETrainingCalendarProps {
-  trainings: HSETraining[];
-  onSessionClick?: (training: HSETraining, session: HSETrainingSession) => void;
-  onCreateSession?: () => void;
-  canEdit?: boolean;
+  trainings: HSETraining[]
+  onSessionClick?: (training: HSETraining, session: HSETrainingSession) => void
+  onCreateSession?: () => void
+  canEdit?: boolean
 }
 
 interface SessionWithTraining extends HSETrainingSession {
-  training: HSETraining;
+  training: HSETraining
 }
 
-export function HSETrainingCalendar({ 
-  trainings, 
-  onSessionClick, 
-  onCreateSession, 
-  canEdit = false 
+export function HSETrainingCalendar({
+  trainings,
+  onSessionClick,
+  onCreateSession,
+  canEdit = false,
 }: HSETrainingCalendarProps) {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [viewMode, setViewMode] = useState<'month' | 'week' | 'list'>('month');
+  const [currentDate, setCurrentDate] = useState(new Date())
+  const [viewMode, setViewMode] = useState<'month' | 'week' | 'list'>('month')
 
   // Récupérer toutes les sessions avec leur formation associée
   const allSessions: SessionWithTraining[] = trainings.flatMap(training =>
     training.sessions.map(session => ({
       ...session,
-      training
-    }))
-  );
+      training,
+    })),
+  )
 
   // Filtrer les sessions du mois courant
-  const monthStart = startOfMonth(currentDate);
-  const monthEnd = endOfMonth(currentDate);
-  const monthSessions = allSessions.filter(session =>
-    session.date >= monthStart && session.date <= monthEnd
-  );
+  const monthStart = startOfMonth(currentDate)
+  const monthEnd = endOfMonth(currentDate)
+  const monthSessions = allSessions.filter(
+    session => session.date >= monthStart && session.date <= monthEnd,
+  )
 
   // Générer les jours du mois
-  const monthDays = eachDayOfInterval({ start: monthStart, end: monthEnd });
+  const monthDays = eachDayOfInterval({ start: monthStart, end: monthEnd })
 
   // Grouper les sessions par jour
-  const sessionsByDay = monthSessions.reduce((acc, session) => {
-    const dayKey = format(session.date, 'yyyy-MM-dd');
-    if (!acc[dayKey]) acc[dayKey] = [];
-    acc[dayKey].push(session);
-    return acc;
-  }, {} as Record<string, SessionWithTraining[]>);
+  const sessionsByDay = monthSessions.reduce(
+    (acc, session) => {
+      const dayKey = format(session.date, 'yyyy-MM-dd')
+      if (!acc[dayKey]) acc[dayKey] = []
+      acc[dayKey].push(session)
+      return acc
+    },
+    {} as Record<string, SessionWithTraining[]>,
+  )
 
   const getStatusColor = (status: HSETrainingSession['status']) => {
     switch (status) {
-      case 'scheduled': return 'info';
-      case 'in_progress': return 'warning';
-      case 'completed': return 'success';
-      case 'cancelled': return 'destructive';
-      default: return 'info';
+      case 'scheduled':
+        return 'info'
+      case 'in_progress':
+        return 'warning'
+      case 'completed':
+        return 'success'
+      case 'cancelled':
+        return 'destructive'
+      default:
+        return 'info'
     }
-  };
+  }
 
   const getStatusLabel = (status: HSETrainingSession['status']) => {
     switch (status) {
-      case 'scheduled': return 'Programmé';
-      case 'in_progress': return 'En cours';
-      case 'completed': return 'Terminé';
-      case 'cancelled': return 'Annulé';
-      default: return status;
+      case 'scheduled':
+        return 'Programmé'
+      case 'in_progress':
+        return 'En cours'
+      case 'completed':
+        return 'Terminé'
+      case 'cancelled':
+        return 'Annulé'
+      default:
+        return status
     }
-  };
+  }
 
   const navigateMonth = (direction: 'prev' | 'next') => {
-    setCurrentDate(prev => 
-      direction === 'prev' ? subMonths(prev, 1) : addMonths(prev, 1)
-    );
-  };
+    setCurrentDate(prev => (direction === 'prev' ? subMonths(prev, 1) : addMonths(prev, 1)))
+  }
 
   const renderMonthView = () => {
-    const weekDays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
-    
+    const weekDays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
+
     return (
       <div className="space-y-4">
         {/* Grille du calendrier */}
@@ -93,14 +122,14 @@ export function HSETrainingCalendar({
               {day}
             </div>
           ))}
-          
+
           {/* Cases des jours */}
           {monthDays.map(day => {
-            const dayKey = format(day, 'yyyy-MM-dd');
-            const daySessions = sessionsByDay[dayKey] || [];
-            const isToday = isSameDay(day, new Date());
-            const isCurrentMonth = isSameMonth(day, currentDate);
-            
+            const dayKey = format(day, 'yyyy-MM-dd')
+            const daySessions = sessionsByDay[dayKey] || []
+            const isToday = isSameDay(day, new Date())
+            const isCurrentMonth = isSameMonth(day, currentDate)
+
             return (
               <div
                 key={dayKey}
@@ -108,10 +137,8 @@ export function HSETrainingCalendar({
                   isCurrentMonth ? 'bg-background' : 'bg-muted/50'
                 } ${isToday ? 'ring-2 ring-primary' : ''}`}
               >
-                <div className="text-sm font-medium mb-1">
-                  {format(day, 'd')}
-                </div>
-                
+                <div className="text-sm font-medium mb-1">{format(day, 'd')}</div>
+
                 <div className="space-y-1">
                   {daySessions.slice(0, 2).map(session => (
                     <div
@@ -119,15 +146,11 @@ export function HSETrainingCalendar({
                       className="text-xs p-1 rounded cursor-pointer hover:bg-muted/50 transition-colors"
                       onClick={() => onSessionClick?.(session.training, session)}
                     >
-                      <div className="font-medium truncate">
-                        {session.training.title}
-                      </div>
-                      <div className="text-muted-foreground">
-                        {format(session.date, 'HH:mm')}
-                      </div>
+                      <div className="font-medium truncate">{session.training.title}</div>
+                      <div className="text-muted-foreground">{format(session.date, 'HH:mm')}</div>
                     </div>
                   ))}
-                  
+
                   {daySessions.length > 2 && (
                     <div className="text-xs text-muted-foreground">
                       +{daySessions.length - 2} autre(s)
@@ -135,18 +158,18 @@ export function HSETrainingCalendar({
                   )}
                 </div>
               </div>
-            );
+            )
           })}
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   const renderListView = () => {
     const upcomingSessions = allSessions
       .filter(session => session.date >= new Date())
       .sort((a, b) => a.date.getTime() - b.date.getTime())
-      .slice(0, 10);
+      .slice(0, 10)
 
     if (upcomingSessions.length === 0) {
       return (
@@ -163,14 +186,14 @@ export function HSETrainingCalendar({
             </Button>
           )}
         </div>
-      );
+      )
     }
 
     return (
       <div className="space-y-4">
         {upcomingSessions.map(session => (
-          <Card 
-            key={session.id} 
+          <Card
+            key={session.id}
             className="cursor-pointer hover:bg-muted/50 transition-colors"
             onClick={() => onSessionClick?.(session.training, session)}
           >
@@ -179,52 +202,54 @@ export function HSETrainingCalendar({
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <h3 className="font-semibold">{session.training.title}</h3>
-                    <StatusBadge 
+                    <StatusBadge
                       status={getStatusLabel(session.status)}
                       variant={getStatusColor(session.status)}
                     />
                   </div>
-                  
+
                   <div className="text-sm text-muted-foreground space-y-1">
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4" />
                       {format(session.date, 'EEEE d MMMM yyyy', { locale: fr })}
                     </div>
-                    
+
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4" />
                       {format(session.date, 'HH:mm')} - {session.training.duration}min
                     </div>
-                    
+
                     <div className="flex items-center gap-2">
                       <MapPin className="w-4 h-4" />
                       {session.location}
                     </div>
-                    
+
                     <div className="flex items-center gap-2">
                       <Users className="w-4 h-4" />
                       {session.attendance.length}/{session.maxParticipants} participants
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="text-right">
                   <div className="text-sm font-medium">{session.instructor}</div>
                   <div className="text-xs text-muted-foreground mt-1">Formateur</div>
                 </div>
               </div>
-              
+
               {/* Barre de progression des inscriptions */}
               <div className="mt-3">
                 <div className="flex justify-between text-xs text-muted-foreground mb-1">
                   <span>Inscriptions</span>
-                  <span>{session.attendance.length}/{session.maxParticipants}</span>
+                  <span>
+                    {session.attendance.length}/{session.maxParticipants}
+                  </span>
                 </div>
                 <div className="w-full bg-muted rounded-full h-2">
-                  <div 
-                    className="bg-primary h-2 rounded-full transition-all" 
-                    style={{ 
-                      width: `${(session.attendance.length / session.maxParticipants) * 100}%` 
+                  <div
+                    className="bg-primary h-2 rounded-full transition-all"
+                    style={{
+                      width: `${(session.attendance.length / session.maxParticipants) * 100}%`,
                     }}
                   />
                 </div>
@@ -233,8 +258,8 @@ export function HSETrainingCalendar({
           </Card>
         ))}
       </div>
-    );
-  };
+    )
+  }
 
   return (
     <Card className="industrial-card">
@@ -244,7 +269,7 @@ export function HSETrainingCalendar({
             <Calendar className="w-5 h-5" />
             Calendrier des formations HSE
           </CardTitle>
-          
+
           <div className="flex items-center gap-2">
             {/* Contrôles de vue */}
             <div className="flex items-center bg-muted rounded-lg p-1">
@@ -265,7 +290,7 @@ export function HSETrainingCalendar({
                 Liste
               </Button>
             </div>
-            
+
             {canEdit && (
               <Button onClick={onCreateSession} className="gap-2">
                 <Plus className="w-4 h-4" />
@@ -274,35 +299,25 @@ export function HSETrainingCalendar({
             )}
           </div>
         </div>
-        
+
         {viewMode === 'month' && (
           <div className="flex items-center justify-between">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigateMonth('prev')}
-            >
+            <Button variant="outline" size="sm" onClick={() => navigateMonth('prev')}>
               <ChevronLeft className="w-4 h-4" />
             </Button>
-            
+
             <h2 className="text-lg font-semibold">
               {format(currentDate, 'MMMM yyyy', { locale: fr })}
             </h2>
-            
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigateMonth('next')}
-            >
+
+            <Button variant="outline" size="sm" onClick={() => navigateMonth('next')}>
               <ChevronRight className="w-4 h-4" />
             </Button>
           </div>
         )}
       </CardHeader>
-      
-      <CardContent>
-        {viewMode === 'month' ? renderMonthView() : renderListView()}
-      </CardContent>
+
+      <CardContent>{viewMode === 'month' ? renderMonthView() : renderListView()}</CardContent>
     </Card>
-  );
+  )
 }

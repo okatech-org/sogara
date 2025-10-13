@@ -3,6 +3,7 @@
 ## 🎯 VOTRE TERMINAL CONVEX ATTEND
 
 Vous voyez :
+
 ```
 ? Welcome to Convex! Would you like to login to your account?
 ```
@@ -12,6 +13,7 @@ Vous voyez :
 ## 1️⃣ TERMINAL 1 : Convex (dans le terminal actuel)
 
 **Sélectionnez avec flèche ↓ puis Entrée :**
+
 ```
   Login or create an account  ← CECI
 ```
@@ -19,6 +21,7 @@ Vous voyez :
 **Connectez-vous avec GitHub**
 
 **Attendez** :
+
 ```
 ✓ Convex functions ready!
 ```
@@ -33,6 +36,7 @@ npx convex run seed:seedDemoData
 ```
 
 **Attendez** :
+
 ```
 🎉 Seeding terminé avec succès !
 ```
@@ -55,6 +59,7 @@ npm run dev
 ## ✅ SI ÇA MARCHE
 
 Vous voyez :
+
 - ✅ Dashboard
 - ✅ 6 employés dans Personnel
 - ✅ Tous les modules accessibles
@@ -96,4 +101,3 @@ Vous voyez :
 ---
 
 **GO ! SÉLECTIONNEZ "Login or create an account" MAINTENANT !** 🚀
-

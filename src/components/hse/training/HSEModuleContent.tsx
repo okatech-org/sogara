@@ -1,114 +1,129 @@
-import { useState } from 'react';
-import { 
-  CheckSquare, 
-  AlertTriangle, 
-  Info, 
-  FileText, 
-  Play, 
+import { useState } from 'react'
+import {
+  CheckSquare,
+  AlertTriangle,
+  Info,
+  FileText,
+  Play,
   CheckCircle,
   Eye,
   BookOpen,
   Zap,
-  Shield
-} from 'lucide-react';
-import { HSEIllustrationViewer } from './HSEIllustrationViewer';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { HSEContentModule, HSEModuleSection } from '@/types';
-import { cn } from '@/lib/utils';
+  Shield,
+} from 'lucide-react'
+import { HSEIllustrationViewer } from './HSEIllustrationViewer'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { HSEContentModule, HSEModuleSection } from '@/types'
+import { cn } from '@/lib/utils'
 
 interface HSEModuleContentProps {
-  module: HSEContentModule;
-  onComplete: () => void;
-  isCompleted: boolean;
+  module: HSEContentModule
+  onComplete: () => void
+  isCompleted: boolean
 }
 
 export function HSEModuleContent({ module, onComplete, isCompleted }: HSEModuleContentProps) {
-  const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
-  const [readSections, setReadSections] = useState<Set<string>>(new Set());
+  const [currentSectionIndex, setCurrentSectionIndex] = useState(0)
+  const [readSections, setReadSections] = useState<Set<string>>(new Set())
 
-  const currentSection = module.content[currentSectionIndex];
-  const totalSections = module.content.length;
+  const currentSection = module.content[currentSectionIndex]
+  const totalSections = module.content.length
 
   const handleSectionRead = (sectionId: string) => {
-    setReadSections(prev => new Set([...prev, sectionId]));
-  };
+    setReadSections(prev => new Set([...prev, sectionId]))
+  }
 
   const handleNextSection = () => {
     if (currentSection) {
-      handleSectionRead(currentSection.id);
+      handleSectionRead(currentSection.id)
     }
-    
+
     if (currentSectionIndex < totalSections - 1) {
-      setCurrentSectionIndex(currentSectionIndex + 1);
+      setCurrentSectionIndex(currentSectionIndex + 1)
     }
-  };
+  }
 
   const handlePreviousSection = () => {
     if (currentSectionIndex > 0) {
-      setCurrentSectionIndex(currentSectionIndex - 1);
+      setCurrentSectionIndex(currentSectionIndex - 1)
     }
-  };
+  }
 
-  const canCompleteModule = readSections.size === totalSections;
+  const canCompleteModule = readSections.size === totalSections
 
   const getSectionIcon = (type: string) => {
     switch (type) {
-      case 'checklist': return <CheckSquare className="w-5 h-5 text-blue-500" />;
-      case 'emergency_protocol': return <AlertTriangle className="w-5 h-5 text-red-500" />;
-      case 'safety_rules': return <Shield className="w-5 h-5 text-green-500" />;
-      case 'procedure': return <FileText className="w-5 h-5 text-purple-500" />;
-      case 'case_study': return <BookOpen className="w-5 h-5 text-orange-500" />;
-      default: return <Info className="w-5 h-5 text-gray-500" />;
+      case 'checklist':
+        return <CheckSquare className="w-5 h-5 text-blue-500" />
+      case 'emergency_protocol':
+        return <AlertTriangle className="w-5 h-5 text-red-500" />
+      case 'safety_rules':
+        return <Shield className="w-5 h-5 text-green-500" />
+      case 'procedure':
+        return <FileText className="w-5 h-5 text-purple-500" />
+      case 'case_study':
+        return <BookOpen className="w-5 h-5 text-orange-500" />
+      default:
+        return <Info className="w-5 h-5 text-gray-500" />
     }
-  };
+  }
 
   const getSectionBorderColor = (type: string) => {
     switch (type) {
-      case 'emergency_protocol': return 'border-l-red-500';
-      case 'safety_rules': return 'border-l-green-500';
-      case 'procedure': return 'border-l-purple-500';
-      case 'checklist': return 'border-l-blue-500';
-      case 'case_study': return 'border-l-orange-500';
-      default: return 'border-l-gray-500';
+      case 'emergency_protocol':
+        return 'border-l-red-500'
+      case 'safety_rules':
+        return 'border-l-green-500'
+      case 'procedure':
+        return 'border-l-purple-500'
+      case 'checklist':
+        return 'border-l-blue-500'
+      case 'case_study':
+        return 'border-l-orange-500'
+      default:
+        return 'border-l-gray-500'
     }
-  };
+  }
 
   const formatContent = (content: string) => {
     // Conversion Markdown basique vers JSX
-    const lines = content.split('\n');
-    const elements: JSX.Element[] = [];
-    let currentList: string[] = [];
-    let currentTable: string[][] = [];
-    let isInCodeBlock = false;
-    let codeBlockContent = '';
+    const lines = content.split('\n')
+    const elements: JSX.Element[] = []
+    let currentList: string[] = []
+    let currentTable: string[][] = []
+    let isInCodeBlock = false
+    let codeBlockContent = ''
 
     lines.forEach((line, index) => {
-      const trimmedLine = line.trim();
+      const trimmedLine = line.trim()
 
       // Bloc de code
       if (trimmedLine.startsWith('```')) {
         if (isInCodeBlock) {
           elements.push(
-            <pre key={`code-${index}`} className="bg-muted p-3 rounded-md text-sm overflow-x-auto my-3">
+            <pre
+              key={`code-${index}`}
+              className="bg-muted p-3 rounded-md text-sm overflow-x-auto my-3"
+            >
               <code>{codeBlockContent}</code>
-            </pre>
-          );
-          codeBlockContent = '';
-          isInCodeBlock = false;
+            </pre>,
+          )
+          codeBlockContent = ''
+          isInCodeBlock = false
         } else {
-          isInCodeBlock = true;
+          isInCodeBlock = true
         }
-        return;
+        return
       }
 
       if (isInCodeBlock) {
-        codeBlockContent += line + '\n';
-        return;
+        codeBlockContent += line + '\n'
+        return
       }
 
       // Finaliser liste si nécessaire
@@ -121,23 +136,26 @@ export function HSEModuleContent({ module, onComplete, isCompleted }: HSEModuleC
                 <span dangerouslySetInnerHTML={{ __html: formatInlineMarkdown(item) }} />
               </li>
             ))}
-          </ul>
-        );
-        currentList = [];
+          </ul>,
+        )
+        currentList = []
       }
 
       // Finaliser tableau si nécessaire
       if (currentTable.length > 0 && !trimmedLine.includes('|')) {
         if (currentTable.length > 1) {
-          const headers = currentTable[0];
-          const rows = currentTable.slice(1);
+          const headers = currentTable[0]
+          const rows = currentTable.slice(1)
           elements.push(
             <div key={`table-${index}`} className="overflow-x-auto my-4">
               <table className="w-full border border-border rounded-lg">
                 <thead className="bg-muted">
                   <tr>
                     {headers.map((header, i) => (
-                      <th key={i} className="p-3 text-left font-medium border-r border-border last:border-r-0">
+                      <th
+                        key={i}
+                        className="p-3 text-left font-medium border-r border-border last:border-r-0"
+                      >
                         {header}
                       </th>
                     ))}
@@ -155,69 +173,75 @@ export function HSEModuleContent({ module, onComplete, isCompleted }: HSEModuleC
                   ))}
                 </tbody>
               </table>
-            </div>
-          );
+            </div>,
+          )
         }
-        currentTable = [];
+        currentTable = []
       }
 
       // Liste
       if (trimmedLine.startsWith('-') || trimmedLine.startsWith('•')) {
-        const item = trimmedLine.substring(1).trim();
-        currentList.push(item);
-        return;
+        const item = trimmedLine.substring(1).trim()
+        currentList.push(item)
+        return
       }
 
       // Tableau
       if (trimmedLine.includes('|') && trimmedLine.split('|').length > 2) {
-        const cells = trimmedLine.split('|').map(cell => cell.trim()).filter(cell => cell);
+        const cells = trimmedLine
+          .split('|')
+          .map(cell => cell.trim())
+          .filter(cell => cell)
         if (cells.length > 0) {
-          currentTable.push(cells);
+          currentTable.push(cells)
         }
-        return;
+        return
       }
 
       // Titres
       if (trimmedLine.startsWith('####')) {
-        const title = trimmedLine.substring(4).trim();
+        const title = trimmedLine.substring(4).trim()
         elements.push(
           <h4 key={`h4-${index}`} className="text-lg font-semibold mt-6 mb-3 text-primary">
             {title}
-          </h4>
-        );
-        return;
+          </h4>,
+        )
+        return
       }
 
       if (trimmedLine.startsWith('###')) {
-        const title = trimmedLine.substring(3).trim();
+        const title = trimmedLine.substring(3).trim()
         elements.push(
           <h3 key={`h3-${index}`} className="text-xl font-semibold mt-6 mb-4 text-foreground">
             {title}
-          </h3>
-        );
-        return;
+          </h3>,
+        )
+        return
       }
 
       if (trimmedLine.startsWith('##')) {
-        const title = trimmedLine.substring(2).trim();
+        const title = trimmedLine.substring(2).trim()
         elements.push(
           <h2 key={`h2-${index}`} className="text-2xl font-bold mt-8 mb-4 text-foreground">
             {title}
-          </h2>
-        );
-        return;
+          </h2>,
+        )
+        return
       }
 
       // Paragraphe normal
       if (trimmedLine.length > 0) {
         elements.push(
-          <p key={`p-${index}`} className="mb-3 leading-relaxed" 
-             dangerouslySetInnerHTML={{ __html: formatInlineMarkdown(trimmedLine) }} />
-        );
+          <p
+            key={`p-${index}`}
+            className="mb-3 leading-relaxed"
+            dangerouslySetInnerHTML={{ __html: formatInlineMarkdown(trimmedLine) }}
+          />,
+        )
       } else {
-        elements.push(<br key={`br-${index}`} />);
+        elements.push(<br key={`br-${index}`} />)
       }
-    });
+    })
 
     // Finaliser liste ou tableau restant
     if (currentList.length > 0) {
@@ -229,20 +253,23 @@ export function HSEModuleContent({ module, onComplete, isCompleted }: HSEModuleC
               <span dangerouslySetInnerHTML={{ __html: formatInlineMarkdown(item) }} />
             </li>
           ))}
-        </ul>
-      );
+        </ul>,
+      )
     }
 
     if (currentTable.length > 1) {
-      const headers = currentTable[0];
-      const rows = currentTable.slice(1);
+      const headers = currentTable[0]
+      const rows = currentTable.slice(1)
       elements.push(
         <div key="final-table" className="overflow-x-auto my-4">
           <table className="w-full border border-border rounded-lg">
             <thead className="bg-muted">
               <tr>
                 {headers.map((header, i) => (
-                  <th key={i} className="p-3 text-left font-medium border-r border-border last:border-r-0">
+                  <th
+                    key={i}
+                    className="p-3 text-left font-medium border-r border-border last:border-r-0"
+                  >
                     {header}
                   </th>
                 ))}
@@ -260,12 +287,12 @@ export function HSEModuleContent({ module, onComplete, isCompleted }: HSEModuleC
               ))}
             </tbody>
           </table>
-        </div>
-      );
+        </div>,
+      )
     }
 
-    return elements;
-  };
+    return elements
+  }
 
   const formatInlineMarkdown = (text: string): string => {
     return text
@@ -277,8 +304,8 @@ export function HSEModuleContent({ module, onComplete, isCompleted }: HSEModuleC
       .replace(/⚠️/g, '<span class="text-orange-500 font-bold">⚠️</span>')
       .replace(/🔥/g, '<span class="text-red-500">🔥</span>')
       .replace(/⚡/g, '<span class="text-yellow-500">⚡</span>')
-      .replace(/☠️/g, '<span class="text-red-600">☠️</span>');
-  };
+      .replace(/☠️/g, '<span class="text-red-600">☠️</span>')
+  }
 
   return (
     <div className="space-y-6">
@@ -287,12 +314,12 @@ export function HSEModuleContent({ module, onComplete, isCompleted }: HSEModuleC
         {module.content.map((section, index) => (
           <Button
             key={section.id}
-            variant={index === currentSectionIndex ? "default" : "outline"}
+            variant={index === currentSectionIndex ? 'default' : 'outline'}
             size="sm"
             onClick={() => setCurrentSectionIndex(index)}
             className={cn(
-              "gap-2",
-              readSections.has(section.id) && "bg-green-50 border-green-200 text-green-700"
+              'gap-2',
+              readSections.has(section.id) && 'bg-green-50 border-green-200 text-green-700',
             )}
           >
             {readSections.has(section.id) ? (
@@ -307,7 +334,7 @@ export function HSEModuleContent({ module, onComplete, isCompleted }: HSEModuleC
 
       {/* Contenu de la section courante */}
       {currentSection && (
-        <Card className={cn("border-l-4", getSectionBorderColor(currentSection.type))}>
+        <Card className={cn('border-l-4', getSectionBorderColor(currentSection.type))}>
           <CardHeader>
             <CardTitle className="flex items-center gap-3">
               {getSectionIcon(currentSection.type)}
@@ -340,7 +367,7 @@ export function HSEModuleContent({ module, onComplete, isCompleted }: HSEModuleC
                 <div className="mt-6 space-y-4">
                   <Separator />
                   <h4 className="font-medium">Éléments Interactifs</h4>
-                  {currentSection.interactive.map((element) => (
+                  {currentSection.interactive.map(element => (
                     <Alert key={element.id}>
                       <Play className="h-4 w-4" />
                       <AlertDescription>
@@ -365,7 +392,7 @@ export function HSEModuleContent({ module, onComplete, isCompleted }: HSEModuleC
                   </Badge>
                 )}
               </div>
-              
+
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
@@ -374,7 +401,7 @@ export function HSEModuleContent({ module, onComplete, isCompleted }: HSEModuleC
                 >
                   Précédent
                 </Button>
-                
+
                 {!readSections.has(currentSection.id) && (
                   <Button onClick={() => handleSectionRead(currentSection.id)} variant="outline">
                     Marquer comme lu
@@ -382,11 +409,9 @@ export function HSEModuleContent({ module, onComplete, isCompleted }: HSEModuleC
                 )}
 
                 {currentSectionIndex < totalSections - 1 ? (
-                  <Button onClick={handleNextSection}>
-                    Suivant
-                  </Button>
+                  <Button onClick={handleNextSection}>Suivant</Button>
                 ) : (
-                  <Button 
+                  <Button
                     onClick={onComplete}
                     disabled={!canCompleteModule || isCompleted}
                     className="gap-2"
@@ -426,10 +451,11 @@ export function HSEModuleContent({ module, onComplete, isCompleted }: HSEModuleC
         <Alert>
           <CheckCircle className="h-4 w-4" />
           <AlertDescription>
-            <strong>Module terminé !</strong> Vous pouvez passer au module suivant ou revoir le contenu.
+            <strong>Module terminé !</strong> Vous pouvez passer au module suivant ou revoir le
+            contenu.
           </AlertDescription>
         </Alert>
       )}
     </div>
-  );
+  )
 }

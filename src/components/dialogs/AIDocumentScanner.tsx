@@ -1,127 +1,142 @@
-import { useState, useRef } from 'react';
-import { Camera, Upload, Scan, AlertCircle, CheckCircle, Loader2, X, RefreshCw, Sparkles } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { ExtractionResult, aiExtractionService } from '@/services/ai-extraction.service';
+import { useState, useRef } from 'react'
+import {
+  Camera,
+  Upload,
+  Scan,
+  AlertCircle,
+  CheckCircle,
+  Loader2,
+  X,
+  RefreshCw,
+  Sparkles,
+} from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog'
+import { ExtractionResult, aiExtractionService } from '@/services/ai-extraction.service'
 
 interface AIDocumentScannerProps {
-  title: string;
-  documentType: 'identity' | 'mail' | 'package';
-  onExtracted: (result: ExtractionResult) => void;
-  onCancel: () => void;
-  acceptedFormats?: string[];
+  title: string
+  documentType: 'identity' | 'mail' | 'package'
+  onExtracted: (result: ExtractionResult) => void
+  onCancel: () => void
+  acceptedFormats?: string[]
 }
 
-export function AIDocumentScanner({ 
-  title, 
-  documentType, 
-  onExtracted, 
+export function AIDocumentScanner({
+  title,
+  documentType,
+  onExtracted,
   onCancel,
-  acceptedFormats = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf']
+  acceptedFormats = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'],
 }: AIDocumentScannerProps) {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [isExtracting, setIsExtracting] = useState(false);
-  const [extractionResult, setExtractionResult] = useState<ExtractionResult | null>(null);
-  const [progress, setProgress] = useState(0);
-  const [currentStep, setCurrentStep] = useState<string>('');
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [isExtracting, setIsExtracting] = useState(false)
+  const [extractionResult, setExtractionResult] = useState<ExtractionResult | null>(null)
+  const [progress, setProgress] = useState(0)
+  const [currentStep, setCurrentStep] = useState<string>('')
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const cameraInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    
+    const file = event.target.files?.[0]
+    if (!file) return
+
     if (!acceptedFormats.includes(file.type)) {
-      alert('Format de fichier non supporté. Utilisez JPG, PNG, WebP ou PDF.');
-      return;
+      alert('Format de fichier non supporté. Utilisez JPG, PNG, WebP ou PDF.')
+      return
     }
-    
-    setSelectedFile(file);
-    
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setPreviewUrl(e.target?.result as string);
-    };
-    reader.readAsDataURL(file);
-  };
+
+    setSelectedFile(file)
+
+    const reader = new FileReader()
+    reader.onload = e => {
+      setPreviewUrl(e.target?.result as string)
+    }
+    reader.readAsDataURL(file)
+  }
 
   const handleExtraction = async () => {
-    if (!selectedFile || !previewUrl) return;
-    
-    setIsExtracting(true);
-    setProgress(0);
-    setCurrentStep('Préparation de l\'image...');
-    
+    if (!selectedFile || !previewUrl) return
+
+    setIsExtracting(true)
+    setProgress(0)
+    setCurrentStep("Préparation de l'image...")
+
     try {
-      await simulateProgress(20, 'Préparation de l\'image...');
-      
-      setCurrentStep('Analyse par IA...');
-      await simulateProgress(40, 'Analyse par IA...');
-      
+      await simulateProgress(20, "Préparation de l'image...")
+
+      setCurrentStep('Analyse par IA...')
+      await simulateProgress(40, 'Analyse par IA...')
+
       // Utiliser le service IA réel au lieu des données mockées
-      let result: ExtractionResult;
-      console.log(`🔧 Extraction du document type: ${documentType}`);
-      
+      let result: ExtractionResult
+      console.log(`🔧 Extraction du document type: ${documentType}`)
+
       if (documentType === 'identity') {
-        console.log('📷 Appel extraction identité avec image...');
-        result = await aiExtractionService.extractIdentityDocument(previewUrl);
+        console.log('📷 Appel extraction identité avec image...')
+        result = await aiExtractionService.extractIdentityDocument(previewUrl)
       } else if (documentType === 'package') {
-        console.log('📦 Appel extraction colis avec image...');
-        result = await aiExtractionService.extractPackageLabel(previewUrl);
+        console.log('📦 Appel extraction colis avec image...')
+        result = await aiExtractionService.extractPackageLabel(previewUrl)
       } else if (documentType === 'mail') {
-        console.log('✉️ Appel extraction courrier avec image...');
-        result = await aiExtractionService.extractMailDocument(previewUrl);
+        console.log('✉️ Appel extraction courrier avec image...')
+        result = await aiExtractionService.extractMailDocument(previewUrl)
       } else {
-        throw new Error('Type de document non supporté');
+        throw new Error('Type de document non supporté')
       }
-      
-      console.log('📊 Résultat extraction:', result);
-      
-      setCurrentStep('Validation des données...');
-      await simulateProgress(80, 'Validation des données...');
-      
-      await simulateProgress(100, 'Terminé !');
-      
-      setExtractionResult(result);
-      
+
+      console.log('📊 Résultat extraction:', result)
+
+      setCurrentStep('Validation des données...')
+      await simulateProgress(80, 'Validation des données...')
+
+      await simulateProgress(100, 'Terminé !')
+
+      setExtractionResult(result)
+
       setTimeout(() => {
-        onExtracted(result);
-      }, 500);
-      
+        onExtracted(result)
+      }, 500)
     } catch (error: any) {
-      console.error('❌ Erreur extraction:', error);
+      console.error('❌ Erreur extraction:', error)
       setExtractionResult({
         success: false,
         confidence: 0,
         data: {},
         warnings: [`Erreur lors de l'extraction: ${error.message || 'Erreur inconnue'}`],
-        requiresVerification: true
-      });
+        requiresVerification: true,
+      })
     } finally {
-      setTimeout(() => setIsExtracting(false), 500);
+      setTimeout(() => setIsExtracting(false), 500)
     }
-  };
+  }
 
   const simulateProgress = (target: number, step: string): Promise<void> => {
-    return new Promise((resolve) => {
-      setCurrentStep(step);
+    return new Promise(resolve => {
+      setCurrentStep(step)
       const interval = setInterval(() => {
         setProgress(prev => {
           if (prev >= target) {
-            clearInterval(interval);
-            resolve();
-            return target;
+            clearInterval(interval)
+            resolve()
+            return target
           }
-          return prev + 2;
-        });
-      }, 30);
-    });
-  };
+          return prev + 2
+        })
+      }, 30)
+    })
+  }
 
   const generateMockData = (type: string) => {
     switch (type) {
@@ -132,34 +147,34 @@ export function AIDocumentScanner({
           idNumber: `CNI${Math.floor(Math.random() * 1000000000)}`,
           idType: 'CNI',
           nationality: 'Gabonaise',
-          birthDate: '1990-05-15'
-        };
+          birthDate: '1990-05-15',
+        }
       case 'package':
         return {
           trackingNumber: `GA${Date.now()}`,
           sender: { name: 'DHL Express', organization: 'DHL' },
           recipient: { name: 'Service IT', department: 'Informatique' },
-          packageCategory: 'standard'
-        };
+          packageCategory: 'standard',
+        }
       case 'mail':
         return {
           sender: { name: 'Direction Générale', organization: 'Ministère' },
           recipient: { name: 'SOGARA', department: 'Direction' },
           documentType: 'lettre',
-          urgency: 'normal'
-        };
+          urgency: 'normal',
+        }
       default:
-        return {};
+        return {}
     }
-  };
+  }
 
   const resetScanner = () => {
-    setSelectedFile(null);
-    setPreviewUrl(null);
-    setExtractionResult(null);
-    setProgress(0);
-    setCurrentStep('');
-  };
+    setSelectedFile(null)
+    setPreviewUrl(null)
+    setExtractionResult(null)
+    setProgress(0)
+    setCurrentStep('')
+  }
 
   return (
     <Dialog open={true} onOpenChange={onCancel}>
@@ -232,12 +247,7 @@ export function AIDocumentScanner({
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-base">Aperçu du document</CardTitle>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={resetScanner}
-                    disabled={isExtracting}
-                  >
+                  <Button variant="ghost" size="sm" onClick={resetScanner} disabled={isExtracting}>
                     <RefreshCw className="w-4 h-4" />
                   </Button>
                 </div>
@@ -248,7 +258,11 @@ export function AIDocumentScanner({
                     <div className="flex flex-col items-center justify-center p-8 bg-muted h-96">
                       <div className="text-center space-y-4">
                         <div className="w-24 h-24 mx-auto bg-red-100 rounded-lg flex items-center justify-center">
-                          <svg className="w-12 h-12 text-red-600" fill="currentColor" viewBox="0 0 24 24">
+                          <svg
+                            className="w-12 h-12 text-red-600"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                          >
                             <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20M10,19L12,15H13L15,19H13L11.5,16L10,19M8,11V19H10V13H11C11.6,13 12,12.6 12,12V11C12,10.4 11.6,10 11,10H8M10,11H11V12H10V11Z" />
                           </svg>
                         </div>
@@ -290,7 +304,13 @@ export function AIDocumentScanner({
                 )}
 
                 {extractionResult && (
-                  <Alert className={extractionResult.success ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'}>
+                  <Alert
+                    className={
+                      extractionResult.success
+                        ? 'border-green-500 bg-green-50'
+                        : 'border-red-500 bg-red-50'
+                    }
+                  >
                     {extractionResult.success ? (
                       <CheckCircle className="h-4 w-4 text-green-600" />
                     ) : (
@@ -310,7 +330,9 @@ export function AIDocumentScanner({
                           {extractionResult.warnings.length > 0 && (
                             <div className="mt-2 space-y-1">
                               {extractionResult.warnings.map((warning, i) => (
-                                <p key={i} className="text-xs text-orange-600">⚠️ {warning}</p>
+                                <p key={i} className="text-xs text-orange-600">
+                                  ⚠️ {warning}
+                                </p>
                               ))}
                             </div>
                           )}
@@ -319,7 +341,9 @@ export function AIDocumentScanner({
                         <div>
                           <p className="font-medium text-red-800">Échec de l'extraction</p>
                           {extractionResult.warnings.map((warning, i) => (
-                            <p key={i} className="text-xs text-red-700 mt-1">{warning}</p>
+                            <p key={i} className="text-xs text-red-700 mt-1">
+                              {warning}
+                            </p>
                           ))}
                         </div>
                       )}
@@ -338,11 +362,7 @@ export function AIDocumentScanner({
             </Button>
 
             {previewUrl && !extractionResult && (
-              <Button 
-                onClick={handleExtraction}
-                disabled={isExtracting}
-                className="gap-2"
-              >
+              <Button onClick={handleExtraction} disabled={isExtracting} className="gap-2">
                 {isExtracting ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -360,6 +380,5 @@ export function AIDocumentScanner({
         </div>
       </DialogContent>
     </Dialog>
-  );
+  )
 }
-

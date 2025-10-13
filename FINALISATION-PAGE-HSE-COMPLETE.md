@@ -5,6 +5,7 @@
 ### ✅ FONCTIONNEL ET OPÉRATIONNEL
 
 #### 1. **Architecture Générale**
+
 - ✅ 10 onglets actifs et fonctionnels
 - ✅ Système de navigation par tabs
 - ✅ États de chargement (HSELoadingState)
@@ -13,6 +14,7 @@
 - ✅ Permissions par rôle
 
 #### 2. **Hooks de Données** ✅ COMPLETS
+
 - ✅ `useHSEIncidents` - Gestion incidents (CRUD complet)
 - ✅ `useHSETrainings` - Gestion formations (CRUD complet)
 - ✅ `useHSECompliance` - Calculs conformité
@@ -21,18 +23,18 @@
 
 #### 3. **Onglets Implémentés**
 
-| # | Onglet | Statut | Fonctionnalités |
-|---|--------|--------|-----------------|
-| 1 | Vue d'ensemble | ✅ | KPIs, incidents récents, formations à venir |
-| 2 | **Centre d'Envoi** | ✅ | Hub formations/alertes/documents |
-| 3 | Incidents | ✅ | CRUD, recherche avancée, timeline |
-| 4 | Formations | ✅ | Catalogue, import, calendrier, modules |
-| 5 | Collaborateurs | ✅ | Suivi personnalisé, attribution |
-| 6 | Notifications | ✅ | Centre communication, envoi ciblé |
-| 7 | Attribution Auto | ✅ | Règles configurables, matrice |
-| 8 | Conformité & EPI | ✅ | Dashboard, gestion EPI, audits |
-| 9 | Système & Outils | ✅ | État système, imports, maintenance |
-| 10 | Analyses & Rapports | ✅ | Graphiques, exports |
+| #   | Onglet              | Statut | Fonctionnalités                             |
+| --- | ------------------- | ------ | ------------------------------------------- |
+| 1   | Vue d'ensemble      | ✅     | KPIs, incidents récents, formations à venir |
+| 2   | **Centre d'Envoi**  | ✅     | Hub formations/alertes/documents            |
+| 3   | Incidents           | ✅     | CRUD, recherche avancée, timeline           |
+| 4   | Formations          | ✅     | Catalogue, import, calendrier, modules      |
+| 5   | Collaborateurs      | ✅     | Suivi personnalisé, attribution             |
+| 6   | Notifications       | ✅     | Centre communication, envoi ciblé           |
+| 7   | Attribution Auto    | ✅     | Règles configurables, matrice               |
+| 8   | Conformité & EPI    | ✅     | Dashboard, gestion EPI, audits              |
+| 9   | Système & Outils    | ✅     | État système, imports, maintenance          |
+| 10  | Analyses & Rapports | ✅     | Graphiques, exports                         |
 
 ---
 
@@ -41,6 +43,7 @@
 ### 1️⃣ VUE D'ENSEMBLE ✅
 
 #### Éléments Actifs:
+
 - ✅ **4 KPIs en temps réel**
   - Incidents ouverts (clickable → onglet Incidents)
   - Formations cette semaine (clickable → onglet Formations)
@@ -64,6 +67,7 @@
   - Formateur et lieu
 
 #### Handlers Implémentés:
+
 ```typescript
 setShowIncidentForm(true)       → Ouvre dialog déclaration
 setActiveTab('formations')      → Change d'onglet
@@ -76,6 +80,7 @@ handleSessionClick(training, session) → Détails session
 ### 2️⃣ CENTRE D'ENVOI ⭐ NOUVEAU ✅
 
 #### Structure:
+
 ```
 [Formations] [Alertes & Infos] [Documents]
       ↓              ↓              ↓
@@ -86,6 +91,7 @@ handleSessionClick(training, session) → Détails session
 ```
 
 #### Fonctionnalités:
+
 - ✅ **Onglet Formations**
   - Dropdown 9 formations du catalogue
   - Preview formation sélectionnée
@@ -105,6 +111,7 @@ handleSessionClick(training, session) → Détails session
   - Tracking téléchargements
 
 #### Handlers Actifs:
+
 ```typescript
 createContent()          → Crée HSEContentItem
 assignContent()          → Crée HSEAssignments
@@ -117,6 +124,7 @@ handleSend()             → Envoi avec validation
 ### 3️⃣ INCIDENTS ✅
 
 #### Fonctionnalités:
+
 - ✅ **Recherche avancée** (HSEAdvancedSearch)
   - Par terme de recherche
   - Par sévérité (low/medium/high)
@@ -140,6 +148,7 @@ handleSend()             → Envoi avec validation
   - Accès rapide
 
 #### Handlers:
+
 ```typescript
 addIncident()            → Création (Convex ou Local)
 setShowIncidentForm()    → Ouverture dialog
@@ -153,22 +162,26 @@ setShowIncidentDetails() → Timeline incident
 #### 3 Sous-onglets:
 
 **A. Modules Interactifs**
+
 - ✅ HSETrainerDashboard
 - ✅ Liste modules avec contenu
 - ✅ Quiz et évaluations
 
 **B. Calendrier & Sessions**
+
 - ✅ HSETrainingCalendar
 - ✅ Vue mensuelle/hebdo
 - ✅ Sessions clickables
 
 **C. Catalogue & Import**
+
 - ✅ HSETrainingImporter (JSON/Excel)
 - ✅ HSETrainingCatalog (9 modules)
 - ✅ Filtres (catégorie, rôle)
 - ✅ Bouton "Programmer session"
 
 #### Handlers:
+
 ```typescript
 handleScheduleSession()  → Ouvre scheduleur
 onImportComplete()       → Reload données
@@ -180,6 +193,7 @@ handleSessionClick()     → Détails session
 ### 5️⃣ COLLABORATEURS ✅
 
 #### Fonctionnalités:
+
 - ✅ **Statistiques globales**
   - Total employés
   - Conformes ≥90% (vert)
@@ -203,6 +217,7 @@ handleSessionClick()     → Détails session
   - Bouton "Rappel"
 
 #### Handlers:
+
 ```typescript
 handleAssignTraining()   → Attribution manuelle
 sendTrainingReminder()   → Envoi notification
@@ -214,6 +229,7 @@ setSelectedEmployee()    → Dialog détails
 ### 6️⃣ NOTIFICATIONS ✅
 
 #### Fonctionnalités:
+
 - ✅ **Filtres compacts**
   - Par type (Formations/Incidents/EPI/Conformité)
   - Par statut (Toutes/Non lues/Lues)
@@ -235,6 +251,7 @@ setSelectedEmployee()    → Dialog détails
   - Multi-envoi
 
 #### Handlers:
+
 ```typescript
 handleSendNotification() → Création notification
 handleMarkAsRead()       → Mise à jour statut
@@ -246,6 +263,7 @@ handleTemplateSelect()   → Pré-remplissage
 ### 7️⃣ ATTRIBUTION AUTO ✅
 
 #### Fonctionnalités:
+
 - ✅ **6 règles par défaut**
   - Induction (tous)
   - H2S (Production)
@@ -271,6 +289,7 @@ handleTemplateSelect()   → Pré-remplissage
   - Couverture employés
 
 #### Handlers:
+
 ```typescript
 generateAssignments()    → Création lot
 toggleRuleActive()       → ON/OFF règle
@@ -285,17 +304,20 @@ matchesRuleConditions()  → Logique matching
 #### 3 Sous-onglets:
 
 **A. Tableau de Bord**
+
 - ✅ HSEComplianceDashboard
 - ✅ Taux global
 - ✅ Détails par service
 
 **B. Gestion EPI**
+
 - ✅ HSEEquipmentManagement
 - ✅ Liste équipements
 - ✅ Affectations
 - ✅ Vérifications périodiques
 
 **C. Audits & Contrôles**
+
 - ✅ HSEAuditDashboard
 - ✅ Planning audits
 - ✅ Résultats et scores
@@ -307,18 +329,21 @@ matchesRuleConditions()  → Logique matching
 #### 3 Sous-onglets:
 
 **A. État Système**
+
 - ✅ HSESystemStatus
 - ✅ Validation complète
 - ✅ Diagnostics
 - ✅ Bouton "Test système" (ADMIN)
 
 **B. Outils Import**
+
 - ✅ HSEDataImportTools
 - ✅ Import JSON
 - ✅ Import Excel
 - ✅ Bulk operations
 
 **C. Maintenance**
+
 - ✅ HSEMaintenanceTools
 - ✅ Nettoyage données
 - ✅ Optimisations
@@ -328,6 +353,7 @@ matchesRuleConditions()  → Logique matching
 ### 🔟 ANALYSES & RAPPORTS ✅
 
 #### Fonctionnalités:
+
 - ✅ **HSEAnalyticsDashboard**
   - Graphiques incidents (tendances)
   - Graphiques formations (completion)
@@ -345,17 +371,17 @@ matchesRuleConditions()  → Logique matching
 
 ### ✅ Gestionnaires d'Événements (100%)
 
-| Bouton/Action | Handler | Status |
-|---------------|---------|--------|
-| Déclarer incident | `setShowIncidentForm(true)` | ✅ |
-| Programmer formation | `setActiveTab + setShowSessionScheduler` | ✅ |
-| Rafraîchir | `initializeIncidents + initializeTrainings` | ✅ |
-| Test système | `runSystemValidation()` | ✅ |
-| Assigner formation | `handleAssignTraining()` | ✅ |
-| Envoyer notification | `handleSendNotification()` | ✅ |
-| Marquer lu | `handleMarkNotificationAsRead()` | ✅ |
-| Lancer attribution | `generateAssignments()` | ✅ |
-| Envoyer contenu | `assignContent()` | ✅ |
+| Bouton/Action        | Handler                                     | Status |
+| -------------------- | ------------------------------------------- | ------ |
+| Déclarer incident    | `setShowIncidentForm(true)`                 | ✅     |
+| Programmer formation | `setActiveTab + setShowSessionScheduler`    | ✅     |
+| Rafraîchir           | `initializeIncidents + initializeTrainings` | ✅     |
+| Test système         | `runSystemValidation()`                     | ✅     |
+| Assigner formation   | `handleAssignTraining()`                    | ✅     |
+| Envoyer notification | `handleSendNotification()`                  | ✅     |
+| Marquer lu           | `handleMarkNotificationAsRead()`            | ✅     |
+| Lancer attribution   | `generateAssignments()`                     | ✅     |
+| Envoyer contenu      | `assignContent()`                           | ✅     |
 
 ### ✅ États de Chargement (100%)
 
@@ -371,13 +397,14 @@ initialized: boolean          → Garde contre affichage prématuré
 ```
 
 **Composant**: HSELoadingState
+
 ```tsx
-<HSELoadingState 
+<HSELoadingState
   loading={isLoading && !isFullyInitialized}
-  error={hasErrors ? (incidentsError || trainingsError) : null}
+  error={hasErrors ? incidentsError || trainingsError : null}
   onRetry={() => {
-    initializeIncidents();
-    initializeTrainings();
+    initializeIncidents()
+    initializeTrainings()
   }}
 >
   {children}
@@ -387,12 +414,14 @@ initialized: boolean          → Garde contre affichage prématuré
 ### ✅ Gestion d'Erreurs (100%)
 
 **Niveaux**:
+
 1. **Hooks** - Try/catch avec fallback local
 2. **Composants** - Error boundaries (HSEErrorBoundary)
 3. **UI** - Messages toast utilisateur
 4. **Retry** - Boutons de réessai
 
 **Exemples**:
+
 ```typescript
 // Dans useHSEIncidents
 try {
@@ -408,6 +437,7 @@ try {
 ### ✅ Validation Formulaires (100%)
 
 **Incidents** (IncidentForm):
+
 ```typescript
 const incidentFormSchema = z.object({
   employeeId: z.string().min(1, 'Employé requis'),
@@ -416,42 +446,50 @@ const incidentFormSchema = z.object({
   description: z.string().min(10).max(2000),
   location: z.string().min(5).max(200),
   occurredAt: z.date(),
-  reportedBy: z.string().min(1)
-});
+  reportedBy: z.string().min(1),
+})
 ```
 
 **Formations** (SessionScheduler):
+
 - Validation date future
 - Validation nombre participants
 - Validation formateur qualifié
 
 **Centre d'Envoi**:
+
 ```typescript
 const canSend = useMemo(() => {
-  if (selectedEmployees.length === 0) return false;
+  if (selectedEmployees.length === 0) return false
   switch (activeTab) {
-    case 'training': return !!selectedTraining;
-    case 'alert': return !!alertTitle && !!alertMessage;
-    case 'document': return !!documentName && !!documentUrl;
+    case 'training':
+      return !!selectedTraining
+    case 'alert':
+      return !!alertTitle && !!alertMessage
+    case 'document':
+      return !!documentName && !!documentUrl
   }
-}, [dependencies]);
+}, [dependencies])
 ```
 
 ### ✅ Feedback Utilisateur (100%)
 
 **Toasts** (notifications):
+
 - ✅ Succès → Vert ("Incident déclaré", "Formation assignée")
 - ✅ Erreur → Rouge ("Erreur lors de...", "Impossible de...")
 - ✅ Warning → Jaune ("Mode hors-ligne")
 - ✅ Info → Bleu ("Chargement...")
 
 **États visuels**:
+
 - ✅ Hover → shadow-md, bg-muted/50
 - ✅ Disabled → opacity-50, cursor-not-allowed
 - ✅ Loading → Spinner (Loader2 animate-spin)
 - ✅ Active → border-primary, bg-primary/5
 
 **Badges**:
+
 - ✅ Compteurs dynamiques
 - ✅ Couleurs contextuelles
 - ✅ Animations (pulse pour non lu)
@@ -463,6 +501,7 @@ const canSend = useMemo(() => {
 ### Test 1: Déclaration Incident
 
 **Procédure**:
+
 ```
 1. /app/hse → Vue d'ensemble
 2. Clic "Déclarer un incident" (bouton rouge)
@@ -485,6 +524,7 @@ const canSend = useMemo(() => {
 ### Test 2: Attribution Formation
 
 **Procédure**:
+
 ```
 1. /app/hse → Centre d'Envoi
 2. Onglet "Formations"
@@ -506,6 +546,7 @@ const canSend = useMemo(() => {
 ### Test 3: Consultation Inbox Employé
 
 **Procédure**:
+
 ```
 1. Login EMP001 (Pierre BEKALE)
 2. /app/dashboard
@@ -527,6 +568,7 @@ const canSend = useMemo(() => {
 ### Test 4: Recherche Avancée Incidents
 
 **Procédure**:
+
 ```
 1. /app/hse → Onglet Incidents
 2. HSEAdvancedSearch visible
@@ -544,6 +586,7 @@ const canSend = useMemo(() => {
 ### Test 5: Attribution Automatique
 
 **Procédure**:
+
 ```
 1. /app/hse → Attribution Auto
 2. Vérifier 6 règles affichées
@@ -567,6 +610,7 @@ const canSend = useMemo(() => {
 **Scénario**: Aucun incident dans le système
 
 **Comportement actuel**: ✅
+
 ```tsx
 {recentIncidents.length === 0 ? (
   <div className="text-center py-8">
@@ -580,27 +624,26 @@ const canSend = useMemo(() => {
 ### 2. Chargement Initial
 
 **Comportement actuel**: ✅
+
 ```tsx
 <HSELoadingState loading={isLoading && !isFullyInitialized}>
-  {isFullyInitialized ? (
-    <div>Contenu...</div>
-  ) : (
-    <Loader2 className="animate-spin" />
-  )}
+  {isFullyInitialized ? <div>Contenu...</div> : <Loader2 className="animate-spin" />}
 </HSELoadingState>
 ```
 
 ### 3. Erreurs Convex
 
 **Comportement actuel**: ✅
+
 ```tsx
 // Fallback automatique vers LocalStorage
-const incidents = incidentsData || fallbackIncidents || [];
+const incidents = incidentsData || fallbackIncidents || []
 ```
 
 ### 4. Permissions Insuffisantes
 
 **Comportement actuel**: ✅
+
 ```tsx
 if (!canViewHSE) {
   return (
@@ -609,7 +652,7 @@ if (!canViewHSE) {
       <h3>Accès restreint</h3>
       <p>Permissions insuffisantes</p>
     </div>
-  );
+  )
 }
 ```
 
@@ -618,6 +661,7 @@ if (!canViewHSE) {
 ## ✅ Checklist Finale
 
 ### Fonctionnalités Métier
+
 - [x] Création incidents avec validation
 - [x] Mise à jour statut incidents
 - [x] Attribution enquêteur
@@ -632,12 +676,14 @@ if (!canViewHSE) {
 - [x] Génération rapports
 
 ### États et Chargement
+
 - [x] Loading states partout
 - [x] Spinners visibles
 - [x] Skeleton screens
 - [x] Messages d'attente
 
 ### Gestion Erreurs
+
 - [x] Try/catch dans hooks
 - [x] Fallback Convex → Local
 - [x] Toasts d'erreur
@@ -645,6 +691,7 @@ if (!canViewHSE) {
 - [x] Error boundaries
 
 ### UX/UI
+
 - [x] Tous boutons hover effects
 - [x] Disabled states visuels
 - [x] Animations transitions
@@ -654,6 +701,7 @@ if (!canViewHSE) {
 - [x] Badges compteurs
 
 ### Performance
+
 - [x] useMemo pour filtrage
 - [x] useCallback pour handlers
 - [x] Lazy loading (dialogs)
@@ -686,6 +734,7 @@ Status: PRODUCTION READY ✅
 ### Données de Test
 
 **Pour tester avec données réelles**:
+
 ```
 Console navigateur:
 > clearSogaraCache()  // Nettoie tout
@@ -709,6 +758,7 @@ sogara_employees        → Liste employés
 ### Debug
 
 **Validation système**:
+
 ```
 /app/hse → Vue d'ensemble
 Bouton "Test système" (visible si ADMIN)

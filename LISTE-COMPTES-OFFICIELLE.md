@@ -13,15 +13,16 @@
 ### 🔴 Direction et Administration (3 comptes avec ADMIN)
 
 #### 1. PELLEN Asted - ADM001
+
 ```yaml
-Matricule:    ADM001
-Nom complet:  PELLEN Asted
-Poste:        Administrateur Systèmes & Informatique
+Matricule: ADM001
+Nom complet: PELLEN Asted
+Poste: Administrateur Systèmes & Informatique
 Organisation: ORGANEUS Gabon (partenaire externe)
-Rôles:        ADMIN
-Email:        pellen.asted@organeus.ga
+Rôles: ADMIN
+Email: pellen.asted@organeus.ga
 Mot de passe: Admin123!
-Route:        /app/dashboard
+Route: /app/dashboard
 
 Responsabilités:
   - Supervision générale des modules
@@ -35,15 +36,16 @@ Accès: COMPLET - Tous les modules
 ```
 
 #### 2. Daniel MVOU - DG001
+
 ```yaml
-Matricule:    DG001
-Nom complet:  Daniel MVOU
-Poste:        Directeur Général
-Service:      Direction Générale
-Rôles:        DG, ADMIN
-Email:        daniel.mvou@sogara.com
+Matricule: DG001
+Nom complet: Daniel MVOU
+Poste: Directeur Général
+Service: Direction Générale
+Rôles: DG, ADMIN
+Email: daniel.mvou@sogara.com
 Mot de passe: DG123!
-Route:        /app/dashboard
+Route: /app/dashboard
 
 Responsabilités:
   - Direction générale de l'entreprise
@@ -57,15 +59,16 @@ Accès: COMPLET - Tous modules + Tableaux de bord stratégiques
 ```
 
 #### 3. Brigitte NGUEMA - DRH001
+
 ```yaml
-Matricule:    DRH001
-Nom complet:  Brigitte NGUEMA
-Poste:        Directrice des Ressources Humaines
-Service:      Ressources Humaines
-Rôles:        DRH, ADMIN
-Email:        brigitte.nguema@sogara.com
+Matricule: DRH001
+Nom complet: Brigitte NGUEMA
+Poste: Directrice des Ressources Humaines
+Service: Ressources Humaines
+Rôles: DRH, ADMIN
+Email: brigitte.nguema@sogara.com
 Mot de passe: DRH123!
-Route:        /app/dashboard
+Route: /app/dashboard
 
 Responsabilités:
   - Direction des ressources humaines
@@ -83,15 +86,16 @@ Accès: Personnel, Formations, HSE, Tableaux de bord RH
 ### 🟠 Services Opérationnels (4 comptes)
 
 #### 4. Marie-Claire NZIEGE - HSE001 🛡️
+
 ```yaml
-Matricule:    HSE001
-Nom complet:  Marie-Claire NZIEGE
-Poste:        Chef de Division HSE et Conformité
-Service:      HSE et Conformité
-Rôles:        HSE, COMPLIANCE, SECURITE
-Email:        marie-claire.nziege@sogara.com
+Matricule: HSE001
+Nom complet: Marie-Claire NZIEGE
+Poste: Chef de Division HSE et Conformité
+Service: HSE et Conformité
+Rôles: HSE, COMPLIANCE, SECURITE
+Email: marie-claire.nziege@sogara.com
 Mot de passe: HSE123!
-Route:        /app/hse
+Route: /app/hse
 
 Responsabilités:
   - Direction de la division HSE et Conformité
@@ -104,8 +108,7 @@ Responsabilités:
 
 Accès: Personnel, Équipements, HSE, Conformité, Sécurité, Réception
 
-Modules HSE:
-  ✅ Gestion Collaborateurs (suivi formations)
+Modules HSE: ✅ Gestion Collaborateurs (suivi formations)
   ✅ Centre de Notifications (communication)
   ✅ Attribution Automatique (règles)
   ✅ Catalogue 9 formations
@@ -115,15 +118,16 @@ Modules HSE:
 ```
 
 #### 5. Clarisse MBOUMBA - COM001 📢
+
 ```yaml
-Matricule:    COM001
-Nom complet:  Clarisse MBOUMBA
-Poste:        Directeur Communication
-Service:      Communication
-Rôles:        COMMUNICATION
-Email:        clarisse.mboumba@sogara.com
+Matricule: COM001
+Nom complet: Clarisse MBOUMBA
+Poste: Directeur Communication
+Service: Communication
+Rôles: COMMUNICATION
+Email: clarisse.mboumba@sogara.com
 Mot de passe: Communication123!
-Route:        /app/connect
+Route: /app/connect
 
 Responsabilités:
   - Direction de la communication
@@ -136,19 +140,20 @@ Responsabilités:
 Accès: SOGARA Connect (édition complète)
 
 Note: ✅ UNIQUE - Seul compte COMMUNICATION
-      ❌ COM002 (Aminata SECK) SUPPRIMÉ
+  ❌ COM002 (Aminata SECK) SUPPRIMÉ
 ```
 
 #### 6. Sylvie KOUMBA - REC001 📦
+
 ```yaml
-Matricule:    REC001
-Nom complet:  Sylvie KOUMBA
-Poste:        Responsable Sécurité
-Service:      Sécurité
-Rôles:        RECEP
-Email:        sylvie.koumba@sogara.com
+Matricule: REC001
+Nom complet: Sylvie KOUMBA
+Poste: Responsable Sécurité
+Service: Sécurité
+Rôles: RECEP
+Email: sylvie.koumba@sogara.com
 Mot de passe: Reception123!
-Route:        /app/visites
+Route: /app/visites
 
 Responsabilités:
   - Gestion de la sécurité du site
@@ -161,15 +166,16 @@ Accès: Visites, Colis & Courriers
 ```
 
 #### 7. Pierre BEKALE - EMP001 ⚙️
+
 ```yaml
-Matricule:    EMP001
-Nom complet:  Pierre BEKALE
-Poste:        Technicien Raffinage
-Service:      Production
-Rôles:        EMPLOYE
-Email:        pierre.bekale@sogara.com
+Matricule: EMP001
+Nom complet: Pierre BEKALE
+Poste: Technicien Raffinage
+Service: Production
+Rôles: EMPLOYE
+Email: pierre.bekale@sogara.com
 Mot de passe: Employee123!
-Route:        /app/dashboard
+Route: /app/dashboard
 
 Responsabilités:
   - Consultation des informations de service
@@ -185,15 +191,15 @@ Accès: Dashboard, SOGARA Connect (lecture)
 
 ## 🔐 Matrice des Permissions
 
-| Compte | Personnel | Visites | Colis | Équipements | HSE | Connect | Dashboard |
-|--------|-----------|---------|-------|-------------|-----|---------|-----------|
-| **ADM001** | ✅ RW | ✅ RW | ✅ RW | ✅ RW | ✅ RW | ✅ RW | ✅ RW |
-| **DG001** | ✅ RW | ✅ RW | ✅ RW | ✅ RW | ✅ RW | ✅ RW | ✅ RW |
-| **DRH001** | ✅ RW | ✅ R | ✅ R | ✅ R | ✅ RW | ✅ R | ✅ RW |
-| **HSE001** | ✅ RW | ✅ R | ✅ R | ✅ RW | ✅ RW | ✅ R | ✅ R |
-| **COM001** | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ RW | ✅ R |
-| **REC001** | ❌ | ✅ RW | ✅ RW | ❌ | ❌ | ✅ R | ✅ R |
-| **EMP001** | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ R | ✅ R |
+| Compte     | Personnel | Visites | Colis | Équipements | HSE   | Connect | Dashboard |
+| ---------- | --------- | ------- | ----- | ----------- | ----- | ------- | --------- |
+| **ADM001** | ✅ RW     | ✅ RW   | ✅ RW | ✅ RW       | ✅ RW | ✅ RW   | ✅ RW     |
+| **DG001**  | ✅ RW     | ✅ RW   | ✅ RW | ✅ RW       | ✅ RW | ✅ RW   | ✅ RW     |
+| **DRH001** | ✅ RW     | ✅ R    | ✅ R  | ✅ R        | ✅ RW | ✅ R    | ✅ RW     |
+| **HSE001** | ✅ RW     | ✅ R    | ✅ R  | ✅ RW       | ✅ RW | ✅ R    | ✅ R      |
+| **COM001** | ❌        | ❌      | ❌    | ❌          | ❌    | ✅ RW   | ✅ R      |
+| **REC001** | ❌        | ✅ RW   | ✅ RW | ❌          | ❌    | ✅ R    | ✅ R      |
+| **EMP001** | ❌        | ❌      | ❌    | ❌          | ❌    | ✅ R    | ✅ R      |
 
 **Légende**: R = Lecture, W = Écriture, RW = Lecture + Écriture
 
@@ -216,6 +222,7 @@ EMP001  → /app/dashboard (employé)
 ## 🧪 Tests de Connexion
 
 ### Connexion COM001 (Clarisse MBOUMBA)
+
 ```typescript
 Login: COM001
 Password: Communication123!
@@ -225,6 +232,7 @@ Expected Role: COMMUNICATION
 ```
 
 ### Connexion HSE001 (Marie-Claire NZIEGE)
+
 ```typescript
 Login: HSE001
 Password: HSE123!
@@ -234,6 +242,7 @@ Expected Roles: HSE, COMPLIANCE, SECURITE
 ```
 
 ### Vérification Absence Doublons
+
 ```typescript
 // Ne devrait PAS exister
 COM002 ❌ SUPPRIMÉ
@@ -247,6 +256,7 @@ Aminata SECK ❌ SUPPRIMÉE
 ## 📝 Changelog
 
 ### 2025-01-09 - Nettoyage Majeur
+
 ```diff
 - Supprimé: COM002 (Aminata SECK) - doublon COMMUNICATION
 - Supprimé: SUP001 (Christian ELLA) - n'existait que dans Convex

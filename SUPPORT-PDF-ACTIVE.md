@@ -23,11 +23,13 @@ L'extraction IA peut maintenant traiter les **fichiers PDF** en plus des images 
 ## 📄 Comment ça marche
 
 ### 1. Pour les Images (comme avant)
+
 ```
 Image → API OpenAI → Données extraites
 ```
 
 ### 2. Pour les PDFs (nouveau)
+
 ```
 PDF → Extraction 1ère page → Conversion en image → API OpenAI → Données extraites
 ```
@@ -58,6 +60,7 @@ PDF → Extraction 1ère page → Conversion en image → API OpenAI → Donnée
 ## 📊 Logs Console attendus
 
 ### Pour un PDF:
+
 ```
 📄 PDF détecté, conversion en image...
 📄 PDF chargé: 1 page(s)
@@ -70,6 +73,7 @@ PDF → Extraction 1ère page → Conversion en image → API OpenAI → Donnée
 ```
 
 ### Pour une Image:
+
 ```
 🔧 Extraction du document type: identity
 📷 Appel extraction identité avec image...
@@ -82,16 +86,19 @@ PDF → Extraction 1ère page → Conversion en image → API OpenAI → Donnée
 ## 🎯 Cas d'usage
 
 ### Documents d'identité
+
 - ✅ CNI scannée en PDF
 - ✅ Passeport en PDF
 - ✅ Permis de conduire en PDF
 
 ### Courriers
+
 - ✅ Lettres scannées
 - ✅ Documents administratifs
 - ✅ Factures PDF
 
 ### Étiquettes colis
+
 - ✅ Bons de livraison PDF
 - ✅ Étiquettes d'expédition PDF
 
@@ -100,11 +107,13 @@ PDF → Extraction 1ère page → Conversion en image → API OpenAI → Donnée
 ## 🛠️ Technologies utilisées
 
 ### Bibliothèques:
+
 - **pdfjs-dist**: Pour lire et rendre les PDFs
 - **Canvas API**: Pour convertir les pages PDF en images
 - **OpenAI GPT-4o**: Pour l'extraction des données
 
 ### Services créés:
+
 - `pdf-converter.service.ts`: Service de conversion PDF→Image
 - `ai-extraction.service.ts`: Modifié pour détecter et traiter les PDFs
 
@@ -119,7 +128,7 @@ PDF → Extraction 1ère page → Conversion en image → API OpenAI → Donnée
 2. **Taille maximale**: 10MB pour les PDFs
    - Les PDFs très volumineux peuvent être lents à traiter
 
-3. **Qualité du scan**: 
+3. **Qualité du scan**:
    - Un PDF de bonne qualité donnera de meilleurs résultats
    - Minimum recommandé: 150 DPI
 
@@ -130,16 +139,19 @@ PDF → Extraction 1ère page → Conversion en image → API OpenAI → Donnée
 ### Si l'extraction PDF ne fonctionne pas:
 
 **1. Vérifiez pdfjs-dist:**
+
 ```bash
 npm list pdfjs-dist
 ```
 
 **2. Vérifiez les logs Console:**
+
 - Cherchez "📄 PDF détecté"
 - Si absent = PDF non reconnu
 - Si présent = Conversion en cours
 
 **3. Testez avec une image d'abord:**
+
 - Si l'image fonctionne mais pas le PDF = problème de conversion
 - Si ni l'un ni l'autre = problème d'API
 
@@ -150,9 +162,8 @@ npm list pdfjs-dist
 **Le support PDF est maintenant 100% FONCTIONNEL !**
 
 - Upload de PDF ✅
-- Conversion automatique ✅  
+- Conversion automatique ✅
 - Extraction IA ✅
 - Interface adaptée ✅
 
 Vous pouvez maintenant utiliser des **CNI en PDF** directement ! 🎉
-

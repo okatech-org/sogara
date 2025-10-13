@@ -1,16 +1,16 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { 
-  Settings, 
-  Users, 
-  Calendar, 
-  Package, 
-  HardHat, 
-  Shield, 
-  Newspaper, 
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import {
+  Settings,
+  Users,
+  Calendar,
+  Package,
+  HardHat,
+  Shield,
+  Newspaper,
   Database,
   Zap,
   Lock,
@@ -18,10 +18,10 @@ import {
   Code,
   Layers,
   Globe,
-  Link as LinkIcon
-} from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { demoAccounts } from '@/data/demoAccounts';
+  Link as LinkIcon,
+} from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { demoAccounts } from '@/data/demoAccounts'
 
 export function ProjetPage() {
   return (
@@ -59,8 +59,9 @@ export function ProjetPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <p className="text-sm text-muted-foreground">
-                  SOGARA est un système de gestion intégrée pour l'administration d'une raffinerie pétrolière,
-                  couvrant la gestion du personnel, des visites, du courrier, des équipements et de la sécurité HSE.
+                  SOGARA est un système de gestion intégrée pour l'administration d'une raffinerie
+                  pétrolière, couvrant la gestion du personnel, des visites, du courrier, des
+                  équipements et de la sécurité HSE.
                 </p>
                 <div className="space-y-2">
                   <h4 className="font-medium">Fonctionnalités principales :</h4>
@@ -124,83 +125,91 @@ export function ProjetPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-                <div className="grid gap-6">
-                  <div className="grid gap-4 md:grid-cols-2">
-                    {demoAccounts.map((account) => {
-                      const Icon = account.icon;
-                      return (
-                        <Card key={account.id} className="border-2">
-                          <CardHeader className="pb-3">
-                            <div className="flex items-center gap-2">
-                              <Badge variant="outline">{account.matricule}</Badge>
-                              <span className="font-semibold">{account.fullName}</span>
-                            </div>
-                          </CardHeader>
-                          <CardContent className="space-y-3">
-                            <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                              <Icon className="w-4 h-4" />
-                              <span>{account.jobTitle}</span>
-                            </div>
-                            <p className="text-sm text-muted-foreground">
-                              {account.description}
-                            </p>
-                            <div className="space-y-1 text-xs text-muted-foreground">
-                              <strong>Responsabilités principales :</strong>
-                              <ul className="ml-4 space-y-1 list-disc">
-                                {account.responsibilities.slice(0, 4).map((item) => (
-                                  <li key={item}>{item}</li>
-                                ))}
-                                {account.responsibilities.length > 4 && <li>…</li>}
-                              </ul>
-                            </div>
-                            <Badge variant="outline" className="text-xs">
-                              {account.accessSummary}
-                            </Badge>
-                            <div className="flex items-center gap-2 pt-2">
-                              <Link
-                                to={`/comptes/${account.slug}`}
-                                className="inline-flex items-center gap-1 text-xs text-primary underline underline-offset-4"
-                              >
-                                Voir la fiche complète
-                                <LinkIcon className="w-3 h-3" />
-                              </Link>
-                              <Link
-                                to={`/app/accounts/${account.slug}`}
-                                className="inline-flex items-center gap-1 text-xs text-muted-foreground"
-                              >
-                                Accéder en mode connecté
-                              </Link>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      );
-                    })}
-                  </div>
-
-                  <Separator />
-
-                  <div className="bg-muted p-4 rounded-lg">
-                    <h4 className="font-medium mb-2">Instructions de Test</h4>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Pour tester le système, utilisez les matricules suivants lors de la connexion ou accédez directement aux fiches :
-                    </p>
-                    <div className="grid gap-2 text-sm">
-                      {demoAccounts.map((account) => (
-                        <div key={account.id} className="flex items-center justify-between flex-wrap gap-2">
-                          <span className="font-mono font-semibold">{account.matricule}</span>
-                          <div className="flex items-center gap-3 text-xs">
-                            <Link to={`/comptes/${account.slug}`} className="text-primary underline underline-offset-4">
-                              Fiche publique
+              <div className="grid gap-6">
+                <div className="grid gap-4 md:grid-cols-2">
+                  {demoAccounts.map(account => {
+                    const Icon = account.icon
+                    return (
+                      <Card key={account.id} className="border-2">
+                        <CardHeader className="pb-3">
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline">{account.matricule}</Badge>
+                            <span className="font-semibold">{account.fullName}</span>
+                          </div>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                          <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                            <Icon className="w-4 h-4" />
+                            <span>{account.jobTitle}</span>
+                          </div>
+                          <p className="text-sm text-muted-foreground">{account.description}</p>
+                          <div className="space-y-1 text-xs text-muted-foreground">
+                            <strong>Responsabilités principales :</strong>
+                            <ul className="ml-4 space-y-1 list-disc">
+                              {account.responsibilities.slice(0, 4).map(item => (
+                                <li key={item}>{item}</li>
+                              ))}
+                              {account.responsibilities.length > 4 && <li>…</li>}
+                            </ul>
+                          </div>
+                          <Badge variant="outline" className="text-xs">
+                            {account.accessSummary}
+                          </Badge>
+                          <div className="flex items-center gap-2 pt-2">
+                            <Link
+                              to={`/comptes/${account.slug}`}
+                              className="inline-flex items-center gap-1 text-xs text-primary underline underline-offset-4"
+                            >
+                              Voir la fiche complète
+                              <LinkIcon className="w-3 h-3" />
                             </Link>
-                            <Link to={`/app/accounts/${account.slug}`} className="text-muted-foreground underline underline-offset-4">
-                              Vue interne
+                            <Link
+                              to={`/app/accounts/${account.slug}`}
+                              className="inline-flex items-center gap-1 text-xs text-muted-foreground"
+                            >
+                              Accéder en mode connecté
                             </Link>
                           </div>
+                        </CardContent>
+                      </Card>
+                    )
+                  })}
+                </div>
+
+                <Separator />
+
+                <div className="bg-muted p-4 rounded-lg">
+                  <h4 className="font-medium mb-2">Instructions de Test</h4>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Pour tester le système, utilisez les matricules suivants lors de la connexion ou
+                    accédez directement aux fiches :
+                  </p>
+                  <div className="grid gap-2 text-sm">
+                    {demoAccounts.map(account => (
+                      <div
+                        key={account.id}
+                        className="flex items-center justify-between flex-wrap gap-2"
+                      >
+                        <span className="font-mono font-semibold">{account.matricule}</span>
+                        <div className="flex items-center gap-3 text-xs">
+                          <Link
+                            to={`/comptes/${account.slug}`}
+                            className="text-primary underline underline-offset-4"
+                          >
+                            Fiche publique
+                          </Link>
+                          <Link
+                            to={`/app/accounts/${account.slug}`}
+                            className="text-muted-foreground underline underline-offset-4"
+                          >
+                            Vue interne
+                          </Link>
                         </div>
-                      ))}
-                    </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -228,18 +237,35 @@ export function ProjetPage() {
                           <div className="space-y-2">
                             <h4 className="font-medium text-sm">Fonctionnalités :</h4>
                             <ul className="text-xs space-y-1 text-muted-foreground ml-4">
-                              <li>• <strong>Fiche employé :</strong> Informations personnelles, service, matricule</li>
-                              <li>• <strong>Gestion des rôles :</strong> Attribution et modification des permissions</li>
-                              <li>• <strong>Compétences :</strong> Suivi des qualifications et certifications</li>
-                              <li>• <strong>Habilitations :</strong> Autorisations d'accès aux zones/équipements</li>
-                              <li>• <strong>Statistiques :</strong> Visites reçues, colis, formations HSE</li>
-                              <li>• <strong>Recherche avancée :</strong> Par service, rôle, compétence</li>
+                              <li>
+                                • <strong>Fiche employé :</strong> Informations personnelles,
+                                service, matricule
+                              </li>
+                              <li>
+                                • <strong>Gestion des rôles :</strong> Attribution et modification
+                                des permissions
+                              </li>
+                              <li>
+                                • <strong>Compétences :</strong> Suivi des qualifications et
+                                certifications
+                              </li>
+                              <li>
+                                • <strong>Habilitations :</strong> Autorisations d'accès aux
+                                zones/équipements
+                              </li>
+                              <li>
+                                • <strong>Statistiques :</strong> Visites reçues, colis, formations
+                                HSE
+                              </li>
+                              <li>
+                                • <strong>Recherche avancée :</strong> Par service, rôle, compétence
+                              </li>
                             </ul>
                           </div>
                         </div>
                       </div>
                     </Card>
-                    
+
                     <Card className="p-4 border-l-4 border-l-green-500">
                       <div className="flex items-start gap-3">
                         <Calendar className="w-8 h-8 text-green-600 mt-1" />
@@ -251,18 +277,35 @@ export function ProjetPage() {
                           <div className="space-y-2">
                             <h4 className="font-medium text-sm">Fonctionnalités :</h4>
                             <ul className="text-xs space-y-1 text-muted-foreground ml-4">
-                              <li>• <strong>Planification :</strong> Programmation des visites avec hôte assigné</li>
-                              <li>• <strong>Enregistrement visiteurs :</strong> Identité, société, documents</li>
-                              <li>• <strong>Check-in/out :</strong> Contrôle d'entrée et sortie horodaté</li>
-                              <li>• <strong>Gestion badges :</strong> Attribution et récupération sécurisée</li>
-                              <li>• <strong>Statuts temps réel :</strong> Attendu, en attente, en cours, parti</li>
-                              <li>• <strong>Historique :</strong> Traçabilité complète des accès</li>
+                              <li>
+                                • <strong>Planification :</strong> Programmation des visites avec
+                                hôte assigné
+                              </li>
+                              <li>
+                                • <strong>Enregistrement visiteurs :</strong> Identité, société,
+                                documents
+                              </li>
+                              <li>
+                                • <strong>Check-in/out :</strong> Contrôle d'entrée et sortie
+                                horodaté
+                              </li>
+                              <li>
+                                • <strong>Gestion badges :</strong> Attribution et récupération
+                                sécurisée
+                              </li>
+                              <li>
+                                • <strong>Statuts temps réel :</strong> Attendu, en attente, en
+                                cours, parti
+                              </li>
+                              <li>
+                                • <strong>Historique :</strong> Traçabilité complète des accès
+                              </li>
                             </ul>
                           </div>
                         </div>
                       </div>
                     </Card>
-                    
+
                     <Card className="p-4 border-l-4 border-l-purple-500">
                       <div className="flex items-start gap-3">
                         <Package className="w-8 h-8 text-purple-600 mt-1" />
@@ -274,19 +317,34 @@ export function ProjetPage() {
                           <div className="space-y-2">
                             <h4 className="font-medium text-sm">Fonctionnalités :</h4>
                             <ul className="text-xs space-y-1 text-muted-foreground ml-4">
-                              <li>• <strong>Réception :</strong> Enregistrement avec photo et référence unique</li>
-                              <li>• <strong>Classification :</strong> Colis/courrier, priorité normale/urgente</li>
-                              <li>• <strong>Attribution :</strong> Assignation au destinataire final</li>
-                              <li>• <strong>Notifications :</strong> Alertes automatiques au destinataire</li>
-                              <li>• <strong>Remise :</strong> Signature électronique et horodatage</li>
-                              <li>• <strong>Suivi :</strong> États reçu, stocké, remis avec historique</li>
+                              <li>
+                                • <strong>Réception :</strong> Enregistrement avec photo et
+                                référence unique
+                              </li>
+                              <li>
+                                • <strong>Classification :</strong> Colis/courrier, priorité
+                                normale/urgente
+                              </li>
+                              <li>
+                                • <strong>Attribution :</strong> Assignation au destinataire final
+                              </li>
+                              <li>
+                                • <strong>Notifications :</strong> Alertes automatiques au
+                                destinataire
+                              </li>
+                              <li>
+                                • <strong>Remise :</strong> Signature électronique et horodatage
+                              </li>
+                              <li>
+                                • <strong>Suivi :</strong> États reçu, stocké, remis avec historique
+                              </li>
                             </ul>
                           </div>
                         </div>
                       </div>
                     </Card>
                   </div>
-                  
+
                   <div className="space-y-4">
                     <Card className="p-4 border-l-4 border-l-orange-500">
                       <div className="flex items-start gap-3">
@@ -299,18 +357,34 @@ export function ProjetPage() {
                           <div className="space-y-2">
                             <h4 className="font-medium text-sm">Fonctionnalités :</h4>
                             <ul className="text-xs space-y-1 text-muted-foreground ml-4">
-                              <li>• <strong>Inventaire :</strong> Catalogage par type, numéro de série, localisation</li>
-                              <li>• <strong>Attribution :</strong> Assignation nominative aux porteurs</li>
-                              <li>• <strong>États :</strong> Opérationnel, maintenance, hors service</li>
-                              <li>• <strong>Planification :</strong> Échéances de vérification automatisées</li>
-                              <li>• <strong>Historique :</strong> Traçabilité des affectations et interventions</li>
-                              <li>• <strong>Alertes :</strong> Notifications préventives avant échéances</li>
+                              <li>
+                                • <strong>Inventaire :</strong> Catalogage par type, numéro de
+                                série, localisation
+                              </li>
+                              <li>
+                                • <strong>Attribution :</strong> Assignation nominative aux porteurs
+                              </li>
+                              <li>
+                                • <strong>États :</strong> Opérationnel, maintenance, hors service
+                              </li>
+                              <li>
+                                • <strong>Planification :</strong> Échéances de vérification
+                                automatisées
+                              </li>
+                              <li>
+                                • <strong>Historique :</strong> Traçabilité des affectations et
+                                interventions
+                              </li>
+                              <li>
+                                • <strong>Alertes :</strong> Notifications préventives avant
+                                échéances
+                              </li>
                             </ul>
                           </div>
                         </div>
                       </div>
                     </Card>
-                    
+
                     <Card className="p-4 border-l-4 border-l-red-500">
                       <div className="flex items-start gap-3">
                         <Shield className="w-8 h-8 text-red-600 mt-1" />
@@ -322,18 +396,35 @@ export function ProjetPage() {
                           <div className="space-y-2">
                             <h4 className="font-medium text-sm">Fonctionnalités :</h4>
                             <ul className="text-xs space-y-1 text-muted-foreground ml-4">
-                              <li>• <strong>Incidents :</strong> Déclaration, investigation, résolution</li>
-                              <li>• <strong>Formations :</strong> Organisation sessions, suivi participation</li>
-                              <li>• <strong>Conformité :</strong> Taux de conformité et indicateurs KPI</li>
-                              <li>• <strong>Certifications :</strong> Validité et renouvellement automatique</li>
-                              <li>• <strong>Audits :</strong> Planification et suivi des contrôles</li>
-                              <li>• <strong>Rapports :</strong> Tableaux de bord sécurité règlementaires</li>
+                              <li>
+                                • <strong>Incidents :</strong> Déclaration, investigation,
+                                résolution
+                              </li>
+                              <li>
+                                • <strong>Formations :</strong> Organisation sessions, suivi
+                                participation
+                              </li>
+                              <li>
+                                • <strong>Conformité :</strong> Taux de conformité et indicateurs
+                                KPI
+                              </li>
+                              <li>
+                                • <strong>Certifications :</strong> Validité et renouvellement
+                                automatique
+                              </li>
+                              <li>
+                                • <strong>Audits :</strong> Planification et suivi des contrôles
+                              </li>
+                              <li>
+                                • <strong>Rapports :</strong> Tableaux de bord sécurité
+                                règlementaires
+                              </li>
                             </ul>
                           </div>
                         </div>
                       </div>
                     </Card>
-                    
+
                     <Card className="p-4 border-l-4 border-l-cyan-500">
                       <div className="flex items-start gap-3">
                         <Newspaper className="w-8 h-8 text-cyan-600 mt-1" />
@@ -345,12 +436,29 @@ export function ProjetPage() {
                           <div className="space-y-2">
                             <h4 className="font-medium text-sm">Fonctionnalités :</h4>
                             <ul className="text-xs space-y-1 text-muted-foreground ml-4">
-                              <li>• <strong>Articles :</strong> Actualités, annonces, événements de l'entreprise</li>
-                              <li>• <strong>Médias :</strong> Images multiples, vidéos YouTube/Vimeo intégrées</li>
-                              <li>• <strong>Catégories :</strong> News, activités, annonces, événements</li>
-                              <li>• <strong>Édition :</strong> Interface WYSIWYG pour le service communication</li>
-                              <li>• <strong>Publication :</strong> Gestion brouillon/publié/archivé</li>
-                              <li>• <strong>Engagement :</strong> Système de commentaires et interaction</li>
+                              <li>
+                                • <strong>Articles :</strong> Actualités, annonces, événements de
+                                l'entreprise
+                              </li>
+                              <li>
+                                • <strong>Médias :</strong> Images multiples, vidéos YouTube/Vimeo
+                                intégrées
+                              </li>
+                              <li>
+                                • <strong>Catégories :</strong> News, activités, annonces,
+                                événements
+                              </li>
+                              <li>
+                                • <strong>Édition :</strong> Interface WYSIWYG pour le service
+                                communication
+                              </li>
+                              <li>
+                                • <strong>Publication :</strong> Gestion brouillon/publié/archivé
+                              </li>
+                              <li>
+                                • <strong>Engagement :</strong> Système de commentaires et
+                                interaction
+                              </li>
                             </ul>
                           </div>
                         </div>
@@ -382,8 +490,12 @@ export function ProjetPage() {
                       🔐 Système d'Authentification
                     </h3>
                     <div className="space-y-2 text-sm">
-                      <p><strong>Fonction :</strong> <code>useAuth().login(matricule)</code></p>
-                      <p><strong>Processus :</strong></p>
+                      <p>
+                        <strong>Fonction :</strong> <code>useAuth().login(matricule)</code>
+                      </p>
+                      <p>
+                        <strong>Processus :</strong>
+                      </p>
                       <ol className="list-decimal list-inside space-y-1 ml-4 text-muted-foreground">
                         <li>Validation du matricule contre la base employés</li>
                         <li>Récupération du profil utilisateur complet</li>
@@ -391,7 +503,9 @@ export function ProjetPage() {
                         <li>Persistance de la session dans LocalStorage</li>
                         <li>Redirection vers le dashboard approprié</li>
                       </ol>
-                      <p><strong>Sécurité :</strong> Vérification des rôles à chaque navigation</p>
+                      <p>
+                        <strong>Sécurité :</strong> Vérification des rôles à chaque navigation
+                      </p>
                     </div>
                   </Card>
 
@@ -400,16 +514,35 @@ export function ProjetPage() {
                       👥 Gestion des Employés
                     </h3>
                     <div className="space-y-2 text-sm">
-                      <p><strong>Fonctions principales :</strong></p>
+                      <p>
+                        <strong>Fonctions principales :</strong>
+                      </p>
                       <ul className="space-y-1 ml-4 text-muted-foreground">
-                        <li>• <code>useEmployees().addEmployee()</code> - Création nouveau profil</li>
-                        <li>• <code>useEmployees().updateEmployee()</code> - Modification données</li>
-                        <li>• <code>useEmployees().updateEmployeeRoles()</code> - Gestion permissions</li>
-                        <li>• <code>useEmployees().updateCompetences()</code> - Mise à jour compétences</li>
-                        <li>• <code>useEmployees().updateHabilitations()</code> - Gestion autorisations</li>
+                        <li>
+                          • <code>useEmployees().addEmployee()</code> - Création nouveau profil
+                        </li>
+                        <li>
+                          • <code>useEmployees().updateEmployee()</code> - Modification données
+                        </li>
+                        <li>
+                          • <code>useEmployees().updateEmployeeRoles()</code> - Gestion permissions
+                        </li>
+                        <li>
+                          • <code>useEmployees().updateCompetences()</code> - Mise à jour
+                          compétences
+                        </li>
+                        <li>
+                          • <code>useEmployees().updateHabilitations()</code> - Gestion
+                          autorisations
+                        </li>
                       </ul>
-                      <p><strong>Algorithme de recherche :</strong> Filtrage multi-critères temps réel</p>
-                      <p><strong>Statistiques :</strong> Calcul automatique des KPI par employé</p>
+                      <p>
+                        <strong>Algorithme de recherche :</strong> Filtrage multi-critères temps
+                        réel
+                      </p>
+                      <p>
+                        <strong>Statistiques :</strong> Calcul automatique des KPI par employé
+                      </p>
                     </div>
                   </Card>
 
@@ -418,20 +551,35 @@ export function ProjetPage() {
                       📅 Workflow des Visites
                     </h3>
                     <div className="space-y-2 text-sm">
-                      <p><strong>États de transition :</strong></p>
+                      <p>
+                        <strong>États de transition :</strong>
+                      </p>
                       <div className="bg-white dark:bg-gray-800 p-3 rounded border">
                         <code className="text-xs">
                           expected → waiting → in_progress → checked_out
                         </code>
                       </div>
-                      <p><strong>Fonctions de gestion :</strong></p>
+                      <p>
+                        <strong>Fonctions de gestion :</strong>
+                      </p>
                       <ul className="space-y-1 ml-4 text-muted-foreground">
-                        <li>• <code>scheduleVisit()</code> - Planification avec hôte</li>
-                        <li>• <code>checkInVisitor()</code> - Arrivée et attribution badge</li>
-                        <li>• <code>checkOutVisitor()</code> - Départ et récupération badge</li>
-                        <li>• <code>updateVisitStatus()</code> - Changement d'état horodaté</li>
+                        <li>
+                          • <code>scheduleVisit()</code> - Planification avec hôte
+                        </li>
+                        <li>
+                          • <code>checkInVisitor()</code> - Arrivée et attribution badge
+                        </li>
+                        <li>
+                          • <code>checkOutVisitor()</code> - Départ et récupération badge
+                        </li>
+                        <li>
+                          • <code>updateVisitStatus()</code> - Changement d'état horodaté
+                        </li>
                       </ul>
-                      <p><strong>Business Logic :</strong> Validation automatique des créneaux et conflits</p>
+                      <p>
+                        <strong>Business Logic :</strong> Validation automatique des créneaux et
+                        conflits
+                      </p>
                     </div>
                   </Card>
 
@@ -440,7 +588,9 @@ export function ProjetPage() {
                       📦 Traçabilité Colis
                     </h3>
                     <div className="space-y-2 text-sm">
-                      <p><strong>Cycle de vie complet :</strong></p>
+                      <p>
+                        <strong>Cycle de vie complet :</strong>
+                      </p>
                       <div className="grid grid-cols-3 gap-2 text-xs">
                         <div className="bg-white dark:bg-gray-800 p-2 rounded text-center">
                           <div className="font-medium">RECEIVED</div>
@@ -455,7 +605,9 @@ export function ProjetPage() {
                           <div className="text-muted-foreground">Remis</div>
                         </div>
                       </div>
-                      <p><strong>Algorithmes :</strong></p>
+                      <p>
+                        <strong>Algorithmes :</strong>
+                      </p>
                       <ul className="space-y-1 ml-4 text-muted-foreground">
                         <li>• Génération automatique de références uniques</li>
                         <li>• Système de priorités avec notifications push</li>
@@ -470,14 +622,18 @@ export function ProjetPage() {
                       🛡️ Moteur HSE
                     </h3>
                     <div className="space-y-2 text-sm">
-                      <p><strong>Gestion des incidents :</strong></p>
+                      <p>
+                        <strong>Gestion des incidents :</strong>
+                      </p>
                       <ul className="space-y-1 ml-4 text-muted-foreground">
                         <li>• Classification automatique par sévérité (low/medium/high)</li>
                         <li>• Workflow d'investigation avec assignation d'enquêteurs</li>
                         <li>• Génération de rapports conformes aux normes ISO</li>
                         <li>• Calcul automatique des taux de fréquence/gravité</li>
                       </ul>
-                      <p><strong>Formations HSE :</strong></p>
+                      <p>
+                        <strong>Formations HSE :</strong>
+                      </p>
                       <ul className="space-y-1 ml-4 text-muted-foreground">
                         <li>• Planificateur intelligent basé sur les rôles</li>
                         <li>• Suivi automatique des certifications et échéances</li>
@@ -492,15 +648,34 @@ export function ProjetPage() {
                       📊 Dashboard Intelligence
                     </h3>
                     <div className="space-y-2 text-sm">
-                      <p><strong>Calculs temps réel :</strong></p>
+                      <p>
+                        <strong>Calculs temps réel :</strong>
+                      </p>
                       <ul className="space-y-1 ml-4 text-muted-foreground">
-                        <li>• <strong>KPI Visites :</strong> Agrégation par statut avec compteurs live</li>
-                        <li>• <strong>Métriques Colis :</strong> Alertes urgentes et taux de traitement</li>
-                        <li>• <strong>Indicateurs Équipements :</strong> Échéances et taux de disponibilité</li>
-                        <li>• <strong>Score HSE :</strong> Conformité réglementaire et incidents ouverts</li>
+                        <li>
+                          • <strong>KPI Visites :</strong> Agrégation par statut avec compteurs live
+                        </li>
+                        <li>
+                          • <strong>Métriques Colis :</strong> Alertes urgentes et taux de
+                          traitement
+                        </li>
+                        <li>
+                          • <strong>Indicateurs Équipements :</strong> Échéances et taux de
+                          disponibilité
+                        </li>
+                        <li>
+                          • <strong>Score HSE :</strong> Conformité réglementaire et incidents
+                          ouverts
+                        </li>
                       </ul>
-                      <p><strong>Algorithme de priorisation :</strong> Tri intelligent des tâches urgentes</p>
-                      <p><strong>Analytics :</strong> Tendances et prédictions basées sur l'historique</p>
+                      <p>
+                        <strong>Algorithme de priorisation :</strong> Tri intelligent des tâches
+                        urgentes
+                      </p>
+                      <p>
+                        <strong>Analytics :</strong> Tendances et prédictions basées sur
+                        l'historique
+                      </p>
                     </div>
                   </Card>
                 </div>
@@ -525,9 +700,9 @@ export function ProjetPage() {
                     <div className="bg-muted p-3 rounded-lg text-sm font-mono">
                       <div>src/</div>
                       <div className="ml-2">├── components/</div>
-                      <div className="ml-4">│   ├── Layout/ (Header, Navigation, Layout)</div>
-                      <div className="ml-4">│   ├── auth/ (LoginForm)</div>
-                      <div className="ml-4">│   └── ui/ (Shadcn components)</div>
+                      <div className="ml-4">│ ├── Layout/ (Header, Navigation, Layout)</div>
+                      <div className="ml-4">│ ├── auth/ (LoginForm)</div>
+                      <div className="ml-4">│ └── ui/ (Shadcn components)</div>
                       <div className="ml-2">├── pages/ (Dashboard, PersonnelPage, etc.)</div>
                       <div className="ml-2">├── hooks/ (useEmployees, useVisits, etc.)</div>
                       <div className="ml-2">├── contexts/ (AppContext)</div>
@@ -535,16 +710,24 @@ export function ProjetPage() {
                       <div className="ml-2">└── types/ (TypeScript interfaces)</div>
                     </div>
                   </div>
-                  
+
                   <Separator />
-                  
+
                   <div>
                     <h4 className="font-medium mb-2">Gestion d'État</h4>
                     <ul className="text-sm space-y-1 text-muted-foreground">
-                      <li>• <strong>AppContext :</strong> État global avec useReducer</li>
-                      <li>• <strong>LocalStorage :</strong> Persistance des données</li>
-                      <li>• <strong>Hooks personnalisés :</strong> Logique métier encapsulée</li>
-                      <li>• <strong>Repositories :</strong> Couche d'accès aux données</li>
+                      <li>
+                        • <strong>AppContext :</strong> État global avec useReducer
+                      </li>
+                      <li>
+                        • <strong>LocalStorage :</strong> Persistance des données
+                      </li>
+                      <li>
+                        • <strong>Hooks personnalisés :</strong> Logique métier encapsulée
+                      </li>
+                      <li>
+                        • <strong>Repositories :</strong> Couche d'accès aux données
+                      </li>
                     </ul>
                   </div>
                 </div>
@@ -634,7 +817,8 @@ export function ProjetPage() {
                         <span className="text-sm font-medium">Administrateur</span>
                       </div>
                       <p className="text-sm text-muted-foreground">
-                        Accès complet à tous les modules. Gestion des utilisateurs et configuration système.
+                        Accès complet à tous les modules. Gestion des utilisateurs et configuration
+                        système.
                       </p>
                       <div className="mt-2">
                         <span className="text-xs text-muted-foreground">
@@ -742,10 +926,13 @@ export function ProjetPage() {
                 <Card className="p-4 bg-slate-50 dark:bg-slate-950">
                   <h3 className="font-semibold mb-3">🔐 Logique d'Autorisation</h3>
                   <div className="space-y-3 text-sm">
-                    <p><strong>Fonction principale :</strong> <code>hasAnyRole(requiredRoles)</code></p>
+                    <p>
+                      <strong>Fonction principale :</strong> <code>hasAnyRole(requiredRoles)</code>
+                    </p>
                     <p className="text-muted-foreground">
                       Chaque navigation et action est protégée par une vérification des rôles.
-                      L'utilisateur doit posséder au moins un des rôles requis pour accéder à une fonction.
+                      L'utilisateur doit posséder au moins un des rôles requis pour accéder à une
+                      fonction.
                     </p>
                     <div className="bg-white dark:bg-gray-800 p-3 rounded border">
                       <code className="text-xs">
@@ -775,7 +962,9 @@ if (hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR'])) {
                     </thead>
                     <tbody>
                       <tr>
-                        <td className="border border-gray-300 p-2 font-medium">Dashboard - Consultation</td>
+                        <td className="border border-gray-300 p-2 font-medium">
+                          Dashboard - Consultation
+                        </td>
                         <td className="border border-gray-300 p-2 text-center">✅</td>
                         <td className="border border-gray-300 p-2 text-center">✅</td>
                         <td className="border border-gray-300 p-2 text-center">✅</td>
@@ -784,7 +973,9 @@ if (hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR'])) {
                         <td className="border border-gray-300 p-2 text-center">✅</td>
                       </tr>
                       <tr className="bg-muted/30">
-                        <td className="border border-gray-300 p-2 font-medium">SOGARA Connect - Lecture</td>
+                        <td className="border border-gray-300 p-2 font-medium">
+                          SOGARA Connect - Lecture
+                        </td>
                         <td className="border border-gray-300 p-2 text-center">✅</td>
                         <td className="border border-gray-300 p-2 text-center">✅</td>
                         <td className="border border-gray-300 p-2 text-center">✅</td>
@@ -793,7 +984,9 @@ if (hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR'])) {
                         <td className="border border-gray-300 p-2 text-center">✅</td>
                       </tr>
                       <tr>
-                        <td className="border border-gray-300 p-2 font-medium">SOGARA Connect - Édition</td>
+                        <td className="border border-gray-300 p-2 font-medium">
+                          SOGARA Connect - Édition
+                        </td>
                         <td className="border border-gray-300 p-2 text-center">✅</td>
                         <td className="border border-gray-300 p-2 text-center">❌</td>
                         <td className="border border-gray-300 p-2 text-center">❌</td>
@@ -802,7 +995,9 @@ if (hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR'])) {
                         <td className="border border-gray-300 p-2 text-center">❌</td>
                       </tr>
                       <tr className="bg-muted/30">
-                        <td className="border border-gray-300 p-2 font-medium">Personnel - Consultation</td>
+                        <td className="border border-gray-300 p-2 font-medium">
+                          Personnel - Consultation
+                        </td>
                         <td className="border border-gray-300 p-2 text-center">✅</td>
                         <td className="border border-gray-300 p-2 text-center">✅</td>
                         <td className="border border-gray-300 p-2 text-center">✅</td>
@@ -811,7 +1006,9 @@ if (hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR'])) {
                         <td className="border border-gray-300 p-2 text-center">❌</td>
                       </tr>
                       <tr>
-                        <td className="border border-gray-300 p-2 font-medium">Personnel - Modification</td>
+                        <td className="border border-gray-300 p-2 font-medium">
+                          Personnel - Modification
+                        </td>
                         <td className="border border-gray-300 p-2 text-center">✅</td>
                         <td className="border border-gray-300 p-2 text-center">✅</td>
                         <td className="border border-gray-300 p-2 text-center">❌</td>
@@ -820,7 +1017,9 @@ if (hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR'])) {
                         <td className="border border-gray-300 p-2 text-center">❌</td>
                       </tr>
                       <tr className="bg-muted/30">
-                        <td className="border border-gray-300 p-2 font-medium">Visites - Gestion</td>
+                        <td className="border border-gray-300 p-2 font-medium">
+                          Visites - Gestion
+                        </td>
                         <td className="border border-gray-300 p-2 text-center">✅</td>
                         <td className="border border-gray-300 p-2 text-center">❌</td>
                         <td className="border border-gray-300 p-2 text-center">✅</td>
@@ -829,7 +1028,9 @@ if (hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR'])) {
                         <td className="border border-gray-300 p-2 text-center">❌</td>
                       </tr>
                       <tr>
-                        <td className="border border-gray-300 p-2 font-medium">Colis & Courriers</td>
+                        <td className="border border-gray-300 p-2 font-medium">
+                          Colis & Courriers
+                        </td>
                         <td className="border border-gray-300 p-2 text-center">✅</td>
                         <td className="border border-gray-300 p-2 text-center">❌</td>
                         <td className="border border-gray-300 p-2 text-center">❌</td>
@@ -856,7 +1057,9 @@ if (hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR'])) {
                         <td className="border border-gray-300 p-2 text-center">❌</td>
                       </tr>
                       <tr className="bg-muted/30">
-                        <td className="border border-gray-300 p-2 font-medium">Documentation Projet</td>
+                        <td className="border border-gray-300 p-2 font-medium">
+                          Documentation Projet
+                        </td>
                         <td className="border border-gray-300 p-2 text-center">✅</td>
                         <td className="border border-gray-300 p-2 text-center">❌</td>
                         <td className="border border-gray-300 p-2 text-center">❌</td>
@@ -875,17 +1078,21 @@ if (hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR'])) {
                     </h4>
                     <div className="space-y-2 text-sm">
                       <div>
-                        <Badge variant="destructive" className="mb-1">ADMIN</Badge>
+                        <Badge variant="destructive" className="mb-1">
+                          ADMIN
+                        </Badge>
                         <p className="text-muted-foreground">
-                          Accès universel. Responsable de la configuration système, 
-                          gestion des utilisateurs et supervision globale.
+                          Accès universel. Responsable de la configuration système, gestion des
+                          utilisateurs et supervision globale.
                         </p>
                       </div>
                       <div>
-                        <Badge variant="secondary" className="mb-1">HSE</Badge>
+                        <Badge variant="secondary" className="mb-1">
+                          HSE
+                        </Badge>
                         <p className="text-muted-foreground">
-                          Autorité sécurité. Gestion exclusive des incidents, 
-                          formations et conformité réglementaire.
+                          Autorité sécurité. Gestion exclusive des incidents, formations et
+                          conformité réglementaire.
                         </p>
                       </div>
                     </div>
@@ -897,17 +1104,21 @@ if (hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR'])) {
                     </h4>
                     <div className="space-y-2 text-sm">
                       <div>
-                        <Badge variant="outline" className="mb-1">SUPERVISEUR</Badge>
+                        <Badge variant="outline" className="mb-1">
+                          SUPERVISEUR
+                        </Badge>
                         <p className="text-muted-foreground">
-                          Encadrement terrain. Validation des processus 
-                          et coordination entre services.
+                          Encadrement terrain. Validation des processus et coordination entre
+                          services.
                         </p>
                       </div>
                       <div>
-                        <Badge variant="outline" className="mb-1">RECEP</Badge>
+                        <Badge variant="outline" className="mb-1">
+                          RECEP
+                        </Badge>
                         <p className="text-muted-foreground">
-                          Interface externe. Point d'entrée pour visiteurs 
-                          et gestion logistique du courrier.
+                          Interface externe. Point d'entrée pour visiteurs et gestion logistique du
+                          courrier.
                         </p>
                       </div>
                     </div>
@@ -919,10 +1130,22 @@ if (hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR'])) {
                     ⚠️ Sécurité et Validation
                   </h4>
                   <div className="space-y-2 text-sm text-muted-foreground">
-                    <p><strong>Principe de moindre privilège :</strong> Chaque utilisateur n'a accès qu'aux fonctions nécessaires à son rôle.</p>
-                    <p><strong>Validation en temps réel :</strong> Vérification des permissions à chaque action critique.</p>
-                    <p><strong>Traçabilité :</strong> Toutes les actions sont horodatées et associées à l'utilisateur connecté.</p>
-                    <p><strong>Escalade :</strong> Système de validation hiérarchique pour les actions sensibles.</p>
+                    <p>
+                      <strong>Principe de moindre privilège :</strong> Chaque utilisateur n'a accès
+                      qu'aux fonctions nécessaires à son rôle.
+                    </p>
+                    <p>
+                      <strong>Validation en temps réel :</strong> Vérification des permissions à
+                      chaque action critique.
+                    </p>
+                    <p>
+                      <strong>Traçabilité :</strong> Toutes les actions sont horodatées et associées
+                      à l'utilisateur connecté.
+                    </p>
+                    <p>
+                      <strong>Escalade :</strong> Système de validation hiérarchique pour les
+                      actions sensibles.
+                    </p>
                   </div>
                 </Card>
               </div>
@@ -1030,5 +1253,5 @@ if (hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR'])) {
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }

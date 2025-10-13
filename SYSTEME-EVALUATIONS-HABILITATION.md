@@ -5,6 +5,7 @@
 **Objectif**: Permettre au Responsable HSE de créer des tests d'habilitation pour les personnes externes (et internes) avant qu'elles puissent exercer une activité dans la raffinerie.
 
 **Flux complet**:
+
 ```
 HSE crée test → Assigne à candidat → Candidat répond → HSE corrige → Résultat envoyé
 ```
@@ -104,6 +105,7 @@ HSE crée test → Assigne à candidat → Candidat répond → HSE corrige → 
 ```
 
 **Email auto-généré au candidat**:
+
 ```
 Objet: Test d'Habilitation SOGARA
 
@@ -145,6 +147,7 @@ Responsable HSE - SOGARA
 ```
 
 **Pendant le test**:
+
 ```
 ┌────────────────────────────────────────────────────┐
 │ Question 1/5            ⏱️ 12:34 restantes         │
@@ -185,6 +188,7 @@ Responsable HSE - SOGARA
 ```
 
 **Soumission finale**:
+
 ```
 ┌────────────────────────────────────────────────────┐
 │ Récapitulatif                                     │
@@ -200,6 +204,7 @@ Responsable HSE - SOGARA
 ```
 
 **Après soumission**:
+
 ```
 ┌────────────────────────────────────────────────────┐
 │          ✅ Test Soumis                            │
@@ -233,6 +238,7 @@ Responsable HSE - SOGARA
 ```
 
 **Interface de Correction**:
+
 ```
 ┌────────────────────────────────────────────────────┐
 │ Correction: Jean MARTIN                           │
@@ -287,6 +293,7 @@ Responsable HSE - SOGARA
 ### ÉTAPE 5: Résultat Envoyé au Candidat
 
 **Email auto au candidat**:
+
 ```
 Objet: Résultats - Test d'Habilitation SOGARA
 
@@ -306,7 +313,7 @@ Certificat d'habilitation:
 Validité: 12 mois (expire le 10/01/2026)
 
 Commentaire du correcteur:
-"Très bon niveau de connaissance. Candidat apte à 
+"Très bon niveau de connaissance. Candidat apte à
 travailler en zone production."
 
 Cordialement,
@@ -319,6 +326,7 @@ Responsable HSE - SOGARA
 ## 📊 Structure des Données
 
 ### Assessment (Test)
+
 ```typescript
 {
   id: "test_123",
@@ -351,6 +359,7 @@ Responsable HSE - SOGARA
 ```
 
 ### AssessmentSubmission (Copie candidat)
+
 ```typescript
 {
   id: "sub_456",
@@ -429,11 +438,13 @@ Responsable HSE - SOGARA
 ### Candidat Externe
 
 **Accès via lien unique**:
+
 ```
 https://sogara.app/eval/abc123xyz
 ```
 
 **Interface**:
+
 1. Identification (si pas encore fait)
 2. Lecture instructions
 3. Passage du test (chronomètre)
@@ -444,6 +455,7 @@ https://sogara.app/eval/abc123xyz
 ### Candidat Interne (Employé)
 
 **Dans son Inbox HSE** (comme formations):
+
 ```
 Onglet "Évaluations":
 ┌────────────────────────────────────────┐
@@ -459,7 +471,9 @@ Onglet "Évaluations":
 ## 🔧 Composants à Créer
 
 ### 1. HSEAssessmentCreator.tsx
+
 Interface création de test pour HSE:
+
 - Formulaire titre/type/catégorie
 - Ajout questions (drag & drop pour ordre)
 - Preview test
@@ -467,7 +481,9 @@ Interface création de test pour HSE:
 - Publication
 
 ### 2. HSEAssessmentPlayer.tsx
+
 Interface passage test pour candidat:
+
 - Chronomètre
 - Navigation questions
 - Sauvegarde auto réponses
@@ -475,7 +491,9 @@ Interface passage test pour candidat:
 - Confirmation
 
 ### 3. HSEAssessmentCorrector.tsx
+
 Interface correction pour HSE:
+
 - Affichage question + réponse candidat
 - Notation manuelle
 - Auto-notation QCM
@@ -484,7 +502,9 @@ Interface correction pour HSE:
 - Génération certificat
 
 ### 4. CandidateAssessmentInbox.tsx
+
 Inbox évaluations pour candidat:
+
 - Tests assignés
 - Tests en cours
 - Résultats
@@ -499,6 +519,7 @@ Inbox évaluations pour candidat:
 - [x] Hook useAssessments
 
 **À faire**:
+
 - [ ] Composant HSEAssessmentCreator
 - [ ] Composant HSEAssessmentPlayer
 - [ ] Composant HSEAssessmentCorrector
@@ -516,6 +537,7 @@ Inbox évaluations pour candidat:
 **Contexte**: Total Energies envoie un technicien pour maintenance compresseur
 
 **Workflow**:
+
 ```
 1. Demande accès reçue
 2. HSE crée fiche candidat externe
@@ -536,6 +558,7 @@ Inbox évaluations pour candidat:
 **Contexte**: Pierre doit passer test qualification opérateur
 
 **Workflow**:
+
 ```
 1. HSE assigne "Test Qualification Opérateur" à Pierre
 2. Pierre voit dans "Mon Espace HSE" → Évaluations
@@ -550,4 +573,3 @@ Inbox évaluations pour candidat:
 ---
 
 **Voulez-vous que je crée maintenant les composants d'interface (Créateur, Player, Correcteur) ?** 🎯
-

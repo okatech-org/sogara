@@ -3,6 +3,7 @@
 ## 📋 Profil Complet
 
 ### Identification
+
 ```
 Matricule:     EXT001
 Nom complet:   Jean-Luc BERNARD
@@ -15,6 +16,7 @@ Mot de passe:  External123!
 ```
 
 ### Raison de l'Accès
+
 ```
 Mission: Maintenance préventive compresseur haute pression
 Zone:    Production A
@@ -23,11 +25,13 @@ Statut:  En attente habilitation
 ```
 
 ### Compétences
+
 - Maintenance compresseurs
 - Hydraulique
 - Automatisme
 
 ### Habilitations
+
 - **Aucune** (à obtenir via tests)
 
 ---
@@ -35,6 +39,7 @@ Statut:  En attente habilitation
 ## 🎯 Navigation Candidat Externe
 
 **Menu simplifié**:
+
 ```
 🏠 Tableau de bord
 📰 SOGARA Connect (lecture)
@@ -42,6 +47,7 @@ Statut:  En attente habilitation
 ```
 
 **Pas d'accès**:
+
 - ❌ Planning
 - ❌ Paie
 - ❌ Personnel
@@ -95,6 +101,7 @@ Statut:  En attente habilitation
 **URL**: `/app/mes-evaluations`
 
 **Affichage**:
+
 ```
 ┌────────────────────────────────────────────────────┐
 │ JB  Bienvenue, Jean-Luc !              0          │
@@ -167,7 +174,7 @@ Clic "Commencer le test"
 
 ```
 Dashboard → Badge "En correction: 1"
-Page Évaluations → 
+Page Évaluations →
   [Soumis] [En correction]
   Test d'Habilitation...
   Soumis le 10/01/2025 - En attente correction
@@ -176,22 +183,24 @@ Page Évaluations →
 ### Étape 5: Résultat Reçu
 
 **Après correction HSE**:
+
 ```
 Dashboard → Badge "Habilitations: 1" (vert)
 Page Évaluations →
   [Réussi] [Habilitation obtenue]
   Test d'Habilitation...
-  
+
   Résultat: 88% ✅ ADMIS
   Habilitation: "Accès Zones Production Autorisé"
   Valide jusqu'au: 10/01/2026
-  
+
   Commentaire: "Excellent niveau de connaissance..."
-  
+
   [📥 Télécharger certificat]
 ```
 
 **Profil mis à jour**:
+
 ```
 Habilitations:
   ✓ Accès Zones Production Autorisé
@@ -214,12 +223,14 @@ Jean-Luc se présente à l'accueil SOGARA
 ## 🎨 Design Spécifique Externe
 
 ### Couleurs
+
 - **Primary**: Orange (identité "Externe")
 - **Badges**: Orange pour statut externe
 - **Alertes**: Jaune si tests en attente
 - **Success**: Vert pour habilitations
 
 ### Icônes
+
 - 👷 Avatar avec initiales (JB)
 - 📝 FileCheck pour évaluations
 - 🎓 Award pour habilitations

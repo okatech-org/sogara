@@ -8,24 +8,26 @@ Chaque compte SOGARA Access possède maintenant sa propre URL de destination et 
 
 ## 🎯 Mapping Comptes → URLs
 
-| Matricule | Nom | Rôle | URL Spécifique | Dashboard |
-|-----------|-----|------|----------------|-----------|
-| **ADM001** | PELLEN Asted | ADMIN | `/app/admin` | Dashboard Administrateur |
-| **DG001** | Daniel MVOU | DG, ADMIN | `/app/direction` | Dashboard Direction Générale |
-| **DRH001** | Brigitte NGUEMA | DRH, ADMIN | `/app/rh` | Dashboard Ressources Humaines |
-| **COM001** | Clarisse MBOUMBA | COMMUNICATION | `/app/connect` | SOGARA Connect |
-| **HSE001** | Marie-Claire NZIEGE | HSE, COMPLIANCE, SECURITE | `/app/hse` | Dashboard HSE Complet |
-| **REC001** | Sylvie KOUMBA | RECEP | `/app/visites` | Gestion Visites & Colis |
-| **EMP001** | Pierre BEKALE | EMPLOYE | `/app/dashboard` | Dashboard Employé |
+| Matricule  | Nom                 | Rôle                      | URL Spécifique   | Dashboard                     |
+| ---------- | ------------------- | ------------------------- | ---------------- | ----------------------------- |
+| **ADM001** | PELLEN Asted        | ADMIN                     | `/app/admin`     | Dashboard Administrateur      |
+| **DG001**  | Daniel MVOU         | DG, ADMIN                 | `/app/direction` | Dashboard Direction Générale  |
+| **DRH001** | Brigitte NGUEMA     | DRH, ADMIN                | `/app/rh`        | Dashboard Ressources Humaines |
+| **COM001** | Clarisse MBOUMBA    | COMMUNICATION             | `/app/connect`   | SOGARA Connect                |
+| **HSE001** | Marie-Claire NZIEGE | HSE, COMPLIANCE, SECURITE | `/app/hse`       | Dashboard HSE Complet         |
+| **REC001** | Sylvie KOUMBA       | RECEP                     | `/app/visites`   | Gestion Visites & Colis       |
+| **EMP001** | Pierre BEKALE       | EMPLOYE                   | `/app/dashboard` | Dashboard Employé             |
 
 ---
 
 ## 📄 Détails par Compte
 
 ### 1. ADM001 - PELLEN Asted 🔧
+
 **URL**: `https://sogara.lovable.app/app/admin`
 
 #### Dashboard Administrateur
+
 - **Modules accessibles** :
   - Personnel (gestion complète)
   - HSE & Sécurité (supervision)
@@ -50,9 +52,11 @@ Chaque compte SOGARA Access possède maintenant sa propre URL de destination et 
 ---
 
 ### 2. DG001 - Daniel MVOU 👑
+
 **URL**: `https://sogara.lovable.app/app/direction`
 
 #### Dashboard Direction Générale
+
 - **Vue stratégique** :
   - Performance opérationnelle (95%)
   - Effectif total
@@ -80,9 +84,11 @@ Chaque compte SOGARA Access possède maintenant sa propre URL de destination et 
 ---
 
 ### 3. DRH001 - Brigitte NGUEMA 👥
+
 **URL**: `https://sogara.lovable.app/app/rh`
 
 #### Dashboard Ressources Humaines
+
 - **KPIs RH** :
   - Effectif total ({count} collaborateurs)
   - Formations HSE cette semaine
@@ -114,9 +120,11 @@ Chaque compte SOGARA Access possède maintenant sa propre URL de destination et 
 ---
 
 ### 4. COM001 - Clarisse MBOUMBA 📢
+
 **URL**: `https://sogara.lovable.app/app/connect`
 
 #### SOGARA Connect (Communication)
+
 - **Page dédiée** : Publication et gestion de contenu
 - **Fonctionnalités** :
   - Créer/éditer des publications
@@ -134,9 +142,11 @@ Chaque compte SOGARA Access possède maintenant sa propre URL de destination et 
 ---
 
 ### 5. HSE001 - Marie-Claire NZIEGE 🛡️
+
 **URL**: `https://sogara.lovable.app/app/hse`
 
 #### Dashboard HSE Complet (9 onglets)
+
 - **Modules spécialisés** :
   1. Vue d'ensemble (KPIs)
   2. Incidents (gestion et enquêtes)
@@ -159,9 +169,11 @@ Chaque compte SOGARA Access possède maintenant sa propre URL de destination et 
 ---
 
 ### 6. REC001 - Sylvie KOUMBA 📦
+
 **URL**: `https://sogara.lovable.app/app/visites`
 
 #### Gestion Visites & Colis
+
 - **Page dédiée** : Réception et contrôle accès
 - **Fonctionnalités** :
   - Enregistrement visiteurs
@@ -180,9 +192,11 @@ Chaque compte SOGARA Access possède maintenant sa propre URL de destination et 
 ---
 
 ### 7. EMP001 - Pierre BEKALE ⚙️
+
 **URL**: `https://sogara.lovable.app/app/dashboard`
 
 #### Dashboard Employé Standard
+
 - **Vue personnelle** :
   - Informations de service
   - Indicateurs personnels
@@ -200,21 +214,24 @@ Chaque compte SOGARA Access possède maintenant sa propre URL de destination et 
 ## 🔄 Logique de Redirection
 
 ### Après Login
+
 ```typescript
 // Dans LoginForm.tsx
-const account = demoAccounts.find(acc => acc.id === accountId);
+const account = demoAccounts.find(acc => acc.id === accountId)
 if (account?.defaultRoute) {
-  window.location.href = account.defaultRoute;
+  window.location.href = account.defaultRoute
 }
 ```
 
 ### Comportement
+
 1. **Login avec matricule** → Authentification
 2. **Récupération du defaultRoute** dans demoAccounts
 3. **Redirection automatique** vers l'URL spécifique
 4. **Affichage du dashboard** adapté au rôle
 
 ### Exemples
+
 ```
 Login ADM001 → Redirect to /app/admin
 Login DG001  → Redirect to /app/direction
@@ -269,6 +286,7 @@ Login EMP001 → Redirect to /app/dashboard
 ```
 
 ### Contrôle d'Accès
+
 - ✅ Utilisateur sans le rôle requis → Redirect to `/app/dashboard`
 - ✅ Utilisateur non authentifié → Redirect to `/login`
 
@@ -277,6 +295,7 @@ Login EMP001 → Redirect to /app/dashboard
 ## 🎨 Différenciation Visuelle
 
 ### Couleurs par Compte
+
 ```
 ADM001 → bg-destructive (rouge/admin)
 DG001  → bg-primary (bleu/direction)
@@ -288,6 +307,7 @@ EMP001 → bg-secondary (gris/employé)
 ```
 
 ### Icônes par Rôle
+
 ```
 ADM001 → Settings ⚙️
 DG001  → Crown 👑
@@ -303,36 +323,43 @@ EMP001 → HardHat ⚒️
 ## 📊 Contenu Spécifique par Dashboard
 
 ### AdminDashboard (ADM001)
+
 - **Focus** : Supervision technique et système
 - **Modules** : Tous (6 cards cliquables)
 - **Actions** : Gestion utilisateurs, HSE, Documentation
 
 ### DirectionDashboard (DG001)
+
 - **Focus** : Vision stratégique et performance
 - **KPIs** : Performance opérationnelle, objectifs, conformité
 - **Pilotage** : Par domaine (RH, HSE, Ops, Communication)
 - **Priorités** : Agenda direction (audits, comités, présentations)
 
 ### RHDashboard (DRH001)
+
 - **Focus** : Capital humain et formations
 - **KPIs** : Effectif, formations, conformité, satisfaction
 - **Modules** : Personnel, Formations, Conformité
 - **Répartition** : Par service (détail effectifs)
 
 ### HSEDashboard (HSE001)
+
 - **Focus** : Sécurité, formations, conformité
 - **Modules** : 9 onglets spécialisés
 - **Fonctionnalités** : Gestion collaborateurs, notifications, attribution auto
 
 ### SOGARA Connect (COM001)
+
 - **Focus** : Communication et contenu
 - **Fonctionnalités** : Publication, édition, engagement
 
 ### Visites (REC001)
+
 - **Focus** : Accueil et sécurité
 - **Fonctionnalités** : Visiteurs, badges, colis
 
 ### Dashboard Employé (EMP001)
+
 - **Focus** : Vue personnelle
 - **Accès** : Lecture informations et actualités
 
@@ -341,6 +368,7 @@ EMP001 → HardHat ⚒️
 ## ✅ Tests de Validation
 
 ### Test 1: Redirection ADM001
+
 ```
 1. Login avec ADM001
 2. Vérifier redirect → /app/admin
@@ -349,6 +377,7 @@ EMP001 → HardHat ⚒️
 ```
 
 ### Test 2: Redirection DG001
+
 ```
 1. Login avec DG001
 2. Vérifier redirect → /app/direction
@@ -357,6 +386,7 @@ EMP001 → HardHat ⚒️
 ```
 
 ### Test 3: Redirection DRH001
+
 ```
 1. Login avec DRH001
 2. Vérifier redirect → /app/rh
@@ -365,6 +395,7 @@ EMP001 → HardHat ⚒️
 ```
 
 ### Test 4: URLs Existantes
+
 ```
 COM001 → /app/connect ✅ (déjà fonctionnel)
 HSE001 → /app/hse ✅ (déjà fonctionnel)
@@ -373,6 +404,7 @@ EMP001 → /app/dashboard ✅ (existant)
 ```
 
 ### Test 5: Protection Routes
+
 ```
 Employé (EMP001) tente /app/admin → Redirect /app/dashboard ✅
 Réceptionniste (REC001) tente /app/direction → Redirect /app/dashboard ✅
@@ -383,18 +415,21 @@ Réceptionniste (REC001) tente /app/direction → Redirect /app/dashboard ✅
 ## 🔧 Fichiers Modifiés
 
 ### 1. Routes et Dashboards
+
 - ✅ `src/pages/AdminDashboard.tsx` (CRÉÉ)
 - ✅ `src/pages/DirectionDashboard.tsx` (CRÉÉ)
 - ✅ `src/pages/RHDashboard.tsx` (CRÉÉ)
 - ✅ `src/App.tsx` (3 routes ajoutées)
 
 ### 2. Configuration Comptes
+
 - ✅ `src/data/demoAccounts.ts` (defaultRoute mis à jour)
   - ADM001: `/app/dashboard` → `/app/admin`
   - DG001: `/app/dashboard` → `/app/direction`
   - DRH001: `/app/dashboard` → `/app/rh`
 
 ### 3. Authentification
+
 - ✅ `src/components/auth/LoginForm.tsx` (redirection auto ajoutée)
 
 ---
@@ -402,13 +437,16 @@ Réceptionniste (REC001) tente /app/direction → Redirect /app/dashboard ✅
 ## 📱 Navigation Interne
 
 ### Depuis n'importe quel dashboard
+
 Les utilisateurs peuvent naviguer vers les modules autorisés via:
+
 1. **Navigation latérale** (sidebar)
 2. **Cards cliquables** dans leur dashboard
 3. **Actions rapides** (header dropdown)
 4. **URL directe** (si permissions suffisantes)
 
 ### Exemple: DG001 (Direction Générale)
+
 ```
 Dashboard Direction (/app/direction)
   ↓ (clic card "Ressources Humaines")
@@ -422,21 +460,25 @@ Personnel (/app/personnel) → Accessible
 ## 🎯 Avantages de l'Architecture
 
 ### 1. **Expérience Personnalisée**
+
 - Chaque rôle voit d'abord ce qui le concerne
 - Dashboards optimisés pour les besoins métier
 - Navigation intuitive vers fonctions principales
 
 ### 2. **Sécurité Renforcée**
+
 - Routes protégées par rôle (RoleProtected)
 - Redirection automatique si accès non autorisé
 - Séparation claire des niveaux d'accès
 
 ### 3. **Maintenance Facilitée**
+
 - defaultRoute centralisé dans demoAccounts
 - Ajout/modification de comptes simplifié
 - Protection automatique via tableau de routes
 
 ### 4. **Scalabilité**
+
 - Nouveaux rôles faciles à ajouter
 - Dashboards modulaires et réutilisables
 - Pattern clair pour nouvelles pages
@@ -449,7 +491,7 @@ Personnel (/app/personnel) → Accessible
 # Administrateur
 https://sogara.lovable.app/app/admin
 
-# Direction Générale  
+# Direction Générale
 https://sogara.lovable.app/app/direction
 
 # Ressources Humaines
@@ -472,15 +514,15 @@ https://sogara.lovable.app/app/dashboard
 
 ## ✅ Statut d'Implémentation
 
-| Compte | URL | Dashboard | Route Protégée | Redirect Auto | Status |
-|--------|-----|-----------|----------------|---------------|--------|
-| ADM001 | `/app/admin` | AdminDashboard | ✅ ADMIN | ✅ | ✅ Opérationnel |
-| DG001 | `/app/direction` | DirectionDashboard | ✅ DG, ADMIN | ✅ | ✅ Opérationnel |
-| DRH001 | `/app/rh` | RHDashboard | ✅ DRH, ADMIN | ✅ | ✅ Opérationnel |
-| COM001 | `/app/connect` | SOGARAConnectPage | ✅ Tous | ✅ | ✅ Opérationnel |
-| HSE001 | `/app/hse` | HSEPage | ✅ HSE, ADMIN | ✅ | ✅ Opérationnel |
-| REC001 | `/app/visites` | VisitesPage | ✅ RECEP | ✅ | ✅ Opérationnel |
-| EMP001 | `/app/dashboard` | Dashboard | ✅ Tous | ✅ | ✅ Opérationnel |
+| Compte | URL              | Dashboard          | Route Protégée | Redirect Auto | Status          |
+| ------ | ---------------- | ------------------ | -------------- | ------------- | --------------- |
+| ADM001 | `/app/admin`     | AdminDashboard     | ✅ ADMIN       | ✅            | ✅ Opérationnel |
+| DG001  | `/app/direction` | DirectionDashboard | ✅ DG, ADMIN   | ✅            | ✅ Opérationnel |
+| DRH001 | `/app/rh`        | RHDashboard        | ✅ DRH, ADMIN  | ✅            | ✅ Opérationnel |
+| COM001 | `/app/connect`   | SOGARAConnectPage  | ✅ Tous        | ✅            | ✅ Opérationnel |
+| HSE001 | `/app/hse`       | HSEPage            | ✅ HSE, ADMIN  | ✅            | ✅ Opérationnel |
+| REC001 | `/app/visites`   | VisitesPage        | ✅ RECEP       | ✅            | ✅ Opérationnel |
+| EMP001 | `/app/dashboard` | Dashboard          | ✅ Tous        | ✅            | ✅ Opérationnel |
 
 ---
 

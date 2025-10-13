@@ -19,12 +19,7 @@
           "type": "multiple_choice",
           "question": "À quelle concentration le H2S devient-il mortel ?",
           "points": 10,
-          "options": [
-            "10 ppm",
-            "100 ppm",
-            "700 ppm",
-            "1000 ppm"
-          ],
+          "options": ["10 ppm", "100 ppm", "700 ppm", "1000 ppm"],
           "correctAnswer": "700 ppm",
           "explanation": "Le H2S est mortel à partir de 700 ppm. À 1000 ppm, la mort est quasi-instantanée.",
           "requiresManualCorrection": false
@@ -427,4 +422,3 @@
     }
   ]
 }
-

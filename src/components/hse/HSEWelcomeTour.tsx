@@ -1,29 +1,30 @@
-import { useState, useEffect } from 'react';
-import { X, ChevronLeft, ChevronRight, CheckCircle, Sparkles } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { useState, useEffect } from 'react'
+import { X, ChevronLeft, ChevronRight, CheckCircle, Sparkles } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 
 interface TourStep {
-  id: string;
-  title: string;
-  description: string;
-  tips: string[];
-  icon: string;
+  id: string
+  title: string
+  description: string
+  tips: string[]
+  icon: string
 }
 
 const tourSteps: TourStep[] = [
   {
     id: 'welcome',
     title: 'Bienvenue dans le Module HSE',
-    description: 'Le module HSE de SOGARA vous permet de gérer tous les aspects de la sécurité, santé et environnement de votre entreprise.',
+    description:
+      'Le module HSE de SOGARA vous permet de gérer tous les aspects de la sécurité, santé et environnement de votre entreprise.',
     tips: [
       'Déclarez et suivez les incidents de sécurité',
       'Gérez les formations obligatoires',
       'Surveillez la conformité réglementaire',
-      'Accédez aux analyses et rapports'
+      'Accédez aux analyses et rapports',
     ],
-    icon: '🛡️'
+    icon: '🛡️',
   },
   {
     id: 'incidents',
@@ -33,9 +34,9 @@ const tourSteps: TourStep[] = [
       'Cliquez sur "Déclarer un incident" pour signaler',
       'Classifiez la sévérité (faible, moyen, élevé)',
       'Ajoutez des photos et descriptions détaillées',
-      'Suivez le statut en temps réel'
+      'Suivez le statut en temps réel',
     ],
-    icon: '⚠️'
+    icon: '⚠️',
   },
   {
     id: 'trainings',
@@ -45,9 +46,9 @@ const tourSteps: TourStep[] = [
       'Consultez le catalogue de formations',
       'Inscrivez-vous aux sessions programmées',
       'Suivez votre progression en temps réel',
-      'Obtenez vos certificats au format PDF'
+      'Obtenez vos certificats au format PDF',
     ],
-    icon: '🎓'
+    icon: '🎓',
   },
   {
     id: 'compliance',
@@ -57,9 +58,9 @@ const tourSteps: TourStep[] = [
       'Consultez votre taux de conformité',
       'Visualisez les formations à renouveler',
       'Gérez vos équipements EPI',
-      'Planifiez les inspections'
+      'Planifiez les inspections',
     ],
-    icon: '✅'
+    icon: '✅',
   },
   {
     id: 'analytics',
@@ -69,60 +70,60 @@ const tourSteps: TourStep[] = [
       'Visualisez les tendances des incidents',
       'Analysez les taux de participation',
       'Exportez des rapports personnalisés',
-      'Identifiez les zones à risque'
+      'Identifiez les zones à risque',
     ],
-    icon: '📊'
-  }
-];
+    icon: '📊',
+  },
+]
 
 interface HSEWelcomeTourProps {
-  onComplete: () => void;
+  onComplete: () => void
 }
 
 export function HSEWelcomeTour({ onComplete }: HSEWelcomeTourProps) {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [showTour, setShowTour] = useState(true);
+  const [currentStep, setCurrentStep] = useState(0)
+  const [showTour, setShowTour] = useState(true)
 
-  const currentStepData = tourSteps[currentStep];
-  const isFirstStep = currentStep === 0;
-  const isLastStep = currentStep === tourSteps.length - 1;
+  const currentStepData = tourSteps[currentStep]
+  const isFirstStep = currentStep === 0
+  const isLastStep = currentStep === tourSteps.length - 1
 
   useEffect(() => {
     // Vérifier si l'utilisateur a déjà vu le tour
-    const hasSeenTour = localStorage.getItem('sogara_hse_tour_completed');
+    const hasSeenTour = localStorage.getItem('sogara_hse_tour_completed')
     if (hasSeenTour) {
-      setShowTour(false);
+      setShowTour(false)
     }
-  }, []);
+  }, [])
 
   const handleNext = () => {
     if (isLastStep) {
-      handleComplete();
+      handleComplete()
     } else {
-      setCurrentStep(currentStep + 1);
+      setCurrentStep(currentStep + 1)
     }
-  };
+  }
 
   const handlePrevious = () => {
     if (!isFirstStep) {
-      setCurrentStep(currentStep - 1);
+      setCurrentStep(currentStep - 1)
     }
-  };
+  }
 
   const handleSkip = () => {
-    localStorage.setItem('sogara_hse_tour_completed', 'true');
-    setShowTour(false);
-    onComplete();
-  };
+    localStorage.setItem('sogara_hse_tour_completed', 'true')
+    setShowTour(false)
+    onComplete()
+  }
 
   const handleComplete = () => {
-    localStorage.setItem('sogara_hse_tour_completed', 'true');
-    setShowTour(false);
-    onComplete();
-  };
+    localStorage.setItem('sogara_hse_tour_completed', 'true')
+    setShowTour(false)
+    onComplete()
+  }
 
   if (!showTour) {
-    return null;
+    return null
   }
 
   return (
@@ -163,9 +164,7 @@ export function HSEWelcomeTour({ onComplete }: HSEWelcomeTourProps) {
 
           {/* Tips */}
           <div className="space-y-3">
-            <h4 className="font-semibold text-sm uppercase text-primary">
-              Points clés
-            </h4>
+            <h4 className="font-semibold text-sm uppercase text-primary">Points clés</h4>
             <div className="space-y-2">
               {currentStepData.tips.map((tip, index) => (
                 <div key={index} className="flex items-start gap-3 p-3 bg-muted/50 rounded-lg">
@@ -185,8 +184,8 @@ export function HSEWelcomeTour({ onComplete }: HSEWelcomeTourProps) {
                   index === currentStep
                     ? 'w-8 bg-primary'
                     : index < currentStep
-                    ? 'w-2 bg-primary/50'
-                    : 'w-2 bg-muted'
+                      ? 'w-2 bg-primary/50'
+                      : 'w-2 bg-muted'
                 }`}
               />
             ))}
@@ -225,16 +224,15 @@ export function HSEWelcomeTour({ onComplete }: HSEWelcomeTourProps) {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }
 
 // Hook pour réinitialiser le tour (pour les admins)
 export function useResetTour() {
   const resetTour = () => {
-    localStorage.removeItem('sogara_hse_tour_completed');
-    window.location.reload();
-  };
+    localStorage.removeItem('sogara_hse_tour_completed')
+    window.location.reload()
+  }
 
-  return { resetTour };
+  return { resetTour }
 }
-

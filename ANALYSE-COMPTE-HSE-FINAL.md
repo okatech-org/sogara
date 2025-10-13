@@ -3,6 +3,7 @@
 ## 📋 Identification du Compte
 
 ### Informations Personnelles
+
 ```
 Matricule:     HSE001
 Nom complet:   Marie-Claire NZIEGE
@@ -13,11 +14,13 @@ Mot de passe:  HSE123!
 ```
 
 ### Rôles et Permissions
+
 ```javascript
 roles: ['HSE', 'COMPLIANCE', 'SECURITE']
 ```
 
 **Permissions accordées** (backend):
+
 - ✅ `read:employees` - Consulter tous les employés
 - ✅ `write:employees` - Modifier les employés (formations, habilitations)
 - ✅ `read:equipment` - Consulter les équipements
@@ -27,6 +30,7 @@ roles: ['HSE', 'COMPLIANCE', 'SECURITE']
 - ✅ `read:posts` - Lecture SOGARA Connect
 
 ### Responsabilités Métier
+
 1. **Direction de la division HSE et Conformité**
 2. **Gestion des incidents de sécurité**
 3. **Supervision de la conformité réglementaire**
@@ -39,6 +43,7 @@ roles: ['HSE', 'COMPLIANCE', 'SECURITE']
 10. **Coordination avec les responsables HSE, Conformité et Sécurité**
 
 ### Route d'Accès
+
 ```
 Route par défaut: /app/hse
 Accès direct:     Login → Auto-redirect vers HSE Dashboard
@@ -52,6 +57,7 @@ Accès direct:     Login → Auto-redirect vers HSE Dashboard
 **Route**: `/app/hse`
 
 #### Onglets disponibles (9 au total):
+
 1. **Vue d'ensemble** - Dashboard principal avec KPIs
 2. **Incidents** - Gestion incidents sécurité
 3. **Formations & Modules** - Catalogue complet formations
@@ -63,9 +69,10 @@ Accès direct:     Login → Auto-redirect vers HSE Dashboard
 9. **Analyses & Rapports** - Tableaux de bord analytiques
 
 #### Permissions d'accès:
+
 ```typescript
-const canManageHSE = hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR']); // ✅ TRUE pour HSE001
-const canViewHSE = hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR', 'EMPLOYE']); // ✅ TRUE
+const canManageHSE = hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR']) // ✅ TRUE pour HSE001
+const canViewHSE = hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR', 'EMPLOYE']) // ✅ TRUE
 ```
 
 ### 2. Gestion des Collaborateurs ⭐ NOUVEAU ✅
@@ -76,6 +83,7 @@ const canViewHSE = hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR', 'EMPLOYE']); // �
 #### Fonctionnalités complètes:
 
 ##### Vue Globale
+
 ```typescript
 // Statistiques automatiques
 {
@@ -87,38 +95,41 @@ const canViewHSE = hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR', 'EMPLOYE']); // �
 ```
 
 ##### Pour Chaque Employé
+
 ```typescript
 interface EmployeeTrainingStatus {
-  employeeId: string;
-  requiredTrainings: string[];      // Calculé selon service + rôle
-  completedTrainings: string[];     // Formations validées
-  expiredTrainings: string[];       // À renouveler d'urgence
-  upcomingTrainings: string[];      // Expire dans 30 jours
-  complianceRate: number;           // 0-100%
+  employeeId: string
+  requiredTrainings: string[] // Calculé selon service + rôle
+  completedTrainings: string[] // Formations validées
+  expiredTrainings: string[] // À renouveler d'urgence
+  upcomingTrainings: string[] // Expire dans 30 jours
+  complianceRate: number // 0-100%
 }
 ```
 
 ##### Logique d'Attribution Automatique
+
 ```typescript
 // Exemple: Personnel Production
 if (employee.service === 'Production') {
   requiredTrainings.push(
-    'HSE-015',  // H2S - CRITIQUE
-    'HSE-006',  // Produits chimiques
-    'HSE-004'   // Espace confiné
-  );
+    'HSE-015', // H2S - CRITIQUE
+    'HSE-006', // Produits chimiques
+    'HSE-004', // Espace confiné
+  )
 }
 
 // Exemple: Personnel Maintenance
 if (employee.service === 'Maintenance') {
   requiredTrainings.push(
-    'HSE-005',  // Travail en hauteur
-    'HSE-007'   // Permis de travail
-  );
+    'HSE-005', // Travail en hauteur
+    'HSE-007', // Permis de travail
+  )
 }
 ```
 
 ##### Actions Disponibles
+
 1. **Recherche et filtres**
    - Par nom, matricule, service
    - Par service (dropdown)
@@ -141,12 +152,14 @@ if (employee.service === 'Maintenance') {
 **Accessible**: ✅ Oui (role HSE détecté)
 
 #### Rôle spécial HSE:
+
 ```typescript
-const isHSE = hasAnyRole(['HSE']); // ✅ TRUE
+const isHSE = hasAnyRole(['HSE']) // ✅ TRUE
 // Unlock: Envoi de notifications + Onglet "Envoyées"
 ```
 
 #### Modèles Prédéfinis (5)
+
 ```typescript
 const NOTIFICATION_TEMPLATES = [
   {
@@ -154,40 +167,41 @@ const NOTIFICATION_TEMPLATES = [
     title: 'Rappel de formation',
     type: 'hse_training_expiring',
     targetRoles: ['EMPLOYE', 'SUPERVISEUR'],
-    priority: 'medium'
+    priority: 'medium',
   },
   {
     id: 'training_mandatory',
     title: 'Formation obligatoire',
     type: 'hse_training_expiring',
     targetRoles: ['EMPLOYE', 'SUPERVISEUR'],
-    priority: 'high'
+    priority: 'high',
   },
   {
     id: 'safety_alert',
     title: 'Alerte sécurité',
     type: 'hse_incident_high',
     targetRoles: ['EMPLOYE', 'SUPERVISEUR'],
-    priority: 'high'
+    priority: 'high',
   },
   {
     id: 'equipment_check',
     title: 'Vérification équipement',
     type: 'hse_equipment_check',
     targetRoles: ['EMPLOYE'],
-    priority: 'medium'
+    priority: 'medium',
   },
   {
     id: 'compliance_alert',
     title: 'Alerte conformité',
     type: 'hse_compliance_alert',
     targetRoles: ['SUPERVISEUR'],
-    priority: 'high'
-  }
-];
+    priority: 'high',
+  },
+]
 ```
 
 #### Flux d'Envoi
+
 1. **Sélection modèle** → Auto-remplissage titre, message, type
 2. **Sélection destinataires** → Pré-sélection par rôle cible
 3. **Personnalisation** → Modification libre du message
@@ -195,14 +209,15 @@ const NOTIFICATION_TEMPLATES = [
 5. **Tracking** → Visible dans onglet "Envoyées"
 
 #### Types de Notifications Spécialisées
+
 ```typescript
-type HSENotificationType = 
-  | 'info'                      // Information générale
-  | 'warning'                   // Avertissement
-  | 'hse_training_expiring'     // Formation expire bientôt
-  | 'hse_incident_high'         // Incident critique
-  | 'hse_equipment_check'       // Vérification EPI requise
-  | 'hse_compliance_alert';     // Non-conformité détectée
+type HSENotificationType =
+  | 'info' // Information générale
+  | 'warning' // Avertissement
+  | 'hse_training_expiring' // Formation expire bientôt
+  | 'hse_incident_high' // Incident critique
+  | 'hse_equipment_check' // Vérification EPI requise
+  | 'hse_compliance_alert' // Non-conformité détectée
 ```
 
 ### 4. Attribution Automatique ⭐ NOUVEAU ✅
@@ -213,6 +228,7 @@ type HSENotificationType =
 #### Règles Par Défaut (6)
 
 ##### Règle 1: Induction Obligatoire
+
 ```typescript
 {
   name: 'Induction obligatoire - Nouveaux employés',
@@ -228,6 +244,7 @@ type HSENotificationType =
 ```
 
 ##### Règle 2: Formation H2S - CRITIQUE ⚠️
+
 ```typescript
 {
   name: 'Formation H2S - Personnel Production',
@@ -243,6 +260,7 @@ type HSENotificationType =
 ```
 
 ##### Règle 3: Travail en Hauteur
+
 ```typescript
 {
   name: 'Travail en hauteur - Maintenance',
@@ -258,6 +276,7 @@ type HSENotificationType =
 ```
 
 ##### Règle 4: Espace Confiné
+
 ```typescript
 {
   name: 'Espace confiné - Techniciens spécialisés',
@@ -274,6 +293,7 @@ type HSENotificationType =
 ```
 
 ##### Règle 5: Permis de Travail
+
 ```typescript
 {
   name: 'Permis de travail - Superviseurs',
@@ -289,6 +309,7 @@ type HSENotificationType =
 ```
 
 ##### Règle 6: SST
+
 ```typescript
 {
   name: 'SST - Personnel d\'encadrement',
@@ -304,6 +325,7 @@ type HSENotificationType =
 ```
 
 #### Fonctionnement
+
 1. **Détection** du profil employé (service + rôle)
 2. **Matching** avec conditions des règles actives
 3. **Génération** automatique des attributions
@@ -311,16 +333,17 @@ type HSENotificationType =
 5. **Suivi** dans onglet "Attributions générées"
 
 #### Configuration Dynamique
+
 ```typescript
 interface AssignmentRule {
-  id: string;
-  name: string;
-  trainingId: string;
-  conditions: RuleCondition[];
-  autoAssign: boolean;        // ✅ Switch ON/OFF
-  priority: 'low' | 'medium' | 'high';
-  reminderDays: number;
-  active: boolean;            // ✅ Switch ON/OFF
+  id: string
+  name: string
+  trainingId: string
+  conditions: RuleCondition[]
+  autoAssign: boolean // ✅ Switch ON/OFF
+  priority: 'low' | 'medium' | 'high'
+  reminderDays: number
+  active: boolean // ✅ Switch ON/OFF
 }
 ```
 
@@ -330,19 +353,20 @@ interface AssignmentRule {
 
 #### 9 Modules Prédéfinis
 
-| Code | Titre | Catégorie | Durée | Validité | Rôles |
-|------|-------|-----------|-------|----------|-------|
-| HSE-001 | Induction HSE | Obligatoire | 8h | 12 mois | Tous |
-| HSE-002 | Port et Utilisation EPI | Obligatoire | 4h | 24 mois | EMPLOYE, SUPERVISEUR, HSE |
-| HSE-003 | Prévention Incendie | Obligatoire | 6h | 12 mois | EMPLOYE, SUPERVISEUR, HSE |
-| HSE-004 | Espace Confiné | Spécialisée | 8h | 24 mois | EMPLOYE, SUPERVISEUR |
-| HSE-005 | Travail en Hauteur | Spécialisée | 7h | 24 mois | EMPLOYE, SUPERVISEUR |
-| HSE-006 | Produits Chimiques | Spécialisée | 6h | 24 mois | EMPLOYE, SUPERVISEUR, HSE |
-| HSE-007 | Permis de Travail | Spécialisée | 4h | 24 mois | SUPERVISEUR, HSE |
-| HSE-008 | SST (Sauveteur) | Obligatoire | 14h | 24 mois | EMPLOYE, SUPERVISEUR, HSE |
-| HSE-015 | H2S Awareness | **Critique** ⚠️ | 4h | 12 mois | Production |
+| Code    | Titre                   | Catégorie       | Durée | Validité | Rôles                     |
+| ------- | ----------------------- | --------------- | ----- | -------- | ------------------------- |
+| HSE-001 | Induction HSE           | Obligatoire     | 8h    | 12 mois  | Tous                      |
+| HSE-002 | Port et Utilisation EPI | Obligatoire     | 4h    | 24 mois  | EMPLOYE, SUPERVISEUR, HSE |
+| HSE-003 | Prévention Incendie     | Obligatoire     | 6h    | 12 mois  | EMPLOYE, SUPERVISEUR, HSE |
+| HSE-004 | Espace Confiné          | Spécialisée     | 8h    | 24 mois  | EMPLOYE, SUPERVISEUR      |
+| HSE-005 | Travail en Hauteur      | Spécialisée     | 7h    | 24 mois  | EMPLOYE, SUPERVISEUR      |
+| HSE-006 | Produits Chimiques      | Spécialisée     | 6h    | 24 mois  | EMPLOYE, SUPERVISEUR, HSE |
+| HSE-007 | Permis de Travail       | Spécialisée     | 4h    | 24 mois  | SUPERVISEUR, HSE          |
+| HSE-008 | SST (Sauveteur)         | Obligatoire     | 14h   | 24 mois  | EMPLOYE, SUPERVISEUR, HSE |
+| HSE-015 | H2S Awareness           | **Critique** ⚠️ | 4h    | 12 mois  | Production                |
 
 #### Formation Critique: HSE-015 (H2S)
+
 ```json
 {
   "id": "HSE-015",
@@ -350,9 +374,9 @@ interface AssignmentRule {
   "title": "Sensibilisation Sulfure d'Hydrogène (H2S)",
   "category": "Critique",
   "description": "Gaz mortel présent dans les hydrocarbures",
-  "passingScore": 100,        // ⚠️ 100% requis !
-  "practicalTest": true,      // Test pratique obligatoire
-  "validityMonths": 12,       // Renouvellement annuel
+  "passingScore": 100, // ⚠️ 100% requis !
+  "practicalTest": true, // Test pratique obligatoire
+  "validityMonths": 12, // Renouvellement annuel
   "requiredForRoles": ["EMPLOYE", "SUPERVISEUR", "HSE"],
   "prerequisites": ["HSE-001"]
 }
@@ -470,6 +494,7 @@ interface AssignmentRule {
 ## 📊 KPIs et Indicateurs
 
 ### Dashboard Principal
+
 ```typescript
 {
   incidentsOuverts: number,           // Statut != 'resolved'
@@ -481,6 +506,7 @@ interface AssignmentRule {
 ```
 
 ### Collaborateurs
+
 ```typescript
 {
   totalEmployes: 9,
@@ -493,6 +519,7 @@ interface AssignmentRule {
 ```
 
 ### Notifications
+
 ```typescript
 {
   totalRecues: number,
@@ -503,6 +530,7 @@ interface AssignmentRule {
 ```
 
 ### Attribution Auto
+
 ```typescript
 {
   reglesActives: number,              // Sur 6 total
@@ -515,6 +543,7 @@ interface AssignmentRule {
 ## 🎯 Cas d'Usage Avancés
 
 ### 1. Audit ISO 45001
+
 **Objectif**: Préparer audit externe sécurité
 
 1. **Conformité globale**:
@@ -538,6 +567,7 @@ interface AssignmentRule {
    - Graphiques évolution
 
 ### 2. Formation H2S Collective
+
 **Objectif**: Former 15 nouveaux opérateurs Production
 
 1. **Identification besoins**:
@@ -574,6 +604,7 @@ interface AssignmentRule {
    - Expiration = date + 12 mois
 
 ### 3. Réorganisation Service Maintenance
+
 **Objectif**: 5 techniciens transférés Production → Maintenance
 
 1. **Détection changement**:
@@ -607,23 +638,27 @@ interface AssignmentRule {
 ## 🔐 Sécurité et Conformité
 
 ### Contrôles d'Accès
+
 ```typescript
 // Frontend
-const canManageHSE = hasAnyRole(['ADMIN', 'HSE']); // ✅
+const canManageHSE = hasAnyRole(['ADMIN', 'HSE']) // ✅
 
 // Backend
-permissions.add('write:hse');                      // ✅
-permissions.add('write:employees');                // ✅ (formations)
+permissions.add('write:hse') // ✅
+permissions.add('write:employees') // ✅ (formations)
 ```
 
 ### Traçabilité
+
 Toutes les actions sont tracées:
+
 - Création incident → metadata (author, timestamp)
 - Envoi notification → metadata (sentBy, employeeId)
 - Attribution formation → metadata (assignedBy, assignedAt)
 - Modification statut → timeline events
 
 ### Données Sensibles
+
 - Incidents médicaux → Confidentialité renforcée
 - Attestations formations → Stockage sécurisé
 - Photos incidents → Upload vérifié
@@ -631,16 +666,19 @@ Toutes les actions sont tracées:
 ## 📈 Métriques de Performance
 
 ### Temps Gagné
+
 - Attribution manuelle: ~15 min/employé
 - Attribution auto: ~2 min pour 50 employés
 - **Gain: 92%**
 
 ### Conformité
+
 - Avant: suivi Excel, erreurs fréquentes
 - Après: 100% traçabilité, alertes proactives
 - **Gain: Audit réussi sans remarques**
 
 ### Communication
+
 - Avant: emails perdus, pas de suivi
 - Après: notifications centralisées, tracking
 - **Gain: Temps de réponse divisé par 3**
@@ -650,6 +688,7 @@ Toutes les actions sont tracées:
 ## ✅ Validation Finale
 
 ### Compte HSE001 - Statut
+
 - [x] Authentification fonctionnelle
 - [x] Permissions backend correctes
 - [x] Accès tous onglets HSE Dashboard
@@ -661,6 +700,7 @@ Toutes les actions sont tracées:
 - [x] Intégration complète avec reste du système
 
 ### Tests Réalisés
+
 - [x] Login HSE001 → redirect /app/hse ✅
 - [x] Dashboard charge sans erreur ✅
 - [x] Onglet "Collaborateurs" affiche 9 employés ✅
@@ -671,6 +711,7 @@ Toutes les actions sont tracées:
 - [x] Envoi notification fonctionne ✅
 
 ### Système Opérationnel
+
 ```
 🎉 SOGARA HSE - SYSTÈME PLEINEMENT FONCTIONNEL
 Version: 1.0

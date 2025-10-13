@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import { 
-  Shield, 
-  Plus, 
-  Search, 
+import { useState, useEffect } from 'react'
+import {
+  Shield,
+  Plus,
+  Search,
   Filter,
   Edit,
   Trash2,
@@ -11,110 +11,140 @@ import {
   Clock,
   User,
   Calendar,
-  Download
-} from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { StatusBadge } from '@/components/ui/status-badge';
-import { useAuth } from '@/contexts/AppContext';
-import { Equipment } from '@/types';
-import { repositories } from '@/services/repositories';
+  Download,
+} from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { StatusBadge } from '@/components/ui/status-badge'
+import { useAuth } from '@/contexts/AppContext'
+import { Equipment } from '@/types'
+import { repositories } from '@/services/repositories'
 
 export function HSEEquipmentManagement() {
-  const { state, hasAnyRole } = useAuth();
-  const [equipment, setEquipment] = useState<Equipment[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [typeFilter, setTypeFilter] = useState<string>('all');
-  const [selectedEquipment, setSelectedEquipment] = useState<Equipment | null>(null);
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const { state, hasAnyRole } = useAuth()
+  const [equipment, setEquipment] = useState<Equipment[]>([])
+  const [searchTerm, setSearchTerm] = useState('')
+  const [statusFilter, setStatusFilter] = useState<string>('all')
+  const [typeFilter, setTypeFilter] = useState<string>('all')
+  const [selectedEquipment, setSelectedEquipment] = useState<Equipment | null>(null)
+  const [showAddForm, setShowAddForm] = useState(false)
+  const [loading, setLoading] = useState(true)
 
-  const canManageEPI = hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR']);
+  const canManageEPI = hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR'])
 
   useEffect(() => {
-    loadEquipment();
-  }, []);
+    loadEquipment()
+  }, [])
 
   const loadEquipment = async () => {
     try {
-      setLoading(true);
-      const allEquipment = repositories.equipment.getAll();
-      setEquipment(allEquipment);
+      setLoading(true)
+      const allEquipment = repositories.equipment.getAll()
+      setEquipment(allEquipment)
     } catch (error) {
-      console.error('Erreur chargement équipements:', error);
+      console.error('Erreur chargement équipements:', error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   // Filtrer les équipements
   const filteredEquipment = equipment.filter(eq => {
-    const matchesSearch = searchTerm === '' || 
+    const matchesSearch =
+      searchTerm === '' ||
       eq.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      eq.serialNumber.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = statusFilter === 'all' || eq.status === statusFilter;
-    const matchesType = typeFilter === 'all' || eq.type === typeFilter;
-    
-    return matchesSearch && matchesStatus && matchesType;
-  });
+      eq.serialNumber.toLowerCase().includes(searchTerm.toLowerCase())
+
+    const matchesStatus = statusFilter === 'all' || eq.status === statusFilter
+    const matchesType = typeFilter === 'all' || eq.type === typeFilter
+
+    return matchesSearch && matchesStatus && matchesType
+  })
 
   // Statistiques EPI
   const getEPIStats = () => {
-    const total = equipment.length;
-    const available = equipment.filter(eq => eq.status === 'available').length;
-    const assigned = equipment.filter(eq => eq.status === 'assigned').length;
-    const maintenance = equipment.filter(eq => eq.status === 'maintenance').length;
-    const expired = equipment.filter(eq => eq.status === 'expired').length;
+    const total = equipment.length
+    const available = equipment.filter(eq => eq.status === 'available').length
+    const assigned = equipment.filter(eq => eq.status === 'assigned').length
+    const maintenance = equipment.filter(eq => eq.status === 'maintenance').length
+    const expired = equipment.filter(eq => eq.status === 'expired').length
 
-    return { total, available, assigned, maintenance, expired };
-  };
+    return { total, available, assigned, maintenance, expired }
+  }
 
-  const stats = getEPIStats();
+  const stats = getEPIStats()
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'available': return 'success';
-      case 'assigned': return 'info';
-      case 'maintenance': return 'warning';
-      case 'expired': return 'destructive';
-      default: return 'secondary';
+      case 'available':
+        return 'success'
+      case 'assigned':
+        return 'info'
+      case 'maintenance':
+        return 'warning'
+      case 'expired':
+        return 'destructive'
+      default:
+        return 'secondary'
     }
-  };
+  }
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'available': return 'Disponible';
-      case 'assigned': return 'Assigné';
-      case 'maintenance': return 'Maintenance';
-      case 'expired': return 'Expiré';
-      default: return status;
+      case 'available':
+        return 'Disponible'
+      case 'assigned':
+        return 'Assigné'
+      case 'maintenance':
+        return 'Maintenance'
+      case 'expired':
+        return 'Expiré'
+      default:
+        return status
     }
-  };
+  }
 
   const handleAssignEquipment = (equipmentId: string, employeeId: string) => {
     try {
-      repositories.equipment.assign(equipmentId, employeeId);
-      loadEquipment();
+      repositories.equipment.assign(equipmentId, employeeId)
+      loadEquipment()
     } catch (error) {
-      console.error('Erreur assignation:', error);
+      console.error('Erreur assignation:', error)
     }
-  };
+  }
 
   const handleUnassignEquipment = (equipmentId: string) => {
     try {
-      repositories.equipment.unassign(equipmentId);
-      loadEquipment();
+      repositories.equipment.unassign(equipmentId)
+      loadEquipment()
     } catch (error) {
-      console.error('Erreur désassignation:', error);
+      console.error('Erreur désassignation:', error)
     }
-  };
+  }
 
   if (loading) {
     return (
@@ -124,7 +154,7 @@ export function HSEEquipmentManagement() {
           <p className="text-muted-foreground">Chargement des équipements...</p>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -187,12 +217,12 @@ export function HSEEquipmentManagement() {
                 <Input
                   placeholder="Rechercher équipement..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={e => setSearchTerm(e.target.value)}
                   className="pl-10"
                 />
               </div>
             </div>
-            
+
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-48">
                 <SelectValue placeholder="Statut" />
@@ -243,10 +273,9 @@ export function HSEEquipmentManagement() {
               <Shield className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
               <h3 className="text-lg font-medium mb-2">Aucun équipement trouvé</h3>
               <p className="text-muted-foreground">
-                {searchTerm || statusFilter !== 'all' || typeFilter !== 'all' 
+                {searchTerm || statusFilter !== 'all' || typeFilter !== 'all'
                   ? 'Essayez de modifier les filtres de recherche'
-                  : 'Commencez par ajouter des équipements de protection'
-                }
+                  : 'Commencez par ajouter des équipements de protection'}
               </p>
             </div>
           ) : (
@@ -262,27 +291,25 @@ export function HSEEquipmentManagement() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredEquipment.map((eq) => {
-                  const assignedEmployee = eq.holderEmployeeId 
+                {filteredEquipment.map(eq => {
+                  const assignedEmployee = eq.holderEmployeeId
                     ? state.employees?.find(emp => emp.id === eq.holderEmployeeId)
-                    : null;
+                    : null
 
                   return (
                     <TableRow key={eq.id}>
                       <TableCell>
                         <div>
                           <div className="font-medium">{eq.name}</div>
-                          <div className="text-sm text-muted-foreground">
-                            N° {eq.serialNumber}
-                          </div>
+                          <div className="text-sm text-muted-foreground">N° {eq.serialNumber}</div>
                         </div>
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline">{eq.type}</Badge>
                       </TableCell>
                       <TableCell>
-                        <StatusBadge 
-                          status={getStatusLabel(eq.status)} 
+                        <StatusBadge
+                          status={getStatusLabel(eq.status)}
                           variant={getStatusColor(eq.status)}
                         />
                       </TableCell>
@@ -290,7 +317,9 @@ export function HSEEquipmentManagement() {
                         {assignedEmployee ? (
                           <div className="flex items-center gap-2">
                             <User className="w-4 h-4" />
-                            <span>{assignedEmployee.firstName} {assignedEmployee.lastName}</span>
+                            <span>
+                              {assignedEmployee.firstName} {assignedEmployee.lastName}
+                            </span>
                           </div>
                         ) : (
                           <span className="text-muted-foreground">Non assigné</span>
@@ -308,21 +337,23 @@ export function HSEEquipmentManagement() {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
-                          <Button 
-                            size="sm" 
+                          <Button
+                            size="sm"
                             variant="ghost"
                             onClick={() => setSelectedEquipment(eq)}
                           >
                             <Edit className="w-4 h-4" />
                           </Button>
                           {canManageEPI && (
-                            <Button 
-                              size="sm" 
+                            <Button
+                              size="sm"
                               variant="ghost"
                               onClick={() => {
-                                if (confirm('Êtes-vous sûr de vouloir supprimer cet équipement ?')) {
-                                  repositories.equipment.delete(eq.id);
-                                  loadEquipment();
+                                if (
+                                  confirm('Êtes-vous sûr de vouloir supprimer cet équipement ?')
+                                ) {
+                                  repositories.equipment.delete(eq.id)
+                                  loadEquipment()
                                 }
                               }}
                             >
@@ -332,7 +363,7 @@ export function HSEEquipmentManagement() {
                         </div>
                       </TableCell>
                     </TableRow>
-                  );
+                  )
                 })}
               </TableBody>
             </Table>
@@ -369,7 +400,11 @@ export function HSEEquipmentManagement() {
                 <div className="text-left">
                   <div className="font-medium">EPI à Vérifier</div>
                   <div className="text-sm text-muted-foreground">
-                    {equipment.filter(eq => eq.nextCheckDate && eq.nextCheckDate <= new Date()).length} en retard
+                    {
+                      equipment.filter(eq => eq.nextCheckDate && eq.nextCheckDate <= new Date())
+                        .length
+                    }{' '}
+                    en retard
                   </div>
                 </div>
               </Button>
@@ -429,8 +464,8 @@ export function HSEEquipmentManagement() {
                 </div>
                 <div>
                   <label className="text-sm font-medium">Statut</label>
-                  <StatusBadge 
-                    status={getStatusLabel(selectedEquipment.status)} 
+                  <StatusBadge
+                    status={getStatusLabel(selectedEquipment.status)}
                     variant={getStatusColor(selectedEquipment.status)}
                   />
                 </div>
@@ -451,5 +486,5 @@ export function HSEEquipmentManagement() {
         </DialogContent>
       </Dialog>
     </div>
-  );
+  )
 }

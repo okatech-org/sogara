@@ -18,47 +18,47 @@ Système complet de transmission et réception de contenu HSE entre le Responsab
 
 ```typescript
 // Types de contenu HSE
-export type HSEContentType = 
-  | 'training'        // Formation
-  | 'alert'           // Alerte sécurité
-  | 'info'            // Information
-  | 'document'        // Document/PDF
-  | 'procedure'       // Procédure
+export type HSEContentType =
+  | 'training' // Formation
+  | 'alert' // Alerte sécurité
+  | 'info' // Information
+  | 'document' // Document/PDF
+  | 'procedure' // Procédure
   | 'equipment_check' // Vérification EPI
-  | 'quiz'            // Test connaissances
-  | 'reminder';       // Rappel
+  | 'quiz' // Test connaissances
+  | 'reminder' // Rappel
 
 // Item de contenu créé par HSE
 export interface HSEContentItem {
-  id: string;
-  type: HSEContentType;
-  title: string;
-  description: string;
-  priority: 'low' | 'medium' | 'high' | 'critical';
-  trainingId?: string;
-  documentUrl?: string;
-  alertMessage?: string;
-  createdBy: string;
-  createdAt: Date;
-  targetServices?: string[];
-  targetRoles?: UserRole[];
+  id: string
+  type: HSEContentType
+  title: string
+  description: string
+  priority: 'low' | 'medium' | 'high' | 'critical'
+  trainingId?: string
+  documentUrl?: string
+  alertMessage?: string
+  createdBy: string
+  createdAt: Date
+  targetServices?: string[]
+  targetRoles?: UserRole[]
 }
 
 // Attribution à un employé
 export interface HSEAssignment {
-  id: string;
-  contentId: string;
-  contentType: HSEContentType;
-  employeeId: string;
-  status: 'sent' | 'received' | 'read' | 'in_progress' | 'completed' | 'expired' | 'acknowledged';
-  assignedAt: Date;
-  dueDate?: Date;
-  readAt?: Date;
-  completedAt?: Date;
-  progress?: number;
-  score?: number;
-  certificate?: string;
-  sentBy: string;
+  id: string
+  contentId: string
+  contentType: HSEContentType
+  employeeId: string
+  status: 'sent' | 'received' | 'read' | 'in_progress' | 'completed' | 'expired' | 'acknowledged'
+  assignedAt: Date
+  dueDate?: Date
+  readAt?: Date
+  completedAt?: Date
+  progress?: number
+  score?: number
+  certificate?: string
+  sentBy: string
 }
 ```
 
@@ -67,45 +67,47 @@ export interface HSEAssignment {
 ### 2. Hooks de Gestion ✅
 
 #### A. useHSEContent.ts
+
 **Gestion du contenu et des attributions**
 
 ```typescript
 export function useHSEContent() {
   return {
-    content,              // Tous les contenus créés
-    assignments,          // Toutes les attributions
-    createContent,        // Créer nouveau contenu
-    assignContent,        // Assigner à des employés
-    getContentByType,     // Filtrer par type
-    getSentHistory,       // Historique envois
+    content, // Tous les contenus créés
+    assignments, // Toutes les attributions
+    createContent, // Créer nouveau contenu
+    assignContent, // Assigner à des employés
+    getContentByType, // Filtrer par type
+    getSentHistory, // Historique envois
     updateAssignmentStatus, // Mettre à jour statut
-    stats                 // Statistiques globales
-  };
+    stats, // Statistiques globales
+  }
 }
 ```
 
 **Stockage**: LocalStorage (`sogara_hse_content`, `sogara_hse_assignments`)
 
 #### B. useEmployeeHSEInbox.ts
+
 **Gestion de l'inbox employé**
 
 ```typescript
 export function useEmployeeHSEInbox(employeeId: string) {
   return {
-    myAssignments,        // Tout ce qui m'est assigné
-    myTrainings,          // Formations seulement
-    myAlerts,             // Alertes/infos seulement
-    myDocuments,          // Documents seulement
-    unreadCount,          // Nombre non lus
-    pendingTrainings,     // Formations à faire
-    completedTrainings,   // Formations complétées
-    complianceRate,       // Taux conformité (%)
-    acknowledgeItem,      // Accuser réception
-    markAsRead,           // Marquer comme lu
-    startTraining,        // Démarrer formation
-    completeTraining,     // Terminer formation
-    getContentForAssignment // Récupérer le contenu
-  };
+    myAssignments, // Tout ce qui m'est assigné
+    myTrainings, // Formations seulement
+    myAlerts, // Alertes/infos seulement
+    myDocuments, // Documents seulement
+    unreadCount, // Nombre non lus
+    pendingTrainings, // Formations à faire
+    completedTrainings, // Formations complétées
+    complianceRate, // Taux conformité (%)
+    acknowledgeItem, // Accuser réception
+    markAsRead, // Marquer comme lu
+    startTraining, // Démarrer formation
+    completeTraining, // Terminer formation
+    getContentForAssignment, // Récupérer le contenu
+  }
 }
 ```
 
@@ -114,9 +116,11 @@ export function useEmployeeHSEInbox(employeeId: string) {
 ### 3. Composants HSE (Responsable) ✅
 
 #### A. HSERecipientSelector.tsx
+
 **Sélecteur multi-critères de destinataires**
 
 **Fonctionnalités**:
+
 - ✅ Sélection individuelle (checkboxes)
 - ✅ Sélection par service (cards cliquables)
 - ✅ Sélection par rôle (cards cliquables)
@@ -125,6 +129,7 @@ export function useEmployeeHSEInbox(employeeId: string) {
 - ✅ Tout sélectionner / Effacer
 
 **Interface**:
+
 ```
 ┌─────────────────────────────────────────────┐
 │ Sélection des destinataires  [13 sélect.]  │
@@ -143,9 +148,11 @@ export function useEmployeeHSEInbox(employeeId: string) {
 ```
 
 #### B. HSEContentHub.tsx
+
 **Centre d'envoi unifié**
 
 **Structure**:
+
 ```
 ┌─────────────────────────────────────────────┐
 │ 📤 Centre d'Envoi HSE                       │
@@ -172,6 +179,7 @@ export function useEmployeeHSEInbox(employeeId: string) {
 ```
 
 **Onglets disponibles**:
+
 1. **Formations**: Catalogue → Sélection → Envoi
 2. **Alertes & Infos**: Création alerte → Envoi
 3. **Documents**: Upload/URL → Partage
@@ -181,9 +189,11 @@ export function useEmployeeHSEInbox(employeeId: string) {
 ### 4. Composants Employé ✅
 
 #### EmployeeHSEInbox.tsx
+
 **Boîte de réception HSE personnalisée**
 
 **Interface complète**:
+
 ```
 ┌─────────────────────────────────────────────┐
 │ 🛡️ Mon Espace HSE              85% ⚠️      │
@@ -209,6 +219,7 @@ export function useEmployeeHSEInbox(employeeId: string) {
 ```
 
 **Mode compact** (pour Dashboard):
+
 - Affichage réduit (3 items max par onglet)
 - Padding réduit
 - Pas de KPIs détaillés
@@ -224,6 +235,7 @@ export function useEmployeeHSEInbox(employeeId: string) {
 **Navigation**: Login HSE001 → `/app/hse` → Onglet "📤 Centre d'Envoi"
 
 **Actions**:
+
 ```
 1. Clic onglet "Formations"
 2. Sélection dans dropdown: "HSE-015 - H2S Awareness"
@@ -254,6 +266,7 @@ export function useEmployeeHSEInbox(employeeId: string) {
 **Navigation**: Login EMP001 → `/app/dashboard`
 
 **Vue**:
+
 ```
 Card "Mon Espace HSE":
   Badge rouge: "1 nouveau" (animate-pulse)
@@ -265,6 +278,7 @@ Clic sur la card →
 ```
 
 **Inbox**:
+
 ```
 Onglet "Mes Formations (1)":
 
@@ -285,6 +299,7 @@ Onglet "Mes Formations (1)":
 ```
 
 **Action employé**:
+
 ```
 1. Clic "Démarrer"
    → startTraining(assignmentId)
@@ -307,6 +322,7 @@ Onglet "Mes Formations (1)":
 **Navigation**: `/app/hse` → Onglet "Collaborateurs"
 
 **Vue employé Pierre BEKALE**:
+
 ```
 Formations assignées:
 
@@ -364,6 +380,7 @@ src/
 #### Dashboard HSE (`/app/hse`)
 
 **10 onglets** (ajout du Centre d'Envoi):
+
 1. Vue d'ensemble
 2. **📤 Centre d'Envoi** ⭐ NOUVEAU
 3. Incidents
@@ -378,11 +395,13 @@ src/
 #### Onglet "Centre d'Envoi"
 
 **3 sous-onglets**:
+
 - **Formations**: Assignation depuis catalogue (9 modules)
 - **Alertes & Infos**: Création et envoi d'alertes
 - **Documents**: Partage de documents/procédures
 
 **Workflow standard**:
+
 ```
 Sélection contenu
     ↓
@@ -404,24 +423,28 @@ Envoi confirmé
 **Nouvelle card**: "Mon Espace HSE"
 
 **Affichage**:
+
 - Badge rouge animé si nouveau contenu
 - Taux conformité (couleur selon niveau)
 - Nombre de formations en attente
 - Bouton "Accéder à mon espace HSE"
 
 **Au clic**:
+
 - Dialog s'ouvre
 - EmployeeHSEInbox affiché en pleine taille
 
 #### Mon Espace HSE (Dialog)
 
 **KPIs personnels**:
+
 - Formations en attente
 - Formations complétées
 - Alertes non lues
 - Documents disponibles
 
 **3 onglets**:
+
 1. **Mes Formations**: Liste avec statuts, échéances, actions
 2. **Alertes & Infos**: Notifications HSE avec accusé réception
 3. **Documents**: Procédures et documents téléchargeables
@@ -433,22 +456,26 @@ Envoi confirmé
 ### Personnel Production
 
 **Formations automatiques (via Attribution Auto)**:
+
 - 🔴 HSE-015 (H2S) - Critique
 - 🔴 HSE-004 (Espace Confiné) - Critique
 - 🟡 HSE-006 (Produits Chimiques)
 - 🟡 HSE-002 (EPI Avancé)
 
 **Formations manuelles (via Centre d'Envoi)**:
+
 - Formation spécifique selon besoin
 - Recyclage anticipé
 - Formation suite incident
 
 **Alertes fréquentes**:
+
 - Nouvelles procédures H2S
 - Consignes manipulation
 - Rappels port EPI
 
 **Documents permanents**:
+
 - FDS produits manipulés
 - Procédures urgence H2S
 - Check-lists pré-opérationnelles
@@ -456,16 +483,19 @@ Envoi confirmé
 ### Personnel Maintenance
 
 **Formations automatiques**:
+
 - 🟡 HSE-005 (Travail Hauteur)
 - 🟡 HSE-007 (Permis Travail)
 - 🟢 HSE-009 (Consignation)
 
 **Alertes**:
+
 - Inspections harnais
 - Permis travail spéciaux
 - Consignations critiques
 
 **Documents**:
+
 - Procédures LOTO
 - Check-lists hauteur
 - Registres permis
@@ -477,31 +507,35 @@ Envoi confirmé
 ### Règles d'Attribution Automatique
 
 **Priorité 1**: Règles système (HSETrainingAssignmentSystem)
+
 ```typescript
 // Formation H2S pour Production
 if (employee.service === 'Production') {
   assignTraining('HSE-015', employee.id, {
     priority: 'critical',
-    autoAssign: true
-  });
+    autoAssign: true,
+  })
 }
 ```
 
 **Priorité 2**: Envoi manuel (HSEContentHub)
+
 ```typescript
 // HSE sélectionne contenu + destinataires
-createContent({ type: 'training', trainingId: 'HSE-015' });
-assignContent(contentId, employeeIds, { dueDate, sentBy });
+createContent({ type: 'training', trainingId: 'HSE-015' })
+assignContent(contentId, employeeIds, { dueDate, sentBy })
 ```
 
 ### Filtrage Intelligent
 
 **Exclusions automatiques**:
+
 - Employé déjà formé (certification valide) → Exclu
 - Formation pas requise pour son rôle → Suggéré mais pas forcé
 - Document déjà consulté → Marqué comme lu
 
 **Suggestions**:
+
 ```
 Service Production sélectionné
   → Suggestions auto:
@@ -517,12 +551,14 @@ Service Production sélectionné
 ### Côté Responsable HSE
 
 **Statistiques Centre d'Envoi**:
+
 - Contenu total créé
 - Envois actifs (assignments)
 - En attente de traitement
 - Complétés
 
 **Suivi par employé** (Onglet Collaborateurs):
+
 - Liste attributions par employé
 - Statut de chaque attribution
 - Taux de complétion
@@ -530,6 +566,7 @@ Service Production sélectionné
 - Bouton "Relancer" si retard
 
 **Dashboard analytique** (Onglet Rapports):
+
 - Taux complétion par formation
 - Temps moyen complétion
 - Top formations demandées
@@ -538,12 +575,14 @@ Service Production sélectionné
 ### Côté Collaborateur
 
 **Vue personnelle**:
+
 - Taux conformité HSE (%)
 - Formations en attente / complétées
 - Alertes non lues
 - Documents disponibles
 
 **Indicateurs visuels**:
+
 ```
 Conformité ≥90% → Vert
 Conformité 70-89% → Jaune
@@ -559,6 +598,7 @@ Conformité <70% → Rouge + alerte
 **Contexte**: Incident H2S détecté → Recyclage urgent tout Personnel Production
 
 **Actions HSE**:
+
 ```
 1. /app/hse → Centre d'Envoi → Formations
 2. Sélection: HSE-015 (H2S)
@@ -570,6 +610,7 @@ Conformité <70% → Rouge + alerte
 ```
 
 **Réception employés**:
+
 - Badge rouge dans dashboard
 - Notification popover (header)
 - Card "Mon Espace HSE" avec alerte
@@ -581,6 +622,7 @@ Conformité <70% → Rouge + alerte
 **Contexte**: Mise à jour procédure évacuation
 
 **Actions HSE**:
+
 ```
 1. Centre d'Envoi → Alertes & Infos
 2. Titre: "Nouvelle procédure évacuation"
@@ -591,6 +633,7 @@ Conformité <70% → Rouge + alerte
 ```
 
 **Réception**:
+
 - Tous employés voient l'alerte
 - Bouton "Accusé réception" obligatoire
 - Suivi HSE: qui a accusé réception
@@ -598,6 +641,7 @@ Conformité <70% → Rouge + alerte
 ### 3. Partage Document FDS
 
 **Actions HSE**:
+
 ```
 1. Centre d'Envoi → Documents
 2. Nom: "FDS Acide Sulfurique"
@@ -608,6 +652,7 @@ Conformité <70% → Rouge + alerte
 ```
 
 **Réception**:
+
 - Document visible dans onglet "Documents"
 - Bouton "Télécharger"
 - Marqué comme lu après téléchargement
@@ -619,14 +664,17 @@ Conformité <70% → Rouge + alerte
 ### Contrôles d'Accès
 
 **Centre d'Envoi**:
+
 - ✅ Accessible uniquement par: ADMIN, HSE
 - ✅ Vérification rôle avant affichage onglet
 
 **Inbox Employé**:
+
 - ✅ Chaque employé voit UNIQUEMENT ses attributions
 - ✅ Filtre strict par employeeId
 
 **Stockage**:
+
 - ✅ LocalStorage sécurisé par session
 - ✅ Pas de cross-contamination entre utilisateurs
 - ✅ Clear cache utilisateur lors logout
@@ -634,19 +682,19 @@ Conformité <70% → Rouge + alerte
 ### Validation
 
 **Côté envoi**:
+
 ```typescript
 // HSEContentHub
-if (!selectedTraining && activeTab === 'training') return;
-if (selectedEmployees.length === 0) return;
-if (!user?.id) return; // Authentification requise
+if (!selectedTraining && activeTab === 'training') return
+if (selectedEmployees.length === 0) return
+if (!user?.id) return // Authentification requise
 ```
 
 **Côté réception**:
+
 ```typescript
 // EmployeeHSEInbox
-const myAssignments = assignments.filter(
-  a => a.employeeId === employeeId
-);
+const myAssignments = assignments.filter(a => a.employeeId === employeeId)
 ```
 
 ---
@@ -654,15 +702,18 @@ const myAssignments = assignments.filter(
 ## 📱 Responsive Design
 
 ### Desktop (≥1024px)
+
 - Centre d'Envoi: Layouts 2 colonnes
 - Inbox: Dialog large (max-w-5xl)
 - Recipient Selector: Grid 2-3 colonnes
 
 ### Tablet (768-1023px)
+
 - Grid 2 colonnes
 - Dialog adapté
 
 ### Mobile (<768px)
+
 - Grid 1 colonne
 - Filtres empilés
 - Dialog plein écran
@@ -672,6 +723,7 @@ const myAssignments = assignments.filter(
 ## ✅ Tests de Validation
 
 ### Test 1: Envoi Formation
+
 ```
 Compte: HSE001
 1. Login → /app/hse
@@ -684,6 +736,7 @@ Compte: HSE001
 ```
 
 ### Test 2: Réception Employé
+
 ```
 Compte: EMP001
 1. Login → /app/dashboard
@@ -696,6 +749,7 @@ Compte: EMP001
 ```
 
 ### Test 3: Multi-destinataires
+
 ```
 Compte: HSE001
 1. Centre d'Envoi → Alertes
@@ -714,12 +768,14 @@ Compte: HSE001
 ## 🚀 Évolutions Futures
 
 ### Phase 2
+
 - [ ] Module formation interactif (lecteur contenu)
 - [ ] Signature électronique (accusé réception)
 - [ ] Rappels automatiques (cron jobs)
 - [ ] Statistiques avancées (temps moyen, taux abandon)
 
 ### Phase 3
+
 - [ ] Notifications push navigateur
 - [ ] Export Excel liste attributions
 - [ ] Templates alertes personnalisables
@@ -732,6 +788,7 @@ Compte: HSE001
 ### Guide Responsable HSE
 
 **Comment envoyer une formation?**
+
 1. Aller dans HSE → Centre d'Envoi
 2. Onglet "Formations"
 3. Choisir la formation dans la liste
@@ -740,6 +797,7 @@ Compte: HSE001
 6. Envoyer
 
 **Comment suivre la progression?**
+
 1. Onglet "Collaborateurs"
 2. Rechercher l'employé
 3. Voir ses formations assignées
@@ -748,12 +806,14 @@ Compte: HSE001
 ### Guide Collaborateur
 
 **Comment accéder à mes formations?**
+
 1. Dashboard → Card "Mon Espace HSE"
 2. Cliquer sur la card
 3. Onglet "Mes Formations"
 4. Cliquer "Démarrer" sur une formation
 
 **Comment accuser réception d'une alerte?**
+
 1. Mon Espace HSE → Onglet "Alertes"
 2. Lire l'alerte
 3. Cliquer "Accusé de réception"

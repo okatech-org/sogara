@@ -1,21 +1,23 @@
-import { HardHat, AlertTriangle, CheckCircle, Clock, Wrench } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { useAuth } from '@/contexts/AppContext';
-import { useEquipment } from '@/hooks/useEquipment';
+import { HardHat, AlertTriangle, CheckCircle, Clock, Wrench } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { useAuth } from '@/contexts/AppContext'
+import { useEquipment } from '@/hooks/useEquipment'
 
 export function MesEquipementsPage() {
-  const { currentUser } = useAuth();
-  const { equipment } = useEquipment();
+  const { currentUser } = useAuth()
+  const { equipment } = useEquipment()
 
-  const myEquipment = equipment.filter(eq => eq.holderEmployeeId === currentUser?.id);
-  
-  const operational = myEquipment.filter(eq => eq.status === 'operational').length;
-  const maintenance = myEquipment.filter(eq => eq.status === 'maintenance').length;
-  const outOfService = myEquipment.filter(eq => eq.status === 'out_of_service').length;
-  const needsCheck = myEquipment.filter(eq => 
-    eq.nextCheckDate && new Date(eq.nextCheckDate) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-  ).length;
+  const myEquipment = equipment.filter(eq => eq.holderEmployeeId === currentUser?.id)
+
+  const operational = myEquipment.filter(eq => eq.status === 'operational').length
+  const maintenance = myEquipment.filter(eq => eq.status === 'maintenance').length
+  const outOfService = myEquipment.filter(eq => eq.status === 'out_of_service').length
+  const needsCheck = myEquipment.filter(
+    eq =>
+      eq.nextCheckDate &&
+      new Date(eq.nextCheckDate) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+  ).length
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -27,9 +29,7 @@ export function MesEquipementsPage() {
           </div>
           Mes Équipements de Protection
         </h1>
-        <p className="text-muted-foreground mt-2">
-          EPI affectés et matériel de sécurité personnel
-        </p>
+        <p className="text-muted-foreground mt-2">EPI affectés et matériel de sécurité personnel</p>
       </div>
 
       {/* Statistiques */}
@@ -79,7 +79,8 @@ export function MesEquipementsPage() {
               <AlertTriangle className="w-6 h-6 text-yellow-600" />
               <div>
                 <p className="font-semibold text-yellow-900">
-                  {needsCheck} équipement{needsCheck > 1 ? 's' : ''} nécessite{needsCheck > 1 ? 'nt' : ''} un contrôle cette semaine
+                  {needsCheck} équipement{needsCheck > 1 ? 's' : ''} nécessite
+                  {needsCheck > 1 ? 'nt' : ''} un contrôle cette semaine
                 </p>
                 <p className="text-sm text-yellow-800">
                   Présentez-vous au service HSE pour la vérification
@@ -105,29 +106,38 @@ export function MesEquipementsPage() {
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {myEquipment.map((eq) => {
-              const needsCheckSoon = eq.nextCheckDate && 
-                new Date(eq.nextCheckDate) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+            {myEquipment.map(eq => {
+              const needsCheckSoon =
+                eq.nextCheckDate &&
+                new Date(eq.nextCheckDate) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
 
               return (
-                <Card 
-                  key={eq.id} 
+                <Card
+                  key={eq.id}
                   className={`industrial-card ${needsCheckSoon ? 'border-yellow-300' : ''}`}
                 >
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <h3 className="font-semibold text-lg">{eq.label}</h3>
-                      <Badge 
+                      <Badge
                         variant={
-                          eq.status === 'operational' ? 'default' :
-                          eq.status === 'maintenance' ? 'secondary' :
-                          'destructive'
+                          eq.status === 'operational'
+                            ? 'default'
+                            : eq.status === 'maintenance'
+                              ? 'secondary'
+                              : 'destructive'
                         }
                       >
                         {eq.status === 'operational' ? (
-                          <><CheckCircle className="w-3 h-3 mr-1" />OK</>
+                          <>
+                            <CheckCircle className="w-3 h-3 mr-1" />
+                            OK
+                          </>
                         ) : eq.status === 'maintenance' ? (
-                          <><Wrench className="w-3 h-3 mr-1" />Maintenance</>
+                          <>
+                            <Wrench className="w-3 h-3 mr-1" />
+                            Maintenance
+                          </>
                         ) : (
                           'Hors Service'
                         )}
@@ -153,18 +163,21 @@ export function MesEquipementsPage() {
                         </div>
                       )}
                       {eq.nextCheckDate && (
-                        <div className={`flex justify-between ${needsCheckSoon ? 'text-yellow-600 font-semibold' : ''}`}>
+                        <div
+                          className={`flex justify-between ${needsCheckSoon ? 'text-yellow-600 font-semibold' : ''}`}
+                        >
                           <span className="text-muted-foreground">Prochain contrôle:</span>
-                          <span>
-                            {new Date(eq.nextCheckDate).toLocaleDateString('fr-FR')}
-                          </span>
+                          <span>{new Date(eq.nextCheckDate).toLocaleDateString('fr-FR')}</span>
                         </div>
                       )}
                     </div>
 
                     {needsCheckSoon && (
                       <div className="pt-3 border-t">
-                        <Badge variant="outline" className="w-full justify-center text-yellow-600 border-yellow-600">
+                        <Badge
+                          variant="outline"
+                          className="w-full justify-center text-yellow-600 border-yellow-600"
+                        >
                           <Clock className="w-3 h-3 mr-1" />
                           Contrôle prévu cette semaine
                         </Badge>
@@ -178,12 +191,11 @@ export function MesEquipementsPage() {
                     )}
                   </CardContent>
                 </Card>
-              );
+              )
             })}
           </div>
         )}
       </div>
     </div>
-  );
+  )
 }
-

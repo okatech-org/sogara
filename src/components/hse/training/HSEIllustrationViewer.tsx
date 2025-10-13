@@ -1,44 +1,56 @@
-import { useState } from 'react';
-import { Eye, Download, Maximize2, X } from 'lucide-react';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { HSEIllustration } from '@/types';
+import { useState } from 'react'
+import { Eye, Download, Maximize2, X } from 'lucide-react'
+import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { HSEIllustration } from '@/types'
 
 interface HSEIllustrationViewerProps {
-  illustrations: HSEIllustration[];
-  className?: string;
+  illustrations: HSEIllustration[]
+  className?: string
 }
 
 export function HSEIllustrationViewer({ illustrations, className }: HSEIllustrationViewerProps) {
-  const [selectedIllustration, setSelectedIllustration] = useState<HSEIllustration | null>(null);
+  const [selectedIllustration, setSelectedIllustration] = useState<HSEIllustration | null>(null)
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'diagram': return '📊';
-      case 'photo': return '📷';
-      case 'schema': return '🔧';
-      case 'infographic': return '📈';
-      case 'chart': return '📉';
-      default: return '🖼️';
+      case 'diagram':
+        return '📊'
+      case 'photo':
+        return '📷'
+      case 'schema':
+        return '🔧'
+      case 'infographic':
+        return '📈'
+      case 'chart':
+        return '📉'
+      default:
+        return '🖼️'
     }
-  };
+  }
 
   const getTypeBadgeVariant = (type: string) => {
     switch (type) {
-      case 'diagram': return 'default';
-      case 'photo': return 'secondary';
-      case 'schema': return 'outline';
-      case 'infographic': return 'destructive';
-      case 'chart': return 'secondary';
-      default: return 'outline';
+      case 'diagram':
+        return 'default'
+      case 'photo':
+        return 'secondary'
+      case 'schema':
+        return 'outline'
+      case 'infographic':
+        return 'destructive'
+      case 'chart':
+        return 'secondary'
+      default:
+        return 'outline'
     }
-  };
+  }
 
   return (
     <div className={className}>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {illustrations.map((illustration) => (
+        {illustrations.map(illustration => (
           <div
             key={illustration.id}
             className="border rounded-lg p-4 bg-card hover:bg-muted/50 transition-colors cursor-pointer"
@@ -46,14 +58,14 @@ export function HSEIllustrationViewer({ illustrations, className }: HSEIllustrat
           >
             <div className="aspect-video bg-muted rounded-md flex items-center justify-center mb-3 relative overflow-hidden">
               {illustration.url.endsWith('.svg') ? (
-                <img 
-                  src={illustration.url} 
+                <img
+                  src={illustration.url}
                   alt={illustration.alt}
                   className="w-full h-full object-contain"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                    target.nextElementSibling?.classList.remove('hidden');
+                  onError={e => {
+                    const target = e.target as HTMLImageElement
+                    target.style.display = 'none'
+                    target.nextElementSibling?.classList.remove('hidden')
                   }}
                 />
               ) : null}
@@ -90,7 +102,9 @@ export function HSEIllustrationViewer({ illustrations, className }: HSEIllustrat
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-lg font-semibold">{selectedIllustration.title}</h3>
-                  <p className="text-sm text-muted-foreground">{selectedIllustration.description}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedIllustration.description}
+                  </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge variant={getTypeBadgeVariant(selectedIllustration.type)}>
@@ -105,18 +119,20 @@ export function HSEIllustrationViewer({ illustrations, className }: HSEIllustrat
                   </Button>
                 </div>
               </div>
-              
+
               <div className="bg-white rounded-lg border p-4 max-h-[60vh] overflow-auto">
                 {selectedIllustration.url.endsWith('.svg') ? (
-                  <img 
-                    src={selectedIllustration.url} 
+                  <img
+                    src={selectedIllustration.url}
                     alt={selectedIllustration.alt}
                     className="w-full h-auto max-w-full"
                   />
                 ) : (
                   <div className="aspect-video flex items-center justify-center text-muted-foreground">
                     <div className="text-center">
-                      <span className="text-6xl mb-4 block">{getTypeIcon(selectedIllustration.type)}</span>
+                      <span className="text-6xl mb-4 block">
+                        {getTypeIcon(selectedIllustration.type)}
+                      </span>
                       <p>{selectedIllustration.title}</p>
                       <p className="text-sm mt-2">Illustration non disponible</p>
                     </div>
@@ -128,5 +144,5 @@ export function HSEIllustrationViewer({ illustrations, className }: HSEIllustrat
         </DialogContent>
       </Dialog>
     </div>
-  );
+  )
 }

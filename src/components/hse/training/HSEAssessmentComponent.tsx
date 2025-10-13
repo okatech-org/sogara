@@ -1,90 +1,94 @@
-import { useState, useEffect } from 'react';
-import { 
-  Clock, 
-  CheckCircle, 
-  XCircle, 
-  AlertCircle, 
+import { useState, useEffect } from 'react'
+import {
+  Clock,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
   Award,
   RotateCcw,
   Eye,
   ChevronLeft,
-  ChevronRight
-} from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { HSEAssessment, HSEQuestion, HSEAssessmentResult } from '@/types';
+  ChevronRight,
+} from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { HSEAssessment, HSEQuestion, HSEAssessmentResult } from '@/types'
 
 interface HSEAssessmentComponentProps {
-  assessments: HSEAssessment[];
-  onComplete: (result: Omit<HSEAssessmentResult, 'completedAt'>) => void;
-  onCancel: () => void;
+  assessments: HSEAssessment[]
+  onComplete: (result: Omit<HSEAssessmentResult, 'completedAt'>) => void
+  onCancel: () => void
 }
 
-export function HSEAssessmentComponent({ assessments, onComplete, onCancel }: HSEAssessmentComponentProps) {
-  const [currentAssessmentIndex, setCurrentAssessmentIndex] = useState(0);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<Map<string, string>>(new Map());
-  const [timeRemaining, setTimeRemaining] = useState<number>(0);
-  const [showResults, setShowResults] = useState(false);
-  const [assessmentResults, setAssessmentResults] = useState<any[]>([]);
+export function HSEAssessmentComponent({
+  assessments,
+  onComplete,
+  onCancel,
+}: HSEAssessmentComponentProps) {
+  const [currentAssessmentIndex, setCurrentAssessmentIndex] = useState(0)
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
+  const [answers, setAnswers] = useState<Map<string, string>>(new Map())
+  const [timeRemaining, setTimeRemaining] = useState<number>(0)
+  const [showResults, setShowResults] = useState(false)
+  const [assessmentResults, setAssessmentResults] = useState<any[]>([])
 
-  const currentAssessment = assessments[currentAssessmentIndex];
-  const currentQuestion = currentAssessment?.questions[currentQuestionIndex];
-  const totalQuestions = currentAssessment?.questions.length || 0;
+  const currentAssessment = assessments[currentAssessmentIndex]
+  const currentQuestion = currentAssessment?.questions[currentQuestionIndex]
+  const totalQuestions = currentAssessment?.questions.length || 0
 
   useEffect(() => {
     if (currentAssessment) {
-      setTimeRemaining(currentAssessment.duration * 60); // Convertir en secondes
+      setTimeRemaining(currentAssessment.duration * 60) // Convertir en secondes
     }
-  }, [currentAssessment]);
+  }, [currentAssessment])
 
   useEffect(() => {
     if (timeRemaining > 0 && !showResults) {
       const timer = setTimeout(() => {
-        setTimeRemaining(prev => prev - 1);
-      }, 1000);
-      return () => clearTimeout(timer);
+        setTimeRemaining(prev => prev - 1)
+      }, 1000)
+      return () => clearTimeout(timer)
     } else if (timeRemaining === 0 && !showResults) {
-      handleFinishAssessment();
+      handleFinishAssessment()
     }
-  }, [timeRemaining, showResults]);
+  }, [timeRemaining, showResults])
 
   const handleAnswerChange = (questionId: string, answer: string) => {
-    setAnswers(prev => new Map(prev.set(questionId, answer)));
-  };
+    setAnswers(prev => new Map(prev.set(questionId, answer)))
+  }
 
   const handleNextQuestion = () => {
     if (currentQuestionIndex < totalQuestions - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setCurrentQuestionIndex(currentQuestionIndex + 1)
     }
-  };
+  }
 
   const handlePreviousQuestion = () => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(currentQuestionIndex - 1);
+      setCurrentQuestionIndex(currentQuestionIndex - 1)
     }
-  };
+  }
 
   const handleFinishAssessment = () => {
-    if (!currentAssessment) return;
+    if (!currentAssessment) return
 
     // Calculer le score
-    let correctAnswers = 0;
-    const detailedResults: any[] = [];
+    let correctAnswers = 0
+    const detailedResults: any[] = []
 
     currentAssessment.questions.forEach(question => {
-      const userAnswer = answers.get(question.id) || '';
-      const isCorrect = Array.isArray(question.correctAnswer) 
+      const userAnswer = answers.get(question.id) || ''
+      const isCorrect = Array.isArray(question.correctAnswer)
         ? question.correctAnswer.includes(userAnswer)
-        : question.correctAnswer === userAnswer;
-      
-      if (isCorrect) correctAnswers++;
+        : question.correctAnswer === userAnswer
+
+      if (isCorrect) correctAnswers++
 
       detailedResults.push({
         questionId: question.id,
@@ -92,51 +96,55 @@ export function HSEAssessmentComponent({ assessments, onComplete, onCancel }: HS
         userAnswer,
         correctAnswer: question.correctAnswer,
         isCorrect,
-        explanation: question.explanation
-      });
-    });
+        explanation: question.explanation,
+      })
+    })
 
-    const score = Math.round((correctAnswers / totalQuestions) * 100);
-    const passed = score >= currentAssessment.passingScore;
+    const score = Math.round((correctAnswers / totalQuestions) * 100)
+    const passed = score >= currentAssessment.passingScore
 
     const result = {
       assessmentId: currentAssessment.id,
       score,
       passed,
       attempts: 1,
-      answers: detailedResults
-    };
+      answers: detailedResults,
+    }
 
-    setAssessmentResults([result]);
-    setShowResults(true);
+    setAssessmentResults([result])
+    setShowResults(true)
 
     // Si c'est le dernier assessment et qu'il est réussi
     if (currentAssessmentIndex === assessments.length - 1 && passed) {
-      onComplete(result);
+      onComplete(result)
     }
-  };
+  }
 
   const handleRetryAssessment = () => {
-    setAnswers(new Map());
-    setCurrentQuestionIndex(0);
-    setTimeRemaining(currentAssessment.duration * 60);
-    setShowResults(false);
-  };
+    setAnswers(new Map())
+    setCurrentQuestionIndex(0)
+    setTimeRemaining(currentAssessment.duration * 60)
+    setShowResults(false)
+  }
 
   const formatTime = (seconds: number): string => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-  };
+    const minutes = Math.floor(seconds / 60)
+    const remainingSeconds = seconds % 60
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
+  }
 
   const getQuestionIcon = (type: string) => {
     switch (type) {
-      case 'multiple_choice': return '📝';
-      case 'true_false': return '✓/✗';
-      case 'open': return '💭';
-      default: return '❓';
+      case 'multiple_choice':
+        return '📝'
+      case 'true_false':
+        return '✓/✗'
+      case 'open':
+        return '💭'
+      default:
+        return '❓'
     }
-  };
+  }
 
   if (!currentAssessment) {
     return (
@@ -144,12 +152,12 @@ export function HSEAssessmentComponent({ assessments, onComplete, onCancel }: HS
         <AlertCircle className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
         <p className="text-muted-foreground">Aucune évaluation disponible</p>
       </div>
-    );
+    )
   }
 
   if (showResults) {
-    const result = assessmentResults[0];
-    const isPassed = result?.passed;
+    const result = assessmentResults[0]
+    const isPassed = result?.passed
 
     return (
       <div className="space-y-6">
@@ -169,14 +177,11 @@ export function HSEAssessmentComponent({ assessments, onComplete, onCancel }: HS
             <CardTitle className={isPassed ? 'text-green-600' : 'text-red-600'}>
               {isPassed ? 'Évaluation Réussie !' : 'Évaluation Non Réussie'}
             </CardTitle>
-            <div className="text-3xl font-bold">
-              {result?.score || 0}%
-            </div>
+            <div className="text-3xl font-bold">{result?.score || 0}%</div>
             <p className="text-muted-foreground">
-              {result?.score >= currentAssessment.passingScore 
+              {result?.score >= currentAssessment.passingScore
                 ? `Score supérieur au minimum requis (${currentAssessment.passingScore}%)`
-                : `Score inférieur au minimum requis (${currentAssessment.passingScore}%)`
-              }
+                : `Score inférieur au minimum requis (${currentAssessment.passingScore}%)`}
             </p>
           </CardHeader>
           <CardContent>
@@ -184,9 +189,12 @@ export function HSEAssessmentComponent({ assessments, onComplete, onCancel }: HS
             <div className="space-y-4">
               <h4 className="font-medium">Détail des réponses :</h4>
               {result?.answers.map((answer: any, index: number) => (
-                <div key={index} className={`p-3 rounded-lg border ${
-                  answer.isCorrect ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
-                }`}>
+                <div
+                  key={index}
+                  className={`p-3 rounded-lg border ${
+                    answer.isCorrect ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+                  }`}
+                >
                   <div className="flex items-start gap-2">
                     {answer.isCorrect ? (
                       <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
@@ -200,7 +208,8 @@ export function HSEAssessmentComponent({ assessments, onComplete, onCancel }: HS
                       </p>
                       {!answer.isCorrect && (
                         <p className="text-sm mt-1">
-                          <span className="font-medium text-green-600">Réponse correcte :</span> {answer.correctAnswer}
+                          <span className="font-medium text-green-600">Réponse correcte :</span>{' '}
+                          {answer.correctAnswer}
                         </p>
                       )}
                       {answer.explanation && (
@@ -237,7 +246,7 @@ export function HSEAssessmentComponent({ assessments, onComplete, onCancel }: HS
           </CardContent>
         </Card>
       </div>
-    );
+    )
   }
 
   return (
@@ -252,20 +261,20 @@ export function HSEAssessmentComponent({ assessments, onComplete, onCancel }: HS
                 {currentAssessment.title}
               </CardTitle>
               <p className="text-muted-foreground mt-1">
-                Type: {currentAssessment.type === 'qcm' ? 'QCM' : 'Pratique'} • 
-                Score minimum: {currentAssessment.passingScore}%
+                Type: {currentAssessment.type === 'qcm' ? 'QCM' : 'Pratique'} • Score minimum:{' '}
+                {currentAssessment.passingScore}%
               </p>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold text-primary">
-                {formatTime(timeRemaining)}
-              </div>
+              <div className="text-2xl font-bold text-primary">{formatTime(timeRemaining)}</div>
               <div className="text-sm text-muted-foreground">Temps restant</div>
             </div>
           </div>
           <div className="mt-4">
             <div className="flex justify-between text-sm mb-2">
-              <span>Question {currentQuestionIndex + 1} sur {totalQuestions}</span>
+              <span>
+                Question {currentQuestionIndex + 1} sur {totalQuestions}
+              </span>
               <span>{Math.round(((currentQuestionIndex + 1) / totalQuestions) * 100)}%</span>
             </div>
             <Progress value={((currentQuestionIndex + 1) / totalQuestions) * 100} />
@@ -284,9 +293,7 @@ export function HSEAssessmentComponent({ assessments, onComplete, onCancel }: HS
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
-              <div className="text-lg leading-relaxed">
-                {currentQuestion.text}
-              </div>
+              <div className="text-lg leading-relaxed">{currentQuestion.text}</div>
 
               {/* Illustration de la question */}
               {currentQuestion.illustration && (
@@ -308,10 +315,13 @@ export function HSEAssessmentComponent({ assessments, onComplete, onCancel }: HS
                 {currentQuestion.type === 'multiple_choice' && currentQuestion.options && (
                   <RadioGroup
                     value={answers.get(currentQuestion.id) || ''}
-                    onValueChange={(value) => handleAnswerChange(currentQuestion.id, value)}
+                    onValueChange={value => handleAnswerChange(currentQuestion.id, value)}
                   >
                     {currentQuestion.options.map((option, index) => (
-                      <div key={index} className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-muted/50">
+                      <div
+                        key={index}
+                        className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-muted/50"
+                      >
                         <RadioGroupItem value={option} id={`option-${index}`} />
                         <Label htmlFor={`option-${index}`} className="flex-1 cursor-pointer">
                           {option}
@@ -324,7 +334,7 @@ export function HSEAssessmentComponent({ assessments, onComplete, onCancel }: HS
                 {currentQuestion.type === 'true_false' && (
                   <RadioGroup
                     value={answers.get(currentQuestion.id) || ''}
-                    onValueChange={(value) => handleAnswerChange(currentQuestion.id, value)}
+                    onValueChange={value => handleAnswerChange(currentQuestion.id, value)}
                   >
                     <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-muted/50">
                       <RadioGroupItem value="true" id="true" />
@@ -348,7 +358,7 @@ export function HSEAssessmentComponent({ assessments, onComplete, onCancel }: HS
                       id="open-answer"
                       placeholder="Saisissez votre réponse détaillée..."
                       value={answers.get(currentQuestion.id) || ''}
-                      onChange={(e) => handleAnswerChange(currentQuestion.id, e.target.value)}
+                      onChange={e => handleAnswerChange(currentQuestion.id, e.target.value)}
                       rows={4}
                     />
                   </div>
@@ -374,10 +384,7 @@ export function HSEAssessmentComponent({ assessments, onComplete, onCancel }: HS
                 </div>
 
                 {currentQuestionIndex < totalQuestions - 1 ? (
-                  <Button
-                    onClick={handleNextQuestion}
-                    className="gap-2"
-                  >
+                  <Button onClick={handleNextQuestion} className="gap-2">
                     Suivant
                     <ChevronRight className="w-4 h-4" />
                   </Button>
@@ -405,7 +412,7 @@ export function HSEAssessmentComponent({ assessments, onComplete, onCancel }: HS
             {currentAssessment?.questions.map((question, index) => (
               <Button
                 key={question.id}
-                variant={index === currentQuestionIndex ? "default" : "outline"}
+                variant={index === currentQuestionIndex ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setCurrentQuestionIndex(index)}
                 className={`relative ${answers.has(question.id) ? 'bg-green-50 border-green-200' : ''}`}
@@ -424,9 +431,9 @@ export function HSEAssessmentComponent({ assessments, onComplete, onCancel }: HS
       <Alert>
         <AlertCircle className="h-4 w-4" />
         <AlertDescription>
-          <strong>Instructions :</strong> Répondez à toutes les questions. 
-          Vous pouvez naviguer entre les questions et modifier vos réponses avant de terminer.
-          Score minimum requis : {currentAssessment.passingScore}%.
+          <strong>Instructions :</strong> Répondez à toutes les questions. Vous pouvez naviguer
+          entre les questions et modifier vos réponses avant de terminer. Score minimum requis :{' '}
+          {currentAssessment.passingScore}%.
         </AlertDescription>
       </Alert>
 
@@ -440,11 +447,9 @@ export function HSEAssessmentComponent({ assessments, onComplete, onCancel }: HS
             <Clock className="w-3 h-3" />
             {currentAssessment.duration} minutes
           </Badge>
-          <Badge variant="outline">
-            {totalQuestions} questions
-          </Badge>
+          <Badge variant="outline">{totalQuestions} questions</Badge>
         </div>
       </div>
     </div>
-  );
+  )
 }

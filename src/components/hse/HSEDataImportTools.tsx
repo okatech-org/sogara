@@ -1,84 +1,84 @@
-import { useState } from 'react';
-import { 
-  Upload, 
-  Download, 
-  FileText, 
+import { useState } from 'react'
+import {
+  Upload,
+  Download,
+  FileText,
   Database,
   RefreshCw,
   CheckCircle,
   AlertTriangle,
   Settings,
-  Trash2
-} from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
-import { useAuth } from '@/contexts/AppContext';
+  Trash2,
+} from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Progress } from '@/components/ui/progress'
+import { Badge } from '@/components/ui/badge'
+import { useAuth } from '@/contexts/AppContext'
 
 interface HSEDataImportToolsProps {
-  onImportComplete: () => void;
+  onImportComplete: () => void
 }
 
 export function HSEDataImportTools({ onImportComplete }: HSEDataImportToolsProps) {
-  const { hasAnyRole } = useAuth();
-  const [importing, setImporting] = useState(false);
-  const [importProgress, setImportProgress] = useState(0);
-  const [lastImport, setLastImport] = useState<Date | null>(null);
+  const { hasAnyRole } = useAuth()
+  const [importing, setImporting] = useState(false)
+  const [importProgress, setImportProgress] = useState(0)
+  const [lastImport, setLastImport] = useState<Date | null>(null)
 
-  const canManageImports = hasAnyRole(['ADMIN', 'HSE']);
+  const canManageImports = hasAnyRole(['ADMIN', 'HSE'])
 
   const handleImportData = async (type: string) => {
-    if (!canManageImports) return;
-    
-    setImporting(true);
-    setImportProgress(0);
+    if (!canManageImports) return
+
+    setImporting(true)
+    setImportProgress(0)
 
     try {
       // Simuler l'import avec progression
       for (let i = 0; i <= 100; i += 10) {
-        setImportProgress(i);
-        await new Promise(resolve => setTimeout(resolve, 200));
+        setImportProgress(i)
+        await new Promise(resolve => setTimeout(resolve, 200))
       }
 
-      setLastImport(new Date());
-      onImportComplete();
+      setLastImport(new Date())
+      onImportComplete()
     } catch (error) {
-      console.error('Erreur import:', error);
+      console.error('Erreur import:', error)
     } finally {
-      setImporting(false);
-      setImportProgress(0);
+      setImporting(false)
+      setImportProgress(0)
     }
-  };
+  }
 
   const exportData = async (type: string) => {
     try {
       // Simuler l'export
-      console.log(`Export ${type} en cours...`);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      console.log(`Export ${type} en cours...`)
+      await new Promise(resolve => setTimeout(resolve, 1000))
+
       // Dans une vraie application, on téléchargerait le fichier
-      alert(`Export ${type} terminé`);
+      alert(`Export ${type} terminé`)
     } catch (error) {
-      console.error('Erreur export:', error);
+      console.error('Erreur export:', error)
     }
-  };
+  }
 
   const clearData = async (type: string) => {
     if (!confirm(`Êtes-vous sûr de vouloir effacer toutes les données ${type} ?`)) {
-      return;
+      return
     }
 
     try {
       // Simuler la suppression
-      console.log(`Suppression ${type}...`);
-      await new Promise(resolve => setTimeout(resolve, 500));
-      onImportComplete();
+      console.log(`Suppression ${type}...`)
+      await new Promise(resolve => setTimeout(resolve, 500))
+      onImportComplete()
     } catch (error) {
-      console.error('Erreur suppression:', error);
+      console.error('Erreur suppression:', error)
     }
-  };
+  }
 
   const importTools = [
     {
@@ -86,30 +86,30 @@ export function HSEDataImportTools({ onImportComplete }: HSEDataImportToolsProps
       title: 'Import Employés',
       description: 'Importer liste des employés avec rôles HSE',
       icon: <Database className="w-6 h-6" />,
-      color: 'bg-blue-500'
+      color: 'bg-blue-500',
     },
     {
       id: 'equipment',
       title: 'Import Équipements',
       description: 'Importer inventaire des EPI et équipements',
       icon: <Settings className="w-6 h-6" />,
-      color: 'bg-green-500'
+      color: 'bg-green-500',
     },
     {
       id: 'incidents',
       title: 'Import Incidents',
       description: 'Importer historique des incidents HSE',
       icon: <AlertTriangle className="w-6 h-6" />,
-      color: 'bg-orange-500'
+      color: 'bg-orange-500',
     },
     {
       id: 'trainings',
       title: 'Import Formations',
       description: 'Importer données de formation et certifications',
       icon: <FileText className="w-6 h-6" />,
-      color: 'bg-purple-500'
-    }
-  ];
+      color: 'bg-purple-500',
+    },
+  ]
 
   return (
     <div className="space-y-6">
@@ -145,20 +145,22 @@ export function HSEDataImportTools({ onImportComplete }: HSEDataImportToolsProps
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {importTools.map((tool) => (
+            {importTools.map(tool => (
               <Card key={tool.id} className="border hover:bg-muted/50 transition-colors">
                 <CardContent className="pt-6">
                   <div className="flex items-start gap-4">
-                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-white ${tool.color}`}>
+                    <div
+                      className={`w-12 h-12 rounded-lg flex items-center justify-center text-white ${tool.color}`}
+                    >
                       {tool.icon}
                     </div>
                     <div className="flex-1">
                       <h3 className="font-medium">{tool.title}</h3>
                       <p className="text-sm text-muted-foreground mt-1">{tool.description}</p>
-                      
+
                       <div className="flex gap-2 mt-4">
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           onClick={() => handleImportData(tool.id)}
                           disabled={importing || !canManageImports}
                           className="gap-2"
@@ -166,8 +168,8 @@ export function HSEDataImportTools({ onImportComplete }: HSEDataImportToolsProps
                           <Upload className="w-4 h-4" />
                           Importer
                         </Button>
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           variant="outline"
                           onClick={() => exportData(tool.id)}
                           className="gap-2"
@@ -176,8 +178,8 @@ export function HSEDataImportTools({ onImportComplete }: HSEDataImportToolsProps
                           Exporter
                         </Button>
                         {canManageImports && (
-                          <Button 
-                            size="sm" 
+                          <Button
+                            size="sm"
                             variant="ghost"
                             onClick={() => clearData(tool.id)}
                             className="gap-2 text-red-600 hover:text-red-700"
@@ -225,9 +227,12 @@ export function HSEDataImportTools({ onImportComplete }: HSEDataImportToolsProps
               { name: 'Modèle Employés', file: 'template-employees.csv' },
               { name: 'Modèle Équipements', file: 'template-equipment.csv' },
               { name: 'Modèle Incidents', file: 'template-incidents.csv' },
-              { name: 'Modèle Formations', file: 'template-trainings.csv' }
-            ].map((template) => (
-              <div key={template.file} className="flex items-center justify-between p-3 border rounded-lg">
+              { name: 'Modèle Formations', file: 'template-trainings.csv' },
+            ].map(template => (
+              <div
+                key={template.file}
+                className="flex items-center justify-between p-3 border rounded-lg"
+              >
                 <div className="flex items-center gap-3">
                   <FileText className="w-5 h-5 text-muted-foreground" />
                   <span className="font-medium">{template.name}</span>
@@ -242,5 +247,5 @@ export function HSEDataImportTools({ onImportComplete }: HSEDataImportToolsProps
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

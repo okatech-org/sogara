@@ -1,22 +1,20 @@
-import { Users, Package, Mail, TrendingUp, Sparkles, Eye, AlertTriangle } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { visitorService } from '@/services/visitor-management.service';
-import { packageService } from '@/services/package-management.service';
-import { mailService } from '@/services/mail-management.service';
+import { Users, Package, Mail, TrendingUp, Sparkles, Eye, AlertTriangle } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
+import { visitorService } from '@/services/visitor-management.service'
+import { packageService } from '@/services/package-management.service'
+import { mailService } from '@/services/mail-management.service'
 
 export function ReceptionDashboard() {
-  const visitorStats = visitorService.getVisitorStats();
-  const packageStats = packageService.getPackageStats();
-  const mailStats = mailService.getMailStats();
+  const visitorStats = visitorService.getVisitorStats()
+  const packageStats = packageService.getPackageStats()
+  const mailStats = mailService.getMailStats()
 
-  const totalAIOperations = 
-    visitorStats.aiExtracted + 
-    (packageStats.aiScanned || 0) + 
-    (mailStats.scannesAujourdhui || 0);
+  const totalAIOperations =
+    visitorStats.aiExtracted + (packageStats.aiScanned || 0) + (mailStats.scannesAujourdhui || 0)
 
-  const overdueItems = visitorStats.overdue + packageStats.urgents + mailStats.urgents;
+  const overdueItems = visitorStats.overdue + packageStats.urgents + mailStats.urgents
 
   return (
     <div className="space-y-6">
@@ -43,7 +41,9 @@ export function ReceptionDashboard() {
               <div className="text-sm text-muted-foreground">Colis scannés</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-orange-600">{mailStats.scannesAujourdhui}</div>
+              <div className="text-3xl font-bold text-orange-600">
+                {mailStats.scannesAujourdhui}
+              </div>
               <div className="text-sm text-muted-foreground">Courriers OCR</div>
             </div>
           </div>
@@ -180,6 +180,5 @@ export function ReceptionDashboard() {
         </Card>
       )}
     </div>
-  );
+  )
 }
-

@@ -1,50 +1,50 @@
-import { useState, useEffect } from 'react';
-import { 
-  ClipboardCheck, 
-  Calendar, 
-  TrendingUp, 
+import { useState, useEffect } from 'react'
+import {
+  ClipboardCheck,
+  Calendar,
+  TrendingUp,
   AlertTriangle,
   CheckCircle,
   Clock,
   FileText,
   Download,
   Plus,
-  Eye
-} from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { StatusBadge } from '@/components/ui/status-badge';
-import { useAuth } from '@/contexts/AppContext';
+  Eye,
+} from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
+import { StatusBadge } from '@/components/ui/status-badge'
+import { useAuth } from '@/contexts/AppContext'
 
 interface Audit {
-  id: string;
-  title: string;
-  type: 'internal' | 'external' | 'regulatory';
-  status: 'planned' | 'in_progress' | 'completed' | 'overdue';
-  scheduledDate: Date;
-  auditor: string;
-  scope: string[];
-  score?: number;
-  findings: number;
-  criticalFindings: number;
+  id: string
+  title: string
+  type: 'internal' | 'external' | 'regulatory'
+  status: 'planned' | 'in_progress' | 'completed' | 'overdue'
+  scheduledDate: Date
+  auditor: string
+  scope: string[]
+  score?: number
+  findings: number
+  criticalFindings: number
 }
 
 export function HSEAuditDashboard() {
-  const { hasAnyRole } = useAuth();
-  const [audits, setAudits] = useState<Audit[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { hasAnyRole } = useAuth()
+  const [audits, setAudits] = useState<Audit[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const canManageAudits = hasAnyRole(['ADMIN', 'HSE']);
+  const canManageAudits = hasAnyRole(['ADMIN', 'HSE'])
 
   useEffect(() => {
-    loadAudits();
-  }, []);
+    loadAudits()
+  }, [])
 
   const loadAudits = async () => {
     try {
-      setLoading(true);
+      setLoading(true)
       // Simuler des données d'audit
       const mockAudits: Audit[] = [
         {
@@ -57,7 +57,7 @@ export function HSEAuditDashboard() {
           scope: ['Formations', 'EPI', 'Incidents'],
           score: 87,
           findings: 12,
-          criticalFindings: 2
+          criticalFindings: 2,
         },
         {
           id: '2',
@@ -68,7 +68,7 @@ export function HSEAuditDashboard() {
           auditor: 'Inspection du Travail',
           scope: ['Conformité', 'Documentation', 'Formations'],
           findings: 0,
-          criticalFindings: 0
+          criticalFindings: 0,
         },
         {
           id: '3',
@@ -79,31 +79,30 @@ export function HSEAuditDashboard() {
           auditor: 'Bureau Veritas',
           scope: ['Management Environnemental', 'Déchets', 'Émissions'],
           findings: 5,
-          criticalFindings: 0
-        }
-      ];
-      
-      setAudits(mockAudits);
+          criticalFindings: 0,
+        },
+      ]
+
+      setAudits(mockAudits)
     } catch (error) {
-      console.error('Erreur chargement audits:', error);
+      console.error('Erreur chargement audits:', error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const getAuditStats = () => {
-    const completed = audits.filter(a => a.status === 'completed').length;
-    const planned = audits.filter(a => a.status === 'planned').length;
-    const inProgress = audits.filter(a => a.status === 'in_progress').length;
-    const overdue = audits.filter(a => a.status === 'overdue').length;
-    
-    const averageScore = audits
-      .filter(a => a.score !== undefined)
-      .reduce((sum, a) => sum + (a.score || 0), 0) / 
-      Math.max(audits.filter(a => a.score !== undefined).length, 1);
+    const completed = audits.filter(a => a.status === 'completed').length
+    const planned = audits.filter(a => a.status === 'planned').length
+    const inProgress = audits.filter(a => a.status === 'in_progress').length
+    const overdue = audits.filter(a => a.status === 'overdue').length
 
-    const totalFindings = audits.reduce((sum, a) => sum + a.findings, 0);
-    const criticalFindings = audits.reduce((sum, a) => sum + a.criticalFindings, 0);
+    const averageScore =
+      audits.filter(a => a.score !== undefined).reduce((sum, a) => sum + (a.score || 0), 0) /
+      Math.max(audits.filter(a => a.score !== undefined).length, 1)
+
+    const totalFindings = audits.reduce((sum, a) => sum + a.findings, 0)
+    const criticalFindings = audits.reduce((sum, a) => sum + a.criticalFindings, 0)
 
     return {
       total: audits.length,
@@ -113,49 +112,67 @@ export function HSEAuditDashboard() {
       overdue,
       averageScore: Math.round(averageScore),
       totalFindings,
-      criticalFindings
-    };
-  };
+      criticalFindings,
+    }
+  }
 
-  const stats = getAuditStats();
+  const stats = getAuditStats()
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': return 'success';
-      case 'in_progress': return 'info';
-      case 'planned': return 'secondary';
-      case 'overdue': return 'destructive';
-      default: return 'secondary';
+      case 'completed':
+        return 'success'
+      case 'in_progress':
+        return 'info'
+      case 'planned':
+        return 'secondary'
+      case 'overdue':
+        return 'destructive'
+      default:
+        return 'secondary'
     }
-  };
+  }
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'completed': return 'Terminé';
-      case 'in_progress': return 'En cours';
-      case 'planned': return 'Planifié';
-      case 'overdue': return 'En retard';
-      default: return status;
+      case 'completed':
+        return 'Terminé'
+      case 'in_progress':
+        return 'En cours'
+      case 'planned':
+        return 'Planifié'
+      case 'overdue':
+        return 'En retard'
+      default:
+        return status
     }
-  };
+  }
 
   const getTypeLabel = (type: string) => {
     switch (type) {
-      case 'internal': return 'Interne';
-      case 'external': return 'Externe';
-      case 'regulatory': return 'Réglementaire';
-      default: return type;
+      case 'internal':
+        return 'Interne'
+      case 'external':
+        return 'Externe'
+      case 'regulatory':
+        return 'Réglementaire'
+      default:
+        return type
     }
-  };
+  }
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'internal': return 'default';
-      case 'external': return 'secondary';
-      case 'regulatory': return 'destructive';
-      default: return 'outline';
+      case 'internal':
+        return 'default'
+      case 'external':
+        return 'secondary'
+      case 'regulatory':
+        return 'destructive'
+      default:
+        return 'outline'
     }
-  };
+  }
 
   if (loading) {
     return (
@@ -165,7 +182,7 @@ export function HSEAuditDashboard() {
           <p className="text-muted-foreground">Chargement des audits...</p>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -190,9 +207,7 @@ export function HSEAuditDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">{stats.completed}</div>
-            <p className="text-xs text-muted-foreground">
-              {stats.inProgress} en cours
-            </p>
+            <p className="text-xs text-muted-foreground">{stats.inProgress} en cours</p>
           </CardContent>
         </Card>
 
@@ -203,9 +218,7 @@ export function HSEAuditDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalFindings}</div>
-            <p className="text-xs text-muted-foreground">
-              {stats.criticalFindings} critiques
-            </p>
+            <p className="text-xs text-muted-foreground">{stats.criticalFindings} critiques</p>
           </CardContent>
         </Card>
 
@@ -216,9 +229,7 @@ export function HSEAuditDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600">{stats.planned}</div>
-            <p className="text-xs text-muted-foreground">
-              {stats.overdue} en retard
-            </p>
+            <p className="text-xs text-muted-foreground">{stats.overdue} en retard</p>
           </CardContent>
         </Card>
       </div>
@@ -244,13 +255,11 @@ export function HSEAuditDashboard() {
             <div className="text-center py-8">
               <ClipboardCheck className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
               <h3 className="text-lg font-medium mb-2">Aucun audit en cours</h3>
-              <p className="text-muted-foreground">
-                Planifiez votre premier audit HSE
-              </p>
+              <p className="text-muted-foreground">Planifiez votre premier audit HSE</p>
             </div>
           ) : (
             <div className="space-y-4">
-              {audits.map((audit) => (
+              {audits.map(audit => (
                 <Card key={audit.id} className="border">
                   <CardContent className="pt-6">
                     <div className="flex items-start justify-between mb-4">
@@ -274,16 +283,14 @@ export function HSEAuditDashboard() {
                           ))}
                         </div>
                       </div>
-                      
+
                       <div className="text-right space-y-2">
-                        <StatusBadge 
-                          status={getStatusLabel(audit.status)} 
+                        <StatusBadge
+                          status={getStatusLabel(audit.status)}
                           variant={getStatusColor(audit.status)}
                         />
                         {audit.score !== undefined && (
-                          <div className="text-lg font-bold text-primary">
-                            {audit.score}%
-                          </div>
+                          <div className="text-lg font-bold text-primary">{audit.score}%</div>
                         )}
                       </div>
                     </div>
@@ -295,7 +302,9 @@ export function HSEAuditDashboard() {
                           <div className="text-sm text-muted-foreground">Constats total</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-lg font-bold text-red-600">{audit.criticalFindings}</div>
+                          <div className="text-lg font-bold text-red-600">
+                            {audit.criticalFindings}
+                          </div>
                           <div className="text-sm text-muted-foreground">Constats critiques</div>
                         </div>
                       </div>
@@ -325,5 +334,5 @@ export function HSEAuditDashboard() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

@@ -1,22 +1,28 @@
-import { useState } from 'react';
-import { Calendar, Clock, MapPin, Users, Plus, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
-import { HSETraining, HSETrainingSession, Employee } from '@/types';
-import { useApp } from '@/contexts/AppContext';
-import { useHSETrainings } from '@/hooks/useHSETrainings';
-import hseModulesData from '@/data/hse-training-modules.json';
+import { useState } from 'react'
+import { Calendar, Clock, MapPin, Users, Plus, X } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Badge } from '@/components/ui/badge'
+import { Checkbox } from '@/components/ui/checkbox'
+import { HSETraining, HSETrainingSession, Employee } from '@/types'
+import { useApp } from '@/contexts/AppContext'
+import { useHSETrainings } from '@/hooks/useHSETrainings'
+import hseModulesData from '@/data/hse-training-modules.json'
 
 interface HSESessionSchedulerProps {
-  training: HSETraining;
-  onScheduled?: (session: HSETrainingSession) => void;
-  onCancel?: () => void;
+  training: HSETraining
+  onScheduled?: (session: HSETrainingSession) => void
+  onCancel?: () => void
 }
 
 const instructors = [
@@ -26,8 +32,8 @@ const instructors = [
   'Jean-Pierre MOUKALA (Technicien HSE)',
   'Expert DEKRA (Formateur externe)',
   'Dr. MBADINGA (Médecin du travail)',
-  'Formateur TOTAL E&P (Expert externe)'
-];
+  'Formateur TOTAL E&P (Expert externe)',
+]
 
 const locations = [
   'Salle de formation A',
@@ -35,122 +41,125 @@ const locations = [
   'Auditorium principal',
   'Centre de formation HSE',
   'Salle informatique',
-  'Terrain d\'exercice',
-  'Zone de pratique EPI'
-];
+  "Terrain d'exercice",
+  'Zone de pratique EPI',
+]
 
 export function HSESessionScheduler({ training, onScheduled, onCancel }: HSESessionSchedulerProps) {
-  const { state } = useApp();
-  const { addSession } = useHSETrainings();
-  
+  const { state } = useApp()
+  const { addSession } = useHSETrainings()
+
   const [formData, setFormData] = useState({
     date: '',
     time: '09:00',
     instructor: '',
     location: '',
     maxParticipants: 15,
-    notes: ''
-  });
-  
-  const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+    notes: '',
+  })
+
+  const [selectedEmployees, setSelectedEmployees] = useState<string[]>([])
+  const [errors, setErrors] = useState<Record<string, string>>({})
 
   // Obtenir les informations du module original
-  const moduleInfo = hseModulesData.hseTrainingModules.find(m => m.title === training.title);
-  
+  const moduleInfo = hseModulesData.hseTrainingModules.find(m => m.title === training.title)
+
   // Filtrer les employés éligibles (ont les prérequis et le bon rôle)
   const eligibleEmployees = state.employees.filter(employee => {
     // Vérifier si l'employé a le bon rôle
-    const hasRequiredRole = training.requiredForRoles.some(role => employee.roles.includes(role));
-    if (!hasRequiredRole) return false;
+    const hasRequiredRole = training.requiredForRoles.some(role => employee.roles.includes(role))
+    if (!hasRequiredRole) return false
 
     // Vérifier les prérequis (simplifié pour la démo)
     // Dans un vrai système, on vérifierait si l'employé a complété toutes les formations prérequises
-    
-    return true;
-  });
+
+    return true
+  })
 
   // Obtenir les employés qui ont besoin de cette formation
   const employeesNeedingTraining = eligibleEmployees.filter(employee => {
     // Vérifier si l'employé a déjà complété cette formation et si elle est encore valide
     const hasValidCertification = training.sessions.some(session =>
-      session.attendance.some(att => 
-        att.employeeId === employee.id && 
-        att.status === 'completed' &&
-        att.expirationDate &&
-        att.expirationDate > new Date()
-      )
-    );
-    
-    return !hasValidCertification;
-  });
+      session.attendance.some(
+        att =>
+          att.employeeId === employee.id &&
+          att.status === 'completed' &&
+          att.expirationDate &&
+          att.expirationDate > new Date(),
+      ),
+    )
+
+    return !hasValidCertification
+  })
 
   const validateForm = () => {
-    const newErrors: Record<string, string> = {};
+    const newErrors: Record<string, string> = {}
 
-    if (!formData.date) newErrors.date = 'Date requise';
-    if (!formData.instructor) newErrors.instructor = 'Instructeur requis';
-    if (!formData.location) newErrors.location = 'Lieu requis';
-    if (formData.maxParticipants < 1) newErrors.maxParticipants = 'Nombre de participants invalide';
-    
-    const selectedDate = new Date(`${formData.date}T${formData.time}`);
+    if (!formData.date) newErrors.date = 'Date requise'
+    if (!formData.instructor) newErrors.instructor = 'Instructeur requis'
+    if (!formData.location) newErrors.location = 'Lieu requis'
+    if (formData.maxParticipants < 1) newErrors.maxParticipants = 'Nombre de participants invalide'
+
+    const selectedDate = new Date(`${formData.date}T${formData.time}`)
     if (selectedDate <= new Date()) {
-      newErrors.date = 'La date doit être dans le futur';
+      newErrors.date = 'La date doit être dans le futur'
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateForm()) return;
+    e.preventDefault()
+
+    if (!validateForm()) return
 
     try {
-      const sessionDate = new Date(`${formData.date}T${formData.time}`);
-      
+      const sessionDate = new Date(`${formData.date}T${formData.time}`)
+
       const newSession = await addSession(training.id, {
         trainingId: training.id,
         date: sessionDate,
         instructor: formData.instructor,
         location: formData.location,
         maxParticipants: formData.maxParticipants,
-        status: 'scheduled'
-      });
+        status: 'scheduled',
+      })
 
       if (newSession) {
         // Inscrire les employés sélectionnés
         // Note: Dans un vrai système, ceci serait fait via un appel API distinct
-        console.log(`Session créée pour ${training.title} avec ${selectedEmployees.length} inscrits`);
-        
-        onScheduled?.(newSession);
+        console.log(
+          `Session créée pour ${training.title} avec ${selectedEmployees.length} inscrits`,
+        )
+
+        onScheduled?.(newSession)
       }
     } catch (error) {
-      console.error('Erreur lors de la création de la session:', error);
+      console.error('Erreur lors de la création de la session:', error)
     }
-  };
+  }
 
   const handleEmployeeSelection = (employeeId: string, checked: boolean) => {
     if (checked) {
       if (selectedEmployees.length < formData.maxParticipants) {
-        setSelectedEmployees(prev => [...prev, employeeId]);
+        setSelectedEmployees(prev => [...prev, employeeId])
       }
     } else {
-      setSelectedEmployees(prev => prev.filter(id => id !== employeeId));
+      setSelectedEmployees(prev => prev.filter(id => id !== employeeId))
     }
-  };
+  }
 
   const selectEmployeesNeedingTraining = () => {
     const employeeIds = employeesNeedingTraining
       .slice(0, formData.maxParticipants)
-      .map(emp => emp.id);
-    setSelectedEmployees(employeeIds);
-  };
+      .map(emp => emp.id)
+    setSelectedEmployees(employeeIds)
+  }
 
   const clearSelection = () => {
-    setSelectedEmployees([]);
-  };
+    setSelectedEmployees([])
+  }
 
   return (
     <Card className="w-full max-w-4xl mx-auto">
@@ -159,9 +168,7 @@ export function HSESessionScheduler({ training, onScheduled, onCancel }: HSESess
           <Calendar className="w-5 h-5 text-blue-500" />
           Programmer une session - {training.title}
         </CardTitle>
-        <p className="text-muted-foreground">
-          {training.description}
-        </p>
+        <p className="text-muted-foreground">{training.description}</p>
         {moduleInfo && (
           <div className="flex items-center gap-2 mt-2">
             <Badge variant="outline">{moduleInfo.category}</Badge>
@@ -170,7 +177,7 @@ export function HSESessionScheduler({ training, onScheduled, onCancel }: HSESess
           </div>
         )}
       </CardHeader>
-      
+
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Informations de base */}
@@ -181,7 +188,7 @@ export function HSESessionScheduler({ training, onScheduled, onCancel }: HSESess
                 id="date"
                 type="date"
                 value={formData.date}
-                onChange={(e) => setFormData(prev => ({ ...prev, date: e.target.value }))}
+                onChange={e => setFormData(prev => ({ ...prev, date: e.target.value }))}
                 className={errors.date ? 'border-red-500' : ''}
                 min={new Date().toISOString().split('T')[0]}
               />
@@ -190,9 +197,9 @@ export function HSESessionScheduler({ training, onScheduled, onCancel }: HSESess
 
             <div className="space-y-2">
               <Label htmlFor="time">Heure de début *</Label>
-              <Select 
-                value={formData.time} 
-                onValueChange={(value) => setFormData(prev => ({ ...prev, time: value }))}
+              <Select
+                value={formData.time}
+                onValueChange={value => setFormData(prev => ({ ...prev, time: value }))}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -211,9 +218,9 @@ export function HSESessionScheduler({ training, onScheduled, onCancel }: HSESess
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="instructor">Formateur *</Label>
-              <Select 
-                value={formData.instructor} 
-                onValueChange={(value) => setFormData(prev => ({ ...prev, instructor: value }))}
+              <Select
+                value={formData.instructor}
+                onValueChange={value => setFormData(prev => ({ ...prev, instructor: value }))}
               >
                 <SelectTrigger className={errors.instructor ? 'border-red-500' : ''}>
                   <SelectValue placeholder="Sélectionner un formateur" />
@@ -231,9 +238,9 @@ export function HSESessionScheduler({ training, onScheduled, onCancel }: HSESess
 
             <div className="space-y-2">
               <Label htmlFor="location">Lieu *</Label>
-              <Select 
-                value={formData.location} 
-                onValueChange={(value) => setFormData(prev => ({ ...prev, location: value }))}
+              <Select
+                value={formData.location}
+                onValueChange={value => setFormData(prev => ({ ...prev, location: value }))}
               >
                 <SelectTrigger className={errors.location ? 'border-red-500' : ''}>
                   <SelectValue placeholder="Sélectionner un lieu" />
@@ -258,7 +265,9 @@ export function HSESessionScheduler({ training, onScheduled, onCancel }: HSESess
               min="1"
               max={moduleInfo?.maxParticipants || 25}
               value={formData.maxParticipants}
-              onChange={(e) => setFormData(prev => ({ ...prev, maxParticipants: parseInt(e.target.value) || 1 }))}
+              onChange={e =>
+                setFormData(prev => ({ ...prev, maxParticipants: parseInt(e.target.value) || 1 }))
+              }
               className={errors.maxParticipants ? 'border-red-500' : ''}
             />
             {moduleInfo && (
@@ -266,13 +275,17 @@ export function HSESessionScheduler({ training, onScheduled, onCancel }: HSESess
                 Maximum recommandé pour ce module: {moduleInfo.maxParticipants} participants
               </p>
             )}
-            {errors.maxParticipants && <p className="text-sm text-red-500">{errors.maxParticipants}</p>}
+            {errors.maxParticipants && (
+              <p className="text-sm text-red-500">{errors.maxParticipants}</p>
+            )}
           </div>
 
           {/* Sélection des participants */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <Label>Participants ({selectedEmployees.length}/{formData.maxParticipants})</Label>
+              <Label>
+                Participants ({selectedEmployees.length}/{formData.maxParticipants})
+              </Label>
               <div className="flex gap-2">
                 <Button
                   type="button"
@@ -298,13 +311,14 @@ export function HSESessionScheduler({ training, onScheduled, onCancel }: HSESess
             <div className="max-h-64 overflow-y-auto border rounded-lg p-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {eligibleEmployees.map(employee => {
-                  const isSelected = selectedEmployees.includes(employee.id);
-                  const needsTraining = employeesNeedingTraining.some(emp => emp.id === employee.id);
-                  const isDisabled = !isSelected && selectedEmployees.length >= formData.maxParticipants;
-                  
+                  const isSelected = selectedEmployees.includes(employee.id)
+                  const needsTraining = employeesNeedingTraining.some(emp => emp.id === employee.id)
+                  const isDisabled =
+                    !isSelected && selectedEmployees.length >= formData.maxParticipants
+
                   return (
-                    <div 
-                      key={employee.id} 
+                    <div
+                      key={employee.id}
                       className={`flex items-center space-x-3 p-2 rounded ${
                         needsTraining ? 'bg-yellow-50' : ''
                       } ${isDisabled ? 'opacity-50' : ''}`}
@@ -312,15 +326,12 @@ export function HSESessionScheduler({ training, onScheduled, onCancel }: HSESess
                       <Checkbox
                         id={employee.id}
                         checked={isSelected}
-                        onCheckedChange={(checked) => 
+                        onCheckedChange={checked =>
                           handleEmployeeSelection(employee.id, checked as boolean)
                         }
                         disabled={isDisabled}
                       />
-                      <Label 
-                        htmlFor={employee.id} 
-                        className="flex-1 cursor-pointer text-sm"
-                      >
+                      <Label htmlFor={employee.id} className="flex-1 cursor-pointer text-sm">
                         <div className="flex items-center justify-between">
                           <div>
                             <span className="font-medium">
@@ -338,7 +349,7 @@ export function HSESessionScheduler({ training, onScheduled, onCancel }: HSESess
                         </div>
                       </Label>
                     </div>
-                  );
+                  )
                 })}
               </div>
             </div>
@@ -357,14 +368,14 @@ export function HSESessionScheduler({ training, onScheduled, onCancel }: HSESess
             <Textarea
               id="notes"
               value={formData.notes}
-              onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+              onChange={e => setFormData(prev => ({ ...prev, notes: e.target.value }))}
               placeholder="Informations complémentaires sur la session..."
               className="min-h-[80px]"
             />
           </div>
 
           {/* Résumé de la session */}
-          {(formData.date && formData.instructor && formData.location) && (
+          {formData.date && formData.instructor && formData.location && (
             <Card className="bg-blue-50 border-blue-200">
               <CardContent className="p-4">
                 <h4 className="font-medium mb-3 text-blue-900">Résumé de la session</h4>
@@ -376,21 +387,23 @@ export function HSESessionScheduler({ training, onScheduled, onCancel }: HSESess
                         weekday: 'long',
                         year: 'numeric',
                         month: 'long',
-                        day: 'numeric'
+                        day: 'numeric',
                       })}
                     </span>
                   </div>
-                  
+
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-blue-600" />
-                    <span>{formData.time} - {training.duration}min</span>
+                    <span>
+                      {formData.time} - {training.duration}min
+                    </span>
                   </div>
-                  
+
                   <div className="flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-blue-600" />
                     <span>{formData.location}</span>
                   </div>
-                  
+
                   <div className="flex items-center gap-2">
                     <Users className="w-4 h-4 text-blue-600" />
                     <span>{selectedEmployees.length} participant(s) inscrits</span>
@@ -405,11 +418,7 @@ export function HSESessionScheduler({ training, onScheduled, onCancel }: HSESess
             <Button type="button" variant="outline" onClick={onCancel}>
               Annuler
             </Button>
-            <Button 
-              type="submit" 
-              className="gap-2"
-              disabled={selectedEmployees.length === 0}
-            >
+            <Button type="submit" className="gap-2" disabled={selectedEmployees.length === 0}>
               <Plus className="w-4 h-4" />
               Programmer la session ({selectedEmployees.length} participants)
             </Button>
@@ -417,5 +426,5 @@ export function HSESessionScheduler({ training, onScheduled, onCancel }: HSESess
         </form>
       </CardContent>
     </Card>
-  );
+  )
 }

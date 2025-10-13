@@ -1,30 +1,36 @@
-import { useState } from 'react';
-import { Package, Sparkles, CheckCircle, Loader2, AlertTriangle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AIDocumentScanner } from './AIDocumentScanner';
-import { packageService, PackageItem } from '@/services/package-management.service';
-import { ExtractionResult } from '@/services/ai-extraction.service';
-import { toast } from '@/hooks/use-toast';
+import { useState } from 'react'
+import { Package, Sparkles, CheckCircle, Loader2, AlertTriangle } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { AIDocumentScanner } from './AIDocumentScanner'
+import { packageService, PackageItem } from '@/services/package-management.service'
+import { ExtractionResult } from '@/services/ai-extraction.service'
+import { toast } from '@/hooks/use-toast'
 
 interface RegisterPackageWithAIProps {
-  onSuccess: (pkg: PackageItem) => void;
-  onCancel: () => void;
-  open: boolean;
+  onSuccess: (pkg: PackageItem) => void
+  onCancel: () => void
+  open: boolean
 }
 
 export function RegisterPackageWithAI({ onSuccess, onCancel, open }: RegisterPackageWithAIProps) {
-  const [showScanner, setShowScanner] = useState(false);
-  const [extractedData, setExtractedData] = useState<any>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [scannedImage, setScannedImage] = useState<string | null>(null);
-  
+  const [showScanner, setShowScanner] = useState(false)
+  const [extractedData, setExtractedData] = useState<any>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [scannedImage, setScannedImage] = useState<string | null>(null)
+
   const [formData, setFormData] = useState({
     trackingNumber: '',
     senderName: '',
@@ -35,14 +41,14 @@ export function RegisterPackageWithAI({ onSuccess, onCancel, open }: RegisterPac
     priority: 'normal' as PackageItem['priority'],
     weight: '',
     notes: '',
-    receivedBy: 'Reception'
-  });
+    receivedBy: 'Reception',
+  })
 
   const handleExtractionComplete = (result: ExtractionResult) => {
-    setShowScanner(false);
-    
+    setShowScanner(false)
+
     if (result.success) {
-      setExtractedData(result.data);
+      setExtractedData(result.data)
       setFormData(prev => ({
         ...prev,
         trackingNumber: result.data.trackingNumber || prev.trackingNumber,
@@ -50,40 +56,40 @@ export function RegisterPackageWithAI({ onSuccess, onCancel, open }: RegisterPac
         senderOrganization: result.data.sender?.organization || prev.senderOrganization,
         recipientName: result.data.recipient?.name || prev.recipientName,
         recipientDepartment: result.data.recipient?.department || prev.recipientDepartment,
-        notes: result.data.specialInstructions || prev.notes
-      }));
-      
+        notes: result.data.specialInstructions || prev.notes,
+      }))
+
       if (result.data.weight) {
-        setFormData(prev => ({ ...prev, weight: result.data.weight }));
+        setFormData(prev => ({ ...prev, weight: result.data.weight }))
       }
-      
+
       toast({
         title: 'Extraction réussie',
         description: `Numéro de suivi: ${result.data.trackingNumber}`,
-      });
+      })
     } else {
       toast({
-        title: 'Échec de l\'extraction',
+        title: "Échec de l'extraction",
         description: 'Veuillez saisir les informations manuellement',
-        variant: 'destructive'
-      });
+        variant: 'destructive',
+      })
     }
-  };
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+    e.preventDefault()
+
     if (!formData.senderName || !formData.recipientName || !formData.recipientDepartment) {
       toast({
         title: 'Champs requis manquants',
         description: 'Veuillez remplir tous les champs obligatoires',
-        variant: 'destructive'
-      });
-      return;
+        variant: 'destructive',
+      })
+      return
     }
-    
-    setIsSubmitting(true);
-    
+
+    setIsSubmitting(true)
+
     try {
       const pkg: PackageItem = {
         id: '',
@@ -104,25 +110,25 @@ export function RegisterPackageWithAI({ onSuccess, onCancel, open }: RegisterPac
         notes: formData.notes,
         aiScanned: !!extractedData,
         autoClassified: !!extractedData,
-        photos: scannedImage ? [scannedImage] : undefined
-      };
-      
-      onSuccess(pkg);
-      
+        photos: scannedImage ? [scannedImage] : undefined,
+      }
+
+      onSuccess(pkg)
+
       toast({
         title: 'Colis enregistré',
         description: `Colis ${pkg.trackingNumber} enregistré avec succès`,
-      });
+      })
     } catch (error) {
       toast({
         title: 'Erreur',
-        description: 'Impossible d\'enregistrer le colis',
-        variant: 'destructive'
-      });
+        description: "Impossible d'enregistrer le colis",
+        variant: 'destructive',
+      })
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
   return (
     <>
@@ -143,7 +149,9 @@ export function RegisterPackageWithAI({ onSuccess, onCancel, open }: RegisterPac
                     <Sparkles className="w-8 h-8 text-purple-600" />
                     <div>
                       <h4 className="font-medium text-purple-900">Scan IA de l'étiquette</h4>
-                      <p className="text-sm text-purple-700">Extraction automatique des informations</p>
+                      <p className="text-sm text-purple-700">
+                        Extraction automatique des informations
+                      </p>
                     </div>
                   </div>
                   <Button
@@ -173,7 +181,7 @@ export function RegisterPackageWithAI({ onSuccess, onCancel, open }: RegisterPac
                 <Label>Numéro de suivi</Label>
                 <Input
                   value={formData.trackingNumber}
-                  onChange={(e) => setFormData(prev => ({ ...prev, trackingNumber: e.target.value }))}
+                  onChange={e => setFormData(prev => ({ ...prev, trackingNumber: e.target.value }))}
                   placeholder="Auto-généré si vide"
                 />
               </div>
@@ -184,7 +192,7 @@ export function RegisterPackageWithAI({ onSuccess, onCancel, open }: RegisterPac
                   type="number"
                   step="0.1"
                   value={formData.weight}
-                  onChange={(e) => setFormData(prev => ({ ...prev, weight: e.target.value }))}
+                  onChange={e => setFormData(prev => ({ ...prev, weight: e.target.value }))}
                 />
               </div>
 
@@ -192,7 +200,7 @@ export function RegisterPackageWithAI({ onSuccess, onCancel, open }: RegisterPac
                 <Label>Expéditeur *</Label>
                 <Input
                   value={formData.senderName}
-                  onChange={(e) => setFormData(prev => ({ ...prev, senderName: e.target.value }))}
+                  onChange={e => setFormData(prev => ({ ...prev, senderName: e.target.value }))}
                   required
                 />
               </div>
@@ -201,7 +209,9 @@ export function RegisterPackageWithAI({ onSuccess, onCancel, open }: RegisterPac
                 <Label>Organisation expéditeur</Label>
                 <Input
                   value={formData.senderOrganization}
-                  onChange={(e) => setFormData(prev => ({ ...prev, senderOrganization: e.target.value }))}
+                  onChange={e =>
+                    setFormData(prev => ({ ...prev, senderOrganization: e.target.value }))
+                  }
                 />
               </div>
 
@@ -209,7 +219,7 @@ export function RegisterPackageWithAI({ onSuccess, onCancel, open }: RegisterPac
                 <Label>Destinataire *</Label>
                 <Input
                   value={formData.recipientName}
-                  onChange={(e) => setFormData(prev => ({ ...prev, recipientName: e.target.value }))}
+                  onChange={e => setFormData(prev => ({ ...prev, recipientName: e.target.value }))}
                   required
                 />
               </div>
@@ -218,16 +228,20 @@ export function RegisterPackageWithAI({ onSuccess, onCancel, open }: RegisterPac
                 <Label>Service/Département *</Label>
                 <Input
                   value={formData.recipientDepartment}
-                  onChange={(e) => setFormData(prev => ({ ...prev, recipientDepartment: e.target.value }))}
+                  onChange={e =>
+                    setFormData(prev => ({ ...prev, recipientDepartment: e.target.value }))
+                  }
                   required
                 />
               </div>
 
               <div className="space-y-2">
                 <Label>Catégorie</Label>
-                <Select 
-                  value={formData.category} 
-                  onValueChange={(value: any) => setFormData(prev => ({ ...prev, category: value }))}
+                <Select
+                  value={formData.category}
+                  onValueChange={(value: any) =>
+                    setFormData(prev => ({ ...prev, category: value }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -244,9 +258,11 @@ export function RegisterPackageWithAI({ onSuccess, onCancel, open }: RegisterPac
 
               <div className="space-y-2">
                 <Label>Priorité</Label>
-                <Select 
-                  value={formData.priority} 
-                  onValueChange={(value: any) => setFormData(prev => ({ ...prev, priority: value }))}
+                <Select
+                  value={formData.priority}
+                  onValueChange={(value: any) =>
+                    setFormData(prev => ({ ...prev, priority: value }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -263,7 +279,7 @@ export function RegisterPackageWithAI({ onSuccess, onCancel, open }: RegisterPac
                 <Label>Notes / Instructions</Label>
                 <Textarea
                   value={formData.notes}
-                  onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+                  onChange={e => setFormData(prev => ({ ...prev, notes: e.target.value }))}
                   rows={3}
                   placeholder="Instructions spéciales, observations..."
                 />
@@ -319,6 +335,5 @@ export function RegisterPackageWithAI({ onSuccess, onCancel, open }: RegisterPac
         />
       )}
     </>
-  );
+  )
 }
-

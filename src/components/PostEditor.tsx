@@ -1,106 +1,109 @@
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MediaUpload } from './MediaUpload';
-import { Post } from '@/types';
-import { X, Save, Eye, Send } from 'lucide-react';
+import { useState, useEffect } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { MediaUpload } from './MediaUpload'
+import { Post } from '@/types'
+import { X, Save, Eye, Send } from 'lucide-react'
 
 interface PostEditorProps {
-  post?: Post;
-  onSave: (postData: Omit<Post, 'id' | 'createdAt' | 'updatedAt'>) => void;
-  onCancel: () => void;
-  isEditing?: boolean;
+  post?: Post
+  onSave: (postData: Omit<Post, 'id' | 'createdAt' | 'updatedAt'>) => void
+  onCancel: () => void
+  isEditing?: boolean
 }
 
 export function PostEditor({ post, onSave, onCancel, isEditing = false }: PostEditorProps) {
-  const [title, setTitle] = useState(post?.title || '');
-  const [content, setContent] = useState(post?.content || '');
-  const [excerpt, setExcerpt] = useState(post?.excerpt || '');
-  const [category, setCategory] = useState<Post['category']>(post?.category || 'news');
-  const [status, setStatus] = useState<Post['status']>(post?.status || 'draft');
-  const [images, setImages] = useState<string[]>(post?.images || []);
-  const [featuredImage, setFeaturedImage] = useState(post?.featuredImage || '');
-  const [videoUrl, setVideoUrl] = useState(post?.videoUrl || '');
-  const [tags, setTags] = useState<string[]>(post?.tags || []);
-  const [tagInput, setTagInput] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [title, setTitle] = useState(post?.title || '')
+  const [content, setContent] = useState(post?.content || '')
+  const [excerpt, setExcerpt] = useState(post?.excerpt || '')
+  const [category, setCategory] = useState<Post['category']>(post?.category || 'news')
+  const [status, setStatus] = useState<Post['status']>(post?.status || 'draft')
+  const [images, setImages] = useState<string[]>(post?.images || [])
+  const [featuredImage, setFeaturedImage] = useState(post?.featuredImage || '')
+  const [videoUrl, setVideoUrl] = useState(post?.videoUrl || '')
+  const [tags, setTags] = useState<string[]>(post?.tags || [])
+  const [tagInput, setTagInput] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Auto-générer l'extrait à partir du contenu
   useEffect(() => {
     if (content && !excerpt) {
-      const autoExcerpt = content
-        .replace(/[#*`]/g, '')
-        .substring(0, 150)
-        .trim();
-      
+      const autoExcerpt = content.replace(/[#*`]/g, '').substring(0, 150).trim()
+
       if (autoExcerpt.length >= 140) {
-        setExcerpt(autoExcerpt + '...');
+        setExcerpt(autoExcerpt + '...')
       } else {
-        setExcerpt(autoExcerpt);
+        setExcerpt(autoExcerpt)
       }
     }
-  }, [content, excerpt]);
+  }, [content, excerpt])
 
   // Définir l'image principale automatiquement
   useEffect(() => {
     if (images.length > 0 && !featuredImage) {
-      setFeaturedImage(images[0]);
+      setFeaturedImage(images[0])
     }
-  }, [images, featuredImage]);
+  }, [images, featuredImage])
 
   const categoryLabels = {
     news: 'Actualités',
     activity: 'Activités',
     announcement: 'Annonces',
     event: 'Événements',
-  };
+  }
 
   const statusLabels = {
     draft: 'Brouillon',
     published: 'Publié',
     archived: 'Archivé',
-  };
+  }
 
   const handleAddTag = () => {
-    const newTag = tagInput.trim();
+    const newTag = tagInput.trim()
     if (newTag && !tags.includes(newTag)) {
-      setTags([...tags, newTag]);
-      setTagInput('');
+      setTags([...tags, newTag])
+      setTagInput('')
     }
-  };
+  }
 
   const handleRemoveTag = (tagToRemove: string) => {
-    setTags(tags.filter(tag => tag !== tagToRemove));
-  };
+    setTags(tags.filter(tag => tag !== tagToRemove))
+  }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      e.preventDefault();
-      handleAddTag();
+      e.preventDefault()
+      handleAddTag()
     }
-  };
+  }
 
   const handleImagesChange = (newImages: string[]) => {
-    setImages(newImages);
+    setImages(newImages)
     // Mettre à jour l'image principale si nécessaire
     if (newImages.length > 0 && !featuredImage) {
-      setFeaturedImage(newImages[0]);
+      setFeaturedImage(newImages[0])
     } else if (newImages.length === 0) {
-      setFeaturedImage('');
+      setFeaturedImage('')
     }
-  };
+  }
 
   const handleSubmit = async (publishNow = false) => {
     if (!title.trim() || !content.trim()) {
-      return;
+      return
     }
 
-    setIsSubmitting(true);
+    setIsSubmitting(true)
 
     try {
       const postData: Omit<Post, 'id' | 'createdAt' | 'updatedAt'> = {
@@ -114,16 +117,16 @@ export function PostEditor({ post, onSave, onCancel, isEditing = false }: PostEd
         images: images.length > 0 ? images : undefined,
         videoUrl: videoUrl.trim() || undefined,
         tags,
-        publishedAt: publishNow ? new Date() : (status === 'published' ? new Date() : undefined),
-      };
+        publishedAt: publishNow ? new Date() : status === 'published' ? new Date() : undefined,
+      }
 
-      await onSave(postData);
+      await onSave(postData)
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
-  const isFormValid = title.trim() && content.trim();
+  const isFormValid = title.trim() && content.trim()
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -136,7 +139,7 @@ export function PostEditor({ post, onSave, onCancel, isEditing = false }: PostEd
             </Button>
           </CardTitle>
         </CardHeader>
-        
+
         <CardContent className="space-y-6">
           {/* Titre */}
           <div>
@@ -147,7 +150,7 @@ export function PostEditor({ post, onSave, onCancel, isEditing = false }: PostEd
               id="title"
               placeholder="Saisissez le titre de votre publication..."
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={e => setTitle(e.target.value)}
               className="text-lg"
             />
           </div>
@@ -156,7 +159,10 @@ export function PostEditor({ post, onSave, onCancel, isEditing = false }: PostEd
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label className="text-sm font-medium mb-2 block">Catégorie</Label>
-              <Select value={category} onValueChange={(value: Post['category']) => setCategory(value)}>
+              <Select
+                value={category}
+                onValueChange={(value: Post['category']) => setCategory(value)}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -196,7 +202,7 @@ export function PostEditor({ post, onSave, onCancel, isEditing = false }: PostEd
               id="content"
               placeholder="Rédigez le contenu de votre publication..."
               value={content}
-              onChange={(e) => setContent(e.target.value)}
+              onChange={e => setContent(e.target.value)}
               className="min-h-[200px]"
             />
           </div>
@@ -210,13 +216,11 @@ export function PostEditor({ post, onSave, onCancel, isEditing = false }: PostEd
               id="excerpt"
               placeholder="Résumé court qui apparaîtra dans la liste des publications..."
               value={excerpt}
-              onChange={(e) => setExcerpt(e.target.value)}
+              onChange={e => setExcerpt(e.target.value)}
               maxLength={200}
               className="resize-none"
             />
-            <p className="text-xs text-muted-foreground mt-1">
-              {excerpt.length}/200 caractères
-            </p>
+            <p className="text-xs text-muted-foreground mt-1">{excerpt.length}/200 caractères</p>
           </div>
 
           {/* Médias */}
@@ -233,28 +237,26 @@ export function PostEditor({ post, onSave, onCancel, isEditing = false }: PostEd
 
           {/* Tags */}
           <div>
-            <Label className="text-sm font-medium mb-2 block">
-              Tags
-            </Label>
-            
+            <Label className="text-sm font-medium mb-2 block">Tags</Label>
+
             <div className="flex gap-2 mb-3">
               <Input
                 placeholder="Ajouter un tag..."
                 value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
+                onChange={e => setTagInput(e.target.value)}
                 onKeyPress={handleKeyPress}
                 className="flex-1"
               />
-              <Button 
-                type="button" 
-                variant="outline" 
+              <Button
+                type="button"
+                variant="outline"
                 onClick={handleAddTag}
                 disabled={!tagInput.trim()}
               >
                 Ajouter
               </Button>
             </div>
-            
+
             {tags.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {tags.map((tag, index) => (
@@ -279,7 +281,7 @@ export function PostEditor({ post, onSave, onCancel, isEditing = false }: PostEd
             <Button variant="outline" onClick={onCancel}>
               Annuler
             </Button>
-            
+
             <div className="flex gap-3">
               <Button
                 variant="outline"
@@ -290,7 +292,7 @@ export function PostEditor({ post, onSave, onCancel, isEditing = false }: PostEd
                 <Save className="w-4 h-4" />
                 Sauvegarder
               </Button>
-              
+
               <Button
                 onClick={() => handleSubmit(true)}
                 disabled={!isFormValid || isSubmitting}
@@ -304,5 +306,5 @@ export function PostEditor({ post, onSave, onCancel, isEditing = false }: PostEd
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

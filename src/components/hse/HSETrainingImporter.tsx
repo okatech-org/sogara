@@ -1,24 +1,33 @@
-import { useState, useEffect } from 'react';
-import { Download, Calendar, Users, AlertTriangle, CheckCircle, BarChart3, PlayCircle, RefreshCw } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { StatusBadge } from '@/components/ui/status-badge';
-import { useHSETrainingImporter } from '@/hooks/useHSETrainingImporter';
-import { useAuth } from '@/contexts/AppContext';
-import { formatDistanceToNow } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useState, useEffect } from 'react'
+import {
+  Download,
+  Calendar,
+  Users,
+  AlertTriangle,
+  CheckCircle,
+  BarChart3,
+  PlayCircle,
+  RefreshCw,
+} from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Progress } from '@/components/ui/progress'
+import { Badge } from '@/components/ui/badge'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { StatusBadge } from '@/components/ui/status-badge'
+import { useHSETrainingImporter } from '@/hooks/useHSETrainingImporter'
+import { useAuth } from '@/contexts/AppContext'
+import { formatDistanceToNow } from 'date-fns'
+import { fr } from 'date-fns/locale'
 
 interface HSETrainingImporterProps {
-  onImportComplete?: () => void;
+  onImportComplete?: () => void
 }
 
 export function HSETrainingImporter({ onImportComplete }: HSETrainingImporterProps) {
-  const { hasAnyRole } = useAuth();
+  const { hasAnyRole } = useAuth()
   const {
     isImporting,
     importProgress,
@@ -27,64 +36,72 @@ export function HSETrainingImporter({ onImportComplete }: HSETrainingImporterPro
     generateComplianceReport,
     getImportStats,
     needsImport,
-    resetProgress
-  } = useHSETrainingImporter();
+    resetProgress,
+  } = useHSETrainingImporter()
 
-  const [complianceReport, setComplianceReport] = useState<any>(null);
-  const [showDetails, setShowDetails] = useState(false);
+  const [complianceReport, setComplianceReport] = useState<any>(null)
+  const [showDetails, setShowDetails] = useState(false)
 
-  const canManageHSE = hasAnyRole(['ADMIN', 'HSE']);
-  const importStats = getImportStats();
-  const requiresImport = needsImport();
+  const canManageHSE = hasAnyRole(['ADMIN', 'HSE'])
+  const importStats = getImportStats()
+  const requiresImport = needsImport()
 
   useEffect(() => {
     if (lastImportResult?.complianceReport) {
-      setComplianceReport(lastImportResult.complianceReport);
+      setComplianceReport(lastImportResult.complianceReport)
     }
-  }, [lastImportResult]);
+  }, [lastImportResult])
 
   const handleCompleteImport = async () => {
     try {
-      resetProgress();
-      const result = await initializeCompleteHSESystem();
-      
+      resetProgress()
+      const result = await initializeCompleteHSESystem()
+
       if (result?.complianceReport) {
-        setComplianceReport(result.complianceReport);
+        setComplianceReport(result.complianceReport)
       }
-      
-      onImportComplete?.();
+
+      onImportComplete?.()
     } catch (error) {
-      console.error('Erreur lors de l\'importation:', error);
+      console.error("Erreur lors de l'importation:", error)
     }
-  };
+  }
 
   const handleGenerateReport = async () => {
     try {
-      const report = await generateComplianceReport();
-      setComplianceReport(report);
+      const report = await generateComplianceReport()
+      setComplianceReport(report)
     } catch (error) {
-      console.error('Erreur lors de la génération du rapport:', error);
+      console.error('Erreur lors de la génération du rapport:', error)
     }
-  };
+  }
 
   const getProgressColor = (progress: number) => {
-    if (progress === 100) return 'bg-green-500';
-    if (progress > 50) return 'bg-blue-500';
-    return 'bg-yellow-500';
-  };
+    if (progress === 100) return 'bg-green-500'
+    if (progress > 50) return 'bg-blue-500'
+    return 'bg-yellow-500'
+  }
 
   const getStepIcon = (step: string) => {
     switch (step) {
-      case 'importing': return <Download className="w-4 h-4 animate-pulse" />;
-      case 'analyzing': return <BarChart3 className="w-4 h-4 animate-pulse" />;
-      case 'planning': return <Calendar className="w-4 h-4 animate-pulse" />;
-      case 'simulating': return <PlayCircle className="w-4 h-4 animate-pulse" />;
-      case 'reporting': return <Users className="w-4 h-4 animate-pulse" />;
-      case 'completed': return <CheckCircle className="w-4 h-4 text-green-500" />;
-      case 'error': return <AlertTriangle className="w-4 h-4 text-red-500" />;
-      default: return <RefreshCw className="w-4 h-4" />;
+      case 'importing':
+        return <Download className="w-4 h-4 animate-pulse" />
+      case 'analyzing':
+        return <BarChart3 className="w-4 h-4 animate-pulse" />
+      case 'planning':
+        return <Calendar className="w-4 h-4 animate-pulse" />
+      case 'simulating':
+        return <PlayCircle className="w-4 h-4 animate-pulse" />
+      case 'reporting':
+        return <Users className="w-4 h-4 animate-pulse" />
+      case 'completed':
+        return <CheckCircle className="w-4 h-4 text-green-500" />
+      case 'error':
+        return <AlertTriangle className="w-4 h-4 text-red-500" />
+      default:
+        return <RefreshCw className="w-4 h-4" />
     }
-  };
+  }
 
   if (!canManageHSE) {
     return (
@@ -94,7 +111,7 @@ export function HSETrainingImporter({ onImportComplete }: HSETrainingImporterPro
           Seuls les administrateurs et responsables HSE peuvent accéder à la gestion des formations.
         </AlertDescription>
       </Alert>
-    );
+    )
   }
 
   return (
@@ -118,7 +135,8 @@ export function HSETrainingImporter({ onImportComplete }: HSETrainingImporterPro
                 <div>
                   <h3 className="font-medium text-green-900">Système initialisé</h3>
                   <p className="text-sm text-green-700">
-                    Dernière importation: {formatDistanceToNow(importStats.lastImport, { addSuffix: true, locale: fr })}
+                    Dernière importation:{' '}
+                    {formatDistanceToNow(importStats.lastImport, { addSuffix: true, locale: fr })}
                   </p>
                 </div>
                 <div className="flex items-center gap-4 text-sm">
@@ -144,8 +162,8 @@ export function HSETrainingImporter({ onImportComplete }: HSETrainingImporterPro
             <Alert>
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
-                Le système de formation HSE n'est pas encore initialisé ou nécessite une mise à jour.
-                Cliquez sur "Initialiser le système" pour importer les modules de formation.
+                Le système de formation HSE n'est pas encore initialisé ou nécessite une mise à
+                jour. Cliquez sur "Initialiser le système" pour importer les modules de formation.
               </AlertDescription>
             </Alert>
           )}
@@ -157,28 +175,25 @@ export function HSETrainingImporter({ onImportComplete }: HSETrainingImporterPro
                 {getStepIcon(importProgress.step)}
                 <span className="text-sm font-medium">{importProgress.message}</span>
               </div>
-              <Progress 
-                value={importProgress.progress} 
-                className="h-2"
-              />
+              <Progress value={importProgress.progress} className="h-2" />
             </div>
           )}
 
           {/* Actions */}
           <div className="flex items-center gap-3">
-            <Button 
+            <Button
               onClick={handleCompleteImport}
               disabled={isImporting}
               className="gap-2"
-              variant={requiresImport ? "default" : "outline"}
+              variant={requiresImport ? 'default' : 'outline'}
             >
               <Download className="w-4 h-4" />
               {requiresImport ? 'Initialiser le système' : 'Réinitialiser'}
             </Button>
-            
+
             {!requiresImport && (
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={handleGenerateReport}
                 disabled={isImporting}
                 className="gap-2"
@@ -187,10 +202,10 @@ export function HSETrainingImporter({ onImportComplete }: HSETrainingImporterPro
                 Actualiser le rapport
               </Button>
             )}
-            
+
             {complianceReport && (
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 onClick={() => setShowDetails(!showDetails)}
                 className="gap-2"
               >
@@ -218,7 +233,9 @@ export function HSETrainingImporter({ onImportComplete }: HSETrainingImporterPro
                   <CardTitle className="text-sm">Employés</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{complianceReport.summary.totalEmployees}</div>
+                  <div className="text-2xl font-bold">
+                    {complianceReport.summary.totalEmployees}
+                  </div>
                   <p className="text-xs text-muted-foreground">Total dans le système</p>
                 </CardContent>
               </Card>
@@ -231,9 +248,13 @@ export function HSETrainingImporter({ onImportComplete }: HSETrainingImporterPro
                   <div className="text-2xl font-bold text-green-600">
                     {complianceReport.summary.overallCompliance}%
                   </div>
-                  <StatusBadge 
-                    status={complianceReport.summary.overallCompliance >= 90 ? 'Excellent' : 'À améliorer'}
-                    variant={complianceReport.summary.overallCompliance >= 90 ? 'success' : 'warning'}
+                  <StatusBadge
+                    status={
+                      complianceReport.summary.overallCompliance >= 90 ? 'Excellent' : 'À améliorer'
+                    }
+                    variant={
+                      complianceReport.summary.overallCompliance >= 90 ? 'success' : 'warning'
+                    }
                   />
                 </CardContent>
               </Card>
@@ -243,7 +264,9 @@ export function HSETrainingImporter({ onImportComplete }: HSETrainingImporterPro
                   <CardTitle className="text-sm">Sessions programmées</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{complianceReport.summary.upcomingSessions}</div>
+                  <div className="text-2xl font-bold">
+                    {complianceReport.summary.upcomingSessions}
+                  </div>
                   <p className="text-xs text-muted-foreground">Dans les prochains mois</p>
                 </CardContent>
               </Card>
@@ -270,7 +293,10 @@ export function HSETrainingImporter({ onImportComplete }: HSETrainingImporterPro
               <CardContent>
                 <div className="space-y-4">
                   {complianceReport.byCategory.map((category: any, index: number) => (
-                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 border rounded-lg"
+                    >
                       <div>
                         <h3 className="font-medium">{category.category}</h3>
                         <p className="text-sm text-muted-foreground">
@@ -296,7 +322,10 @@ export function HSETrainingImporter({ onImportComplete }: HSETrainingImporterPro
               <CardContent>
                 <div className="space-y-4">
                   {complianceReport.byRole.map((role: any, index: number) => (
-                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 border rounded-lg"
+                    >
                       <div>
                         <h3 className="font-medium">{role.role}</h3>
                         <p className="text-sm text-muted-foreground">
@@ -305,9 +334,7 @@ export function HSETrainingImporter({ onImportComplete }: HSETrainingImporterPro
                       </div>
                       <div className="flex items-center gap-4">
                         {role.criticalIssues > 0 && (
-                          <Badge variant="destructive">
-                            {role.criticalIssues} problème(s)
-                          </Badge>
+                          <Badge variant="destructive">{role.criticalIssues} problème(s)</Badge>
                         )}
                         <div className="text-right">
                           <div className="text-lg font-bold">{role.averageCompliance}%</div>
@@ -333,23 +360,21 @@ export function HSETrainingImporter({ onImportComplete }: HSETrainingImporterPro
                 <ScrollArea className="h-[400px]">
                   <div className="space-y-3">
                     {complianceReport.urgentActions.map((action: any, index: number) => (
-                      <div 
-                        key={index} 
+                      <div
+                        key={index}
                         className={`p-3 rounded-lg border-l-4 ${
-                          action.type === 'expired' 
-                            ? 'bg-red-50 border-l-red-500' 
+                          action.type === 'expired'
+                            ? 'bg-red-50 border-l-red-500'
                             : 'bg-yellow-50 border-l-yellow-500'
                         }`}
                       >
                         <div className="flex items-center justify-between">
                           <div>
                             <h4 className="font-medium">{action.employeeName}</h4>
-                            <p className="text-sm text-muted-foreground">
-                              {action.trainingTitle}
-                            </p>
+                            <p className="text-sm text-muted-foreground">{action.trainingTitle}</p>
                           </div>
                           <div className="text-right">
-                            <StatusBadge 
+                            <StatusBadge
                               status={action.type === 'expired' ? 'Expirée' : 'Manquante'}
                               variant={action.type === 'expired' ? 'urgent' : 'warning'}
                             />
@@ -362,12 +387,14 @@ export function HSETrainingImporter({ onImportComplete }: HSETrainingImporterPro
                         </div>
                       </div>
                     ))}
-                    
+
                     {complianceReport.urgentActions.length === 0 && (
                       <div className="text-center py-8 text-muted-foreground">
                         <CheckCircle className="w-12 h-12 mx-auto mb-3 text-green-500" />
                         <p>Aucune action urgente requise</p>
-                        <p className="text-sm">Tous les employés sont conformes aux exigences HSE</p>
+                        <p className="text-sm">
+                          Tous les employés sont conformes aux exigences HSE
+                        </p>
                       </div>
                     )}
                   </div>
@@ -378,5 +405,5 @@ export function HSETrainingImporter({ onImportComplete }: HSETrainingImporterPro
         </Tabs>
       )}
     </div>
-  );
+  )
 }

@@ -1,6 +1,6 @@
-import { Outlet } from 'react-router-dom';
-import { Header } from './Header';
-import { Navigation } from './Navigation';
+import { Outlet } from 'react-router-dom'
+import { Header } from './Header'
+import { Navigation } from './Navigation'
 
 export function Layout() {
   return (
@@ -13,5 +13,5 @@ export function Layout() {
         </main>
       </div>
     </div>
-  );
+  )
 }

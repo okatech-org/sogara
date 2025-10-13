@@ -1,35 +1,35 @@
-import { useState } from 'react';
-import { FileCheck, Play, Clock, Lock, CheckCircle, XCircle } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { useAuth } from '@/contexts/AppContext';
-import { useCertificationPaths } from '@/hooks/useCertificationPaths';
+import { useState } from 'react'
+import { FileCheck, Play, Clock, Lock, CheckCircle, XCircle } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { useAuth } from '@/contexts/AppContext'
+import { useCertificationPaths } from '@/hooks/useCertificationPaths'
 
 export function MesEvaluationsExternePage() {
-  const { currentUser } = useAuth();
-  const { getMyProgress } = useCertificationPaths();
+  const { currentUser } = useAuth()
+  const { getMyProgress } = useCertificationPaths()
 
-  const myProgress = getMyProgress(currentUser?.id || '');
+  const myProgress = getMyProgress(currentUser?.id || '')
 
   const getEvaluationStatus = (progress: any) => {
-    if (progress.evaluationPassed === true) return 'passed';
-    if (progress.evaluationPassed === false) return 'failed';
-    if (progress.evaluationSubmittedAt) return 'submitted';
-    if (progress.evaluationStartedAt) return 'in_progress';
+    if (progress.evaluationPassed === true) return 'passed'
+    if (progress.evaluationPassed === false) return 'failed'
+    if (progress.evaluationSubmittedAt) return 'submitted'
+    if (progress.evaluationStartedAt) return 'in_progress'
     if (progress.evaluationAvailableDate) {
-      const now = new Date();
-      const availableDate = new Date(progress.evaluationAvailableDate);
-      return now >= availableDate ? 'available' : 'locked';
+      const now = new Date()
+      const availableDate = new Date(progress.evaluationAvailableDate)
+      return now >= availableDate ? 'available' : 'locked'
     }
-    return 'locked';
-  };
+    return 'locked'
+  }
 
   const getDaysUntilAvailable = (date: Date) => {
-    const now = new Date();
-    const diff = date.getTime() - now.getTime();
-    return Math.ceil(diff / (1000 * 60 * 60 * 24));
-  };
+    const now = new Date()
+    const diff = date.getTime() - now.getTime()
+    return Math.ceil(diff / (1000 * 60 * 60 * 24))
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -93,24 +93,22 @@ export function MesEvaluationsExternePage() {
       {/* Liste des évaluations */}
       <div>
         <h2 className="text-xl font-semibold mb-4">Évaluations de Certification</h2>
-        
+
         {myProgress.length === 0 ? (
           <Card className="industrial-card">
             <CardContent className="text-center py-16">
               <FileCheck className="w-16 h-16 mx-auto mb-4 text-muted-foreground opacity-50" />
               <h3 className="text-xl font-semibold mb-2">Aucune évaluation</h3>
-              <p className="text-muted-foreground">
-                Les tests de certification apparaîtront ici.
-              </p>
+              <p className="text-muted-foreground">Les tests de certification apparaîtront ici.</p>
             </CardContent>
           </Card>
         ) : (
           <div className="space-y-4">
-            {myProgress.map((progress) => {
-              const evalStatus = getEvaluationStatus(progress);
-              const daysUntil = progress.evaluationAvailableDate 
+            {myProgress.map(progress => {
+              const evalStatus = getEvaluationStatus(progress)
+              const daysUntil = progress.evaluationAvailableDate
                 ? getDaysUntilAvailable(progress.evaluationAvailableDate)
-                : 0;
+                : 0
 
               return (
                 <Card key={progress.id} className="industrial-card">
@@ -137,9 +135,7 @@ export function MesEvaluationsExternePage() {
                             </Badge>
                           )}
                           {evalStatus === 'submitted' && (
-                            <Badge className="bg-purple-500">
-                              En correction
-                            </Badge>
+                            <Badge className="bg-purple-500">En correction</Badge>
                           )}
                           {evalStatus === 'passed' && (
                             <Badge className="bg-green-500">
@@ -155,9 +151,7 @@ export function MesEvaluationsExternePage() {
                           )}
                         </div>
 
-                        <h3 className="font-semibold text-lg mb-1">
-                          Test Qualification H2S
-                        </h3>
+                        <h3 className="font-semibold text-lg mb-1">Test Qualification H2S</h3>
                         <p className="text-sm text-muted-foreground mb-2">
                           Durée: 30 minutes • Score minimum: 85%
                         </p>
@@ -171,31 +165,37 @@ export function MesEvaluationsExternePage() {
                         )}
 
                         {/* Délai attente */}
-                        {progress.trainingCompletedAt && evalStatus === 'locked' && daysUntil > 0 && (
-                          <div className="p-3 bg-blue-50 rounded text-sm text-blue-800">
-                            <Clock className="w-4 h-4 inline mr-1" />
-                            Disponible dans {daysUntil} jour{daysUntil > 1 ? 's' : ''} 
-                            (le {progress.evaluationAvailableDate?.toLocaleDateString('fr-FR')})
-                          </div>
-                        )}
+                        {progress.trainingCompletedAt &&
+                          evalStatus === 'locked' &&
+                          daysUntil > 0 && (
+                            <div className="p-3 bg-blue-50 rounded text-sm text-blue-800">
+                              <Clock className="w-4 h-4 inline mr-1" />
+                              Disponible dans {daysUntil} jour{daysUntil > 1 ? 's' : ''}
+                              (le {progress.evaluationAvailableDate?.toLocaleDateString('fr-FR')})
+                            </div>
+                          )}
 
                         {/* En correction */}
                         {evalStatus === 'submitted' && (
                           <div className="p-3 bg-purple-50 rounded text-sm text-purple-800">
-                            Soumis le {progress.evaluationSubmittedAt?.toLocaleDateString('fr-FR')}
-                            - En attente de correction par le Responsable HSE
+                            Soumis le {progress.evaluationSubmittedAt?.toLocaleDateString('fr-FR')}-
+                            En attente de correction par le Responsable HSE
                           </div>
                         )}
 
                         {/* Résultat */}
                         {(evalStatus === 'passed' || evalStatus === 'failed') && (
-                          <div className={`p-3 rounded ${
-                            evalStatus === 'passed' ? 'bg-green-50' : 'bg-red-50'
-                          }`}>
+                          <div
+                            className={`p-3 rounded ${
+                              evalStatus === 'passed' ? 'bg-green-50' : 'bg-red-50'
+                            }`}
+                          >
                             <div className="flex items-center justify-between">
-                              <span className={`font-medium ${
-                                evalStatus === 'passed' ? 'text-green-900' : 'text-red-900'
-                              }`}>
+                              <span
+                                className={`font-medium ${
+                                  evalStatus === 'passed' ? 'text-green-900' : 'text-red-900'
+                                }`}
+                              >
                                 Score: {progress.evaluationScore?.toFixed(1)}%
                               </span>
                               {evalStatus === 'passed' ? (
@@ -232,7 +232,7 @@ export function MesEvaluationsExternePage() {
                     </div>
                   </CardContent>
                 </Card>
-              );
+              )
             })}
           </div>
         )}
@@ -241,13 +241,20 @@ export function MesEvaluationsExternePage() {
       {/* Informations */}
       <Card className="bg-blue-50/50 border-blue-200">
         <CardContent className="p-4 space-y-2 text-sm text-blue-800">
-          <p>• <strong>Prérequis:</strong> Complétez la formation avant de passer l'évaluation</p>
-          <p>• <strong>Délai:</strong> L'évaluation est disponible 7 jours après la formation</p>
-          <p>• <strong>Score:</strong> Minimum 85% requis pour valider</p>
-          <p>• <strong>Correction:</strong> Les réponses libres sont corrigées par le HSE (24-48h)</p>
+          <p>
+            • <strong>Prérequis:</strong> Complétez la formation avant de passer l'évaluation
+          </p>
+          <p>
+            • <strong>Délai:</strong> L'évaluation est disponible 7 jours après la formation
+          </p>
+          <p>
+            • <strong>Score:</strong> Minimum 85% requis pour valider
+          </p>
+          <p>
+            • <strong>Correction:</strong> Les réponses libres sont corrigées par le HSE (24-48h)
+          </p>
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }
-

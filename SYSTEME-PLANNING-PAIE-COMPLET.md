@@ -3,6 +3,7 @@
 ## ✅ Ce qui a été implémenté
 
 ### Architecture Complète
+
 - ✅ **5 nouvelles tables Convex** (sites, vacations, payslips, payslipItems, availabilities)
 - ✅ **3 mutations Convex** (vacations.ts, payslips.ts)
 - ✅ **2 hooks React** (useVacations, usePayroll)
@@ -18,6 +19,7 @@
 ### EMPLOYÉ (Pierre BEKALE - EMP001)
 
 **Menu visible**:
+
 ```
 🏠 Tableau de bord
 📰 SOGARA Connect
@@ -31,6 +33,7 @@
 ```
 
 **Fonctionnalités**:
+
 1. **Mon Planning** (`/app/mon-planning`)
    - Consultation de mes vacations
    - Pointage arrivée/départ
@@ -49,6 +52,7 @@
 ### DRH (Brigitte NGUEMA - DRH001)
 
 **Menu visible**:
+
 ```
 🏠 Tableau de bord
 📰 SOGARA Connect
@@ -61,6 +65,7 @@
 ```
 
 **Fonctionnalités**:
+
 1. **Planning Global** (`/app/planning`)
    - Vue complète toutes vacations
    - Filtres (mois, année, employé)
@@ -80,6 +85,7 @@
 ### HSE (Marie-Claire NZIEGE - HSE001)
 
 **Menu conservé** + accès Planning (consultation):
+
 ```
 🏠 Tableau de bord
 📰 SOGARA Connect
@@ -94,6 +100,7 @@
 ### DG (Daniel MVOU - DG001)
 
 **Accès complet** (tous les menus):
+
 ```
 Tous les menus incluant:
 📅 Planning Global (validation)
@@ -105,6 +112,7 @@ Tous les menus incluant:
 ### ADMIN (PELLEN Asted - ADM001)
 
 **Accès total** y compris:
+
 ```
 📅 Planning Global
 💰 Gestion Paie
@@ -224,12 +232,14 @@ Tous les menus incluant:
 ### Formules Appliquées
 
 #### Taux Horaire
+
 ```
 Taux horaire = Salaire mensuel base / 173h
 Exemple: 500,000 FCFA / 173h = 2,890 FCFA/h
 ```
 
 #### Heures Supplémentaires
+
 ```
 Si heures travaillées > 173h:
   Heures sup = Total - 173
@@ -238,6 +248,7 @@ Si heures travaillées > 173h:
 ```
 
 #### Prime de Nuit
+
 ```
 Si vacation type = NIGHT:
   Prime nuit = Heures nuit × Taux horaire × 0.25
@@ -245,24 +256,28 @@ Si vacation type = NIGHT:
 ```
 
 #### Prime de Risque Raffinerie
+
 ```
 Prime risque = Total heures × Taux horaire × 0.15
 (Majoration 15% pour risque industrie pétrolière)
 ```
 
 #### Indemnités
+
 ```
 Transport: 50,000 FCFA (fixe/mois)
 Repas: 5,000 FCFA × jours travaillés
 ```
 
 #### Déductions
+
 ```
 Sécurité sociale: Brut × 15%
 Impôt sur revenu: (Brut - Sécu) × 20%
 ```
 
 #### Salaire Net
+
 ```
 NET = BRUT - Sécurité sociale - Impôts
 ```
@@ -270,6 +285,7 @@ NET = BRUT - Sécurité sociale - Impôts
 ### Exemple Complet
 
 **Pierre BEKALE - Janvier 2025**:
+
 ```
 Vacations:
 - 10 × Jour 12h = 120h
@@ -312,6 +328,7 @@ NET: 713,028 - 106,954 - 121,215
 **URL**: `/app/mon-planning`
 
 **Affichage**:
+
 - Sélection mois/année
 - 4 KPIs (Vacations, Heures, Complétées, À venir)
 - Liste chronologique des vacations
@@ -320,6 +337,7 @@ NET: 713,028 - 106,954 - 121,215
 - **Boutons pointage** si vacation aujourd'hui
 
 **Actions**:
+
 - ✅ Pointer arrivée (commence vacation)
 - ✅ Pointer départ (termine + calcul heures réelles)
 - ✅ Filtrage par période
@@ -331,6 +349,7 @@ NET: 713,028 - 106,954 - 121,215
 **URL**: `/app/ma-paie`
 
 **Affichage**:
+
 - Sélection mois/année
 - Badge statut (Brouillon/Validé/Payé)
 - Infos employé (matricule, service)
@@ -342,6 +361,7 @@ NET: 713,028 - 106,954 - 121,215
 - Bouton télécharger PDF
 
 **Génération auto**:
+
 - Si fiche n'existe pas et heures > 0
 - Recalcul automatique après chaque pointage
 
@@ -352,6 +372,7 @@ NET: 713,028 - 106,954 - 121,215
 **URL**: `/app/planning`
 
 **Affichage**:
+
 - Sélection mois/année/employé
 - Statistiques globales (total, planifiées, en cours, complétées)
 - **Bouton "Créer vacation"** (si permission)
@@ -359,6 +380,7 @@ NET: 713,028 - 106,954 - 121,215
 - Vue par employé
 
 **Fonctionnalités**:
+
 - ✅ Création vacations
 - ✅ Modification/suppression
 - ✅ Validation vacations
@@ -371,6 +393,7 @@ NET: 713,028 - 106,954 - 121,215
 **URL**: `/app/paie`
 
 **Affichage**:
+
 - Sélection mois/année
 - **Bouton "Générer toutes les paies"**
 - Statistiques (fiches, masse salariale, heures)
@@ -378,6 +401,7 @@ NET: 713,028 - 106,954 - 121,215
 - Status chaque fiche
 
 **Fonctionnalités**:
+
 - ✅ Génération en masse (tous employés)
 - ✅ Recalcul individuel
 - ✅ Validation fiches
@@ -389,6 +413,7 @@ NET: 713,028 - 106,954 - 121,215
 ## 🗂️ Structure des Données
 
 ### Table Vacations (Convex)
+
 ```typescript
 {
   date: number,              // Timestamp jour
@@ -409,6 +434,7 @@ NET: 713,028 - 106,954 - 121,215
 ```
 
 ### Table Payslips (Convex)
+
 ```typescript
 {
   month: number,
@@ -497,6 +523,7 @@ npm run convex:dev
 ## 📱 Pages Responsive
 
 Toutes les pages sont optimisées mobile:
+
 - ✅ Grid 1 col mobile, 2-4 cols desktop
 - ✅ Boutons pleine largeur mobile
 - ✅ Selects responsive
@@ -508,22 +535,26 @@ Toutes les pages sont optimisées mobile:
 ## ✅ Checklist Implémentation
 
 ### Backend (Convex)
+
 - [x] Schema étendu (5 tables)
 - [x] Mutations vacations
 - [x] Mutations payslips
 - [x] Queries filtrage
 
 ### Services
+
 - [x] PayrollCalculatorService
 - [x] Calculs primes/déductions
 - [x] Formatage FCFA
 
 ### Hooks
+
 - [x] useVacations
 - [x] usePayroll
 - [x] Intégration Convex
 
 ### Pages Employé (5)
+
 - [x] Mon Planning
 - [x] Ma Paie
 - [x] Mes Formations HSE
@@ -531,16 +562,19 @@ Toutes les pages sont optimisées mobile:
 - [x] Mes Habilitations
 
 ### Pages RH/Direction (2)
+
 - [x] Planning Global
 - [x] Gestion Paie
 
 ### Navigation
+
 - [x] Menus filtrés par rôle
 - [x] Icons appropriées
 - [x] Mobile menu
 - [x] Routes protégées
 
 ### UI Components
+
 - [x] Separator
 - [x] Toutes pages responsive
 - [x] Badges status
@@ -550,12 +584,12 @@ Toutes les pages sont optimisées mobile:
 
 ## 🔐 Permissions
 
-| Page | EMPLOYE | HSE | RECEP | DRH | DG | ADMIN |
-|------|---------|-----|-------|-----|----|-|
-| Mon Planning | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Ma Paie | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Planning Global | ❌ | 👁️ | ❌ | ✅ | ✅ | ✅ |
-| Gestion Paie | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ |
+| Page            | EMPLOYE | HSE | RECEP | DRH | DG  | ADMIN |
+| --------------- | ------- | --- | ----- | --- | --- | ----- |
+| Mon Planning    | ✅      | ❌  | ❌    | ❌  | ❌  | ❌    |
+| Ma Paie         | ✅      | ❌  | ❌    | ❌  | ❌  | ❌    |
+| Planning Global | ❌      | 👁️  | ❌    | ✅  | ✅  | ✅    |
+| Gestion Paie    | ❌      | ❌  | ❌    | ✅  | ✅  | ✅    |
 
 👁️ = Lecture seule
 
@@ -564,6 +598,7 @@ Toutes les pages sont optimisées mobile:
 ## 💡 Prochaines Évolutions
 
 ### Phase 2 (à venir)
+
 - [ ] Calendrier visuel (FullCalendar/react-big-calendar)
 - [ ] Drag & drop affectations
 - [ ] Génération PDF fiches de paie
@@ -573,6 +608,7 @@ Toutes les pages sont optimisées mobile:
 - [ ] Export Excel masse salariale
 
 ### Phase 3 (avancé)
+
 - [ ] App mobile pointage (React Native)
 - [ ] QR Code pointage rapide
 - [ ] IA prédiction besoins en personnel

@@ -1,43 +1,61 @@
-import { useState } from 'react';
-import { Calendar, Users, Clock, MapPin, Plus } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useAuth } from '@/contexts/AppContext';
-import { useVacations } from '@/hooks/useVacations';
-import { useEmployees } from '@/hooks/useEmployees';
+import { useState } from 'react'
+import { Calendar, Users, Clock, MapPin, Plus } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { useAuth } from '@/contexts/AppContext'
+import { useVacations } from '@/hooks/useVacations'
+import { useEmployees } from '@/hooks/useEmployees'
 
 export function PlanningPage() {
-  const { hasAnyRole } = useAuth();
-  const { vacations, loading } = useVacations();
-  const { employees } = useEmployees();
-  
-  const currentDate = new Date();
-  const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth() + 1);
-  const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
-  const [selectedEmployee, setSelectedEmployee] = useState<string>('all');
+  const { hasAnyRole } = useAuth()
+  const { vacations, loading } = useVacations()
+  const { employees } = useEmployees()
 
-  const canManagePlanning = hasAnyRole(['ADMIN', 'DRH', 'DG']);
+  const currentDate = new Date()
+  const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth() + 1)
+  const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear())
+  const [selectedEmployee, setSelectedEmployee] = useState<string>('all')
+
+  const canManagePlanning = hasAnyRole(['ADMIN', 'DRH', 'DG'])
 
   const filteredVacations = vacations.filter(v => {
-    const vDate = new Date(v.date);
-    const matchesMonth = vDate.getMonth() + 1 === selectedMonth && vDate.getFullYear() === selectedYear;
-    const matchesEmployee = selectedEmployee === 'all' || v.employeeId === selectedEmployee;
-    return matchesMonth && matchesEmployee;
-  });
+    const vDate = new Date(v.date)
+    const matchesMonth =
+      vDate.getMonth() + 1 === selectedMonth && vDate.getFullYear() === selectedYear
+    const matchesEmployee = selectedEmployee === 'all' || v.employeeId === selectedEmployee
+    return matchesMonth && matchesEmployee
+  })
 
   const stats = {
     total: filteredVacations.length,
     completed: filteredVacations.filter(v => v.status === 'COMPLETED').length,
-    planned: filteredVacations.filter(v => v.status === 'PLANNED' || v.status === 'CONFIRMED').length,
+    planned: filteredVacations.filter(v => v.status === 'PLANNED' || v.status === 'CONFIRMED')
+      .length,
     inProgress: filteredVacations.filter(v => v.status === 'IN_PROGRESS').length,
-  };
+  }
 
   const months = [
-    'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
-  ];
+    'Janvier',
+    'Février',
+    'Mars',
+    'Avril',
+    'Mai',
+    'Juin',
+    'Juillet',
+    'Août',
+    'Septembre',
+    'Octobre',
+    'Novembre',
+    'Décembre',
+  ]
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -63,7 +81,10 @@ export function PlanningPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="text-sm font-medium mb-2 block">Mois</label>
-              <Select value={selectedMonth.toString()} onValueChange={(v) => setSelectedMonth(parseInt(v))}>
+              <Select
+                value={selectedMonth.toString()}
+                onValueChange={v => setSelectedMonth(parseInt(v))}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -78,7 +99,10 @@ export function PlanningPage() {
             </div>
             <div>
               <label className="text-sm font-medium mb-2 block">Année</label>
-              <Select value={selectedYear.toString()} onValueChange={(v) => setSelectedYear(parseInt(v))}>
+              <Select
+                value={selectedYear.toString()}
+                onValueChange={v => setSelectedYear(parseInt(v))}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -147,7 +171,9 @@ export function PlanningPage() {
       {/* Liste des vacations */}
       <Card className="industrial-card">
         <CardHeader>
-          <CardTitle>Vacations - {months[selectedMonth - 1]} {selectedYear}</CardTitle>
+          <CardTitle>
+            Vacations - {months[selectedMonth - 1]} {selectedYear}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {filteredVacations.length === 0 ? (
@@ -158,21 +184,25 @@ export function PlanningPage() {
           ) : (
             <div className="space-y-2">
               {filteredVacations.map(vacation => {
-                const employee = employees.find(e => e.id === vacation.employeeId);
-                
+                const employee = employees.find(e => e.id === vacation.employeeId)
+
                 return (
-                  <div 
-                    key={vacation.id} 
+                  <div
+                    key={vacation.id}
                     className="p-4 border rounded-lg hover:bg-muted/30 transition-colors"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
-                          <Badge variant={
-                            vacation.status === 'COMPLETED' ? 'default' :
-                            vacation.status === 'IN_PROGRESS' ? 'secondary' :
-                            'outline'
-                          }>
+                          <Badge
+                            variant={
+                              vacation.status === 'COMPLETED'
+                                ? 'default'
+                                : vacation.status === 'IN_PROGRESS'
+                                  ? 'secondary'
+                                  : 'outline'
+                            }
+                          >
                             {vacation.status}
                           </Badge>
                           <span className="font-medium">
@@ -187,13 +217,12 @@ export function PlanningPage() {
                       </div>
                     </div>
                   </div>
-                );
+                )
               })}
             </div>
           )}
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }
-

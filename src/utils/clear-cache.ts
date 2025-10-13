@@ -4,8 +4,8 @@
  */
 
 export function clearAllCache(): void {
-  console.log('🧹 Nettoyage du cache localStorage...');
-  
+  console.log('🧹 Nettoyage du cache localStorage...')
+
   const keysToRemove = [
     'sogara_employees',
     'sogara_visitors',
@@ -17,45 +17,44 @@ export function clearAllCache(): void {
     'sogara_posts',
     'sogara_notifications',
     'userId',
-    'matricule'
-  ];
+    'matricule',
+  ]
 
   keysToRemove.forEach(key => {
-    localStorage.removeItem(key);
-    console.log(`  ✅ Supprimé: ${key}`);
-  });
+    localStorage.removeItem(key)
+    console.log(`  ✅ Supprimé: ${key}`)
+  })
 
-  console.log('✅ Cache nettoyé ! Rechargement de la page...');
-  window.location.reload();
+  console.log('✅ Cache nettoyé ! Rechargement de la page...')
+  window.location.reload()
 }
 
 export function clearUserCache(): void {
-  console.log('🧹 Nettoyage du cache utilisateur...');
-  
-  localStorage.removeItem('userId');
-  localStorage.removeItem('matricule');
-  
-  console.log('✅ Cache utilisateur nettoyé !');
+  console.log('🧹 Nettoyage du cache utilisateur...')
+
+  localStorage.removeItem('userId')
+  localStorage.removeItem('matricule')
+
+  console.log('✅ Cache utilisateur nettoyé !')
 }
 
 export function forceClearEmployeeCache(): void {
-  console.log('🧹 Nettoyage forcé du cache employés...');
-  
-  localStorage.removeItem('sogara_employees');
-  
-  console.log('✅ Cache employés supprimé ! Rechargement...');
-  window.location.reload();
+  console.log('🧹 Nettoyage forcé du cache employés...')
+
+  localStorage.removeItem('sogara_employees')
+
+  console.log('✅ Cache employés supprimé ! Rechargement...')
+  window.location.reload()
 }
 
 // Fonction appelable depuis la console pour débugger
 if (typeof window !== 'undefined') {
-  (window as any).clearSogaraCache = clearAllCache;
-  (window as any).clearUserCache = clearUserCache;
-  (window as any).forceClearEmployees = forceClearEmployeeCache;
-  
-  console.log('🔧 Commandes disponibles dans la console:');
-  console.log('  clearSogaraCache() - Nettoie tout le cache');
-  console.log('  clearUserCache() - Nettoie seulement l\'utilisateur');
-  console.log('  forceClearEmployees() - Force le rechargement des employés');
-}
+  ;(window as any).clearSogaraCache = clearAllCache
+  ;(window as any).clearUserCache = clearUserCache
+  ;(window as any).forceClearEmployees = forceClearEmployeeCache
 
+  console.log('🔧 Commandes disponibles dans la console:')
+  console.log('  clearSogaraCache() - Nettoie tout le cache')
+  console.log("  clearUserCache() - Nettoie seulement l'utilisateur")
+  console.log('  forceClearEmployees() - Force le rechargement des employés')
+}

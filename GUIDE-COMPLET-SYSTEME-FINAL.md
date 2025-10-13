@@ -3,6 +3,7 @@
 ## 🎉 Vue d'Ensemble
 
 **SOGARA Access** est maintenant une **plateforme RH complète** pour la gestion d'une raffinerie de pétrole au Gabon, intégrant:
+
 - Gestion du personnel
 - Sécurité HSE
 - Planning et vacations
@@ -16,19 +17,20 @@
 
 ### 7 Comptes Actifs
 
-| Matricule | Nom | Rôle | URL Dédiée |
-|-----------|-----|------|------------|
-| ADM001 | PELLEN Asted | ADMIN | `/app/admin` |
-| DG001 | Daniel MVOU | DG, ADMIN | `/app/direction` |
-| DRH001 | Brigitte NGUEMA | DRH, ADMIN | `/app/rh` |
-| COM001 | Clarisse MBOUMBA | COMMUNICATION | `/app/connect` |
-| HSE001 | Marie-Claire NZIEGE | HSE | `/app/hse` |
-| REC001 | Sylvie KOUMBA | RECEP | `/app/visites` |
-| EMP001 | Pierre BEKALE | EMPLOYE | `/app/dashboard` |
+| Matricule | Nom                 | Rôle          | URL Dédiée       |
+| --------- | ------------------- | ------------- | ---------------- |
+| ADM001    | PELLEN Asted        | ADMIN         | `/app/admin`     |
+| DG001     | Daniel MVOU         | DG, ADMIN     | `/app/direction` |
+| DRH001    | Brigitte NGUEMA     | DRH, ADMIN    | `/app/rh`        |
+| COM001    | Clarisse MBOUMBA    | COMMUNICATION | `/app/connect`   |
+| HSE001    | Marie-Claire NZIEGE | HSE           | `/app/hse`       |
+| REC001    | Sylvie KOUMBA       | RECEP         | `/app/visites`   |
+| EMP001    | Pierre BEKALE       | EMPLOYE       | `/app/dashboard` |
 
 ### + 1 Candidat Externe (Test)
 
 **Jean-Luc BERNARD**
+
 - Société: Total Energies Gabon
 - Poste: Technicien Maintenance Spécialisé
 - Email: jl.bernard@totalenergies.com
@@ -42,6 +44,7 @@
 ### EMPLOYE (Pierre BEKALE - EMP001)
 
 **Navigation**:
+
 ```
 🏠 Tableau de bord
 📰 SOGARA Connect
@@ -54,6 +57,7 @@
 ```
 
 **Fonctionnalités**:
+
 1. **Dashboard** - Vue personnalisée (KPIs, conformité, accès rapides)
 2. **Planning** - Mes vacations, pointage arrivée/départ
 3. **Paie** - Ma fiche de paie mensuelle (génération auto)
@@ -67,6 +71,7 @@
 ### HSE (Marie-Claire NZIEGE - HSE001)
 
 **Navigation**:
+
 ```
 🏠 Tableau de bord
 📰 SOGARA Connect
@@ -78,6 +83,7 @@
 ```
 
 **HSE Dashboard - 10 Onglets**:
+
 1. **Vue d'ensemble** - KPIs, incidents, formations
 2. **📤 Centre d'Envoi** - Formations/Alertes/Documents/Évaluations
 3. **Incidents** - Déclaration, suivi, enquêtes
@@ -94,6 +100,7 @@
 ### DRH (Brigitte NGUEMA - DRH001)
 
 **Navigation**:
+
 ```
 🏠 Tableau de bord
 📰 SOGARA Connect
@@ -105,6 +112,7 @@
 ```
 
 **Fonctionnalités**:
+
 1. **Planning** - Gestion vacations tous employés
 2. **Paie** - Génération masse salariale, validation
 3. **Personnel** - Gestion complète RH
@@ -114,6 +122,7 @@
 ### DG (Daniel MVOU - DG001)
 
 **Vue stratégique**:
+
 ```
 🏠 Tableau de bord Direction
 📰 SOGARA Connect
@@ -132,6 +141,7 @@
 ### Candidat Externe: Jean-Luc BERNARD
 
 **Profil**:
+
 ```json
 {
   "firstName": "Jean-Luc",
@@ -160,6 +170,7 @@
   - 2 Réponses longues (correction manuelle)
 
 **Habilitation accordée si réussite**:
+
 ```
 Nom: "Accès Zones Production Autorisé"
 Code: HAB-PROD-EXT-001
@@ -191,7 +202,7 @@ Formulaire:
   Société: Total Energies Gabon
   Poste: Technicien Maintenance
   Raison: Maintenance compresseur
-  
+
 [Enregistrer]
 → Candidat créé (status: pending)
 ```
@@ -210,11 +221,12 @@ HSE Dashboard → Centre d'Envoi → Onglet "Évaluations"
 
 3. Paramètres:
    Date limite: 15/02/2025
-   
+
 [Envoyer invitation]
 ```
 
 **Email auto envoyé**:
+
 ```
 À: jl.bernard@totalenergies.com
 Objet: Test d'Habilitation SOGARA
@@ -253,7 +265,7 @@ Jean-Luc clique sur le lien
    - Question 4/10 (Texte court: 3 EPI)
    - Question 5/10 (Texte long: Procédure LOTO)
    - Questions 6-10...
-   
+
 → Soumission:
    [✓ Soumettre mes réponses]
    → Status: in_progress → submitted
@@ -286,7 +298,7 @@ Question 4 (Texte court - 3 EPI):
   Réponse: "Casque, chaussures de sécurité, lunettes"
   → Points: [15]/15
   → Commentaire: "Parfait"
-  
+
 Question 5 (Texte long - LOTO):
   Réponse: "La procédure LOTO comprend:
             1. Notification équipe
@@ -313,6 +325,7 @@ Candidat apte à intervenir en zone production.]
 ```
 
 **Actions automatiques après validation**:
+
 1. ✅ Status: submitted → passed
 2. ✅ Score enregistré: 88%
 3. ✅ Certificat généré
@@ -331,6 +344,7 @@ Candidat apte à intervenir en zone production.]
 ### Étape 6: Résultat (Jean-Luc)
 
 **Email reçu**:
+
 ```
 À: jl.bernard@totalenergies.com
 Objet: ✅ Test Réussi - Habilitation Accordée
@@ -366,6 +380,7 @@ Responsable HSE - SOGARA
 ```
 
 **Jean-Luc peut**:
+
 - Télécharger son certificat PDF
 - Présenter à l'accueil SOGARA
 - Accéder zones production pendant 12 mois
@@ -375,6 +390,7 @@ Responsable HSE - SOGARA
 ## 📋 Fichiers Créés Cette Session
 
 ### Base de Données (Convex)
+
 1. `convex/schema.ts` - 18 tables
 2. `convex/vacations.ts`
 3. `convex/payslips.ts`
@@ -382,6 +398,7 @@ Responsable HSE - SOGARA
 5. `convex/externalCandidates.ts`
 
 ### Types & Hooks
+
 6. `src/types/index.ts` - 100+ types
 7. `src/hooks/useHSEContent.ts`
 8. `src/hooks/useEmployeeHSEInbox.ts`
@@ -390,9 +407,11 @@ Responsable HSE - SOGARA
 11. `src/hooks/useAssessments.ts`
 
 ### Services
+
 12. `src/services/payroll-calculator.service.ts`
 
 ### Composants HSE
+
 13. `src/components/hse/HSEContentHub.tsx`
 14. `src/components/hse/HSERecipientSelector.tsx`
 15. `src/components/hse/HSENotificationPopover.tsx`
@@ -401,10 +420,12 @@ Responsable HSE - SOGARA
 18. `src/components/hse/HSETrainingAssignmentSystem.tsx`
 
 ### Composants Employé
+
 19. `src/components/employee/EmployeeHSEInbox.tsx`
 20. `src/components/employee/HSETrainingModulePlayer.tsx`
 
 ### Composants UI
+
 21. `src/components/ui/switch.tsx`
 22. `src/components/ui/table.tsx`
 23. `src/components/ui/checkbox.tsx`
@@ -412,6 +433,7 @@ Responsable HSE - SOGARA
 25. `src/components/ui/radio-group.tsx`
 
 ### Pages Employé
+
 26. `src/pages/EmployeeDashboard.tsx`
 27. `src/pages/employee/MonPlanningPage.tsx`
 28. `src/pages/employee/MaPaiePage.tsx`
@@ -420,6 +442,7 @@ Responsable HSE - SOGARA
 31. `src/pages/employee/MesHabilitationsPage.tsx`
 
 ### Pages Direction/RH
+
 32. `src/pages/AdminDashboard.tsx`
 33. `src/pages/DirectionDashboard.tsx`
 34. `src/pages/RHDashboard.tsx`
@@ -427,9 +450,11 @@ Responsable HSE - SOGARA
 36. `src/pages/PaiePage.tsx`
 
 ### Données
+
 37. `src/data/sample-assessment.json` - Test habilitation complet
 
 ### Documentation (15+ fichiers MD)
+
 38-52. Guides, architectures, workflows...
 
 ---
@@ -437,6 +462,7 @@ Responsable HSE - SOGARA
 ## 🚀 Pour Tester le Système Complet
 
 ### 1. Redémarrer Convex
+
 ```bash
 # Terminal
 npm run convex:dev
@@ -477,20 +503,24 @@ Via HSE Dashboard → Évaluations → Créer
 ### 4. Test Complet
 
 **HSE (Marie-Claire)**:
+
 - Assigne test à Jean-Luc
 - Email envoyé avec lien
 
 **Jean-Luc**:
+
 - Clique lien
 - Passe test (45 min)
 - Soumet réponses
 
 **HSE**:
+
 - Corrige questions manuelles
 - Valide (score 88%)
 - **Habilitation ajoutée automatiquement**
 
 **Jean-Luc**:
+
 - Reçoit email succès + certificat
 - Habilitation valide 12 mois
 - Peut accéder raffinerie
@@ -527,6 +557,6 @@ Le système est PRODUCTION READY ! 🏭✅
 
 ---
 
-**Prochaine étape**: Créer les composants UI pour le système d'évaluations (Créateur, Player, Correcteur) pour finaliser l'expérience utilisateur complète. 
+**Prochaine étape**: Créer les composants UI pour le système d'évaluations (Créateur, Player, Correcteur) pour finaliser l'expérience utilisateur complète.
 
 Voulez-vous que je continue maintenant ? 🎯

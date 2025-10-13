@@ -1,68 +1,83 @@
-import { useState } from 'react';
-import { Newspaper, Calendar, Megaphone, Video, Image, Plus, Heart, MessageCircle, Share2, Eye, Filter, Search, Edit } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAuth } from '@/contexts/AppContext';
-import { usePosts } from '@/hooks/usePosts';
-import { Post } from '@/types';
-import { StatusBadge } from '@/components/ui/status-badge';
-import { PostEditor } from '@/components/PostEditor';
-import { VideoPlayer } from '@/components/VideoPlayer';
+import { useState } from 'react'
+import {
+  Newspaper,
+  Calendar,
+  Megaphone,
+  Video,
+  Image,
+  Plus,
+  Heart,
+  MessageCircle,
+  Share2,
+  Eye,
+  Filter,
+  Search,
+  Edit,
+} from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useAuth } from '@/contexts/AppContext'
+import { usePosts } from '@/hooks/usePosts'
+import { Post } from '@/types'
+import { StatusBadge } from '@/components/ui/status-badge'
+import { PostEditor } from '@/components/PostEditor'
+import { VideoPlayer } from '@/components/VideoPlayer'
 
 export function SOGARAConnectPage() {
-  const { hasAnyRole, currentUser } = useAuth();
-  const { posts, createPost, updatePost } = usePosts();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState<'all' | Post['category']>('all');
-  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
-  const [showEditor, setShowEditor] = useState(false);
-  const [editingPost, setEditingPost] = useState<Post | null>(null);
+  const { hasAnyRole, currentUser } = useAuth()
+  const { posts, createPost, updatePost } = usePosts()
+  const [searchTerm, setSearchTerm] = useState('')
+  const [categoryFilter, setCategoryFilter] = useState<'all' | Post['category']>('all')
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null)
+  const [showEditor, setShowEditor] = useState(false)
+  const [editingPost, setEditingPost] = useState<Post | null>(null)
 
-  const canManagePosts = hasAnyRole(['ADMIN', 'COMMUNICATION']);
+  const canManagePosts = hasAnyRole(['ADMIN', 'COMMUNICATION'])
 
   const filteredPosts = posts.filter(post => {
-    if (post.status !== 'published' && !canManagePosts) return false;
-    
-    const matchesSearch = searchTerm === '' || 
+    if (post.status !== 'published' && !canManagePosts) return false
+
+    const matchesSearch =
+      searchTerm === '' ||
       post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       post.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      post.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
-    
-    const matchesCategory = categoryFilter === 'all' || post.category === categoryFilter;
-    
-    return matchesSearch && matchesCategory;
-  });
+      post.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
 
-  const publishedPosts = filteredPosts.filter(p => p.status === 'published');
+    const matchesCategory = categoryFilter === 'all' || post.category === categoryFilter
+
+    return matchesSearch && matchesCategory
+  })
+
+  const publishedPosts = filteredPosts.filter(p => p.status === 'published')
 
   const categoryIcons = {
     news: Newspaper,
     activity: Calendar,
     announcement: Megaphone,
     event: Calendar,
-  };
+  }
 
   const categoryColors = {
     news: 'bg-primary',
     activity: 'bg-success',
     announcement: 'bg-warning',
     event: 'bg-secondary',
-  };
+  }
 
   const categoryLabels = {
     news: 'Actualités',
     activity: 'Activités',
     announcement: 'Annonces',
     event: 'Événements',
-  };
+  }
 
   const getAuthorName = (authorId: string) => {
     // Dans un vrai cas, on récupérerait depuis les employés
-    return 'Service Communication';
-  };
+    return 'Service Communication'
+  }
 
   const formatDate = (date: Date) => {
     return new Date(date).toLocaleDateString('fr-FR', {
@@ -70,64 +85,64 @@ export function SOGARAConnectPage() {
       month: 'long',
       year: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
+      minute: '2-digit',
+    })
+  }
 
   const stats = {
     totalPosts: publishedPosts.length,
     thisWeek: publishedPosts.filter(p => {
-      const weekAgo = new Date();
-      weekAgo.setDate(weekAgo.getDate() - 7);
-      return p.publishedAt && p.publishedAt >= weekAgo;
+      const weekAgo = new Date()
+      weekAgo.setDate(weekAgo.getDate() - 7)
+      return p.publishedAt && p.publishedAt >= weekAgo
     }).length,
     categories: {
       news: publishedPosts.filter(p => p.category === 'news').length,
       activities: publishedPosts.filter(p => p.category === 'activity').length,
       announcements: publishedPosts.filter(p => p.category === 'announcement').length,
       events: publishedPosts.filter(p => p.category === 'event').length,
-    }
-  };
+    },
+  }
 
   const handleCreatePost = () => {
-    setEditingPost(null);
-    setShowEditor(true);
-  };
+    setEditingPost(null)
+    setShowEditor(true)
+  }
 
   const handleEditPost = (post: Post) => {
-    setEditingPost(post);
-    setShowEditor(true);
-  };
+    setEditingPost(post)
+    setShowEditor(true)
+  }
 
   const handleSavePost = async (postData: Omit<Post, 'id' | 'createdAt' | 'updatedAt'>) => {
     try {
       if (editingPost) {
-        await updatePost(editingPost.id, postData);
+        await updatePost(editingPost.id, postData)
       } else {
-        await createPost(postData);
+        await createPost(postData)
       }
-      setShowEditor(false);
-      setEditingPost(null);
+      setShowEditor(false)
+      setEditingPost(null)
     } catch (error) {
-      console.error('Error saving post:', error);
+      console.error('Error saving post:', error)
     }
-  };
+  }
 
   const handleCancelEdit = () => {
-    setShowEditor(false);
-    setEditingPost(null);
-  };
+    setShowEditor(false)
+    setEditingPost(null)
+  }
 
   // Si on est en mode édition, afficher l'éditeur
   if (showEditor) {
     return (
-      <PostEditor 
+      <PostEditor
         post={editingPost || undefined}
         onSave={handleSavePost}
         onCancel={handleCancelEdit}
         isEditing={!!editingPost}
       />
-    );
+    )
   }
 
   return (
@@ -140,9 +155,7 @@ export function SOGARAConnectPage() {
             </div>
             SOGARA Connect
           </h1>
-          <p className="text-muted-foreground">
-            Actualités, activités et vie de l'entreprise
-          </p>
+          <p className="text-muted-foreground">Actualités, activités et vie de l'entreprise</p>
         </div>
         {canManagePosts && (
           <Button className="gap-2 gradient-primary" onClick={handleCreatePost}>
@@ -210,20 +223,20 @@ export function SOGARAConnectPage() {
           <Input
             placeholder="Rechercher des publications..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={e => setSearchTerm(e.target.value)}
             className="pl-10"
           />
         </div>
-        
+
         <div className="flex gap-2">
-          {(['all', 'news', 'activity', 'announcement', 'event'] as const).map((category) => (
+          {(['all', 'news', 'activity', 'announcement', 'event'] as const).map(category => (
             <Button
               key={category}
               variant={categoryFilter === category ? 'default' : 'outline'}
               size="sm"
               onClick={() => setCategoryFilter(category)}
             >
-              {category === 'all' ? 'Tous' : categoryLabels[category as Post['category']]}
+              {category === 'all' ? 'Tous' : categoryLabels[category]}
             </Button>
           ))}
         </div>
@@ -233,15 +246,20 @@ export function SOGARAConnectPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           <div className="space-y-6">
-            {publishedPosts.map((post) => {
-              const CategoryIcon = categoryIcons[post.category];
-              
+            {publishedPosts.map(post => {
+              const CategoryIcon = categoryIcons[post.category]
+
               return (
-                <Card key={post.id} className="industrial-card hover:shadow-[var(--shadow-elevated)] transition-all">
+                <Card
+                  key={post.id}
+                  className="industrial-card hover:shadow-[var(--shadow-elevated)] transition-all"
+                >
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 ${categoryColors[post.category]} rounded-lg flex items-center justify-center`}>
+                        <div
+                          className={`w-10 h-10 ${categoryColors[post.category]} rounded-lg flex items-center justify-center`}
+                        >
                           <CategoryIcon className="w-5 h-5 text-white" />
                         </div>
                         <div>
@@ -255,16 +273,22 @@ export function SOGARAConnectPage() {
                       </div>
                       {canManagePosts && (
                         <div className="flex gap-2">
-                          <StatusBadge 
-                            status={post.status === 'published' ? 'Publié' : post.status === 'draft' ? 'Brouillon' : 'Archivé'}
+                          <StatusBadge
+                            status={
+                              post.status === 'published'
+                                ? 'Publié'
+                                : post.status === 'draft'
+                                  ? 'Brouillon'
+                                  : 'Archivé'
+                            }
                             variant={post.status === 'published' ? 'success' : 'warning'}
                           />
-                          <Button 
-                            variant="outline" 
+                          <Button
+                            variant="outline"
                             size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleEditPost(post);
+                            onClick={e => {
+                              e.stopPropagation()
+                              handleEditPost(post)
                             }}
                           >
                             <Edit className="w-4 h-4" />
@@ -273,17 +297,19 @@ export function SOGARAConnectPage() {
                       )}
                     </div>
                   </CardHeader>
-                  
+
                   <CardContent className="space-y-4">
                     {post.featuredImage && (
                       <div className="relative aspect-video rounded-lg overflow-hidden">
-                        <img 
-                          src={post.featuredImage} 
+                        <img
+                          src={post.featuredImage}
                           alt={post.title}
                           className="w-full h-full object-cover"
                           loading="lazy"
                           decoding="async"
-                          onError={(e) => { e.currentTarget.src = '/placeholder.svg'; }}
+                          onError={e => {
+                            e.currentTarget.src = '/placeholder.svg'
+                          }}
                         />
                         {post.videoUrl && (
                           <div className="absolute inset-0 flex items-center justify-center bg-black/20">
@@ -294,32 +320,34 @@ export function SOGARAConnectPage() {
                         )}
                       </div>
                     )}
-                    
+
                     {post.videoUrl && !post.featuredImage && (
                       <VideoPlayer url={post.videoUrl} title={post.title} />
                     )}
-                    
-                    <p className="text-muted-foreground leading-relaxed">
-                      {post.excerpt}
-                    </p>
-                    
+
+                    <p className="text-muted-foreground leading-relaxed">{post.excerpt}</p>
+
                     {post.tags.length > 0 && (
                       <div className="flex flex-wrap gap-2">
                         {post.tags.map((tag, idx) => (
-                          <Badge key={`${post.id}-${idx}-${tag}`} variant="secondary" className="text-xs">
+                          <Badge
+                            key={`${post.id}-${idx}-${tag}`}
+                            variant="secondary"
+                            className="text-xs"
+                          >
                             {tag}
                           </Badge>
                         ))}
                       </div>
                     )}
-                    
+
                     <div className="flex items-center justify-between pt-4 border-t">
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
                         <span>Par {getAuthorName(post.authorId)}</span>
                         <span>•</span>
                         <span>{formatDate(post.publishedAt || post.createdAt)}</span>
                       </div>
-                      
+
                       <div className="flex items-center gap-3">
                         <Button variant="ghost" size="sm" className="gap-2">
                           <Heart className="w-4 h-4" />
@@ -336,7 +364,7 @@ export function SOGARAConnectPage() {
                     </div>
                   </CardContent>
                 </Card>
-              );
+              )
             })}
           </div>
 
@@ -346,10 +374,9 @@ export function SOGARAConnectPage() {
                 <Newspaper className="w-16 h-16 mx-auto mb-4 text-muted-foreground opacity-50" />
                 <h3 className="text-lg font-medium mb-2">Aucune publication trouvée</h3>
                 <p className="text-muted-foreground">
-                  {searchTerm || categoryFilter !== 'all' 
+                  {searchTerm || categoryFilter !== 'all'
                     ? 'Essayez de modifier vos filtres de recherche'
-                    : 'Les actualités de SOGARA apparaîtront ici'
-                  }
+                    : 'Les actualités de SOGARA apparaîtront ici'}
                 </p>
               </CardContent>
             </Card>
@@ -364,13 +391,18 @@ export function SOGARAConnectPage() {
             </CardHeader>
             <CardContent className="space-y-3">
               {Object.entries(categoryLabels).map(([key, label]) => {
-                const count = stats.categories[key as keyof typeof stats.categories];
-                const Icon = categoryIcons[key as Post['category']];
-                
+                const count = stats.categories[key as keyof typeof stats.categories]
+                const Icon = categoryIcons[key as Post['category']]
+
                 return (
-                  <div key={key} className="flex items-center justify-between p-2 hover:bg-muted/30 rounded-lg transition-colors">
+                  <div
+                    key={key}
+                    className="flex items-center justify-between p-2 hover:bg-muted/30 rounded-lg transition-colors"
+                  >
                     <div className="flex items-center gap-3">
-                      <div className={`w-6 h-6 ${categoryColors[key as Post['category']]} rounded flex items-center justify-center`}>
+                      <div
+                        className={`w-6 h-6 ${categoryColors[key as Post['category']]} rounded flex items-center justify-center`}
+                      >
                         <Icon className="w-3 h-3 text-white" />
                       </div>
                       <span className="text-sm font-medium">{label}</span>
@@ -379,7 +411,7 @@ export function SOGARAConnectPage() {
                       {count}
                     </Badge>
                   </div>
-                );
+                )
               })}
             </CardContent>
           </Card>
@@ -389,15 +421,16 @@ export function SOGARAConnectPage() {
               <CardTitle className="text-lg">À la une</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {publishedPosts.slice(0, 3).map((post) => (
-                <div key={post.id} className="flex gap-3 p-2 hover:bg-muted/30 rounded-lg transition-colors cursor-pointer">
+              {publishedPosts.slice(0, 3).map(post => (
+                <div
+                  key={post.id}
+                  className="flex gap-3 p-2 hover:bg-muted/30 rounded-lg transition-colors cursor-pointer"
+                >
                   <div className="w-12 h-12 bg-primary/10 rounded-lg flex-shrink-0 flex items-center justify-center">
                     <Newspaper className="w-5 h-5 text-primary" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-sm font-medium line-clamp-2 mb-1">
-                      {post.title}
-                    </h4>
+                    <h4 className="text-sm font-medium line-clamp-2 mb-1">{post.title}</h4>
                     <p className="text-xs text-muted-foreground">
                       {formatDate(post.publishedAt || post.createdAt)}
                     </p>
@@ -409,5 +442,5 @@ export function SOGARAConnectPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }

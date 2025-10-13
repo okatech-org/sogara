@@ -14,6 +14,7 @@
 **URL**: `http://localhost:8081/app/hse`
 
 #### Actions:
+
 ```
 1. Login HSE001
 2. Navigation → /app/hse
@@ -22,7 +23,7 @@
 
 5. Sélection formation:
    Dropdown → "HSE-002 - Port et Utilisation des EPI"
-   
+
 6. Preview affiché:
    ┌──────────────────────────────────┐
    │ [Obligatoire] [EPI-ADVANCED]     │
@@ -36,7 +37,7 @@
 7. Sélection destinataire:
    Onglet "Individuel" →
    ☑ Pierre BEKALE (EMP001) - Production
-   
+
    Badge: "1 collaborateur sélectionné" ✅
 
 8. Paramètres:
@@ -66,6 +67,7 @@
 ```
 
 **Données créées**:
+
 ```typescript
 // HSEContentItem
 {
@@ -106,6 +108,7 @@
 #### Ce que Pierre voit:
 
 **Dashboard employé**:
+
 ```
 ┌────────────────────────────────────────┐
 │ Mon Espace HSE          [1 nouveau 🔴]│ ← Badge rouge qui pulse
@@ -126,6 +129,7 @@
 ```
 
 **Indicateurs visuels**:
+
 - ✅ Bordure bleue (border-2 border-primary) si nouveau contenu
 - ✅ Badge rouge "1 nouveau" avec animation pulse
 - ✅ Point rouge animé (animate-ping)
@@ -140,6 +144,7 @@
 **Action**: Pierre clique sur la card "Mon Espace HSE"
 
 **Dialog s'ouvre** (max-w-5xl):
+
 ```
 ┌────────────────────────────────────────────────────┐
 │ Mon Espace HSE Personnel                      [X]  │
@@ -177,6 +182,7 @@
 **Action**: Pierre clique sur "▶️ Démarrer"
 
 **Effets immédiats**:
+
 ```typescript
 1. markAsRead(assignment.id)
    → status: 'sent' → 'read'
@@ -191,6 +197,7 @@
 ```
 
 **Nouveau Dialog s'ouvre** (HSETrainingModulePlayer):
+
 ```
 ┌────────────────────────────────────────────────────┐
 │ Module de Formation Interactive            [Quitter]│
@@ -226,14 +233,15 @@
 ```
 
 **Progression trackée**:
+
 ```typescript
 // À chaque changement d'étape
 useEffect(() => {
   if (progress > 0 && progress < 100) {
-    updateProgress(assignment.id, progress);
+    updateProgress(assignment.id, progress)
     // → HSEAssignment.progress mis à jour
   }
-}, [progress]);
+}, [progress])
 ```
 
 ---
@@ -241,6 +249,7 @@ useEffect(() => {
 ### 5️⃣ NAVIGATION DANS LE MODULE
 
 **Actions Pierre**:
+
 ```
 Étape 1: Objectif 1 (25%)
   → Clic "Suivant" → progress: 25%
@@ -261,6 +270,7 @@ useEffect(() => {
 ### 6️⃣ ÉVALUATION FINALE (QUIZ)
 
 **Interface Quiz**:
+
 ```
 ┌────────────────────────────────────────────────────┐
 │ Évaluation Finale                                  │
@@ -289,15 +299,16 @@ useEffect(() => {
 **Pierre répond aux 3 questions** et clique "Valider"
 
 **Calcul du score**:
+
 ```typescript
-let correct = 0;
+let correct = 0
 quizQuestions.forEach(q => {
   if (quizAnswers[q.id] === q.correctAnswer) {
-    correct++;
+    correct++
   }
-});
+})
 
-const score = Math.round((correct / quizQuestions.length) * 100);
+const score = Math.round((correct / quizQuestions.length) * 100)
 // Exemple: 3/3 correct = 100%
 ```
 
@@ -308,6 +319,7 @@ const score = Math.round((correct / quizQuestions.length) * 100);
 **Cas 1: Réussite (score ≥ 85%)**
 
 **Affichage**:
+
 ```
 ┌────────────────────────────────────────────────────┐
 │          ┌────────┐                                │
@@ -322,28 +334,30 @@ const score = Math.round((correct / quizQuestions.length) * 100);
 ```
 
 **Traitement backend**:
+
 ```typescript
 // completeTraining() appelé
-const certificateUrl = `certificate_${assignment.id}_${Date.now()}.pdf`;
+const certificateUrl = `certificate_${assignment.id}_${Date.now()}.pdf`
 
-completeTraining(assignment.id, 100, certificateUrl);
+completeTraining(assignment.id, 100, certificateUrl)
 // → HSEAssignment mise à jour:
 //   status: 'in_progress' → 'completed'
 //   completedAt: Date.now()
 //   score: 100
 //   certificate: certificateUrl
 
-setShowCertificate(true);
+setShowCertificate(true)
 
 toast({
   title: '🎉 Formation réussie !',
-  description: 'Score: 100% - Certificat généré'
-});
+  description: 'Score: 100% - Certificat généré',
+})
 ```
 
 **Cas 2: Échec (score < 85%)**
 
 **Affichage**:
+
 ```
 ┌────────────────────────────────────────────────────┐
 │          ┌────────┐                                │
@@ -376,6 +390,7 @@ Pierre peut revoir les réponses et retenter le quiz.
 **Si réussite** (score ≥ 85%):
 
 **Écran certificat**:
+
 ```
 ┌────────────────────────────────────────────────────┐
 │                                                    │
@@ -403,6 +418,7 @@ Pierre peut revoir les réponses et retenter le quiz.
 ```
 
 **Action Pierre**: Clic "Télécharger certificat"
+
 - Toast: "Téléchargement - Le certificat sera disponible..."
 - Retour automatique à l'inbox (1 seconde)
 
@@ -415,6 +431,7 @@ Pierre peut revoir les réponses et retenter le quiz.
 Pierre retourne à `/app/dashboard`
 
 **Card "Mon Espace HSE" mise à jour**:
+
 ```
 ┌────────────────────────────────────────┐
 │ Mon Espace HSE          [0 nouveau]    │ ← Badge disparaît
@@ -433,6 +450,7 @@ Pierre retourne à `/app/dashboard`
 ```
 
 **Dans l'inbox**:
+
 ```
 Onglet "Mes Formations (1)":
 
@@ -456,6 +474,7 @@ Onglet "Mes Formations (1)":
 **Recherche "Pierre BEKALE"**:
 
 **Vue détaillée**:
+
 ```
 ┌────────────────────────────────────────────────────┐
 │ Profil de formation HSE                            │
@@ -549,17 +568,20 @@ Onglet "Mes Formations (1)":
 ## 🎯 Composants Impliqués
 
 ### Côté HSE (Envoi)
+
 1. **HSEContentHub** - Interface d'envoi
 2. **HSERecipientSelector** - Sélection destinataires
 3. **useHSEContent** - Logique création contenu/assignments
 
 ### Côté Employé (Réception)
+
 1. **Dashboard** - Card "Mon Espace HSE" avec badges
 2. **EmployeeHSEInbox** - Liste formations/alertes/documents
 3. **HSETrainingModulePlayer** - Module interactif
 4. **useEmployeeHSEInbox** - Logique inbox personnel
 
 ### Partagés
+
 1. **HSEAssignment** - Type commun
 2. **LocalStorage** - Persistence (sogara_hse_assignments)
 
@@ -568,6 +590,7 @@ Onglet "Mes Formations (1)":
 ## ✅ Fonctionnalités Implémentées
 
 ### Formation
+
 - [x] Envoi par HSE avec sélection destinataires
 - [x] Réception dans inbox employé
 - [x] Badge notification visible
@@ -581,12 +604,14 @@ Onglet "Mes Formations (1)":
 - [x] Suivi par HSE
 
 ### Alerte
+
 - [x] Création et envoi
 - [x] Réception dans inbox
 - [x] Bouton "Accusé de réception"
 - [x] Marquage comme lu
 
 ### Document
+
 - [x] Partage URL
 - [x] Réception dans inbox
 - [x] Bouton "Télécharger"

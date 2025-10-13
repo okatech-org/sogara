@@ -3,6 +3,7 @@
 ## 📋 Analyse du Besoin
 
 ### Acteurs
+
 1. **Responsable HSE** (Marie-Claire NZIEGE - HSE001)
    - Envoie: formations, informations, alertes, procédures
    - Gère: conformité, incidents, habilitations
@@ -46,6 +47,7 @@
 ## 🎯 Architecture Proposée : "HSE Hub & Inbox"
 
 ### Principe
+
 - **1 Hub d'Émission** (Responsable HSE)
 - **N Inbox de Réception** (1 par collaborateur)
 - **Système de Routage** intelligent selon activité
@@ -57,6 +59,7 @@
 ### NIVEAU 1: Hub HSE (Responsable)
 
 #### **HSEContentHub.tsx** (NOUVEAU)
+
 ```
 ┌────────────────────────────────────────────┐
 │          HUB D'ENVOI HSE                   │
@@ -95,6 +98,7 @@
 ```
 
 **Fonctionnalités**:
+
 - ✅ Sélection contenu par type (Formation, Alerte, Document, Procédure)
 - ✅ Multi-sélection destinataires (service, rôle, individuel, mixte)
 - ✅ Preview destinataires en temps réel
@@ -106,6 +110,7 @@
 ### NIVEAU 2: Inbox Employé (Collaborateur)
 
 #### **EmployeeHSEInbox.tsx** (NOUVEAU)
+
 ```
 ┌────────────────────────────────────────────┐
 │        MON ESPACE HSE PERSONNEL            │
@@ -150,6 +155,7 @@
 ```
 
 **Fonctionnalités**:
+
 - ✅ Vue d'ensemble conformité personnelle
 - ✅ Formations assignées avec échéances
 - ✅ Alertes et informations HSE reçues
@@ -163,38 +169,38 @@
 ### 1. Types de Contenu HSE
 
 ```typescript
-type HSEContentType = 
-  | 'training'        // Formation à suivre
-  | 'alert'           // Alerte sécurité
-  | 'info'            // Information générale
-  | 'document'        // Document/procédure
-  | 'procedure'       // Procédure à appliquer
+type HSEContentType =
+  | 'training' // Formation à suivre
+  | 'alert' // Alerte sécurité
+  | 'info' // Information générale
+  | 'document' // Document/procédure
+  | 'procedure' // Procédure à appliquer
   | 'equipment_check' // Vérification EPI
-  | 'quiz'            // Test de connaissances
-  | 'reminder';       // Rappel
+  | 'quiz' // Test de connaissances
+  | 'reminder' // Rappel
 
 interface HSEContentItem {
-  id: string;
-  type: HSEContentType;
-  title: string;
-  description: string;
-  priority: 'low' | 'medium' | 'high' | 'critical';
-  
+  id: string
+  type: HSEContentType
+  title: string
+  description: string
+  priority: 'low' | 'medium' | 'high' | 'critical'
+
   // Contenu spécifique selon type
-  trainingId?: string;        // Si type = 'training'
-  documentUrl?: string;       // Si type = 'document'
-  procedureSteps?: string[];  // Si type = 'procedure'
-  quizQuestions?: any[];      // Si type = 'quiz'
-  
+  trainingId?: string // Si type = 'training'
+  documentUrl?: string // Si type = 'document'
+  procedureSteps?: string[] // Si type = 'procedure'
+  quizQuestions?: any[] // Si type = 'quiz'
+
   // Métadonnées
-  createdBy: string;          // ID Responsable HSE
-  createdAt: Date;
-  validUntil?: Date;          // Date d'expiration
-  
+  createdBy: string // ID Responsable HSE
+  createdAt: Date
+  validUntil?: Date // Date d'expiration
+
   // Ciblage
-  targetServices?: string[];   // Services concernés
-  targetRoles?: UserRole[];    // Rôles concernés
-  targetEmployees?: string[];  // Employés spécifiques
+  targetServices?: string[] // Services concernés
+  targetRoles?: UserRole[] // Rôles concernés
+  targetEmployees?: string[] // Employés spécifiques
 }
 ```
 
@@ -202,33 +208,33 @@ interface HSEContentItem {
 
 ```typescript
 interface HSEAssignment {
-  id: string;
-  contentId: string;           // Lien vers HSEContentItem
-  contentType: HSEContentType;
-  employeeId: string;
-  
+  id: string
+  contentId: string // Lien vers HSEContentItem
+  contentType: HSEContentType
+  employeeId: string
+
   // Statut de traitement
-  status: 'sent' | 'received' | 'read' | 'in_progress' | 'completed' | 'expired';
-  
+  status: 'sent' | 'received' | 'read' | 'in_progress' | 'completed' | 'expired'
+
   // Dates importantes
-  assignedAt: Date;
-  dueDate?: Date;              // Échéance
-  reminderDate?: Date;         // Date rappel automatique
-  
+  assignedAt: Date
+  dueDate?: Date // Échéance
+  reminderDate?: Date // Date rappel automatique
+
   // Interaction employé
-  readAt?: Date;
-  startedAt?: Date;
-  completedAt?: Date;
-  acknowledgedAt?: Date;       // Accusé de réception
-  
+  readAt?: Date
+  startedAt?: Date
+  completedAt?: Date
+  acknowledgedAt?: Date // Accusé de réception
+
   // Suivi
-  progress?: number;           // 0-100% pour formations
-  score?: number;              // Score si quiz/test
-  certificate?: string;        // URL certificat si formation
-  
+  progress?: number // 0-100% pour formations
+  score?: number // Score si quiz/test
+  certificate?: string // URL certificat si formation
+
   // Métadonnées
-  sentBy: string;              // ID Responsable HSE
-  notes?: string;              // Notes privées HSE
+  sentBy: string // ID Responsable HSE
+  notes?: string // Notes privées HSE
 }
 ```
 
@@ -431,11 +437,13 @@ HSEAssignment mise à jour:
 ### Option A: "Hub Centralisé" ⭐ RECOMMANDÉE
 
 **Avantages**:
+
 - ✅ 1 seul point d'envoi (simplicité)
 - ✅ Workflow unifié pour tous types de contenu
 - ✅ Moins de code à maintenir
 
 **Structure**:
+
 ```
 HSE Dashboard
   └─ Onglet "📤 Centre d'Envoi HSE" (NOUVEAU)
@@ -453,6 +461,7 @@ HSE Dashboard
 ```
 
 **Composants**:
+
 1. `HSEContentHub.tsx` - Container principal
 2. `HSETrainingAssigner.tsx` - Assignation formations
 3. `HSEAlertSender.tsx` - Envoi alertes/infos
@@ -462,10 +471,12 @@ HSE Dashboard
 ### Option B: "Actions Contextuelles"
 
 **Avantages**:
+
 - ✅ Envoi depuis le contexte (ex: depuis le catalogue)
 - ✅ Moins de clics pour actions fréquentes
 
 **Inconvénient**:
+
 - ❌ Boutons d'envoi dispersés dans plusieurs endroits
 - ❌ Expérience moins cohérente
 
@@ -484,7 +495,7 @@ HSE Dashboard
   <HSEContentHub
     employees={state.employees}
     trainings={trainings}
-    onContentSent={(assignments) => {
+    onContentSent={assignments => {
       // Créer les attributions
       // Envoyer les notifications
       // Mettre à jour le suivi
@@ -516,15 +527,15 @@ HSE Dashboard
      ☑ Production (15)
      ☐ Maintenance (8)
      ☐ Administration (3)
-   
+
    Mode 2: Par Rôle
      ☑ EMPLOYE (20)
      ☐ SUPERVISEUR (5)
-   
+
    Mode 3: Individuel
      Recherche: [Pierre BEKALE...]
      ☑ Pierre BEKALE (EMP001)
-   
+
    → Preview: 15 collaborateurs sélectionnés
              2 déjà formés (exclus auto)
              = 13 attributions
@@ -544,7 +555,8 @@ HSE Dashboard
 
 #### 2.1 EmployeeHSEInbox (Nouveau composant)
 
-**Intégration**: 
+**Intégration**:
+
 - Dans Dashboard employé (card "Mon Espace HSE")
 - Accessible depuis navigation (lien "HSE" si assignations)
 
@@ -568,36 +580,24 @@ HSE Dashboard
 ```tsx
 <Tabs defaultValue="trainings">
   <TabsList>
-    <TabsTrigger value="trainings">
-      Formations ({trainingCount})
-    </TabsTrigger>
-    <TabsTrigger value="alerts">
-      Alertes ({alertCount})
-    </TabsTrigger>
-    <TabsTrigger value="documents">
-      Documents ({docCount})
-    </TabsTrigger>
+    <TabsTrigger value="trainings">Formations ({trainingCount})</TabsTrigger>
+    <TabsTrigger value="alerts">Alertes ({alertCount})</TabsTrigger>
+    <TabsTrigger value="documents">Documents ({docCount})</TabsTrigger>
   </TabsList>
 
   <TabsContent value="trainings">
-    <EmployeeTrainingList 
+    <EmployeeTrainingList
       assignments={trainings}
-      onStartTraining={(id) => navigate(`/app/training/${id}`)}
+      onStartTraining={id => navigate(`/app/training/${id}`)}
     />
   </TabsContent>
 
   <TabsContent value="alerts">
-    <EmployeeAlertList 
-      assignments={alerts}
-      onAcknowledge={(id) => acknowledgeAlert(id)}
-    />
+    <EmployeeAlertList assignments={alerts} onAcknowledge={id => acknowledgeAlert(id)} />
   </TabsContent>
 
   <TabsContent value="documents">
-    <EmployeeDocumentList 
-      assignments={documents}
-      onDownload={(url) => downloadDocument(url)}
-    />
+    <EmployeeDocumentList assignments={documents} onDownload={url => downloadDocument(url)} />
   </TabsContent>
 </Tabs>
 ```
@@ -609,17 +609,20 @@ HSE Dashboard
 ### Personnel Production
 
 **Formations automatiques**:
+
 - 🔴 HSE-015 (H2S) - CRITIQUE
 - 🔴 HSE-004 (Espace Confiné) - CRITIQUE
 - 🟡 HSE-006 (Produits Chimiques)
 - 🟡 HSE-002 (EPI Avancé)
 
 **Alertes fréquentes**:
+
 - Procédures H2S mises à jour
 - Consignes manipulation hydrocarbures
 - Rappels port EPI spécifiques
 
 **Documents permanents**:
+
 - FDS (Fiches Données Sécurité)
 - Procédures urgence H2S
 - Check-lists pré-opérationnelles
@@ -627,16 +630,19 @@ HSE Dashboard
 ### Personnel Maintenance
 
 **Formations automatiques**:
+
 - 🟡 HSE-005 (Travail en Hauteur)
 - 🟡 HSE-007 (Permis de Travail)
 - 🟢 HSE-009 (Consignation LOTO)
 
 **Alertes fréquentes**:
+
 - Nouvelles procédures consignation
 - Inspections harnais et lignes de vie
 - Permis de travail à renouveler
 
 **Documents permanents**:
+
 - Procédures consignation
 - Check-lists travail en hauteur
 - Registres permis de travail
@@ -644,16 +650,19 @@ HSE Dashboard
 ### Personnel Administratif
 
 **Formations automatiques**:
+
 - 🟢 HSE-001 (Induction)
 - 🟢 HSE-003 (Lutte Incendie)
 - ⚪ HSE-008 (SST - Optionnel)
 
 **Alertes fréquentes**:
+
 - Exercices évacuation
 - Localisation points de rassemblement
 - Consignes générales sécurité
 
 **Documents permanents**:
+
 - Plan évacuation
 - Numéros urgence
 - Consignes générales
@@ -713,7 +722,7 @@ export function useHSEContent() {
   const assignContent = (contentId, employeeIds, params) => {...}
   const getContentByType = (type: HSEContentType) => {...}
   const getSentHistory = (sentBy: string) => {...}
-  
+
   return { createContent, assignContent, getContentByType, getSentHistory };
 }
 
@@ -724,7 +733,7 @@ export function useEmployeeHSEInbox(employeeId: string) {
   const myAlerts = () => {...}        // Alertes uniquement
   const acknowledgeItem = (id) => {...}
   const startTraining = (id) => {...}
-  
+
   return { myAssignments, myTrainings, myAlerts, acknowledgeItem, startTraining };
 }
 
@@ -734,7 +743,7 @@ export function useHSETracking() {
   const getAssignmentProgress = (assignId) => {...}
   const sendReminder = (assignId) => {...}
   const getCompletionStats = () => {...}
-  
+
   return { getEmployeeAssignments, getAssignmentProgress, sendReminder, getCompletionStats };
 }
 ```
@@ -746,11 +755,13 @@ export function useHSETracking() {
 ### 🔴 PRIORITÉ 1: Hub d'Envoi (Responsable HSE)
 
 **Composants à créer**:
+
 1. ✅ HSEContentHub.tsx - Interface principale envoi
 2. ✅ HSETrainingAssigner.tsx - Spécifique formations
 3. ✅ HSERecipientSelector.tsx - Sélection multi-critères destinataires
 
 **Intégration**:
+
 - Ajouter onglet "Centre d'Envoi" dans HSEDashboard
 - Ou bouton global "📤 Envoyer" dans chaque section
 
@@ -759,11 +770,13 @@ export function useHSETracking() {
 ### 🟡 PRIORITÉ 2: Inbox Employé
 
 **Composants à créer**:
+
 1. ✅ EmployeeHSEInbox.tsx - Boîte réception
 2. ✅ EmployeeTrainingList.tsx - Liste formations
 3. ✅ EmployeeHSEProgress.tsx - Progression
 
 **Intégration**:
+
 - Card dans Dashboard.tsx (tous employés)
 - Badge compteur si assignations non lues
 
@@ -772,6 +785,7 @@ export function useHSETracking() {
 ### 🟢 PRIORITÉ 3: Suivi et Rappels
 
 **Fonctionnalités**:
+
 1. ✅ Rappels automatiques (cron ou useEffect)
 2. ✅ Dashboard de suivi (HSEEmployeeManager enrichi)
 3. ✅ Statistiques complétion par contenu
@@ -836,6 +850,7 @@ export function useHSETracking() {
 **Voulez-vous que je commence l'implémentation de cette architecture?**
 
 Je propose de démarrer par:
+
 1. HSEContentHub (onglet Centre d'Envoi)
 2. EmployeeHSEInbox (card dans Dashboard employé)
 3. Hooks de gestion (useHSEContent, useEmployeeHSEInbox)

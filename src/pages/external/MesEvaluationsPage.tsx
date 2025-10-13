@@ -1,35 +1,35 @@
-import { useState } from 'react';
-import { FileCheck, Clock, CheckCircle, AlertTriangle, Award, Download, Play } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { useAuth } from '@/contexts/AppContext';
-import { useAssessments } from '@/hooks/useAssessments';
-import { AssessmentSubmission } from '@/types';
+import { useState } from 'react'
+import { FileCheck, Clock, CheckCircle, AlertTriangle, Award, Download, Play } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { useAuth } from '@/contexts/AppContext'
+import { useAssessments } from '@/hooks/useAssessments'
+import { AssessmentSubmission } from '@/types'
 
 export function MesEvaluationsPage() {
-  const { currentUser } = useAuth();
-  const { getMyCandidateSubmissions, loading } = useAssessments();
-  const [selectedSubmission, setSelectedSubmission] = useState<AssessmentSubmission | null>(null);
+  const { currentUser } = useAuth()
+  const { getMyCandidateSubmissions, loading } = useAssessments()
+  const [selectedSubmission, setSelectedSubmission] = useState<AssessmentSubmission | null>(null)
 
-  const mySubmissions = getMyCandidateSubmissions(currentUser?.id || '');
+  const mySubmissions = getMyCandidateSubmissions(currentUser?.id || '')
 
-  const pending = mySubmissions.filter(s => s.status === 'assigned');
-  const inProgress = mySubmissions.filter(s => s.status === 'in_progress');
-  const submitted = mySubmissions.filter(s => s.status === 'submitted');
-  const corrected = mySubmissions.filter(s => s.status === 'passed' || s.status === 'failed');
+  const pending = mySubmissions.filter(s => s.status === 'assigned')
+  const inProgress = mySubmissions.filter(s => s.status === 'in_progress')
+  const submitted = mySubmissions.filter(s => s.status === 'submitted')
+  const corrected = mySubmissions.filter(s => s.status === 'passed' || s.status === 'failed')
 
   const getStatusBadge = (status: string) => {
     const configs: Record<string, { variant: any; label: string; color: string }> = {
-      'assigned': { variant: 'secondary', label: 'À faire', color: 'bg-yellow-100 text-yellow-800' },
-      'in_progress': { variant: 'default', label: 'En cours', color: 'bg-blue-100 text-blue-800' },
-      'submitted': { variant: 'secondary', label: 'Soumis', color: 'bg-purple-100 text-purple-800' },
-      'passed': { variant: 'default', label: 'Réussi', color: 'bg-green-100 text-green-800' },
-      'failed': { variant: 'destructive', label: 'Échoué', color: 'bg-red-100 text-red-800' },
-    };
-    return configs[status] || configs['assigned'];
-  };
+      assigned: { variant: 'secondary', label: 'À faire', color: 'bg-yellow-100 text-yellow-800' },
+      in_progress: { variant: 'default', label: 'En cours', color: 'bg-blue-100 text-blue-800' },
+      submitted: { variant: 'secondary', label: 'Soumis', color: 'bg-purple-100 text-purple-800' },
+      passed: { variant: 'default', label: 'Réussi', color: 'bg-green-100 text-green-800' },
+      failed: { variant: 'destructive', label: 'Échoué', color: 'bg-red-100 text-red-800' },
+    }
+    return configs[status] || configs['assigned']
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -40,16 +40,15 @@ export function MesEvaluationsPage() {
             <div className="flex items-center gap-3 mb-2">
               <div className="w-14 h-14 bg-orange-500/20 rounded-full flex items-center justify-center">
                 <span className="text-2xl font-bold text-orange-600">
-                  {currentUser?.firstName?.[0]}{currentUser?.lastName?.[0]}
+                  {currentUser?.firstName?.[0]}
+                  {currentUser?.lastName?.[0]}
                 </span>
               </div>
               <div>
                 <h1 className="text-2xl md:text-3xl font-bold text-foreground">
                   Bienvenue, {currentUser?.firstName} !
                 </h1>
-                <p className="text-muted-foreground">
-                  {currentUser?.jobTitle}
-                </p>
+                <p className="text-muted-foreground">{currentUser?.jobTitle}</p>
               </div>
             </div>
             <div className="flex gap-2">
@@ -57,7 +56,7 @@ export function MesEvaluationsPage() {
               <Badge className="bg-orange-500">Candidat Externe</Badge>
             </div>
           </div>
-          
+
           <div className="text-center md:text-right">
             <div className="text-4xl font-bold text-orange-600">
               {corrected.filter(s => s.isPassed).length}
@@ -130,7 +129,7 @@ export function MesEvaluationsPage() {
       {/* Mes Évaluations */}
       <div>
         <h2 className="text-xl font-semibold mb-4">Mes Tests d'Habilitation</h2>
-        
+
         {mySubmissions.length === 0 ? (
           <Card className="industrial-card">
             <CardContent className="text-center py-16">
@@ -143,19 +142,17 @@ export function MesEvaluationsPage() {
           </Card>
         ) : (
           <div className="space-y-4">
-            {mySubmissions.map((submission) => {
-              const statusConfig = getStatusBadge(submission.status);
-              const assessment = null; // À récupérer depuis useAssessments
-              
+            {mySubmissions.map(submission => {
+              const statusConfig = getStatusBadge(submission.status)
+              const assessment = null // À récupérer depuis useAssessments
+
               return (
                 <Card key={submission.id} className="industrial-card">
                   <CardContent className="p-5">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
-                          <Badge className={statusConfig.color}>
-                            {statusConfig.label}
-                          </Badge>
+                          <Badge className={statusConfig.color}>{statusConfig.label}</Badge>
                           {submission.isPassed && (
                             <Badge className="bg-green-500">
                               <CheckCircle className="w-3 h-3 mr-1" />
@@ -163,11 +160,11 @@ export function MesEvaluationsPage() {
                             </Badge>
                           )}
                         </div>
-                        
+
                         <h3 className="font-semibold text-lg mb-1">
                           Test d'Habilitation Raffinerie
                         </h3>
-                        
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-muted-foreground mb-2">
                           <div className="flex items-center gap-1">
                             <Clock className="w-4 h-4" />
@@ -193,7 +190,8 @@ export function MesEvaluationsPage() {
 
                         {submission.status === 'submitted' && submission.submittedAt && (
                           <p className="text-sm text-purple-600">
-                            Soumis le {submission.submittedAt.toLocaleDateString('fr-FR')} - En attente de correction
+                            Soumis le {submission.submittedAt.toLocaleDateString('fr-FR')} - En
+                            attente de correction
                           </p>
                         )}
 
@@ -201,20 +199,25 @@ export function MesEvaluationsPage() {
                           <div className="mt-2 p-3 bg-muted/30 rounded">
                             <div className="flex items-center justify-between mb-2">
                               <span className="font-medium">Résultat:</span>
-                              <span className={`text-2xl font-bold ${
-                                submission.isPassed ? 'text-green-600' : 'text-red-600'
-                              }`}>
+                              <span
+                                className={`text-2xl font-bold ${
+                                  submission.isPassed ? 'text-green-600' : 'text-red-600'
+                                }`}
+                              >
                                 {submission.score?.toFixed(1)}%
                               </span>
                             </div>
                             {submission.isPassed && submission.expiryDate && (
                               <p className="text-xs text-muted-foreground">
-                                Habilitation valide jusqu'au {submission.expiryDate.toLocaleDateString('fr-FR')}
+                                Habilitation valide jusqu'au{' '}
+                                {submission.expiryDate.toLocaleDateString('fr-FR')}
                               </p>
                             )}
                             {submission.correctorComments && (
                               <div className="mt-2 pt-2 border-t">
-                                <p className="text-xs font-medium mb-1">Commentaire du correcteur:</p>
+                                <p className="text-xs font-medium mb-1">
+                                  Commentaire du correcteur:
+                                </p>
                                 <p className="text-xs text-muted-foreground italic">
                                   "{submission.correctorComments}"
                                 </p>
@@ -232,7 +235,7 @@ export function MesEvaluationsPage() {
                             Commencer le test
                           </Button>
                         )}
-                        
+
                         {submission.status === 'in_progress' && (
                           <Button variant="outline" className="gap-2 w-full md:w-auto">
                             <Play className="w-4 h-4" />
@@ -253,8 +256,8 @@ export function MesEvaluationsPage() {
                               <Download className="w-4 h-4" />
                               Certificat
                             </Button>
-                            <Button 
-                              variant="ghost" 
+                            <Button
+                              variant="ghost"
                               size="sm"
                               onClick={() => setSelectedSubmission(submission)}
                             >
@@ -264,8 +267,8 @@ export function MesEvaluationsPage() {
                         )}
 
                         {submission.status === 'failed' && (
-                          <Button 
-                            variant="outline" 
+                          <Button
+                            variant="outline"
                             onClick={() => setSelectedSubmission(submission)}
                             className="w-full md:w-auto"
                           >
@@ -276,7 +279,7 @@ export function MesEvaluationsPage() {
                     </div>
                   </CardContent>
                 </Card>
-              );
+              )
             })}
           </div>
         )}
@@ -306,9 +309,11 @@ export function MesEvaluationsPage() {
           {selectedSubmission && (
             <div className="space-y-4">
               <div className="text-center">
-                <div className={`text-5xl font-bold mb-2 ${
-                  selectedSubmission.isPassed ? 'text-green-600' : 'text-red-600'
-                }`}>
+                <div
+                  className={`text-5xl font-bold mb-2 ${
+                    selectedSubmission.isPassed ? 'text-green-600' : 'text-red-600'
+                  }`}
+                >
                   {selectedSubmission.score?.toFixed(1)}%
                 </div>
                 <Badge className={selectedSubmission.isPassed ? 'bg-green-500' : 'bg-red-500'}>
@@ -343,9 +348,7 @@ export function MesEvaluationsPage() {
                       <Award className="w-5 h-5 text-green-600" />
                       <span className="font-semibold text-green-900">Habilitation Accordée</span>
                     </div>
-                    <p className="text-sm text-green-800 mb-1">
-                      Accès Zones Production Autorisé
-                    </p>
+                    <p className="text-sm text-green-800 mb-1">Accès Zones Production Autorisé</p>
                     {selectedSubmission.expiryDate && (
                       <p className="text-xs text-green-700">
                         Valide jusqu'au {selectedSubmission.expiryDate.toLocaleDateString('fr-FR')}
@@ -365,7 +368,8 @@ export function MesEvaluationsPage() {
               {!selectedSubmission.isPassed && (
                 <div className="p-4 bg-red-50 rounded-lg border border-red-200">
                   <p className="text-sm text-red-800">
-                    Score insuffisant (minimum requis: 80%). Vous pourrez repasser le test après 7 jours.
+                    Score insuffisant (minimum requis: 80%). Vous pourrez repasser le test après 7
+                    jours.
                   </p>
                 </div>
               )}
@@ -374,6 +378,5 @@ export function MesEvaluationsPage() {
         </DialogContent>
       </Dialog>
     </div>
-  );
+  )
 }
-

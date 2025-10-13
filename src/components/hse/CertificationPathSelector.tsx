@@ -1,37 +1,48 @@
-import { useState } from 'react';
-import { Award, BookOpen, FileText, ArrowRight, Clock, Target } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import evaluationsData from '@/data/evaluations-sogara.json';
+import { useState } from 'react'
+import { Award, BookOpen, FileText, ArrowRight, Clock, Target } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import evaluationsData from '@/data/evaluations-sogara.json'
 
 interface CertificationPathSelectorProps {
-  onSelect: (pathId: string) => void;
-  selectedPathId?: string;
+  onSelect: (pathId: string) => void
+  selectedPathId?: string
 }
 
-export function CertificationPathSelector({ onSelect, selectedPathId }: CertificationPathSelectorProps) {
-  const paths = evaluationsData.certificationPaths;
-  const [selectedPath, setSelectedPath] = useState(selectedPathId || '');
+export function CertificationPathSelector({
+  onSelect,
+  selectedPathId,
+}: CertificationPathSelectorProps) {
+  const paths = evaluationsData.certificationPaths
+  const [selectedPath, setSelectedPath] = useState(selectedPathId || '')
 
   const handleSelect = (pathId: string) => {
-    setSelectedPath(pathId);
-    onSelect(pathId);
-  };
+    setSelectedPath(pathId)
+    onSelect(pathId)
+  }
 
-  const selectedPathData = paths.find(p => p.id === selectedPath);
+  const selectedPathData = paths.find(p => p.id === selectedPath)
 
   return (
     <div className="space-y-4">
       <div>
-        <label className="text-sm font-medium mb-2 block">Sélectionnez un parcours de certification</label>
+        <label className="text-sm font-medium mb-2 block">
+          Sélectionnez un parcours de certification
+        </label>
         <Select value={selectedPath} onValueChange={handleSelect}>
           <SelectTrigger>
             <SelectValue placeholder="Choisissez un parcours..." />
           </SelectTrigger>
           <SelectContent>
-            {paths.map((path) => (
+            {paths.map(path => (
               <SelectItem key={path.id} value={path.id}>
                 {path.title}
               </SelectItem>
@@ -43,12 +54,8 @@ export function CertificationPathSelector({ onSelect, selectedPathId }: Certific
       {selectedPathData && (
         <Card className="border-purple-200 bg-purple-50/30">
           <CardHeader>
-            <CardTitle className="text-lg text-purple-900">
-              {selectedPathData.title}
-            </CardTitle>
-            <p className="text-sm text-muted-foreground">
-              {selectedPathData.description}
-            </p>
+            <CardTitle className="text-lg text-purple-900">{selectedPathData.title}</CardTitle>
+            <p className="text-sm text-muted-foreground">{selectedPathData.description}</p>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Schéma du parcours */}
@@ -130,7 +137,9 @@ export function CertificationPathSelector({ onSelect, selectedPathId }: Certific
               </div>
               <div>
                 <p className="text-muted-foreground mb-1">Délai avant évaluation</p>
-                <p className="font-medium">{selectedPathData.daysBeforeAssessment} jours (révision)</p>
+                <p className="font-medium">
+                  {selectedPathData.daysBeforeAssessment} jours (révision)
+                </p>
               </div>
               <div>
                 <p className="text-muted-foreground mb-1">Score minimum requis</p>
@@ -138,13 +147,14 @@ export function CertificationPathSelector({ onSelect, selectedPathId }: Certific
               </div>
               <div>
                 <p className="text-muted-foreground mb-1">Validité habilitation</p>
-                <p className="font-medium text-green-600">{selectedPathData.habilitationValidity} mois</p>
+                <p className="font-medium text-green-600">
+                  {selectedPathData.habilitationValidity} mois
+                </p>
               </div>
             </div>
           </CardContent>
         </Card>
       )}
     </div>
-  );
+  )
 }
-

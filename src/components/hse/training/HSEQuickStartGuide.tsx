@@ -1,32 +1,38 @@
-import { useState } from 'react';
-import { 
-  BookOpen, 
-  Users, 
-  Award, 
+import { useState } from 'react'
+import {
+  BookOpen,
+  Users,
+  Award,
   Download,
   CheckCircle,
   ArrowRight,
   Play,
   FileText,
   Info,
-  AlertTriangle
-} from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+  AlertTriangle,
+} from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 
 interface HSEQuickStartGuideProps {
-  onStartTraining?: (moduleId: string) => void;
+  onStartTraining?: (moduleId: string) => void
 }
 
 export function HSEQuickStartGuide({ onStartTraining }: HSEQuickStartGuideProps) {
-  const [completedSteps, setCompletedSteps] = useState<Set<string>>(new Set());
+  const [completedSteps, setCompletedSteps] = useState<Set<string>>(new Set())
 
   const markStepCompleted = (stepId: string) => {
-    setCompletedSteps(prev => new Set([...prev, stepId]));
-  };
+    setCompletedSteps(prev => new Set([...prev, stepId]))
+  }
 
   const quickStartSteps = [
     {
@@ -35,7 +41,7 @@ export function HSEQuickStartGuide({ onStartTraining }: HSEQuickStartGuideProps)
       description: 'Découvrez les 6 formations HSE disponibles',
       action: 'Voir les modules',
       icon: <BookOpen className="w-5 h-5" />,
-      color: 'bg-blue-500'
+      color: 'bg-blue-500',
     },
     {
       id: 'start-critical',
@@ -43,7 +49,7 @@ export function HSEQuickStartGuide({ onStartTraining }: HSEQuickStartGuideProps)
       description: 'Commencez par la formation la plus importante',
       action: 'Démarrer H2S',
       icon: <AlertTriangle className="w-5 h-5" />,
-      color: 'bg-red-500'
+      color: 'bg-red-500',
     },
     {
       id: 'download-materials',
@@ -51,17 +57,17 @@ export function HSEQuickStartGuide({ onStartTraining }: HSEQuickStartGuideProps)
       description: 'Obtenez les PDF avec logo SOGARA',
       action: 'Télécharger PDF',
       icon: <Download className="w-5 h-5" />,
-      color: 'bg-green-500'
+      color: 'bg-green-500',
     },
     {
       id: 'track-progress',
       title: 'Suivre les Progressions',
-      description: 'Monitorer l\'avancement des employés',
+      description: "Monitorer l'avancement des employés",
       action: 'Voir suivi',
       icon: <Users className="w-5 h-5" />,
-      color: 'bg-purple-500'
-    }
-  ];
+      color: 'bg-purple-500',
+    },
+  ]
 
   const availableModules = [
     { code: 'HSE-001', title: 'Induction HSE', category: 'Obligatoire', critical: false },
@@ -78,8 +84,8 @@ export function HSEQuickStartGuide({ onStartTraining }: HSEQuickStartGuideProps)
     { code: 'HSE-012', title: 'Investigation Incidents', category: 'Management', critical: false },
     { code: 'HSE-013', title: 'Conduite Défensive', category: 'Spécialisée', critical: false },
     { code: 'HSE-014', title: 'Gestes et Postures', category: 'Prévention', critical: false },
-    { code: 'HSE-015', title: 'H2S Critique', category: 'Critique', critical: true }
-  ];
+    { code: 'HSE-015', title: 'H2S Critique', category: 'Critique', critical: true },
+  ]
 
   return (
     <div className="space-y-6">
@@ -95,7 +101,8 @@ export function HSEQuickStartGuide({ onStartTraining }: HSEQuickStartGuideProps)
                 Système de Formation HSE SOGARA - 15 Modules Complets
               </h2>
               <p className="text-blue-700 mt-1">
-                Interface complète avec toutes les formations HSE : contenus interactifs, illustrations SVG et PDF téléchargeables avec logo SOGARA
+                Interface complète avec toutes les formations HSE : contenus interactifs,
+                illustrations SVG et PDF téléchargeables avec logo SOGARA
               </p>
             </div>
           </div>
@@ -116,18 +123,14 @@ export function HSEQuickStartGuide({ onStartTraining }: HSEQuickStartGuideProps)
               <div
                 key={step.id}
                 className={`p-4 border rounded-lg transition-all ${
-                  completedSteps.has(step.id) 
-                    ? 'bg-green-50 border-green-200' 
-                    : 'hover:bg-muted/50'
+                  completedSteps.has(step.id) ? 'bg-green-50 border-green-200' : 'hover:bg-muted/50'
                 }`}
               >
                 <div className="flex items-start gap-3">
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-white ${step.color}`}>
-                    {completedSteps.has(step.id) ? (
-                      <CheckCircle className="w-5 h-5" />
-                    ) : (
-                      step.icon
-                    )}
+                  <div
+                    className={`w-10 h-10 rounded-lg flex items-center justify-center text-white ${step.color}`}
+                  >
+                    {completedSteps.has(step.id) ? <CheckCircle className="w-5 h-5" /> : step.icon}
                   </div>
                   <div className="flex-1">
                     <h3 className="font-medium">{step.title}</h3>
@@ -160,7 +163,7 @@ export function HSEQuickStartGuide({ onStartTraining }: HSEQuickStartGuideProps)
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {availableModules.map((module) => (
+            {availableModules.map(module => (
               <div
                 key={module.code}
                 className={`p-3 border rounded-lg ${
@@ -237,10 +240,11 @@ export function HSEQuickStartGuide({ onStartTraining }: HSEQuickStartGuideProps)
       <Alert>
         <Info className="h-4 w-4" />
         <AlertDescription>
-          <strong>Aide :</strong> Utilisez l'onglet "Modules" pour accéder à l'interface complète de formation.
-          Chaque formation inclut des évaluations, des certificats et des supports PDF téléchargeables.
+          <strong>Aide :</strong> Utilisez l'onglet "Modules" pour accéder à l'interface complète de
+          formation. Chaque formation inclut des évaluations, des certificats et des supports PDF
+          téléchargeables.
         </AlertDescription>
       </Alert>
     </div>
-  );
+  )
 }

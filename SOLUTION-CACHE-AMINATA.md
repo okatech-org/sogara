@@ -3,6 +3,7 @@
 ## ❌ Problème Identifié
 
 Lorsque vous vous connectez avec le compte **COM001 (Clarisse MBOUMBA)**, l'interface affiche:
+
 - ❌ "Aminata SECK" dans le header
 - ❌ "Bonjour Aminata, voici l'aperçu de votre journée"
 
@@ -11,6 +12,7 @@ Lorsque vous vous connectez avec le compte **COM001 (Clarisse MBOUMBA)**, l'inte
 Le problème vient du **cache localStorage** qui contient encore les anciennes données d'Aminata SECK (COM002 supprimée).
 
 ### Données dans le Code ✅
+
 ```typescript
 // src/data/demoAccounts.ts - CORRECT
 {
@@ -29,6 +31,7 @@ Le problème vient du **cache localStorage** qui contient encore les anciennes d
 ```
 
 ### Données en Cache ❌
+
 ```javascript
 // localStorage.getItem('sogara_employees')
 // Contient probablement encore:
@@ -62,6 +65,7 @@ location.reload()
 Un nouveau composant `CacheCleaner` a été créé pour nettoyer facilement le cache.
 
 **Pour l'utiliser**:
+
 1. Ajoutez-le temporairement dans votre dashboard
 2. Cliquez sur "Recharger Employés" ou "Tout Nettoyer"
 3. La page se recharge automatiquement avec les bonnes données
@@ -69,6 +73,7 @@ Un nouveau composant `CacheCleaner` a été créé pour nettoyer facilement le c
 ### Solution 3: Navigation Privée
 
 Testez dans une **fenêtre de navigation privée** pour éviter tout cache:
+
 ```
 Cmd+Shift+N (Chrome/Safari)
 Cmd+Shift+P (Firefox)
@@ -77,6 +82,7 @@ Cmd+Shift+P (Firefox)
 ### Solution 4: Hard Refresh
 
 Forcez le rechargement complet:
+
 ```
 Cmd+Shift+R (Mac)
 Ctrl+Shift+R (Windows/Linux)
@@ -102,27 +108,31 @@ Le fichier `clear-cache.ts` est maintenant importé dans `main.tsx`, donc les co
 
 ```javascript
 // Dans la console du navigateur
-clearSogaraCache()      // Nettoie tout
-clearUserCache()        // Nettoie l'utilisateur connecté
-forceClearEmployees()   // Force rechargement employés
+clearSogaraCache() // Nettoie tout
+clearUserCache() // Nettoie l'utilisateur connecté
+forceClearEmployees() // Force rechargement employés
 ```
 
 ## 📝 Procédure de Test
 
 ### Étape 1: Nettoyer le Cache
+
 ```javascript
 // Dans la console navigateur (F12)
 clearSogaraCache()
 ```
+
 La page va se recharger automatiquement.
 
 ### Étape 2: Se Reconnecter
+
 ```
 Matricule: COM001
 Password: Communication123!
 ```
 
 ### Étape 3: Vérifier
+
 ✅ Header doit afficher: **"Clarisse MBOUMBA"**  
 ✅ Message doit dire: **"Bonjour Clarisse, voici l'aperçu de votre journée"**
 

@@ -3,6 +3,7 @@
 ## 📋 Concept
 
 **Un parcours de certification** lie automatiquement 3 étapes obligatoires :
+
 1. **Formation** - Module pédagogique (contenu + quiz)
 2. **Évaluation** - Test de validation (X jours après formation)
 3. **Habilitation** - Qualification accordée si réussite
@@ -20,19 +21,19 @@ CertificationPath {
   // Général
   title: "Parcours Opérateur Production Qualifié",
   description: "Formation complète + test qualification",
-  
+
   // Étape 1: Formation
   trainingModuleId: "HSE-015",        // H2S Awareness
   trainingTitle: "Sensibilisation H2S",
   trainingDuration: 4,                 // heures
-  
+
   // Étape 2: Évaluation (délai)
   assessmentId: "eval_xyz",
   assessmentTitle: "Test Qualification H2S",
   daysBeforeAssessment: 7,             // ← 7 jours après formation
   assessmentDuration: 30,              // minutes
   passingScore: 85,                    // %
-  
+
   // Étape 3: Habilitation (auto si réussite)
   habilitationName: "Opérateur Qualifié Zone Production",
   habilitationCode: "OPQ-PROD-H2S",
@@ -48,12 +49,12 @@ CertificationPathProgress {
   candidateId: "10",  // Jean-Luc BERNARD
   candidateType: "external",
   status: "training_in_progress",
-  
+
   // Timestamps
   trainingStartedAt: Date,
   trainingCompletedAt: undefined,      // Pas encore fini
   evaluationAvailableDate: undefined,  // Calculé après formation
-  
+
   // Résultats (remplis au fur et à mesure)
   trainingScore: undefined,
   evaluationScore: undefined,
@@ -117,6 +118,7 @@ Preview:
 ```
 
 **Actions automatiques**:
+
 1. CertificationPathProgress créé (status: not_started)
 2. Formation assignée automatiquement (HSEAssignment créé)
 3. Email envoyé à Jean-Luc
@@ -126,6 +128,7 @@ Preview:
 ### ÉTAPE 3: Jean-Luc Reçoit le Parcours
 
 **Email**:
+
 ```
 Objet: Parcours de Certification SOGARA
 
@@ -201,6 +204,7 @@ Actions automatiques:
 ```
 
 **Affichage mis à jour**:
+
 ```
 ┌────────────────────────────────────────────────────┐
 │ ✅ ÉTAPE 1: Formation ✓ Complétée                 │
@@ -220,13 +224,15 @@ Actions automatiques:
 ### ÉTAPE 6: Période d'Attente (7 jours)
 
 **Jours 2-7**: Jean-Luc peut réviser
+
 ```
-Parcours → 
+Parcours →
   ✅ Formation complétée (peut revoir)
   ⏱️ Évaluation disponible dans X jours
 ```
 
 **Jour 8 (08/01/2025)**:
+
 ```
 Parcours mis à jour automatiquement:
 
@@ -258,6 +264,7 @@ Clic "Passer l'évaluation"
 ```
 
 **Affichage**:
+
 ```
 ┌────────────────────────────────────────────────────┐
 │ ✅ ÉTAPE 1: Formation ✓                           │
@@ -297,6 +304,7 @@ Candidat apte à opérer en zone production."
 ```
 
 **Actions automatiques**:
+
 1. ✅ evaluationScore = 88.3%
 2. ✅ evaluationPassed = true
 3. ✅ status: evaluation_submitted → completed_passed
@@ -312,6 +320,7 @@ Candidat apte à opérer en zone production."
 ### ÉTAPE 9: Jean-Luc Reçoit Résultat
 
 **Email**:
+
 ```
 Objet: 🎉 Parcours Réussi - Habilitation Accordée
 
@@ -344,6 +353,7 @@ Responsable HSE - SOGARA
 ```
 
 **Dashboard Jean-Luc**:
+
 ```
 ┌────────────────────────────────────────────────────┐
 │ ✅ PARCOURS COMPLÉTÉ - HABILITATION OBTENUE       │
@@ -364,6 +374,7 @@ Responsable HSE - SOGARA
 ```
 
 **Profil mis à jour**:
+
 ```
 Habilitations:
   ✓ Opérateur Qualifié Zone Production
@@ -382,11 +393,13 @@ Habilitations:
 **Besoin**: Accès zone production pour maintenance
 
 **Parcours assigné**: "Parcours Opérateur Production Qualifié"
+
 - Formation H2S (4h)
 - Test après 7 jours
 - Habilitation valide 12 mois
 
 **Timeline**:
+
 ```
 Jour 0:  Parcours assigné
 Jour 0:  Formation disponible immédiatement
@@ -404,6 +417,7 @@ Jour 10: Jean-Luc accède zone production
 **Besoin**: Qualification opérateur
 
 **Parcours**: "Parcours Qualification Interne"
+
 - Formation Induction (8h)
 - Test après 3 jours
 - Habilitation permanente
@@ -419,12 +433,11 @@ Jour 10: Jean-Luc accède zone production
 ```typescript
 // Après complétion formation
 if (trainingCompleted) {
-  const evaluationAvailableDate = 
-    trainingCompletedAt + (daysBeforeAssessment * 24 * 60 * 60 * 1000);
-  
+  const evaluationAvailableDate = trainingCompletedAt + daysBeforeAssessment * 24 * 60 * 60 * 1000
+
   // Vérifier chaque jour si date atteinte
   if (Date.now() >= evaluationAvailableDate) {
-    status = 'evaluation_available';
+    status = 'evaluation_available'
     // Bouton "Passer l'évaluation" s'active
   }
 }
@@ -436,22 +449,22 @@ if (trainingCompleted) {
 // Après correction évaluation
 if (evaluationScore >= passingScore) {
   // 1. Marquer parcours réussi
-  status = 'completed_passed';
-  
+  status = 'completed_passed'
+
   // 2. Générer dates
-  habilitationGrantedAt = Date.now();
-  habilitationExpiryDate = Date.now() + (habilitationValidity * 30 * 24 * 60 * 60 * 1000);
-  
+  habilitationGrantedAt = Date.now()
+  habilitationExpiryDate = Date.now() + habilitationValidity * 30 * 24 * 60 * 60 * 1000
+
   // 3. Générer certificat
-  certificateUrl = generateCertificate();
-  
+  certificateUrl = generateCertificate()
+
   // 4. Ajouter habilitation au profil
   if (candidateType === 'employee') {
-    employee.habilitations.push(habilitationName);
+    employee.habilitations.push(habilitationName)
   }
-  
+
   // 5. Envoyer email + certificat
-  sendEmail(candidate, result);
+  sendEmail(candidate, result)
 }
 ```
 
@@ -460,6 +473,7 @@ if (evaluationScore >= passingScore) {
 ## 📊 Avantages du Système
 
 ### Pour HSE:
+
 ✅ Configuration une seule fois
 ✅ Envoi automatique formation + évaluation
 ✅ Gestion délai automatique
@@ -467,6 +481,7 @@ if (evaluationScore >= passingScore) {
 ✅ Traçabilité complète
 
 ### Pour Candidat:
+
 ✅ Parcours clair (3 étapes)
 ✅ Formation avant test (préparation)
 ✅ Délai de révision (7 jours)
@@ -474,6 +489,7 @@ if (evaluationScore >= passingScore) {
 ✅ Certificat unique complet
 
 ### Pour Système:
+
 ✅ Workflow unifié
 ✅ Moins d'erreurs
 ✅ Audit trail complet

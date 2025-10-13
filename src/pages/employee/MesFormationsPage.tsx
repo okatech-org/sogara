@@ -1,18 +1,18 @@
-import { useState } from 'react';
-import { BookOpen, Trophy, Clock, CheckCircle, AlertTriangle, Play } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { useAuth } from '@/contexts/AppContext';
-import { useEmployeeHSEInbox } from '@/hooks/useEmployeeHSEInbox';
-import { HSETrainingModulePlayer } from '@/components/employee/HSETrainingModulePlayer';
-import { HSEAssignment } from '@/types';
+import { useState } from 'react'
+import { BookOpen, Trophy, Clock, CheckCircle, AlertTriangle, Play } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { useAuth } from '@/contexts/AppContext'
+import { useEmployeeHSEInbox } from '@/hooks/useEmployeeHSEInbox'
+import { HSETrainingModulePlayer } from '@/components/employee/HSETrainingModulePlayer'
+import { HSEAssignment } from '@/types'
 
 export function MesFormationsPage() {
-  const { currentUser } = useAuth();
+  const { currentUser } = useAuth()
   const {
     myTrainings,
     pendingTrainings,
@@ -20,37 +20,46 @@ export function MesFormationsPage() {
     complianceRate,
     startTraining,
     markAsRead,
-    getContentForAssignment
-  } = useEmployeeHSEInbox(currentUser?.id || '');
+    getContentForAssignment,
+  } = useEmployeeHSEInbox(currentUser?.id || '')
 
-  const [activeTraining, setActiveTraining] = useState<HSEAssignment | null>(null);
+  const [activeTraining, setActiveTraining] = useState<HSEAssignment | null>(null)
 
-  const inProgressTrainings = myTrainings.filter(t => t.status === 'in_progress');
+  const inProgressTrainings = myTrainings.filter(t => t.status === 'in_progress')
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'critical': return 'bg-red-500';
-      case 'high': return 'bg-orange-500';
-      case 'medium': return 'bg-yellow-500';
-      default: return 'bg-green-500';
+      case 'critical':
+        return 'bg-red-500'
+      case 'high':
+        return 'bg-orange-500'
+      case 'medium':
+        return 'bg-yellow-500'
+      default:
+        return 'bg-green-500'
     }
-  };
+  }
 
   const getPriorityLabel = (priority: string) => {
     switch (priority) {
-      case 'critical': return 'CRITIQUE';
-      case 'high': return 'HAUTE';
-      case 'medium': return 'MOYENNE';
-      default: return 'BASSE';
+      case 'critical':
+        return 'CRITIQUE'
+      case 'high':
+        return 'HAUTE'
+      case 'medium':
+        return 'MOYENNE'
+      default:
+        return 'BASSE'
     }
-  };
+  }
 
   const renderTrainingCard = (assignment: HSEAssignment) => {
-    const content = getContentForAssignment(assignment);
-    if (!content) return null;
+    const content = getContentForAssignment(assignment)
+    if (!content) return null
 
-    const isOverdue = assignment.dueDate && assignment.dueDate < new Date() && assignment.status !== 'completed';
-    const priority = assignment.metadata?.priority as string || 'medium';
+    const isOverdue =
+      assignment.dueDate && assignment.dueDate < new Date() && assignment.status !== 'completed'
+    const priority = (assignment.metadata?.priority as string) || 'medium'
 
     return (
       <Card key={assignment.id} className={`industrial-card ${isOverdue ? 'border-red-300' : ''}`}>
@@ -58,9 +67,7 @@ export function MesFormationsPage() {
           <div className="flex items-start justify-between mb-4">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
-                <Badge className={getPriorityColor(priority)}>
-                  {getPriorityLabel(priority)}
-                </Badge>
+                <Badge className={getPriorityColor(priority)}>{getPriorityLabel(priority)}</Badge>
                 {assignment.status === 'completed' && (
                   <Badge variant="secondary" className="bg-green-100 text-green-800">
                     <CheckCircle className="w-3 h-3 mr-1" />
@@ -73,16 +80,12 @@ export function MesFormationsPage() {
                     En cours
                   </Badge>
                 )}
-                {isOverdue && (
-                  <Badge variant="destructive">
-                    Retard
-                  </Badge>
-                )}
+                {isOverdue && <Badge variant="destructive">Retard</Badge>}
               </div>
-              
+
               <h3 className="text-lg font-semibold text-foreground mb-2">{content.title}</h3>
               <p className="text-sm text-muted-foreground mb-3">{content.description}</p>
-              
+
               <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground mb-3">
                 {assignment.dueDate && (
                   <div>
@@ -124,9 +127,9 @@ export function MesFormationsPage() {
             {(assignment.status === 'sent' || assignment.status === 'received') && (
               <Button
                 onClick={() => {
-                  markAsRead(assignment.id);
-                  startTraining(assignment.id);
-                  setActiveTraining(assignment);
+                  markAsRead(assignment.id)
+                  startTraining(assignment.id)
+                  setActiveTraining(assignment)
                 }}
                 className="gap-2"
               >
@@ -153,8 +156,8 @@ export function MesFormationsPage() {
           </div>
         </CardContent>
       </Card>
-    );
-  };
+    )
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -171,13 +174,17 @@ export function MesFormationsPage() {
             Suivi de mes formations et certifications sécurité
           </p>
         </div>
-        
+
         <div className="text-center md:text-right">
-          <div className={`text-4xl font-bold mb-1 ${
-            complianceRate >= 90 ? 'text-green-600' :
-            complianceRate >= 70 ? 'text-yellow-600' :
-            'text-red-600'
-          }`}>
+          <div
+            className={`text-4xl font-bold mb-1 ${
+              complianceRate >= 90
+                ? 'text-green-600'
+                : complianceRate >= 70
+                  ? 'text-yellow-600'
+                  : 'text-red-600'
+            }`}
+          >
             {complianceRate}%
           </div>
           <p className="text-sm text-muted-foreground">Ma conformité HSE</p>
@@ -227,8 +234,7 @@ export function MesFormationsPage() {
       <Tabs defaultValue="pending" className="space-y-6">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="pending">
-            <AlertTriangle className="w-4 h-4 mr-2" />
-            À faire ({pendingTrainings.length})
+            <AlertTriangle className="w-4 h-4 mr-2" />À faire ({pendingTrainings.length})
           </TabsTrigger>
           <TabsTrigger value="inprogress">
             <Clock className="w-4 h-4 mr-2" />
@@ -306,6 +312,5 @@ export function MesFormationsPage() {
         </DialogContent>
       </Dialog>
     </div>
-  );
+  )
 }
-

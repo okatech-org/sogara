@@ -1,32 +1,38 @@
-import { useState } from 'react';
-import { Mail as MailIcon, Sparkles, CheckCircle, Loader2, Eye, Lock } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
-import { AIDocumentScanner } from './AIDocumentScanner';
-import { mailService, Mail } from '@/services/mail-management.service';
-import { ExtractionResult } from '@/services/ai-extraction.service';
-import { toast } from '@/hooks/use-toast';
+import { useState } from 'react'
+import { Mail as MailIcon, Sparkles, CheckCircle, Loader2, Eye, Lock } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
+import { Switch } from '@/components/ui/switch'
+import { AIDocumentScanner } from './AIDocumentScanner'
+import { mailService, Mail } from '@/services/mail-management.service'
+import { ExtractionResult } from '@/services/ai-extraction.service'
+import { toast } from '@/hooks/use-toast'
 
 interface RegisterMailWithAIProps {
-  onSuccess: (mail: Mail) => void;
-  onCancel: () => void;
-  open: boolean;
+  onSuccess: (mail: Mail) => void
+  onCancel: () => void
+  open: boolean
 }
 
 export function RegisterMailWithAI({ onSuccess, onCancel, open }: RegisterMailWithAIProps) {
-  const [showScanner, setShowScanner] = useState(false);
-  const [extractedData, setExtractedData] = useState<any>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [scannedDocument, setScannedDocument] = useState<string | null>(null);
-  
+  const [showScanner, setShowScanner] = useState(false)
+  const [extractedData, setExtractedData] = useState<any>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [scannedDocument, setScannedDocument] = useState<string | null>(null)
+
   const [formData, setFormData] = useState({
     senderName: '',
     senderOrganization: '',
@@ -40,14 +46,14 @@ export function RegisterMailWithAI({ onSuccess, onCancel, open }: RegisterMailWi
     requiresResponse: false,
     responseDeadline: '',
     notes: '',
-    receivedBy: 'Reception'
-  });
+    receivedBy: 'Reception',
+  })
 
   const handleExtractionComplete = (result: ExtractionResult) => {
-    setShowScanner(false);
-    
+    setShowScanner(false)
+
     if (result.success) {
-      setExtractedData(result.data);
+      setExtractedData(result.data)
       setFormData(prev => ({
         ...prev,
         senderName: result.data.sender?.name || prev.senderName,
@@ -55,36 +61,36 @@ export function RegisterMailWithAI({ onSuccess, onCancel, open }: RegisterMailWi
         recipientName: result.data.recipient?.name || prev.recipientName,
         recipientDepartment: result.data.recipient?.department || prev.recipientDepartment,
         urgency: result.data.urgency || prev.urgency,
-        confidentiality: result.data.confidentiality || prev.confidentiality
-      }));
-      
+        confidentiality: result.data.confidentiality || prev.confidentiality,
+      }))
+
       toast({
         title: 'Document scanné',
         description: `Type: ${result.data.documentType}`,
-      });
+      })
     } else {
       toast({
         title: 'Échec du scan',
         description: 'Veuillez saisir les informations manuellement',
-        variant: 'destructive'
-      });
+        variant: 'destructive',
+      })
     }
-  };
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+    e.preventDefault()
+
     if (!formData.senderName || !formData.recipientName || !formData.recipientDepartment) {
       toast({
         title: 'Champs requis manquants',
         description: 'Veuillez remplir tous les champs obligatoires',
-        variant: 'destructive'
-      });
-      return;
+        variant: 'destructive',
+      })
+      return
     }
-    
-    setIsSubmitting(true);
-    
+
+    setIsSubmitting(true)
+
     try {
       const mail: Mail = {
         id: '',
@@ -116,25 +122,25 @@ export function RegisterMailWithAI({ onSuccess, onCancel, open }: RegisterMailWi
         aiConfidence: extractedData ? 0.92 : undefined,
         receivedDate: new Date().toISOString(),
         receivedBy: formData.receivedBy,
-        notes: formData.notes
-      };
-      
-      onSuccess(mail);
-      
+        notes: formData.notes,
+      }
+
+      onSuccess(mail)
+
       toast({
         title: 'Courrier enregistré',
         description: `Courrier ${mail.type} enregistré avec succès`,
-      });
+      })
     } catch (error) {
       toast({
         title: 'Erreur',
-        description: 'Impossible d\'enregistrer le courrier',
-        variant: 'destructive'
-      });
+        description: "Impossible d'enregistrer le courrier",
+        variant: 'destructive',
+      })
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
   return (
     <>
@@ -155,7 +161,9 @@ export function RegisterMailWithAI({ onSuccess, onCancel, open }: RegisterMailWi
                     <Sparkles className="w-8 h-8 text-blue-600 flex-shrink-0" />
                     <div>
                       <h4 className="font-medium text-blue-900">Numérisation IA & OCR</h4>
-                      <p className="text-sm text-blue-700">Extraction automatique + Résumé + Classification</p>
+                      <p className="text-sm text-blue-700">
+                        Extraction automatique + Résumé + Classification
+                      </p>
                       {extractedData?.keywords && (
                         <div className="flex flex-wrap gap-1 mt-2">
                           {extractedData.keywords.map((keyword: string, i: number) => (
@@ -194,7 +202,7 @@ export function RegisterMailWithAI({ onSuccess, onCancel, open }: RegisterMailWi
                 <Label>Expéditeur *</Label>
                 <Input
                   value={formData.senderName}
-                  onChange={(e) => setFormData(prev => ({ ...prev, senderName: e.target.value }))}
+                  onChange={e => setFormData(prev => ({ ...prev, senderName: e.target.value }))}
                   required
                 />
               </div>
@@ -203,7 +211,9 @@ export function RegisterMailWithAI({ onSuccess, onCancel, open }: RegisterMailWi
                 <Label>Organisation expéditeur</Label>
                 <Input
                   value={formData.senderOrganization}
-                  onChange={(e) => setFormData(prev => ({ ...prev, senderOrganization: e.target.value }))}
+                  onChange={e =>
+                    setFormData(prev => ({ ...prev, senderOrganization: e.target.value }))
+                  }
                 />
               </div>
 
@@ -211,7 +221,7 @@ export function RegisterMailWithAI({ onSuccess, onCancel, open }: RegisterMailWi
                 <Label>Destinataire *</Label>
                 <Input
                   value={formData.recipientName}
-                  onChange={(e) => setFormData(prev => ({ ...prev, recipientName: e.target.value }))}
+                  onChange={e => setFormData(prev => ({ ...prev, recipientName: e.target.value }))}
                   required
                 />
               </div>
@@ -220,7 +230,9 @@ export function RegisterMailWithAI({ onSuccess, onCancel, open }: RegisterMailWi
                 <Label>Service/Département *</Label>
                 <Input
                   value={formData.recipientDepartment}
-                  onChange={(e) => setFormData(prev => ({ ...prev, recipientDepartment: e.target.value }))}
+                  onChange={e =>
+                    setFormData(prev => ({ ...prev, recipientDepartment: e.target.value }))
+                  }
                   required
                 />
               </div>
@@ -230,15 +242,15 @@ export function RegisterMailWithAI({ onSuccess, onCancel, open }: RegisterMailWi
                 <Input
                   type="email"
                   value={formData.recipientEmail}
-                  onChange={(e) => setFormData(prev => ({ ...prev, recipientEmail: e.target.value }))}
+                  onChange={e => setFormData(prev => ({ ...prev, recipientEmail: e.target.value }))}
                   placeholder="Pour envoi numérique"
                 />
               </div>
 
               <div className="space-y-2">
                 <Label>Type de courrier</Label>
-                <Select 
-                  value={formData.type} 
+                <Select
+                  value={formData.type}
                   onValueChange={(value: any) => setFormData(prev => ({ ...prev, type: value }))}
                 >
                   <SelectTrigger>
@@ -257,9 +269,11 @@ export function RegisterMailWithAI({ onSuccess, onCancel, open }: RegisterMailWi
 
               <div className="space-y-2">
                 <Label>Confidentialité</Label>
-                <Select 
-                  value={formData.confidentiality} 
-                  onValueChange={(value: any) => setFormData(prev => ({ ...prev, confidentiality: value }))}
+                <Select
+                  value={formData.confidentiality}
+                  onValueChange={(value: any) =>
+                    setFormData(prev => ({ ...prev, confidentiality: value }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -284,8 +298,8 @@ export function RegisterMailWithAI({ onSuccess, onCancel, open }: RegisterMailWi
 
               <div className="space-y-2">
                 <Label>Urgence</Label>
-                <Select 
-                  value={formData.urgency} 
+                <Select
+                  value={formData.urgency}
                   onValueChange={(value: any) => setFormData(prev => ({ ...prev, urgency: value }))}
                 >
                   <SelectTrigger>
@@ -301,9 +315,11 @@ export function RegisterMailWithAI({ onSuccess, onCancel, open }: RegisterMailWi
 
               <div className="space-y-2 md:col-span-2">
                 <Label>Méthode de distribution</Label>
-                <Select 
-                  value={formData.distributionMethod} 
-                  onValueChange={(value: any) => setFormData(prev => ({ ...prev, distributionMethod: value }))}
+                <Select
+                  value={formData.distributionMethod}
+                  onValueChange={(value: any) =>
+                    setFormData(prev => ({ ...prev, distributionMethod: value }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -322,17 +338,21 @@ export function RegisterMailWithAI({ onSuccess, onCancel, open }: RegisterMailWi
                   <Switch
                     id="requiresResponse"
                     checked={formData.requiresResponse}
-                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, requiresResponse: checked }))}
+                    onCheckedChange={checked =>
+                      setFormData(prev => ({ ...prev, requiresResponse: checked }))
+                    }
                   />
                 </div>
-                
+
                 {formData.requiresResponse && (
                   <div className="space-y-2">
                     <Label>Date limite de réponse</Label>
                     <Input
                       type="date"
                       value={formData.responseDeadline}
-                      onChange={(e) => setFormData(prev => ({ ...prev, responseDeadline: e.target.value }))}
+                      onChange={e =>
+                        setFormData(prev => ({ ...prev, responseDeadline: e.target.value }))
+                      }
                     />
                   </div>
                 )}
@@ -342,7 +362,7 @@ export function RegisterMailWithAI({ onSuccess, onCancel, open }: RegisterMailWi
                 <Label>Notes</Label>
                 <Textarea
                   value={formData.notes}
-                  onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+                  onChange={e => setFormData(prev => ({ ...prev, notes: e.target.value }))}
                   rows={3}
                   placeholder="Observations, instructions..."
                 />
@@ -353,7 +373,8 @@ export function RegisterMailWithAI({ onSuccess, onCancel, open }: RegisterMailWi
               <Alert className="border-red-500 bg-red-50">
                 <Lock className="h-4 w-4 text-red-600" />
                 <AlertDescription className="text-red-800">
-                  <strong>Courrier confidentiel :</strong> L'accès sera restreint et aucun scan ne sera envoyé par email
+                  <strong>Courrier confidentiel :</strong> L'accès sera restreint et aucun scan ne
+                  sera envoyé par email
                 </AlertDescription>
               </Alert>
             )}
@@ -366,14 +387,14 @@ export function RegisterMailWithAI({ onSuccess, onCancel, open }: RegisterMailWi
                       <Sparkles className="w-4 h-4 text-primary" />
                       Données extraites par IA
                     </h4>
-                    
+
                     {extractedData.summary && (
                       <div className="text-sm">
                         <span className="font-medium">Résumé : </span>
                         <span className="text-muted-foreground">{extractedData.summary}</span>
                       </div>
                     )}
-                    
+
                     {extractedData.keywords && extractedData.keywords.length > 0 && (
                       <div className="flex flex-wrap gap-1">
                         <span className="text-sm font-medium mr-2">Mots-clés:</span>
@@ -427,6 +448,5 @@ export function RegisterMailWithAI({ onSuccess, onCancel, open }: RegisterMailWi
         />
       )}
     </>
-  );
+  )
 }
-

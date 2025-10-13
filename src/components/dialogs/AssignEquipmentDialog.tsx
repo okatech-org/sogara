@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -6,33 +6,48 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useEmployees } from '@/hooks/useEmployees';
-import { useEquipment } from '@/hooks/useEquipment';
-import { HardHat, User } from 'lucide-react';
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { useEmployees } from '@/hooks/useEmployees'
+import { useEquipment } from '@/hooks/useEquipment'
+import { HardHat, User } from 'lucide-react'
 
-export function AssignEquipmentDialog({ equipmentId, trigger }: { equipmentId: string; trigger?: React.ReactNode }) {
-  const { employees } = useEmployees();
-  const { assignEquipment } = useEquipment();
-  const [isOpen, setIsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [employeeId, setEmployeeId] = useState('');
+export function AssignEquipmentDialog({
+  equipmentId,
+  trigger,
+}: {
+  equipmentId: string
+  trigger?: React.ReactNode
+}) {
+  const { employees } = useEmployees()
+  const { assignEquipment } = useEquipment()
+  const [isOpen, setIsOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [employeeId, setEmployeeId] = useState('')
 
-  const sorted = useMemo(() => employees.slice().sort((a, b) => a.lastName.localeCompare(b.lastName)), [employees]);
+  const sorted = useMemo(
+    () => employees.slice().sort((a, b) => a.lastName.localeCompare(b.lastName)),
+    [employees],
+  )
 
   const onSubmit = async () => {
-    if (!employeeId) return;
-    setIsLoading(true);
+    if (!employeeId) return
+    setIsLoading(true)
     try {
-      await assignEquipment(equipmentId, employeeId);
-      setIsOpen(false);
-      setEmployeeId('');
+      await assignEquipment(equipmentId, employeeId)
+      setIsOpen(false)
+      setEmployeeId('')
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -56,7 +71,7 @@ export function AssignEquipmentDialog({ equipmentId, trigger }: { equipmentId: s
               <SelectValue placeholder="Choisir un employé" />
             </SelectTrigger>
             <SelectContent>
-              {sorted.map((e) => (
+              {sorted.map(e => (
                 <SelectItem key={e.id} value={e.id}>
                   {e.lastName.toUpperCase()} {e.firstName} — {e.service}
                 </SelectItem>
@@ -65,13 +80,15 @@ export function AssignEquipmentDialog({ equipmentId, trigger }: { equipmentId: s
           </Select>
 
           <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setIsOpen(false)} disabled={isLoading}>Annuler</Button>
-            <Button onClick={onSubmit} disabled={!employeeId || isLoading}>Valider</Button>
+            <Button variant="outline" onClick={() => setIsOpen(false)} disabled={isLoading}>
+              Annuler
+            </Button>
+            <Button onClick={onSubmit} disabled={!employeeId || isLoading}>
+              Valider
+            </Button>
           </div>
         </div>
       </DialogContent>
     </Dialog>
-  );
+  )
 }
-
-

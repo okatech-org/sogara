@@ -1,15 +1,24 @@
-import { Settings, Users, Shield, Package, TrendingUp, Activity, Database, FileText } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { useAuth } from '@/contexts/AppContext';
-import { useNavigate } from 'react-router-dom';
-import { useDashboard } from '@/hooks/useDashboard';
+import {
+  Settings,
+  Users,
+  Shield,
+  Package,
+  TrendingUp,
+  Activity,
+  Database,
+  FileText,
+} from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { useAuth } from '@/contexts/AppContext'
+import { useNavigate } from 'react-router-dom'
+import { useDashboard } from '@/hooks/useDashboard'
 
 export function AdminDashboard() {
-  const { currentUser, state } = useAuth();
-  const navigate = useNavigate();
-  const { stats } = useDashboard();
+  const { currentUser, state } = useAuth()
+  const navigate = useNavigate()
+  const { stats } = useDashboard()
 
   const modules = [
     {
@@ -60,7 +69,7 @@ export function AdminDashboard() {
       color: 'bg-cyan-500',
       stats: 'Spécifications système',
     },
-  ];
+  ]
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -74,7 +83,8 @@ export function AdminDashboard() {
             Dashboard Administrateur
           </h1>
           <p className="text-muted-foreground mt-2">
-            Supervision complète - {currentUser?.fullName || `${currentUser?.firstName} ${currentUser?.lastName}`}
+            Supervision complète -{' '}
+            {currentUser?.fullName || `${currentUser?.firstName} ${currentUser?.lastName}`}
           </p>
         </div>
         <Badge className="bg-destructive text-destructive-foreground text-sm px-3 py-1">
@@ -141,31 +151,39 @@ export function AdminDashboard() {
       <div>
         <h2 className="text-xl font-semibold mb-4">Modules du Système</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {modules.map((module) => {
-            const Icon = module.icon;
+          {modules.map(module => {
+            const Icon = module.icon
             return (
-              <Card 
-                key={module.route} 
+              <Card
+                key={module.route}
                 className="industrial-card hover:shadow-lg transition-all cursor-pointer group"
                 onClick={() => navigate(module.route)}
               >
                 <CardHeader>
                   <div className="flex items-center justify-between mb-2">
-                    <div className={`w-12 h-12 ${module.color} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                    <div
+                      className={`w-12 h-12 ${module.color} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform`}
+                    >
                       <Icon className="w-6 h-6 text-white" />
                     </div>
-                    <Badge variant="outline" className="text-xs">{module.stats}</Badge>
+                    <Badge variant="outline" className="text-xs">
+                      {module.stats}
+                    </Badge>
                   </div>
                   <CardTitle className="text-lg">{module.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground">{module.description}</p>
-                  <Button variant="ghost" size="sm" className="w-full mt-3 group-hover:bg-primary group-hover:text-primary-foreground">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full mt-3 group-hover:bg-primary group-hover:text-primary-foreground"
+                  >
                     Accéder →
                   </Button>
                 </CardContent>
               </Card>
-            );
+            )
           })}
         </div>
       </div>
@@ -177,15 +195,27 @@ export function AdminDashboard() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <Button variant="outline" onClick={() => navigate('/app/personnel')} className="justify-start gap-2">
+            <Button
+              variant="outline"
+              onClick={() => navigate('/app/personnel')}
+              className="justify-start gap-2"
+            >
               <Users className="w-4 h-4" />
               Gérer les utilisateurs
             </Button>
-            <Button variant="outline" onClick={() => navigate('/app/hse')} className="justify-start gap-2">
+            <Button
+              variant="outline"
+              onClick={() => navigate('/app/hse')}
+              className="justify-start gap-2"
+            >
               <Shield className="w-4 h-4" />
               Supervision HSE
             </Button>
-            <Button variant="outline" onClick={() => navigate('/app/projet')} className="justify-start gap-2">
+            <Button
+              variant="outline"
+              onClick={() => navigate('/app/projet')}
+              className="justify-start gap-2"
+            >
               <Database className="w-4 h-4" />
               Documentation système
             </Button>
@@ -193,5 +223,5 @@ export function AdminDashboard() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

@@ -1,18 +1,18 @@
-import { useState } from 'react';
-import { Bell, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { HSENotificationCenter } from './HSENotificationCenter';
-import { Employee, HSENotification } from '@/types';
+import { useState } from 'react'
+import { Bell, X } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { HSENotificationCenter } from './HSENotificationCenter'
+import { Employee, HSENotification } from '@/types'
 
 interface HSENotificationPopoverProps {
-  employees?: Employee[];
-  notifications?: HSENotification[];
-  onSendNotification?: (notification: Omit<HSENotification, 'id' | 'timestamp'>) => void;
-  onMarkAsRead?: (notificationId: string) => void;
-  unreadCount?: number;
+  employees?: Employee[]
+  notifications?: HSENotification[]
+  onSendNotification?: (notification: Omit<HSENotification, 'id' | 'timestamp'>) => void
+  onMarkAsRead?: (notificationId: string) => void
+  unreadCount?: number
 }
 
 export function HSENotificationPopover({
@@ -20,19 +20,14 @@ export function HSENotificationPopover({
   notifications = [],
   onSendNotification,
   onMarkAsRead,
-  unreadCount = 0
+  unreadCount = 0,
 }: HSENotificationPopoverProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="relative"
-          aria-label="Notifications"
-        >
+        <Button variant="ghost" size="sm" className="relative" aria-label="Notifications">
           <Bell className="w-4 h-4" />
           {unreadCount > 0 && (
             <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs animate-pulse">
@@ -41,9 +36,9 @@ export function HSENotificationPopover({
           )}
         </Button>
       </PopoverTrigger>
-      
-      <PopoverContent 
-        className="w-[600px] p-0 max-h-[600px] overflow-hidden" 
+
+      <PopoverContent
+        className="w-[600px] p-0 max-h-[600px] overflow-hidden"
         align="end"
         sideOffset={8}
       >
@@ -66,15 +61,15 @@ export function HSENotificationPopover({
             <X className="w-4 h-4" />
           </Button>
         </div>
-        
+
         <ScrollArea className="h-[500px]">
           <div className="p-4">
             <HSENotificationCenter
               employees={employees}
               notifications={notifications}
               onSendNotification={onSendNotification}
-              onMarkAsRead={(id) => {
-                onMarkAsRead?.(id);
+              onMarkAsRead={id => {
+                onMarkAsRead?.(id)
               }}
               compact={true}
             />
@@ -82,5 +77,5 @@ export function HSENotificationPopover({
         </ScrollArea>
       </PopoverContent>
     </Popover>
-  );
+  )
 }

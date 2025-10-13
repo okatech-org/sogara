@@ -5,10 +5,12 @@
 Le problème d'extraction PDF "**Failed to fetch pdf.worker**" est maintenant **RÉSOLU** !
 
 ### Cause du problème:
+
 - ❌ Le worker PDF.js tentait de se charger depuis un CDN avec HTTP (non sécurisé)
 - ❌ L'URL du CDN était incorrecte et retournait une erreur 404
 
 ### Solution appliquée:
+
 - ✅ Copié le worker PDF.js localement dans `/public/pdf.worker.min.js`
 - ✅ Configuré PDF.js pour utiliser le fichier local
 - ✅ Plus de dépendance au CDN externe
@@ -18,12 +20,15 @@ Le problème d'extraction PDF "**Failed to fetch pdf.worker**" est maintenant **
 ## 🎯 TESTEZ MAINTENANT
 
 ### 1. Rafraîchissez complètement la page
+
 ```
 http://localhost:8080/app/visites
 ```
+
 **⚠️ Faites Ctrl+F5 pour forcer le rechargement**
 
 ### 2. Testez l'extraction PDF:
+
 1. Cliquez **"Enregistrer avec IA"**
 2. Cliquez **"Télécharger un fichier"**
 3. Sélectionnez un **PDF de CNI ou Passeport**
@@ -35,6 +40,7 @@ http://localhost:8080/app/visites
 ## 📊 Logs Console Attendus
 
 ### ✅ Logs de succès:
+
 ```
 📄 PDF.js configuré avec worker local
 📄 PDF détecté, conversion en image...
@@ -47,6 +53,7 @@ http://localhost:8080/app/visites
 ```
 
 ### ❌ Plus d'erreurs comme:
+
 - "Failed to load resource: 404"
 - "Setting up fake worker failed"
 - "Failed to fetch dynamically imported module"
@@ -56,6 +63,7 @@ http://localhost:8080/app/visites
 ## 🔍 Vérifications
 
 ### Le worker est maintenant local:
+
 ```bash
 # Le fichier existe dans public/
 ls -la public/pdf.worker.min.js
@@ -63,6 +71,7 @@ ls -la public/pdf.worker.min.js
 ```
 
 ### Configuration mise à jour:
+
 - `pdf-converter.service.ts` utilise `/pdf.worker.min.js` (local)
 - Plus de dépendance au CDN cloudflare
 - Chargement garanti même hors ligne
@@ -71,24 +80,26 @@ ls -la public/pdf.worker.min.js
 
 ## 📄 Formats Supportés
 
-| Format | Support | Status |
-|--------|---------|---------|
-| **Images JPG/PNG** | ✅ | Fonctionnel |
-| **Images WebP** | ✅ | Fonctionnel |
-| **PDF (scan CNI)** | ✅ | **RÉPARÉ !** |
-| **PDF multi-pages** | ✅ | 1ère page extraite |
+| Format              | Support | Status             |
+| ------------------- | ------- | ------------------ |
+| **Images JPG/PNG**  | ✅      | Fonctionnel        |
+| **Images WebP**     | ✅      | Fonctionnel        |
+| **PDF (scan CNI)**  | ✅      | **RÉPARÉ !**       |
+| **PDF multi-pages** | ✅      | 1ère page extraite |
 
 ---
 
 ## 💡 Conseils
 
 ### Pour de meilleurs résultats:
+
 - **Qualité scan**: Minimum 150 DPI
 - **Taille fichier**: Max 10MB recommandé
 - **Format PDF**: PDF/A préféré
 - **Orientation**: Portrait de préférence
 
 ### Si l'extraction échoue encore:
+
 1. Vérifiez que le PDF n'est pas protégé par mot de passe
 2. Assurez-vous que le PDF contient une image scannée (pas juste du texte)
 3. Essayez avec une image JPG/PNG pour confirmer que l'API fonctionne

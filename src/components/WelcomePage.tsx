@@ -1,132 +1,157 @@
-import { HardHat, Users, Package, Calendar, Shield, CheckCircle, ArrowRight, Play, Clock, Award, Zap, Target, Settings, LogIn } from 'lucide-react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import techniciensImage from '@/assets/techniciens-raffinerie.jpg';
-import ingenieurImage from '@/assets/ingenieur-hse.jpg';
-import superviseurImage from '@/assets/superviseur-equipe.jpg';
-import gainTempsImage from '@/assets/gain-temps.jpg';
-import securiteImage from '@/assets/securite-renforcee.jpg';
-import suiviImage from '@/assets/suivi-simplifie.jpg';
-import communicationImage from '@/assets/communication-fluide.jpg';
-import reconnaissanceImage from '@/assets/reconnaissance.jpg';
-import efficaciteImage from '@/assets/efficacite-quotidienne.jpg';
-import { Badge } from '@/components/ui/badge';
-import { useAuth } from '@/contexts/AppContext';
-import { demoAccounts } from '@/data/demoAccounts';
+import {
+  HardHat,
+  Users,
+  Package,
+  Calendar,
+  Shield,
+  CheckCircle,
+  ArrowRight,
+  Play,
+  Clock,
+  Award,
+  Zap,
+  Target,
+  Settings,
+  LogIn,
+} from 'lucide-react'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import techniciensImage from '@/assets/techniciens-raffinerie.jpg'
+import ingenieurImage from '@/assets/ingenieur-hse.jpg'
+import superviseurImage from '@/assets/superviseur-equipe.jpg'
+import gainTempsImage from '@/assets/gain-temps.jpg'
+import securiteImage from '@/assets/securite-renforcee.jpg'
+import suiviImage from '@/assets/suivi-simplifie.jpg'
+import communicationImage from '@/assets/communication-fluide.jpg'
+import reconnaissanceImage from '@/assets/reconnaissance.jpg'
+import efficaciteImage from '@/assets/efficacite-quotidienne.jpg'
+import { Badge } from '@/components/ui/badge'
+import { useAuth } from '@/contexts/AppContext'
+import { demoAccounts } from '@/data/demoAccounts'
 interface WelcomePageProps {
-  onShowLogin: () => void;
+  onShowLogin: () => void
 }
 
 export function WelcomePage({ onShowLogin }: WelcomePageProps) {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const avantagesPersonnel = [
     {
       icon: Clock,
       title: 'Gagnez du temps',
-      description: 'Fini les démarches papier et les allers-retours. Tout se fait en quelques clics.',
+      description:
+        'Fini les démarches papier et les allers-retours. Tout se fait en quelques clics.',
       benefice: 'Plus de temps pour vous concentrer sur votre travail',
-      image: gainTempsImage
+      image: gainTempsImage,
     },
     {
       icon: Shield,
-      title: 'Sécurité renforcée', 
+      title: 'Sécurité renforcée',
       description: 'Suivi automatique des formations HSE et alertes de sécurité personnalisées.',
       benefice: 'Votre sécurité et celle de vos collègues',
-      image: securiteImage
+      image: securiteImage,
     },
     {
       icon: CheckCircle,
       title: 'Suivi simplifié',
       description: 'Visualisez vos colis, vos formations et vos équipements en temps réel.',
-      benefice: 'Plus de perte ou d\'oubli important',
-      image: suiviImage
+      benefice: "Plus de perte ou d'oubli important",
+      image: suiviImage,
     },
     {
       icon: Users,
       title: 'Communication fluide',
       description: 'Recevez les visiteurs plus efficacement et coordonnez vos équipes.',
       benefice: 'Moins de stress, plus de professionnalisme',
-      image: communicationImage
+      image: communicationImage,
     },
     {
       icon: Award,
       title: 'Reconnaissance',
       description: 'Vos compétences et habilitations sont mieux valorisées et trackées.',
       benefice: 'Évolution de carrière facilitée',
-      image: reconnaissanceImage
+      image: reconnaissanceImage,
     },
     {
       icon: Zap,
       title: 'Efficacité quotidienne',
       description: 'Interface moderne et intuitive conçue pour votre usage quotidien.',
       benefice: 'Moins de formation nécessaire',
-      image: efficaciteImage
-    }
-  ];
+      image: efficaciteImage,
+    },
+  ]
 
   const temoignages = [
     {
       nom: 'Pierre BEKALE',
       poste: 'Technicien Raffinage',
-      temoignage: "SOGARA Access m'évite les paperasses. Je vois directement mes EPI et mes formations à jour.",
-      image: techniciensImage
+      temoignage:
+        "SOGARA Access m'évite les paperasses. Je vois directement mes EPI et mes formations à jour.",
+      image: techniciensImage,
     },
     {
-      nom: 'Marie-Claire NZIEGE', 
+      nom: 'Marie-Claire NZIEGE',
       poste: 'Chef de Division HSE et Conformité',
-      temoignage: "Enfin un système qui centralise tout ! Les rapports d'incidents et le suivi formation, tout y est.",
-      image: ingenieurImage
+      temoignage:
+        "Enfin un système qui centralise tout ! Les rapports d'incidents et le suivi formation, tout y est.",
+      image: ingenieurImage,
     },
     {
       nom: 'Clarisse MBOUMBA',
       poste: 'Directeur Communication',
-      temoignage: "SOGARA Connect simplifie la communication interne. Publication d'actualités en quelques clics !",
-      image: superviseurImage
-    }
-  ];
+      temoignage:
+        "SOGARA Connect simplifie la communication interne. Publication d'actualités en quelques clics !",
+      image: superviseurImage,
+    },
+  ]
 
-  const { login } = useAuth();
+  const { login } = useAuth()
 
   return (
     <div className="min-h-screen bg-gradient-card">
       {/* Hero Section */}
       <div className="relative overflow-hidden">
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center opacity-20"
           style={{ backgroundImage: `url(${techniciensImage})` }}
         />
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent" />
-        
+
         <div className="relative container mx-auto px-4 py-20">
           <div className="text-center max-w-4xl mx-auto">
             <div className="flex items-center justify-center gap-4 mb-8">
               <div className="w-20 h-20 rounded-2xl overflow-hidden bg-white shadow-[var(--shadow-industrial)]">
-                <img src={'/Sogara_logo.png'} alt="SOGARA" className="w-full h-full object-contain" onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/placeholder.svg'; }} />
+                <img
+                  src={'/Sogara_logo.png'}
+                  alt="SOGARA"
+                  className="w-full h-full object-contain"
+                  onError={e => {
+                    ;(e.currentTarget as HTMLImageElement).src = '/placeholder.svg'
+                  }}
+                />
               </div>
               <div className="text-left">
-                <h1 className="text-4xl md:text-6xl font-bold text-foreground">
-                  SOGARA Access
-                </h1>
+                <h1 className="text-4xl md:text-6xl font-bold text-foreground">SOGARA Access</h1>
                 <p className="text-xl text-primary font-semibold">
                   Votre nouveau portail personnel
                 </p>
               </div>
             </div>
-            
+
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 mb-12 shadow-[var(--shadow-elevated)]">
               <h2 className="text-3xl font-bold text-foreground mb-6">
                 Pourquoi SOGARA Access ? 🚀
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                <strong>Cher personnel de SOGARA</strong>, nous avons créé ce portail spécialement pour <strong>vous</strong>. 
-                Fini les complications ! SOGARA Access simplifie votre quotidien professionnel et vous fait gagner un temps précieux.
+                <strong>Cher personnel de SOGARA</strong>, nous avons créé ce portail spécialement
+                pour <strong>vous</strong>. Fini les complications ! SOGARA Access simplifie votre
+                quotidien professionnel et vous fait gagner un temps précieux.
               </p>
             </div>
 
             {/* Call to Action */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button 
+              <Button
                 size="lg"
                 className="gradient-primary text-lg px-8 py-6 shadow-[var(--shadow-industrial)] hover:shadow-[var(--shadow-elevated)] transition-all"
                 onClick={onShowLogin}
@@ -161,7 +186,9 @@ export function WelcomePage({ onShowLogin }: WelcomePageProps) {
                     <LogIn className="w-6 h-6" />
                     <span className="font-medium">Catalogue des comptes métiers</span>
                   </div>
-                  <span className="text-xs text-muted-foreground">Découvrir tous les accès et modules proposés</span>
+                  <span className="text-xs text-muted-foreground">
+                    Découvrir tous les accès et modules proposés
+                  </span>
                 </Button>
                 <Button
                   variant="ghost"
@@ -172,7 +199,9 @@ export function WelcomePage({ onShowLogin }: WelcomePageProps) {
                     <ArrowRight className="w-6 h-6" />
                     <span className="font-medium">Vue interne des comptes</span>
                   </div>
-                  <span className="text-xs text-muted-foreground">Accéder aux responsabilités et permissions détaillées</span>
+                  <span className="text-xs text-muted-foreground">
+                    Accéder aux responsabilités et permissions détaillées
+                  </span>
                 </Button>
               </div>
             </CardContent>
@@ -188,18 +217,23 @@ export function WelcomePage({ onShowLogin }: WelcomePageProps) {
               Ce que SOGARA Access vous apporte concrètement
             </h2>
             <p className="text-muted-foreground max-w-3xl mx-auto">
-              <strong>6 raisons</strong> pour lesquelles vos collègues utilisent déjà SOGARA Access au quotidien
+              <strong>6 raisons</strong> pour lesquelles vos collègues utilisent déjà SOGARA Access
+              au quotidien
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {avantagesPersonnel.map((avantage, index) => {
-              const Icon = avantage.icon;
+              const Icon = avantage.icon
               return (
-                <Card key={index} className="industrial-card hover:shadow-[var(--shadow-elevated)] transition-all animate-slide-up overflow-hidden" style={{ animationDelay: `${index * 100}ms` }}>
+                <Card
+                  key={index}
+                  className="industrial-card hover:shadow-[var(--shadow-elevated)] transition-all animate-slide-up overflow-hidden"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
                   <div className="aspect-[4/3] overflow-hidden">
-                    <img 
-                      src={avantage.image} 
+                    <img
+                      src={avantage.image}
                       alt={avantage.title}
                       className="w-full h-full object-cover transition-transform hover:scale-105"
                     />
@@ -211,17 +245,13 @@ export function WelcomePage({ onShowLogin }: WelcomePageProps) {
                     <CardTitle className="text-xl text-foreground">{avantage.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-muted-foreground mb-3">
-                      {avantage.description}
-                    </p>
+                    <p className="text-muted-foreground mb-3">{avantage.description}</p>
                     <div className="bg-success/10 border border-success/20 rounded-lg p-3">
-                      <p className="text-sm font-medium text-success">
-                        ✓ {avantage.benefice}
-                      </p>
+                      <p className="text-sm font-medium text-success">✓ {avantage.benefice}</p>
                     </div>
                   </CardContent>
                 </Card>
-              );
+              )
             })}
           </div>
         </div>
@@ -231,9 +261,7 @@ export function WelcomePage({ onShowLogin }: WelcomePageProps) {
       <div className="py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-foreground mb-4">
-              Vos collègues témoignent
-            </h2>
+            <h2 className="text-3xl font-bold text-foreground mb-4">Vos collègues témoignent</h2>
             <p className="text-muted-foreground">
               Découvrez comment SOGARA Access améliore leur quotidien professionnel
             </p>
@@ -243,8 +271,8 @@ export function WelcomePage({ onShowLogin }: WelcomePageProps) {
             {temoignages.map((temoignage, index) => (
               <Card key={index} className="industrial-card-elevated overflow-hidden">
                 <div className="aspect-square overflow-hidden">
-                  <img 
-                    src={temoignage.image} 
+                  <img
+                    src={temoignage.image}
                     alt={`${temoignage.nom} - ${temoignage.poste}`}
                     className="w-full h-full object-cover"
                   />
@@ -352,11 +380,11 @@ export function WelcomePage({ onShowLogin }: WelcomePageProps) {
             Prêt à simplifier votre quotidien ?
           </h2>
           <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Rejoignez vos collègues qui utilisent déjà SOGARA Access et découvrez 
-            un nouveau niveau d'efficacité dans votre travail quotidien.
+            Rejoignez vos collègues qui utilisent déjà SOGARA Access et découvrez un nouveau niveau
+            d'efficacité dans votre travail quotidien.
           </p>
-          
-          <Button 
+
+          <Button
             size="lg"
             className="gradient-primary text-lg px-8 py-6 shadow-[var(--shadow-industrial)]"
             onClick={onShowLogin}
@@ -389,18 +417,20 @@ export function WelcomePage({ onShowLogin }: WelcomePageProps) {
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="flex items-center gap-2 mb-4 md:mb-0">
               <div className="w-8 h-8 rounded-lg overflow-hidden bg-white">
-                <img src={'/Sogara_logo.png'} alt="SOGARA" className="w-full h-full object-contain" onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/placeholder.svg'; }} />
+                <img
+                  src={'/Sogara_logo.png'}
+                  alt="SOGARA"
+                  className="w-full h-full object-contain"
+                  onError={e => {
+                    ;(e.currentTarget as HTMLImageElement).src = '/placeholder.svg'
+                  }}
+                />
               </div>
               <span className="font-semibold text-foreground">SOGARA Access</span>
               <span className="text-muted-foreground">- Pour le personnel, par le personnel</span>
             </div>
             <div className="text-center md:text-right">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="mt-2"
-                onClick={onShowLogin}
-              >
+              <Button variant="ghost" size="sm" className="mt-2" onClick={onShowLogin}>
                 Accéder à mon espace →
               </Button>
             </div>
@@ -408,5 +438,5 @@ export function WelcomePage({ onShowLogin }: WelcomePageProps) {
         </div>
       </footer>
     </div>
-  );
+  )
 }

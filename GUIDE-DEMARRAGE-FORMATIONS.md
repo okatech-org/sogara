@@ -9,6 +9,7 @@ La fonction **"Démarrer"** dans les modules de formation HSE est maintenant **1
 ## 📍 **Accès à la Fonction**
 
 ### **Chemin d'accès :**
+
 1. Aller sur `http://localhost:8081/app/hse`
 2. Cliquer sur l'onglet **"Formations & Modules"**
 3. Sous-onglet **"Modules Interactifs"**
@@ -19,13 +20,16 @@ La fonction **"Démarrer"** dans les modules de formation HSE est maintenant **1
 ## 🔧 **Fonctionnement de "Démarrer"**
 
 ### **Étape 1 : Sélection Formation**
+
 - Interface avec **15 formations HSE** complètes
 - Filtres par catégorie (Critique, Obligatoire, Spécialisée, etc.)
 - Recherche par nom/description
 - Informations détaillées par formation
 
 ### **Étape 2 : Sélection Employé**
+
 **Nouveau : Interface de sélection d'employé**
+
 - ✅ **Filtrage automatique** selon les rôles requis
 - ✅ **Recherche** par nom, matricule, service
 - ✅ **Visualisation** des rôles de chaque employé
@@ -33,6 +37,7 @@ La fonction **"Démarrer"** dans les modules de formation HSE est maintenant **1
 - ✅ **Interface intuitive** avec photos/initiales
 
 ### **Étape 3 : Lancement Formation**
+
 - ✅ **Interface complète** de formation
 - ✅ **Navigation** entre modules
 - ✅ **Progression** visuelle
@@ -46,6 +51,7 @@ La fonction **"Démarrer"** dans les modules de formation HSE est maintenant **1
 ### ✅ **Interface de Sélection d'Employé**
 
 **Composant créé : `HSEEmployeeSelector`**
+
 - Dialog modal élégant
 - Recherche en temps réel
 - Filtrage par rôles
@@ -55,6 +61,7 @@ La fonction **"Démarrer"** dans les modules de formation HSE est maintenant **1
 ### ✅ **Gestion d'État Avancée**
 
 **Fonctionnalités ajoutées :**
+
 - État de sélection de module/employé
 - Notifications toast en temps réel
 - Gestion d'erreurs robuste
@@ -63,6 +70,7 @@ La fonction **"Démarrer"** dans les modules de formation HSE est maintenant **1
 ### ✅ **Notifications Intelligentes**
 
 **Système de notification :**
+
 - ✅ Confirmation démarrage formation
 - ✅ Félicitations fin de formation
 - ✅ Messages d'erreur contextuels
@@ -72,6 +80,7 @@ La fonction **"Démarrer"** dans les modules de formation HSE est maintenant **1
 ### ✅ **Boutons Contextuels**
 
 **Dans le suivi des progressions :**
+
 - 🎬 **Play** : Démarrer (non commencé)
 - 📖 **BookOpen** : Continuer (en cours)
 - 👁️ **Eye** : Consulter (terminé)
@@ -103,17 +112,20 @@ La fonction **"Démarrer"** dans les modules de formation HSE est maintenant **1
 ## 🎯 **Fonctionnalités Avancées**
 
 ### **Test Rapide**
+
 - ✅ Bouton **"Test Formation"** en haut à droite
 - ✅ Lance directement avec l'utilisateur connecté
 - ✅ Parfait pour tester le système
 
 ### **Gestion Multi-Utilisateur**
+
 - ✅ **Sélection intelligente** d'employés
 - ✅ **Validation des prérequis** automatique
 - ✅ **Rôles et permissions** respectés
 - ✅ **Progression individuelle** trackée
 
 ### **Feedback Immédiat**
+
 - ✅ **Notifications toast** pour chaque action
 - ✅ **États visuels** (loading, success, error)
 - ✅ **Messages contextuels** d'aide
@@ -124,22 +136,25 @@ La fonction **"Démarrer"** dans les modules de formation HSE est maintenant **1
 ## 📊 **Interface Formateur Complète**
 
 ### **Dashboard Principal**
+
 ```
 🏠 Guide de Démarrage
 📚 Modules Interactifs (15 formations)
-📅 Calendrier & Sessions  
+📅 Calendrier & Sessions
 📖 Catalogue & Import
 ```
 
 ### **Suivi des Progressions**
+
 ```
 👥 Vue par employé
-📈 Statistiques de conformité  
+📈 Statistiques de conformité
 🎯 Actions rapides (Démarrer/Continuer/Consulter)
 🏆 Génération certificats
 ```
 
 ### **Gestion des Certificats**
+
 ```
 📄 Certificats par formation
 ⬇️ Export PDF individuel/groupé
@@ -185,4 +200,4 @@ La fonction **"Démarrer"** dans les modules de formation HSE est maintenant **1
 
 **🚀 La fonction "Démarrer" est maintenant entièrement opérationnelle avec une expérience utilisateur professionnelle !**
 
-*Interface moderne, intuitive et complète pour la formation HSE.*
+_Interface moderne, intuitive et complète pour la formation HSE._

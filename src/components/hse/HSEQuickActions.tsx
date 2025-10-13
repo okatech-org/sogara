@@ -1,73 +1,73 @@
-import { useState } from 'react';
-import { Plus, AlertTriangle, Calendar, FileText, Download, Users } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { useAuth } from '@/contexts/AppContext';
-import { useHSEIncidents } from '@/hooks/useHSEIncidents';
-import { useHSETrainings } from '@/hooks/useHSETrainings';
-import { useHSECompliance } from '@/hooks/useHSECompliance';
+import { useState } from 'react'
+import { Plus, AlertTriangle, Calendar, FileText, Download, Users } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { useAuth } from '@/contexts/AppContext'
+import { useHSEIncidents } from '@/hooks/useHSEIncidents'
+import { useHSETrainings } from '@/hooks/useHSETrainings'
+import { useHSECompliance } from '@/hooks/useHSECompliance'
 
 interface HSEQuickActionsProps {
-  onCreateIncident?: () => void;
-  onScheduleTraining?: () => void;
-  onViewCompliance?: () => void;
-  onExportReport?: () => void;
+  onCreateIncident?: () => void
+  onScheduleTraining?: () => void
+  onViewCompliance?: () => void
+  onExportReport?: () => void
 }
 
-export function HSEQuickActions({ 
-  onCreateIncident, 
-  onScheduleTraining, 
+export function HSEQuickActions({
+  onCreateIncident,
+  onScheduleTraining,
   onViewCompliance,
-  onExportReport 
+  onExportReport,
 }: HSEQuickActionsProps) {
-  const { hasAnyRole } = useAuth();
-  const { getStats: getIncidentStats } = useHSEIncidents();
-  const { getStats: getTrainingStats } = useHSETrainings();
-  const { getEmployeesRequiringAction } = useHSECompliance();
-  
-  const [isExporting, setIsExporting] = useState(false);
+  const { hasAnyRole } = useAuth()
+  const { getStats: getIncidentStats } = useHSEIncidents()
+  const { getStats: getTrainingStats } = useHSETrainings()
+  const { getEmployeesRequiringAction } = useHSECompliance()
 
-  const canManageHSE = hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR']);
-  const canViewReports = hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR']);
+  const [isExporting, setIsExporting] = useState(false)
 
-  const incidentStats = getIncidentStats();
-  const trainingStats = getTrainingStats();
-  const employeesNeedingAction = getEmployeesRequiringAction();
+  const canManageHSE = hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR'])
+  const canViewReports = hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR'])
+
+  const incidentStats = getIncidentStats()
+  const trainingStats = getTrainingStats()
+  const employeesNeedingAction = getEmployeesRequiringAction()
 
   const handleExportReport = async () => {
-    if (!canViewReports) return;
-    
+    if (!canViewReports) return
+
     try {
-      setIsExporting(true);
-      
+      setIsExporting(true)
+
       // Simuler la génération d'un rapport (en réalité, on utiliserait une API)
       const reportData = {
         date: new Date().toISOString(),
         incidents: incidentStats,
         trainings: trainingStats,
         employeesNeedingAction: employeesNeedingAction.length,
-        timestamp: new Date().toLocaleString('fr-FR')
-      };
+        timestamp: new Date().toLocaleString('fr-FR'),
+      }
 
       // Créer et télécharger un fichier JSON pour la démo
-      const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `rapport-hse-${new Date().toISOString().split('T')[0]}.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `rapport-hse-${new Date().toISOString().split('T')[0]}.json`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
 
-      onExportReport?.();
+      onExportReport?.()
     } catch (error) {
-      console.error('Erreur lors de l\'export:', error);
+      console.error("Erreur lors de l'export:", error)
     } finally {
-      setIsExporting(false);
+      setIsExporting(false)
     }
-  };
+  }
 
   const quickActions = [
     {
@@ -80,7 +80,7 @@ export function HSEQuickActions({
       borderColor: 'border-red-200',
       action: onCreateIncident,
       visible: canManageHSE,
-      urgent: incidentStats.highSeverity > 0
+      urgent: incidentStats.highSeverity > 0,
     },
     {
       id: 'schedule-training',
@@ -91,7 +91,7 @@ export function HSEQuickActions({
       bgColor: 'bg-blue-50 hover:bg-blue-100',
       borderColor: 'border-blue-200',
       action: onScheduleTraining,
-      visible: canManageHSE
+      visible: canManageHSE,
     },
     {
       id: 'view-compliance',
@@ -103,7 +103,7 @@ export function HSEQuickActions({
       borderColor: 'border-green-200',
       action: onViewCompliance,
       visible: true,
-      badge: employeesNeedingAction.length > 0 ? employeesNeedingAction.length : undefined
+      badge: employeesNeedingAction.length > 0 ? employeesNeedingAction.length : undefined,
     },
     {
       id: 'export-report',
@@ -115,14 +115,14 @@ export function HSEQuickActions({
       borderColor: 'border-purple-200',
       action: handleExportReport,
       visible: canViewReports,
-      loading: isExporting
-    }
-  ];
+      loading: isExporting,
+    },
+  ]
 
-  const visibleActions = quickActions.filter(action => action.visible);
+  const visibleActions = quickActions.filter(action => action.visible)
 
   if (visibleActions.length === 0) {
-    return null;
+    return null
   }
 
   return (
@@ -132,15 +132,13 @@ export function HSEQuickActions({
           <Plus className="w-5 h-5" />
           Actions rapides HSE
         </CardTitle>
-        <p className="text-muted-foreground">
-          Accès direct aux fonctionnalités principales
-        </p>
+        <p className="text-muted-foreground">Accès direct aux fonctionnalités principales</p>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {visibleActions.map((action) => {
-            const Icon = action.icon;
-            
+          {visibleActions.map(action => {
+            const Icon = action.icon
+
             return (
               <div
                 key={action.id}
@@ -155,37 +153,33 @@ export function HSEQuickActions({
                   <div className={`p-2 rounded-lg bg-white border ${action.borderColor}`}>
                     <Icon className={`w-5 h-5 ${action.color}`} />
                   </div>
-                  
+
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="font-medium text-gray-900">{action.label}</h3>
-                      
+
                       {action.badge && (
                         <Badge variant="destructive" className="text-xs">
                           {action.badge}
                         </Badge>
                       )}
-                      
+
                       {action.urgent && (
                         <Badge variant="destructive" className="text-xs animate-pulse">
                           URGENT
                         </Badge>
                       )}
                     </div>
-                    
-                    <p className="text-sm text-gray-600">
-                      {action.description}
-                    </p>
-                    
+
+                    <p className="text-sm text-gray-600">{action.description}</p>
+
                     {action.loading && (
-                      <div className="mt-2 text-xs text-gray-500">
-                        En cours...
-                      </div>
+                      <div className="mt-2 text-xs text-gray-500">En cours...</div>
                     )}
                   </div>
                 </div>
               </div>
-            );
+            )
           })}
         </div>
 
@@ -208,5 +202,5 @@ export function HSEQuickActions({
         )}
       </CardContent>
     </Card>
-  );
+  )
 }

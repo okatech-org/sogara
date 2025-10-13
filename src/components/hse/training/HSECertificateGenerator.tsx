@@ -1,52 +1,52 @@
-import { useState } from 'react';
-import { Download, Award, Calendar, User, Shield, FileText } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { HSETrainingModule, HSETrainingProgress } from '@/types';
-import { useAuth } from '@/contexts/AppContext';
-import { PDFGeneratorService } from '@/services/pdf-generator.service';
+import { useState } from 'react'
+import { Download, Award, Calendar, User, Shield, FileText } from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { HSETrainingModule, HSETrainingProgress } from '@/types'
+import { useAuth } from '@/contexts/AppContext'
+import { PDFGeneratorService } from '@/services/pdf-generator.service'
 
 interface HSECertificateGeneratorProps {
-  module: HSETrainingModule;
-  progress: HSETrainingProgress;
-  employeeId: string;
-  onDownload: () => void;
+  module: HSETrainingModule
+  progress: HSETrainingProgress
+  employeeId: string
+  onDownload: () => void
 }
 
-export function HSECertificateGenerator({ 
-  module, 
-  progress, 
-  employeeId, 
-  onDownload 
+export function HSECertificateGenerator({
+  module,
+  progress,
+  employeeId,
+  onDownload,
 }: HSECertificateGeneratorProps) {
-  const { currentUser, getEmployeeById } = useAuth();
-  const [isGenerating, setIsGenerating] = useState(false);
+  const { currentUser, getEmployeeById } = useAuth()
+  const [isGenerating, setIsGenerating] = useState(false)
 
-  const employee = getEmployeeById?.(employeeId) || currentUser;
+  const employee = getEmployeeById?.(employeeId) || currentUser
 
   const generatePDF = async () => {
-    setIsGenerating(true);
-    
+    setIsGenerating(true)
+
     try {
-      if (!employee) throw new Error('Informations employé manquantes');
-      
+      if (!employee) throw new Error('Informations employé manquantes')
+
       const pdfBlob = await PDFGeneratorService.generateTrainingCertificate(
         module,
         progress,
-        employee
-      );
-      
-      const filename = `certificat-${module.code}-${employee.firstName}-${employee.lastName}-${new Date().getFullYear()}.pdf`;
-      await PDFGeneratorService.downloadPDF(pdfBlob, filename);
-      
-      onDownload();
+        employee,
+      )
+
+      const filename = `certificat-${module.code}-${employee.firstName}-${employee.lastName}-${new Date().getFullYear()}.pdf`
+      await PDFGeneratorService.downloadPDF(pdfBlob, filename)
+
+      onDownload()
     } catch (error) {
-      console.error('Erreur génération PDF:', error);
+      console.error('Erreur génération PDF:', error)
     } finally {
-      setIsGenerating(false);
+      setIsGenerating(false)
     }
-  };
+  }
 
   if (!progress.completedAt || !progress.certificateIssuedAt) {
     return (
@@ -56,7 +56,7 @@ export function HSECertificateGenerator({
           Certificat non disponible. Terminez d'abord la formation.
         </p>
       </div>
-    );
+    )
   }
 
   return (
@@ -68,11 +68,7 @@ export function HSECertificateGenerator({
             {/* Logo et en-tête */}
             <div className="space-y-4">
               <div className="w-16 h-16 mx-auto bg-white rounded-lg shadow-sm flex items-center justify-center">
-                <img
-                  src="/Sogara_logo.png"
-                  alt="SOGARA"
-                  className="w-12 h-12 object-contain"
-                />
+                <img src="/Sogara_logo.png" alt="SOGARA" className="w-12 h-12 object-contain" />
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-primary">SOGARA</h1>
@@ -102,9 +98,7 @@ export function HSECertificateGenerator({
 
               <div className="text-center">
                 <p className="text-sm text-muted-foreground">a suivi avec succès la formation</p>
-                <h4 className="text-lg font-semibold text-primary">
-                  {module.title}
-                </h4>
+                <h4 className="text-lg font-semibold text-primary">{module.title}</h4>
                 <p className="text-sm text-muted-foreground">
                   Code: {module.code} • Durée: {module.duration} {module.durationUnit}
                 </p>
@@ -122,7 +116,7 @@ export function HSECertificateGenerator({
                   </div>
                 </div>
               </div>
-              
+
               <div className="flex items-center gap-2 justify-center">
                 <Shield className="w-4 h-4 text-muted-foreground" />
                 <div>
@@ -162,7 +156,8 @@ export function HSECertificateGenerator({
 
             {/* Numéro de certificat */}
             <div className="text-xs text-muted-foreground">
-              Certificat N° {module.code}-{employeeId.slice(-6)}-{progress.completedAt.getFullYear()}
+              Certificat N° {module.code}-{employeeId.slice(-6)}-
+              {progress.completedAt.getFullYear()}
             </div>
           </div>
         </CardContent>
@@ -170,15 +165,11 @@ export function HSECertificateGenerator({
 
       {/* Actions */}
       <div className="flex items-center justify-center gap-4">
-        <Button 
-          onClick={generatePDF}
-          disabled={isGenerating}
-          className="gap-2"
-        >
+        <Button onClick={generatePDF} disabled={isGenerating} className="gap-2">
           <Download className="w-4 h-4" />
           {isGenerating ? 'Génération en cours...' : 'Télécharger le PDF'}
         </Button>
-        
+
         <Button variant="outline" className="gap-2">
           <FileText className="w-4 h-4" />
           Imprimer
@@ -203,5 +194,5 @@ export function HSECertificateGenerator({
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

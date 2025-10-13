@@ -3,7 +3,9 @@
 ## 🎉 PDF Fonctionne + JSON Amélioré
 
 ### ✅ PDF Conversion: SUCCÈS !
+
 Le PDF se convertit maintenant correctement:
+
 ```
 ✅ PDF.js configuré avec worker local v5.4.149
 ✅ Page 1 rendue: 1190x1684px
@@ -13,6 +15,7 @@ Le PDF se convertit maintenant correctement:
 ### 🔧 Problème JSON Corrigé
 
 **Erreur précédente:**
+
 ```
 ❌ Erreur: Aucun JSON trouvé dans la réponse
 ```
@@ -30,6 +33,7 @@ Le PDF se convertit maintenant correctement:
 ## 🎯 TESTEZ MAINTENANT
 
 **IMPORTANT: Rechargez la page avant !**
+
 ```
 Ctrl+Shift+R (ou Cmd+Shift+R sur Mac)
 ```
@@ -46,6 +50,7 @@ Ctrl+Shift+R (ou Cmd+Shift+R sur Mac)
 ## 📊 Logs Console Attendus
 
 ### ✅ Succès complet:
+
 ```
 📄 PDF.js configuré avec worker local v5.4.149
 📄 PDF détecté, conversion en image...
@@ -61,6 +66,7 @@ Ctrl+Shift+R (ou Cmd+Shift+R sur Mac)
 ### 🔍 Debug activé:
 
 Si vous voyez encore une erreur, vous verrez maintenant:
+
 ```
 📝 Réponse OpenAI brute: [contenu exact reçu]
 ```
@@ -72,29 +78,39 @@ Cela permettra de diagnostiquer exactement ce que OpenAI renvoie.
 ## 🚀 Améliorations Appliquées
 
 ### 1. Mode JSON forcé
+
 ```typescript
-response_format: { type: "json_object" }
+response_format: {
+  type: 'json_object'
+}
 ```
+
 → OpenAI retournera TOUJOURS du JSON valide
 
 ### 2. Message système
+
 ```typescript
 role: 'system',
 content: 'Tu es un expert... réponds UNIQUEMENT avec du JSON valide'
 ```
+
 → Instructions claires pour l'IA
 
 ### 3. Plus de tokens
+
 ```typescript
-max_tokens: 800  // était 500
+max_tokens: 800 // était 500
 ```
+
 → Évite les réponses coupées
 
 ### 4. Parsing robuste
+
 ```typescript
 // Essaie plusieurs méthodes de parsing
 jsonMatch ou parsing direct ou erreur détaillée
 ```
+
 → Gère différents formats de réponse
 
 ---
@@ -102,11 +118,13 @@ jsonMatch ou parsing direct ou erreur détaillée
 ## 🎯 Test Rapide
 
 ### Test 1: Image JPG/PNG
+
 1. Uploadez une **image de CNI**
 2. Devrait extraire les données
 3. Temps: ~2s
 
 ### Test 2: PDF
+
 1. Uploadez le **même document en PDF**
 2. Conversion PDF → Image: +1s
 3. Extraction: même qualité que l'image
@@ -132,6 +150,7 @@ jsonMatch ou parsing direct ou erreur détaillée
 **Regardez les logs Console:**
 
 Si vous voyez:
+
 ```
 📝 Réponse OpenAI brute: ...
 ```

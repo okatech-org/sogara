@@ -1,60 +1,54 @@
-import React, { useEffect, useState } from 'react';
-import QRCode from 'qrcode';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Employee, Visitor, Equipment } from '@/types';
-import { QrCode, Download, User, HardHat, Calendar } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import React, { useEffect, useState } from 'react'
+import QRCode from 'qrcode'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
+import { Employee, Visitor, Equipment } from '@/types'
+import { QrCode, Download, User, HardHat, Calendar } from 'lucide-react'
+import { toast } from '@/hooks/use-toast'
+import { format } from 'date-fns'
+import { fr } from 'date-fns/locale'
 
 interface QRGeneratorProps {
-  type: 'visitor' | 'equipment' | 'employee';
-  data: Visitor | Equipment | Employee;
-  size?: number;
+  type: 'visitor' | 'equipment' | 'employee'
+  data: Visitor | Equipment | Employee
+  size?: number
   visitDetails?: {
-    checkOutTime?: Date;
-    badgeNumber?: string;
-    hostEmployee?: Employee;
-  };
-  className?: string;
+    checkOutTime?: Date
+    badgeNumber?: string
+    hostEmployee?: Employee
+  }
+  className?: string
 }
 
 interface QRData {
-  type: string;
-  id: string;
-  data: any;
-  generatedAt: string;
-  expiresAt?: string;
+  type: string
+  id: string
+  data: any
+  generatedAt: string
+  expiresAt?: string
 }
 
-export function QRGenerator({ 
-  type, 
-  data, 
-  size = 200, 
-  visitDetails,
-  className 
-}: QRGeneratorProps) {
-  const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [qrData, setQrData] = useState<QRData | null>(null);
+export function QRGenerator({ type, data, size = 200, visitDetails, className }: QRGeneratorProps) {
+  const [qrCodeUrl, setQrCodeUrl] = useState<string>('')
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [qrData, setQrData] = useState<QRData | null>(null)
 
   useEffect(() => {
-    generateQRCode();
-  }, [type, data, visitDetails]);
+    generateQRCode()
+  }, [type, data, visitDetails])
 
   const generateQRData = (): QRData => {
     const baseData = {
       type,
       id: data.id,
-      generatedAt: new Date().toISOString()
-    };
+      generatedAt: new Date().toISOString(),
+    }
 
     switch (type) {
       case 'visitor':
-        const visitor = data as Visitor;
+        const visitor = data as Visitor
         return {
           ...baseData,
           data: {
@@ -63,17 +57,19 @@ export function QRGenerator({
             company: visitor.company,
             document: visitor.idDocument,
             badgeNumber: visitDetails?.badgeNumber,
-            host: visitDetails?.hostEmployee ? {
-              name: `${visitDetails.hostEmployee.firstName} ${visitDetails.hostEmployee.lastName}`,
-              service: visitDetails.hostEmployee.service
-            } : undefined,
-            validUntil: visitDetails?.checkOutTime?.toISOString()
+            host: visitDetails?.hostEmployee
+              ? {
+                  name: `${visitDetails.hostEmployee.firstName} ${visitDetails.hostEmployee.lastName}`,
+                  service: visitDetails.hostEmployee.service,
+                }
+              : undefined,
+            validUntil: visitDetails?.checkOutTime?.toISOString(),
           },
-          expiresAt: visitDetails?.checkOutTime?.toISOString()
-        };
+          expiresAt: visitDetails?.checkOutTime?.toISOString(),
+        }
 
       case 'equipment':
-        const equipment = data as Equipment;
+        const equipment = data as Equipment
         return {
           ...baseData,
           data: {
@@ -83,12 +79,12 @@ export function QRGenerator({
             serialNumber: equipment.serialNumber,
             status: equipment.status,
             location: equipment.location,
-            checkDate: equipment.nextCheckDate?.toISOString()
-          }
-        };
+            checkDate: equipment.nextCheckDate?.toISOString(),
+          },
+        }
 
       case 'employee':
-        const employee = data as Employee;
+        const employee = data as Employee
         return {
           ...baseData,
           data: {
@@ -96,118 +92,117 @@ export function QRGenerator({
             matricule: employee.matricule,
             name: `${employee.firstName} ${employee.lastName}`,
             service: employee.service,
-            roles: employee.roles
-          }
-        };
+            roles: employee.roles,
+          },
+        }
 
       default:
-        throw new Error(`Type de QR code non supporté: ${type}`);
+        throw new Error(`Type de QR code non supporté: ${type}`)
     }
-  };
+  }
 
   const generateQRCode = async () => {
-    setIsGenerating(true);
-    
+    setIsGenerating(true)
+
     try {
-      const qrData = generateQRData();
-      setQrData(qrData);
-      
+      const qrData = generateQRData()
+      setQrData(qrData)
+
       // Générer le QR code
-      const qrString = JSON.stringify(qrData);
+      const qrString = JSON.stringify(qrData)
       const qrCodeDataUrl = await QRCode.toDataURL(qrString, {
         width: size,
         margin: 2,
         color: {
           dark: '#000000',
-          light: '#FFFFFF'
+          light: '#FFFFFF',
         },
-        errorCorrectionLevel: 'M'
-      });
-      
-      setQrCodeUrl(qrCodeDataUrl);
-      
+        errorCorrectionLevel: 'M',
+      })
+
+      setQrCodeUrl(qrCodeDataUrl)
     } catch (error) {
-      console.error('Erreur génération QR code:', error);
+      console.error('Erreur génération QR code:', error)
       toast({
         title: 'Erreur',
         description: 'Impossible de générer le QR code',
-        variant: 'destructive'
-      });
+        variant: 'destructive',
+      })
     } finally {
-      setIsGenerating(false);
+      setIsGenerating(false)
     }
-  };
+  }
 
   const downloadQRCode = () => {
-    if (!qrCodeUrl) return;
-    
-    const link = document.createElement('a');
-    link.download = `qr-${type}-${data.id}-${Date.now()}.png`;
-    link.href = qrCodeUrl;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
+    if (!qrCodeUrl) return
+
+    const link = document.createElement('a')
+    link.download = `qr-${type}-${data.id}-${Date.now()}.png`
+    link.href = qrCodeUrl
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+
     toast({
       title: 'QR code téléchargé',
-      description: 'Le QR code a été sauvegardé'
-    });
-  };
+      description: 'Le QR code a été sauvegardé',
+    })
+  }
 
   const copyQRData = () => {
-    if (!qrData) return;
-    
-    navigator.clipboard.writeText(JSON.stringify(qrData, null, 2));
+    if (!qrData) return
+
+    navigator.clipboard.writeText(JSON.stringify(qrData, null, 2))
     toast({
       title: 'Données copiées',
-      description: 'Les données du QR code ont été copiées'
-    });
-  };
+      description: 'Les données du QR code ont été copiées',
+    })
+  }
 
   const getQRTitle = (): string => {
     switch (type) {
       case 'visitor':
-        const visitor = data as Visitor;
-        return `Badge visiteur - ${visitor.firstName} ${visitor.lastName}`;
+        const visitor = data as Visitor
+        return `Badge visiteur - ${visitor.firstName} ${visitor.lastName}`
       case 'equipment':
-        const equipment = data as Equipment;
-        return `Équipement - ${equipment.label}`;
+        const equipment = data as Equipment
+        return `Équipement - ${equipment.label}`
       case 'employee':
-        const employee = data as Employee;
-        return `Employé - ${employee.firstName} ${employee.lastName}`;
+        const employee = data as Employee
+        return `Employé - ${employee.firstName} ${employee.lastName}`
       default:
-        return 'QR Code';
+        return 'QR Code'
     }
-  };
+  }
 
   const getQRDescription = (): string => {
     switch (type) {
       case 'visitor':
-        const visitor = data as Visitor;
-        return `${visitor.company} • ${visitDetails?.badgeNumber || 'Badge à attribuer'}`;
+        const visitor = data as Visitor
+        return `${visitor.company} • ${visitDetails?.badgeNumber || 'Badge à attribuer'}`
       case 'equipment':
-        const equipment = data as Equipment;
-        return `${equipment.type} • ${equipment.serialNumber || 'Pas de N° série'}`;
+        const equipment = data as Equipment
+        return `${equipment.type} • ${equipment.serialNumber || 'Pas de N° série'}`
       case 'employee':
-        const employee = data as Employee;
-        return `${employee.matricule} • ${employee.service}`;
+        const employee = data as Employee
+        return `${employee.matricule} • ${employee.service}`
       default:
-        return '';
+        return ''
     }
-  };
+  }
 
   const getIcon = () => {
     switch (type) {
       case 'visitor':
-        return <User className="w-5 h-5" />;
+        return <User className="w-5 h-5" />
       case 'equipment':
-        return <HardHat className="w-5 h-5" />;
+        return <HardHat className="w-5 h-5" />
       case 'employee':
-        return <User className="w-5 h-5" />;
+        return <User className="w-5 h-5" />
       default:
-        return <QrCode className="w-5 h-5" />;
+        return <QrCode className="w-5 h-5" />
     }
-  };
+  }
 
   return (
     <Card className={className}>
@@ -216,11 +211,9 @@ export function QRGenerator({
           {getIcon()}
           {getQRTitle()}
         </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          {getQRDescription()}
-        </p>
+        <p className="text-sm text-muted-foreground">{getQRDescription()}</p>
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
         {/* QR Code */}
         <div className="flex justify-center">
@@ -233,13 +226,7 @@ export function QRGenerator({
             </div>
           ) : qrCodeUrl ? (
             <div className="p-4 bg-white rounded-lg border">
-              <img 
-                src={qrCodeUrl} 
-                alt="QR Code"
-                className="mx-auto"
-                width={size}
-                height={size}
-              />
+              <img src={qrCodeUrl} alt="QR Code" className="mx-auto" width={size} height={size} />
             </div>
           ) : (
             <div className="flex items-center justify-center w-48 h-48 border-2 border-dashed border-muted-foreground/30 rounded-lg">
@@ -252,31 +239,31 @@ export function QRGenerator({
         {qrData && (
           <div className="space-y-3">
             <Separator />
-            
+
             <div className="space-y-2">
               <h4 className="text-sm font-medium">Informations encodées</h4>
-              
+
               <div className="text-xs space-y-1">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Type:</span>
                   <Badge variant="outline">{qrData.type}</Badge>
                 </div>
-                
+
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">ID:</span>
                   <span className="font-mono">{qrData.id}</span>
                 </div>
-                
+
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Généré le:</span>
-                  <span>{format(new Date(qrData.generatedAt), "dd/MM/yyyy HH:mm")}</span>
+                  <span>{format(new Date(qrData.generatedAt), 'dd/MM/yyyy HH:mm')}</span>
                 </div>
-                
+
                 {qrData.expiresAt && (
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Expire le:</span>
                     <span className="text-red-600">
-                      {format(new Date(qrData.expiresAt), "dd/MM/yyyy HH:mm")}
+                      {format(new Date(qrData.expiresAt), 'dd/MM/yyyy HH:mm')}
                     </span>
                   </div>
                 )}
@@ -297,7 +284,9 @@ export function QRGenerator({
                   {visitDetails.hostEmployee && (
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Hôte:</span>
-                      <span>{visitDetails.hostEmployee.firstName} {visitDetails.hostEmployee.lastName}</span>
+                      <span>
+                        {visitDetails.hostEmployee.firstName} {visitDetails.hostEmployee.lastName}
+                      </span>
                     </div>
                   )}
                 </div>
@@ -310,11 +299,13 @@ export function QRGenerator({
                 <div className="text-xs space-y-1">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Statut:</span>
-                    <Badge 
+                    <Badge
                       variant={
-                        (data as Equipment).status === 'operational' ? 'default' :
-                        (data as Equipment).status === 'maintenance' ? 'secondary' :
-                        'destructive'
+                        (data as Equipment).status === 'operational'
+                          ? 'default'
+                          : (data as Equipment).status === 'maintenance'
+                            ? 'secondary'
+                            : 'destructive'
                       }
                     >
                       {(data as Equipment).status}
@@ -323,7 +314,7 @@ export function QRGenerator({
                   {(data as Equipment).nextCheckDate && (
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Prochain contrôle:</span>
-                      <span>{format((data as Equipment).nextCheckDate!, "dd/MM/yyyy")}</span>
+                      <span>{format((data as Equipment).nextCheckDate, 'dd/MM/yyyy')}</span>
                     </div>
                   )}
                 </div>
@@ -344,7 +335,7 @@ export function QRGenerator({
             <Download className="w-4 h-4 mr-2" />
             Télécharger
           </Button>
-          
+
           <Button
             onClick={copyQRData}
             disabled={!qrData}
@@ -363,7 +354,8 @@ export function QRGenerator({
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4 text-yellow-600" />
               <p className="text-sm text-yellow-700 dark:text-yellow-300">
-                Ce QR code expirera automatiquement le {format(visitDetails.checkOutTime, "dd/MM/yyyy 'à' HH:mm", { locale: fr })}
+                Ce QR code expirera automatiquement le{' '}
+                {format(visitDetails.checkOutTime, "dd/MM/yyyy 'à' HH:mm", { locale: fr })}
               </p>
             </div>
           </div>
@@ -398,50 +390,49 @@ export function QRGenerator({
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }
 
 // Composant pour scanner les QR codes
 interface QRScannerProps {
-  onScan: (data: QRData) => void;
-  onError?: (error: string) => void;
+  onScan: (data: QRData) => void
+  onError?: (error: string) => void
 }
 
 export function QRScanner({ onScan, onError }: QRScannerProps) {
-  const [manualInput, setManualInput] = useState('');
+  const [manualInput, setManualInput] = useState('')
 
   const handleManualScan = () => {
     try {
-      const parsedData = JSON.parse(manualInput);
-      
+      const parsedData = JSON.parse(manualInput)
+
       // Valider la structure des données
       if (!parsedData.type || !parsedData.id || !parsedData.data) {
-        throw new Error('Format de QR code invalide');
+        throw new Error('Format de QR code invalide')
       }
-      
+
       // Vérifier l'expiration
       if (parsedData.expiresAt && new Date(parsedData.expiresAt) < new Date()) {
-        throw new Error('QR code expiré');
+        throw new Error('QR code expiré')
       }
-      
-      onScan(parsedData);
-      setManualInput('');
-      
+
+      onScan(parsedData)
+      setManualInput('')
+
       toast({
         title: 'QR code scanné',
-        description: 'Données récupérées avec succès'
-      });
-      
+        description: 'Données récupérées avec succès',
+      })
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'QR code invalide';
-      onError?.(message);
+      const message = error instanceof Error ? error.message : 'QR code invalide'
+      onError?.(message)
       toast({
         title: 'Erreur scan',
         description: message,
-        variant: 'destructive'
-      });
+        variant: 'destructive',
+      })
     }
-  };
+  }
 
   return (
     <Card>
@@ -451,32 +442,28 @@ export function QRScanner({ onScan, onError }: QRScannerProps) {
           Scanner QR Code
         </CardTitle>
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="manual-qr">Données QR Code (manuel)</Label>
           <Textarea
             id="manual-qr"
             value={manualInput}
-            onChange={(e) => setManualInput(e.target.value)}
+            onChange={e => setManualInput(e.target.value)}
             placeholder="Collez les données du QR code ici..."
             rows={4}
           />
         </div>
-        
-        <Button
-          onClick={handleManualScan}
-          disabled={!manualInput.trim()}
-          className="w-full"
-        >
+
+        <Button onClick={handleManualScan} disabled={!manualInput.trim()} className="w-full">
           <QrCode className="w-4 h-4 mr-2" />
           Scanner
         </Button>
-        
+
         <div className="text-xs text-muted-foreground text-center">
           En production, utiliser la caméra pour scanner automatiquement
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }

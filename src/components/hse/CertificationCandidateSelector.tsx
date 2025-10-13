@@ -1,106 +1,113 @@
-import { useState, useMemo } from 'react';
-import { Users, Building, Search, X, Briefcase, Award } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Employee } from '@/types';
+import { useState, useMemo } from 'react'
+import { Users, Building, Search, X, Briefcase, Award } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Employee } from '@/types'
 
 interface CertificationCandidateSelectorProps {
-  employees: Employee[];
-  onSelectionChange: (selectedIds: string[], selectedTypes: Record<string, 'employee' | 'external'>) => void;
-  preSelectedIds?: string[];
+  employees: Employee[]
+  onSelectionChange: (
+    selectedIds: string[],
+    selectedTypes: Record<string, 'employee' | 'external'>,
+  ) => void
+  preSelectedIds?: string[]
 }
 
-export function CertificationCandidateSelector({ 
-  employees, 
+export function CertificationCandidateSelector({
+  employees,
   onSelectionChange,
-  preSelectedIds = []
+  preSelectedIds = [],
 }: CertificationCandidateSelectorProps) {
-  const [selectedIds, setSelectedIds] = useState<string[]>(preSelectedIds);
-  const [selectedTypes, setSelectedTypes] = useState<Record<string, 'employee' | 'external'>>({});
-  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedIds, setSelectedIds] = useState<string[]>(preSelectedIds)
+  const [selectedTypes, setSelectedTypes] = useState<Record<string, 'employee' | 'external'>>({})
+  const [searchTerm, setSearchTerm] = useState('')
 
   // Séparer employés internes et externes
-  const internalEmployees = useMemo(() => 
-    employees.filter(e => !e.roles.includes('EXTERNE')),
-    [employees]
-  );
+  const internalEmployees = useMemo(
+    () => employees.filter(e => !e.roles.includes('EXTERNE')),
+    [employees],
+  )
 
-  const externalCandidates = useMemo(() =>
-    employees.filter(e => e.roles.includes('EXTERNE')),
-    [employees]
-  );
+  const externalCandidates = useMemo(
+    () => employees.filter(e => e.roles.includes('EXTERNE')),
+    [employees],
+  )
 
   const filteredInternals = useMemo(() => {
     return internalEmployees.filter(emp => {
-      const searchLower = searchTerm.toLowerCase();
-      return searchTerm === '' || 
+      const searchLower = searchTerm.toLowerCase()
+      return (
+        searchTerm === '' ||
         `${emp.firstName} ${emp.lastName}`.toLowerCase().includes(searchLower) ||
         emp.matricule.toLowerCase().includes(searchLower) ||
-        emp.service.toLowerCase().includes(searchLower);
-    });
-  }, [internalEmployees, searchTerm]);
+        emp.service.toLowerCase().includes(searchLower)
+      )
+    })
+  }, [internalEmployees, searchTerm])
 
   const filteredExternals = useMemo(() => {
     return externalCandidates.filter(emp => {
-      const searchLower = searchTerm.toLowerCase();
-      return searchTerm === '' ||
+      const searchLower = searchTerm.toLowerCase()
+      return (
+        searchTerm === '' ||
         `${emp.firstName} ${emp.lastName}`.toLowerCase().includes(searchLower) ||
-        emp.service.toLowerCase().includes(searchLower);
-    });
-  }, [externalCandidates, searchTerm]);
+        emp.service.toLowerCase().includes(searchLower)
+      )
+    })
+  }, [externalCandidates, searchTerm])
 
   const toggleCandidate = (candidateId: string, type: 'employee' | 'external') => {
     const updated = selectedIds.includes(candidateId)
       ? selectedIds.filter(id => id !== candidateId)
-      : [...selectedIds, candidateId];
-    
-    const updatedTypes = { ...selectedTypes };
+      : [...selectedIds, candidateId]
+
+    const updatedTypes = { ...selectedTypes }
     if (updated.includes(candidateId)) {
-      updatedTypes[candidateId] = type;
+      updatedTypes[candidateId] = type
     } else {
-      delete updatedTypes[candidateId];
+      delete updatedTypes[candidateId]
     }
-    
-    setSelectedIds(updated);
-    setSelectedTypes(updatedTypes);
-    onSelectionChange(updated, updatedTypes);
-  };
+
+    setSelectedIds(updated)
+    setSelectedTypes(updatedTypes)
+    onSelectionChange(updated, updatedTypes)
+  }
 
   const selectAllInternal = () => {
-    const internalIds = filteredInternals.map(e => e.id);
-    const newTypes = { ...selectedTypes };
-    internalIds.forEach(id => newTypes[id] = 'employee');
-    
-    const updated = [...new Set([...selectedIds, ...internalIds])];
-    setSelectedIds(updated);
-    setSelectedTypes(newTypes);
-    onSelectionChange(updated, newTypes);
-  };
+    const internalIds = filteredInternals.map(e => e.id)
+    const newTypes = { ...selectedTypes }
+    internalIds.forEach(id => (newTypes[id] = 'employee'))
+
+    const updated = [...new Set([...selectedIds, ...internalIds])]
+    setSelectedIds(updated)
+    setSelectedTypes(newTypes)
+    onSelectionChange(updated, newTypes)
+  }
 
   const selectAllExternal = () => {
-    const externalIds = filteredExternals.map(e => e.id);
-    const newTypes = { ...selectedTypes };
-    externalIds.forEach(id => newTypes[id] = 'external');
-    
-    const updated = [...new Set([...selectedIds, ...externalIds])];
-    setSelectedIds(updated);
-    setSelectedTypes(newTypes);
-    onSelectionChange(updated, newTypes);
-  };
+    const externalIds = filteredExternals.map(e => e.id)
+    const newTypes = { ...selectedTypes }
+    externalIds.forEach(id => (newTypes[id] = 'external'))
+
+    const updated = [...new Set([...selectedIds, ...externalIds])]
+    setSelectedIds(updated)
+    setSelectedTypes(newTypes)
+    onSelectionChange(updated, newTypes)
+  }
 
   const clearSelection = () => {
-    setSelectedIds([]);
-    setSelectedTypes({});
-    onSelectionChange([], {});
-  };
+    setSelectedIds([])
+    setSelectedTypes({})
+    onSelectionChange([], {})
+  }
 
-  const internalSelected = selectedIds.filter(id => selectedTypes[id] === 'employee').length;
-  const externalSelected = selectedIds.filter(id => selectedTypes[id] === 'external').length;
+  const internalSelected = selectedIds.filter(id => selectedTypes[id] === 'employee').length
+  const externalSelected = selectedIds.filter(id => selectedTypes[id] === 'external').length
 
   return (
     <div className="space-y-4">
@@ -140,7 +147,7 @@ export function CertificationCandidateSelector({
         <Input
           placeholder="Rechercher un candidat..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={e => setSearchTerm(e.target.value)}
           className="pl-10"
         />
       </div>
@@ -183,8 +190,8 @@ export function CertificationCandidateSelector({
             <ScrollArea className="h-[250px] border rounded-md p-3">
               <div className="space-y-2">
                 {filteredExternals.map(candidate => (
-                  <div 
-                    key={candidate.id} 
+                  <div
+                    key={candidate.id}
                     className="flex items-center space-x-3 p-3 hover:bg-orange-50 rounded transition-colors border border-orange-100"
                   >
                     <Checkbox
@@ -192,10 +199,7 @@ export function CertificationCandidateSelector({
                       checked={selectedIds.includes(candidate.id)}
                       onCheckedChange={() => toggleCandidate(candidate.id, 'external')}
                     />
-                    <label
-                      htmlFor={`ext-${candidate.id}`}
-                      className="flex-1 cursor-pointer"
-                    >
+                    <label htmlFor={`ext-${candidate.id}`} className="flex-1 cursor-pointer">
                       <div className="flex items-center justify-between">
                         <div>
                           <div className="flex items-center gap-2">
@@ -223,9 +227,7 @@ export function CertificationCandidateSelector({
         {/* Employés Internes */}
         <TabsContent value="internal" className="space-y-3">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">
-              Personnel SOGARA (employés permanents)
-            </p>
+            <p className="text-sm text-muted-foreground">Personnel SOGARA (employés permanents)</p>
             {filteredInternals.length > 0 && (
               <Button size="sm" variant="outline" onClick={selectAllInternal}>
                 Tout sélectionner
@@ -236,8 +238,8 @@ export function CertificationCandidateSelector({
           <ScrollArea className="h-[250px] border rounded-md p-3">
             <div className="space-y-2">
               {filteredInternals.map(employee => (
-                <div 
-                  key={employee.id} 
+                <div
+                  key={employee.id}
                   className="flex items-center space-x-3 p-3 hover:bg-blue-50 rounded transition-colors border border-blue-100"
                 >
                   <Checkbox
@@ -245,10 +247,7 @@ export function CertificationCandidateSelector({
                     checked={selectedIds.includes(employee.id)}
                     onCheckedChange={() => toggleCandidate(employee.id, 'employee')}
                   />
-                  <label
-                    htmlFor={`int-${employee.id}`}
-                    className="flex-1 cursor-pointer"
-                  >
+                  <label htmlFor={`int-${employee.id}`} className="flex-1 cursor-pointer">
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="flex items-center gap-2">
@@ -281,12 +280,15 @@ export function CertificationCandidateSelector({
                 <Award className="w-4 h-4 text-purple-600" />
                 <div>
                   <p className="font-medium text-sm text-purple-900">
-                    {selectedIds.length} candidat{selectedIds.length > 1 ? 's' : ''} sélectionné{selectedIds.length > 1 ? 's' : ''}
+                    {selectedIds.length} candidat{selectedIds.length > 1 ? 's' : ''} sélectionné
+                    {selectedIds.length > 1 ? 's' : ''}
                   </p>
                   <p className="text-xs text-purple-700">
-                    {internalSelected > 0 && `${internalSelected} interne${internalSelected > 1 ? 's' : ''}`}
+                    {internalSelected > 0 &&
+                      `${internalSelected} interne${internalSelected > 1 ? 's' : ''}`}
                     {internalSelected > 0 && externalSelected > 0 && ' • '}
-                    {externalSelected > 0 && `${externalSelected} externe${externalSelected > 1 ? 's' : ''}`}
+                    {externalSelected > 0 &&
+                      `${externalSelected} externe${externalSelected > 1 ? 's' : ''}`}
                   </p>
                 </div>
               </div>
@@ -298,6 +300,5 @@ export function CertificationCandidateSelector({
         </Card>
       )}
     </div>
-  );
+  )
 }
-

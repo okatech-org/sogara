@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -6,34 +6,44 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useEquipment } from '@/hooks/useEquipment';
-import { EquipmentStatus } from '@/types';
-import { HardHat, Plus } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { useEquipment } from '@/hooks/useEquipment'
+import { EquipmentStatus } from '@/types'
+import { HardHat, Plus } from 'lucide-react'
+import { toast } from '@/hooks/use-toast'
 
 export function CreateEquipmentDialog({ trigger }: { trigger?: React.ReactNode }) {
-  const { createEquipment } = useEquipment();
-  const [isOpen, setIsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const { createEquipment } = useEquipment()
+  const [isOpen, setIsOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const [label, setLabel] = useState('');
-  const [type, setType] = useState('EPI');
-  const [serialNumber, setSerialNumber] = useState('');
-  const [status, setStatus] = useState<EquipmentStatus>('operational');
-  const [location, setLocation] = useState('');
-  const [description, setDescription] = useState('');
+  const [label, setLabel] = useState('')
+  const [type, setType] = useState('EPI')
+  const [serialNumber, setSerialNumber] = useState('')
+  const [status, setStatus] = useState<EquipmentStatus>('operational')
+  const [location, setLocation] = useState('')
+  const [description, setDescription] = useState('')
 
   const onSubmit = async () => {
     if (!label || !type) {
-      toast({ title: 'Champs requis', description: 'Libellé et Type sont obligatoires.', variant: 'destructive' });
-      return;
+      toast({
+        title: 'Champs requis',
+        description: 'Libellé et Type sont obligatoires.',
+        variant: 'destructive',
+      })
+      return
     }
-    setIsLoading(true);
+    setIsLoading(true)
     try {
       await createEquipment({
         label,
@@ -45,18 +55,18 @@ export function CreateEquipmentDialog({ trigger }: { trigger?: React.ReactNode }
         description: description || undefined,
         location: location || undefined,
         history: [],
-      } as any);
-      setIsOpen(false);
-      setLabel('');
-      setType('EPI');
-      setSerialNumber('');
-      setStatus('operational');
-      setLocation('');
-      setDescription('');
+      } as any)
+      setIsOpen(false)
+      setLabel('')
+      setType('EPI')
+      setSerialNumber('')
+      setStatus('operational')
+      setLocation('')
+      setDescription('')
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -78,19 +88,31 @@ export function CreateEquipmentDialog({ trigger }: { trigger?: React.ReactNode }
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label>Libellé</Label>
-              <Input value={label} onChange={(e) => setLabel(e.target.value)} placeholder="Casque de sécurité" />
+              <Input
+                value={label}
+                onChange={e => setLabel(e.target.value)}
+                placeholder="Casque de sécurité"
+              />
             </div>
             <div>
               <Label>Type</Label>
-              <Input value={type} onChange={(e) => setType(e.target.value)} placeholder="EPI / Outil / ..." />
+              <Input
+                value={type}
+                onChange={e => setType(e.target.value)}
+                placeholder="EPI / Outil / ..."
+              />
             </div>
             <div>
               <Label>N° série (optionnel)</Label>
-              <Input value={serialNumber} onChange={(e) => setSerialNumber(e.target.value)} placeholder="CSQ001" />
+              <Input
+                value={serialNumber}
+                onChange={e => setSerialNumber(e.target.value)}
+                placeholder="CSQ001"
+              />
             </div>
             <div>
               <Label>Statut</Label>
-              <Select value={status} onValueChange={(v) => setStatus(v as EquipmentStatus)}>
+              <Select value={status} onValueChange={v => setStatus(v as EquipmentStatus)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -103,20 +125,32 @@ export function CreateEquipmentDialog({ trigger }: { trigger?: React.ReactNode }
             </div>
             <div className="md:col-span-2">
               <Label>Localisation (optionnel)</Label>
-              <Input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Zone Production" />
+              <Input
+                value={location}
+                onChange={e => setLocation(e.target.value)}
+                placeholder="Zone Production"
+              />
             </div>
             <div className="md:col-span-2">
               <Label>Description (optionnel)</Label>
-              <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Détails..." />
+              <Input
+                value={description}
+                onChange={e => setDescription(e.target.value)}
+                placeholder="Détails..."
+              />
             </div>
           </div>
 
           <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setIsOpen(false)} disabled={isLoading}>Annuler</Button>
-            <Button onClick={onSubmit} disabled={isLoading}>Enregistrer</Button>
+            <Button variant="outline" onClick={() => setIsOpen(false)} disabled={isLoading}>
+              Annuler
+            </Button>
+            <Button onClick={onSubmit} disabled={isLoading}>
+              Enregistrer
+            </Button>
           </div>
         </div>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

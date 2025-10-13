@@ -1,46 +1,53 @@
-import { useState } from 'react';
-import { 
-  HardHat, Shield, BookOpen, Award, Calendar, Clock, AlertTriangle, 
-  CheckCircle, TrendingUp, FileText, User, Briefcase, Target, Package 
-} from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAuth } from '@/contexts/AppContext';
-import { useEmployees } from '@/hooks/useEmployees';
-import { useEmployeeHSEInbox } from '@/hooks/useEmployeeHSEInbox';
-import { useEquipment } from '@/hooks/useEquipment';
-import { useDashboard } from '@/hooks/useDashboard';
-import { EmployeeHSEInbox } from '@/components/employee/EmployeeHSEInbox';
+import { useState } from 'react'
+import {
+  HardHat,
+  Shield,
+  BookOpen,
+  Award,
+  Calendar,
+  Clock,
+  AlertTriangle,
+  CheckCircle,
+  TrendingUp,
+  FileText,
+  User,
+  Briefcase,
+  Target,
+  Package,
+} from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useAuth } from '@/contexts/AppContext'
+import { useEmployees } from '@/hooks/useEmployees'
+import { useEmployeeHSEInbox } from '@/hooks/useEmployeeHSEInbox'
+import { useEquipment } from '@/hooks/useEquipment'
+import { useDashboard } from '@/hooks/useDashboard'
+import { EmployeeHSEInbox } from '@/components/employee/EmployeeHSEInbox'
 
 export function EmployeeDashboard() {
-  const { currentUser } = useAuth();
-  const { stats, recentNotifications, markNotificationAsRead } = useDashboard();
-  const { employees } = useEmployees();
-  const { equipment } = useEquipment();
-  const [showHSEInbox, setShowHSEInbox] = useState(false);
-  const [activeInfoTab, setActiveInfoTab] = useState('profile');
-  
-  const { 
-    unreadCount, 
-    complianceRate, 
-    pendingTrainings, 
-    completedTrainings,
-    myAlerts 
-  } = useEmployeeHSEInbox(currentUser?.id || '');
+  const { currentUser } = useAuth()
+  const { stats, recentNotifications, markNotificationAsRead } = useDashboard()
+  const { employees } = useEmployees()
+  const { equipment } = useEquipment()
+  const [showHSEInbox, setShowHSEInbox] = useState(false)
+  const [activeInfoTab, setActiveInfoTab] = useState('profile')
+
+  const { unreadCount, complianceRate, pendingTrainings, completedTrainings, myAlerts } =
+    useEmployeeHSEInbox(currentUser?.id || '')
 
   // Mes équipements affectés
-  const myEquipment = equipment.filter(eq => eq.holderEmployeeId === currentUser?.id);
+  const myEquipment = equipment.filter(eq => eq.holderEmployeeId === currentUser?.id)
 
   // Mes statistiques personnelles
   const myStats = currentUser?.stats || {
     visitsReceived: 0,
     packagesReceived: 0,
-    hseTrainingsCompleted: 0
-  };
+    hseTrainingsCompleted: 0,
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -51,7 +58,8 @@ export function EmployeeDashboard() {
             <div className="flex items-center gap-3 mb-2">
               <div className="w-14 h-14 bg-primary/20 rounded-full flex items-center justify-center">
                 <span className="text-2xl font-bold text-primary">
-                  {currentUser?.firstName?.[0]}{currentUser?.lastName?.[0]}
+                  {currentUser?.firstName?.[0]}
+                  {currentUser?.lastName?.[0]}
                 </span>
               </div>
               <div>
@@ -59,7 +67,8 @@ export function EmployeeDashboard() {
                   Bonjour, {currentUser?.firstName} !
                 </h1>
                 <p className="text-muted-foreground">
-                  {currentUser?.jobTitle || 'Technicien Raffinage'} • {currentUser?.service || 'Production'}
+                  {currentUser?.jobTitle || 'Technicien Raffinage'} •{' '}
+                  {currentUser?.service || 'Production'}
                 </p>
               </div>
             </div>
@@ -67,21 +76,25 @@ export function EmployeeDashboard() {
               {currentUser?.matricule}
             </Badge>
           </div>
-          
+
           {/* Conformité HSE visible */}
           <div className="text-center md:text-right">
-            <div className={`text-5xl font-bold mb-1 ${
-              complianceRate >= 90 ? 'text-green-600' :
-              complianceRate >= 70 ? 'text-yellow-600' :
-              'text-red-600'
-            }`}>
+            <div
+              className={`text-5xl font-bold mb-1 ${
+                complianceRate >= 90
+                  ? 'text-green-600'
+                  : complianceRate >= 70
+                    ? 'text-yellow-600'
+                    : 'text-red-600'
+              }`}
+            >
               {complianceRate}%
             </div>
             <p className="text-sm text-muted-foreground">Conformité HSE</p>
             {complianceRate < 90 && (
-              <Button 
-                size="sm" 
-                variant="outline" 
+              <Button
+                size="sm"
+                variant="outline"
                 className="mt-2"
                 onClick={() => setShowHSEInbox(true)}
               >
@@ -100,14 +113,15 @@ export function EmployeeDashboard() {
               <AlertTriangle className="w-6 h-6 text-yellow-600" />
               <div className="flex-1">
                 <p className="font-semibold text-yellow-900">
-                  {pendingTrainings.length} formation{pendingTrainings.length > 1 ? 's' : ''} HSE en attente
+                  {pendingTrainings.length} formation{pendingTrainings.length > 1 ? 's' : ''} HSE en
+                  attente
                 </p>
                 <p className="text-sm text-yellow-800">
                   Complétez vos formations pour maintenir votre conformité
                 </p>
               </div>
-              <Button 
-                size="sm" 
+              <Button
+                size="sm"
                 onClick={() => setShowHSEInbox(true)}
                 className="bg-yellow-600 hover:bg-yellow-700"
               >
@@ -145,9 +159,7 @@ export function EmployeeDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl md:text-3xl font-bold text-blue-600">
-              {myEquipment.length}
-            </div>
+            <div className="text-2xl md:text-3xl font-bold text-blue-600">{myEquipment.length}</div>
             <p className="text-xs text-muted-foreground">Affectés</p>
           </CardContent>
         </Card>
@@ -168,7 +180,7 @@ export function EmployeeDashboard() {
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className={`industrial-card cursor-pointer hover:shadow-lg transition-all ${
             unreadCount > 0 ? 'border-2 border-primary' : ''
           }`}
@@ -182,9 +194,7 @@ export function EmployeeDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl md:text-3xl font-bold text-orange-600">
-              {unreadCount}
-            </div>
+            <div className="text-2xl md:text-3xl font-bold text-orange-600">{unreadCount}</div>
             <p className="text-xs text-muted-foreground">Nouveaux</p>
             {unreadCount > 0 && (
               <div className="w-2 h-2 bg-red-500 rounded-full animate-ping absolute top-2 right-2" />
@@ -196,7 +206,7 @@ export function EmployeeDashboard() {
       {/* Contenu principal responsive */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Mon Espace HSE - Prioritaire */}
-        <Card 
+        <Card
           className={`industrial-card lg:col-span-2 cursor-pointer hover:shadow-xl transition-all ${
             unreadCount > 0 ? 'border-2 border-primary shadow-lg' : ''
           }`}
@@ -205,16 +215,24 @@ export function EmployeeDashboard() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
-                <div className={`p-2 rounded-lg ${
-                  complianceRate >= 90 ? 'bg-green-100' :
-                  complianceRate >= 70 ? 'bg-yellow-100' :
-                  'bg-red-100'
-                }`}>
-                  <Shield className={`w-5 h-5 ${
-                    complianceRate >= 90 ? 'text-green-600' :
-                    complianceRate >= 70 ? 'text-yellow-600' :
-                    'text-red-600'
-                  }`} />
+                <div
+                  className={`p-2 rounded-lg ${
+                    complianceRate >= 90
+                      ? 'bg-green-100'
+                      : complianceRate >= 70
+                        ? 'bg-yellow-100'
+                        : 'bg-red-100'
+                  }`}
+                >
+                  <Shield
+                    className={`w-5 h-5 ${
+                      complianceRate >= 90
+                        ? 'text-green-600'
+                        : complianceRate >= 70
+                          ? 'text-yellow-600'
+                          : 'text-red-600'
+                    }`}
+                  />
                 </div>
                 Mon Espace HSE
               </CardTitle>
@@ -230,16 +248,26 @@ export function EmployeeDashboard() {
             <div>
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm font-medium">Ma conformité HSE</span>
-                <Badge variant={complianceRate >= 90 ? "default" : complianceRate >= 70 ? "secondary" : "destructive"}>
+                <Badge
+                  variant={
+                    complianceRate >= 90
+                      ? 'default'
+                      : complianceRate >= 70
+                        ? 'secondary'
+                        : 'destructive'
+                  }
+                >
                   {complianceRate}%
                 </Badge>
               </div>
-              <Progress 
-                value={complianceRate} 
+              <Progress
+                value={complianceRate}
                 className={`h-3 ${
-                  complianceRate >= 90 ? 'bg-green-100' :
-                  complianceRate >= 70 ? 'bg-yellow-100' :
-                  'bg-red-100'
+                  complianceRate >= 90
+                    ? 'bg-green-100'
+                    : complianceRate >= 70
+                      ? 'bg-yellow-100'
+                      : 'bg-red-100'
                 }`}
               />
             </div>
@@ -251,7 +279,9 @@ export function EmployeeDashboard() {
                 <div className="text-xs text-muted-foreground">À faire</div>
               </div>
               <div className="text-center p-3 bg-blue-50 rounded-lg">
-                <div className="text-2xl font-bold text-blue-600">{pendingTrainings.filter(t => t.status === 'in_progress').length}</div>
+                <div className="text-2xl font-bold text-blue-600">
+                  {pendingTrainings.filter(t => t.status === 'in_progress').length}
+                </div>
                 <div className="text-xs text-muted-foreground">En cours</div>
               </div>
               <div className="text-center p-3 bg-green-50 rounded-lg">
@@ -266,16 +296,25 @@ export function EmployeeDashboard() {
                 <div className="flex items-center gap-2">
                   <AlertTriangle className="w-4 h-4 text-red-600" />
                   <span className="text-sm font-medium text-red-900">
-                    {myAlerts.filter(a => a.status === 'sent' || a.status === 'received').length} alerte(s) non lue(s)
+                    {myAlerts.filter(a => a.status === 'sent' || a.status === 'received').length}{' '}
+                    alerte(s) non lue(s)
                   </span>
                 </div>
               </div>
             )}
 
-            <Button className="w-full gap-2" onClick={(e) => { e.stopPropagation(); setShowHSEInbox(true); }}>
+            <Button
+              className="w-full gap-2"
+              onClick={e => {
+                e.stopPropagation()
+                setShowHSEInbox(true)
+              }}
+            >
               <BookOpen className="w-4 h-4" />
               Ouvrir mon espace HSE
-              {unreadCount > 0 && <Badge className="ml-auto bg-white text-primary">{unreadCount}</Badge>}
+              {unreadCount > 0 && (
+                <Badge className="ml-auto bg-white text-primary">{unreadCount}</Badge>
+              )}
             </Button>
           </CardContent>
         </Card>
@@ -291,9 +330,15 @@ export function EmployeeDashboard() {
           <CardContent>
             <Tabs value={activeInfoTab} onValueChange={setActiveInfoTab} className="space-y-4">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="profile" className="text-xs">Profil</TabsTrigger>
-                <TabsTrigger value="skills" className="text-xs">Compét.</TabsTrigger>
-                <TabsTrigger value="habilit" className="text-xs">Habil.</TabsTrigger>
+                <TabsTrigger value="profile" className="text-xs">
+                  Profil
+                </TabsTrigger>
+                <TabsTrigger value="skills" className="text-xs">
+                  Compét.
+                </TabsTrigger>
+                <TabsTrigger value="habilit" className="text-xs">
+                  Habil.
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="profile" className="space-y-3">
@@ -312,7 +357,9 @@ export function EmployeeDashboard() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Statut:</span>
-                    <Badge variant="secondary">{currentUser?.status === 'active' ? 'Actif' : 'Inactif'}</Badge>
+                    <Badge variant="secondary">
+                      {currentUser?.status === 'active' ? 'Actif' : 'Inactif'}
+                    </Badge>
                   </div>
                 </div>
               </TabsContent>
@@ -358,21 +405,28 @@ export function EmployeeDashboard() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {myEquipment.map((eq) => (
-                <div key={eq.id} className="p-3 border rounded-lg hover:bg-muted/30 transition-colors">
+              {myEquipment.map(eq => (
+                <div
+                  key={eq.id}
+                  className="p-3 border rounded-lg hover:bg-muted/30 transition-colors"
+                >
                   <div className="flex items-center justify-between mb-2">
                     <h4 className="font-medium text-sm">{eq.label}</h4>
-                    <Badge 
+                    <Badge
                       variant={
-                        eq.status === 'operational' ? 'default' :
-                        eq.status === 'maintenance' ? 'secondary' :
-                        'destructive'
+                        eq.status === 'operational'
+                          ? 'default'
+                          : eq.status === 'maintenance'
+                            ? 'secondary'
+                            : 'destructive'
                       }
                       className="text-xs"
                     >
-                      {eq.status === 'operational' ? 'OK' :
-                       eq.status === 'maintenance' ? 'Maint.' :
-                       'HS'}
+                      {eq.status === 'operational'
+                        ? 'OK'
+                        : eq.status === 'maintenance'
+                          ? 'Maint.'
+                          : 'HS'}
                     </Badge>
                   </div>
                   <p className="text-xs text-muted-foreground mb-1">
@@ -434,22 +488,34 @@ export function EmployeeDashboard() {
           <CardContent>
             <div className="space-y-2">
               {recentNotifications.length > 0 ? (
-                recentNotifications.slice(0, 3).map((notification) => (
-                  <div 
-                    key={notification.id} 
+                recentNotifications.slice(0, 3).map(notification => (
+                  <div
+                    key={notification.id}
                     className="flex items-start gap-2 p-2 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer"
                     onClick={() => markNotificationAsRead(notification.id)}
                   >
-                    <div className={`p-1 rounded-full mt-0.5 ${
-                      notification.type === 'urgent' ? 'bg-destructive/20' :
-                      notification.type === 'warning' ? 'bg-warning/20' :
-                      notification.type === 'success' ? 'bg-success/20' : 'bg-primary/20'
-                    }`}>
-                      <div className={`w-1.5 h-1.5 rounded-full ${
-                        notification.type === 'urgent' ? 'bg-destructive' :
-                        notification.type === 'warning' ? 'bg-warning' :
-                        notification.type === 'success' ? 'bg-success' : 'bg-primary'
-                      }`} />
+                    <div
+                      className={`p-1 rounded-full mt-0.5 ${
+                        notification.type === 'urgent'
+                          ? 'bg-destructive/20'
+                          : notification.type === 'warning'
+                            ? 'bg-warning/20'
+                            : notification.type === 'success'
+                              ? 'bg-success/20'
+                              : 'bg-primary/20'
+                      }`}
+                    >
+                      <div
+                        className={`w-1.5 h-1.5 rounded-full ${
+                          notification.type === 'urgent'
+                            ? 'bg-destructive'
+                            : notification.type === 'warning'
+                              ? 'bg-warning'
+                              : notification.type === 'success'
+                                ? 'bg-success'
+                                : 'bg-primary'
+                        }`}
+                      />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate">{notification.title}</p>
@@ -480,30 +546,28 @@ export function EmployeeDashboard() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="h-auto py-4 flex-col gap-2"
               onClick={() => setShowHSEInbox(true)}
             >
               <Shield className="w-6 h-6 text-orange-500" />
               <span className="text-xs">Mon HSE</span>
-              {unreadCount > 0 && <Badge className="absolute top-1 right-1 h-5 w-5 p-0 text-xs">{unreadCount}</Badge>}
+              {unreadCount > 0 && (
+                <Badge className="absolute top-1 right-1 h-5 w-5 p-0 text-xs">{unreadCount}</Badge>
+              )}
             </Button>
-            
-            <Button 
-              variant="outline" 
+
+            <Button
+              variant="outline"
               className="h-auto py-4 flex-col gap-2"
-              onClick={() => window.location.href = '/app/connect'}
+              onClick={() => (window.location.href = '/app/connect')}
             >
               <FileText className="w-6 h-6 text-blue-500" />
               <span className="text-xs">Actualités</span>
             </Button>
 
-            <Button 
-              variant="outline" 
-              className="h-auto py-4 flex-col gap-2"
-              disabled
-            >
+            <Button variant="outline" className="h-auto py-4 flex-col gap-2" disabled>
               <Calendar className="w-6 h-6 text-green-500" />
               <span className="text-xs">Planning</span>
             </Button>
@@ -521,6 +585,5 @@ export function EmployeeDashboard() {
         </DialogContent>
       </Dialog>
     </div>
-  );
+  )
 }
-

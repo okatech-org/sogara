@@ -1,67 +1,66 @@
-import { useState } from 'react';
-import { HardHat, Search, Plus, Settings, User, Calendar } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { useEquipment } from '@/hooks/useEquipment';
-import { useEmployees } from '@/hooks/useEmployees';
-import { useAuth } from '@/contexts/AppContext';
-import { Equipment, EquipmentStatus } from '@/types';
-import { StatusBadge } from '@/components/ui/status-badge';
-import { CreateEquipmentDialog } from '@/components/dialogs/CreateEquipmentDialog';
-import { AssignEquipmentDialog } from '@/components/dialogs/AssignEquipmentDialog';
+import { useState } from 'react'
+import { HardHat, Search, Plus, Settings, User, Calendar } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
+import { useEquipment } from '@/hooks/useEquipment'
+import { useEmployees } from '@/hooks/useEmployees'
+import { useAuth } from '@/contexts/AppContext'
+import { Equipment, EquipmentStatus } from '@/types'
+import { StatusBadge } from '@/components/ui/status-badge'
+import { CreateEquipmentDialog } from '@/components/dialogs/CreateEquipmentDialog'
+import { AssignEquipmentDialog } from '@/components/dialogs/AssignEquipmentDialog'
 
 export function EquipementsPage() {
-  const { equipment, assignEquipment, unassignEquipment, ensureRoleEquipment } = useEquipment();
-  const { employees } = useEmployees();
-  const { hasAnyRole } = useAuth();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | EquipmentStatus>('all');
-  const [selectedEquipment, setSelectedEquipment] = useState<Equipment | null>(null);
+  const { equipment, assignEquipment, unassignEquipment, ensureRoleEquipment } = useEquipment()
+  const { employees } = useEmployees()
+  const { hasAnyRole } = useAuth()
+  const [searchTerm, setSearchTerm] = useState('')
+  const [statusFilter, setStatusFilter] = useState<'all' | EquipmentStatus>('all')
+  const [selectedEquipment, setSelectedEquipment] = useState<Equipment | null>(null)
 
-  const canManageEquipment = hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR']);
+  const canManageEquipment = hasAnyRole(['ADMIN', 'HSE', 'SUPERVISEUR'])
 
   const filteredEquipment = equipment.filter(eq => {
-    const holder = employees.find(e => e.id === eq.holderEmployeeId);
-    const searchLower = searchTerm.toLowerCase();
-    
-    const matchesSearch = (
+    const holder = employees.find(e => e.id === eq.holderEmployeeId)
+    const searchLower = searchTerm.toLowerCase()
+
+    const matchesSearch =
       eq.label.toLowerCase().includes(searchLower) ||
       eq.type.toLowerCase().includes(searchLower) ||
       eq.serialNumber?.toLowerCase().includes(searchLower) ||
       holder?.firstName.toLowerCase().includes(searchLower) ||
       holder?.lastName.toLowerCase().includes(searchLower)
-    );
 
-    const matchesStatus = statusFilter === 'all' || eq.status === statusFilter;
+    const matchesStatus = statusFilter === 'all' || eq.status === statusFilter
 
-    return matchesSearch && matchesStatus;
-  });
+    return matchesSearch && matchesStatus
+  })
 
   const statusVariants = {
     operational: { label: 'Opérationnel', variant: 'operational' as const },
     maintenance: { label: 'Maintenance', variant: 'maintenance' as const },
     out_of_service: { label: 'Hors service', variant: 'urgent' as const },
-  };
+  }
 
   const getHolderName = (holderId?: string) => {
-    if (!holderId) return 'Non affecté';
-    const holder = employees.find(e => e.id === holderId);
-    return holder ? `${holder.firstName} ${holder.lastName}` : 'Employé inconnu';
-  };
+    if (!holderId) return 'Non affecté'
+    const holder = employees.find(e => e.id === holderId)
+    return holder ? `${holder.firstName} ${holder.lastName}` : 'Employé inconnu'
+  }
 
   const stats = {
     operational: equipment.filter(e => e.status === 'operational').length,
     maintenance: equipment.filter(e => e.status === 'maintenance').length,
     outOfService: equipment.filter(e => e.status === 'out_of_service').length,
     needsCheck: equipment.filter(e => {
-      if (!e.nextCheckDate) return false;
-      const nextWeek = new Date();
-      nextWeek.setDate(nextWeek.getDate() + 7);
-      return e.nextCheckDate <= nextWeek;
+      if (!e.nextCheckDate) return false
+      const nextWeek = new Date()
+      nextWeek.setDate(nextWeek.getDate() + 7)
+      return e.nextCheckDate <= nextWeek
     }).length,
-  };
+  }
 
   const statsCards = [
     {
@@ -88,16 +87,14 @@ export function EquipementsPage() {
       icon: Calendar,
       color: 'text-warning',
     },
-  ];
+  ]
 
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Équipements</h1>
-          <p className="text-muted-foreground">
-            Gestion des équipements de travail et EPI
-          </p>
+          <p className="text-muted-foreground">Gestion des équipements de travail et EPI</p>
         </div>
         {canManageEquipment && (
           <div className="flex gap-2">
@@ -111,15 +108,21 @@ export function EquipementsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {statsCards.map((stat, index) => {
-          const Icon = stat.icon;
+          const Icon = stat.icon
           return (
             <Card key={index} className="industrial-card">
               <CardContent className="flex items-center gap-4 p-4">
-                <div className={`p-2 rounded-lg ${
-                  stat.color === 'text-destructive' ? 'bg-destructive/10' :
-                  stat.color === 'text-warning' ? 'bg-warning/10' :
-                  stat.color === 'text-success' ? 'bg-success/10' : 'bg-primary/10'
-                }`}>
+                <div
+                  className={`p-2 rounded-lg ${
+                    stat.color === 'text-destructive'
+                      ? 'bg-destructive/10'
+                      : stat.color === 'text-warning'
+                        ? 'bg-warning/10'
+                        : stat.color === 'text-success'
+                          ? 'bg-success/10'
+                          : 'bg-primary/10'
+                  }`}
+                >
                   <Icon className={`w-5 h-5 ${stat.color}`} />
                 </div>
                 <div>
@@ -128,7 +131,7 @@ export function EquipementsPage() {
                 </div>
               </CardContent>
             </Card>
-          );
+          )
         })}
       </div>
 
@@ -138,13 +141,13 @@ export function EquipementsPage() {
           <Input
             placeholder="Rechercher par nom, type ou détenteur..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={e => setSearchTerm(e.target.value)}
             className="pl-10"
           />
         </div>
-        
+
         <div className="flex gap-2">
-          {(['all', 'operational', 'maintenance', 'out_of_service'] as const).map((status) => (
+          {(['all', 'operational', 'maintenance', 'out_of_service'] as const).map(status => (
             <Button
               key={status}
               variant={statusFilter === status ? 'default' : 'outline'}
@@ -168,15 +171,15 @@ export function EquipementsPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {filteredEquipment.map((eq) => {
-                  const statusInfo = statusVariants[eq.status];
-                  
+                {filteredEquipment.map(eq => {
+                  const statusInfo = statusVariants[eq.status]
+
                   return (
                     <div
                       key={eq.id}
                       className={`p-4 rounded-lg border transition-all cursor-pointer hover:shadow-md ${
-                        selectedEquipment?.id === eq.id 
-                          ? 'border-primary bg-primary/5 shadow-md' 
+                        selectedEquipment?.id === eq.id
+                          ? 'border-primary bg-primary/5 shadow-md'
                           : 'border-border bg-card hover:bg-muted/30'
                       }`}
                       onClick={() => setSelectedEquipment(eq)}
@@ -187,39 +190,35 @@ export function EquipementsPage() {
                             <HardHat className="w-6 h-6 text-primary" />
                           </div>
                           <div>
-                            <h3 className="font-medium text-foreground">
-                              {eq.label}
-                            </h3>
+                            <h3 className="font-medium text-foreground">{eq.label}</h3>
                             <div className="text-sm text-muted-foreground">
                               <p>Type: {eq.type}</p>
                               {eq.serialNumber && <p>N° série: {eq.serialNumber}</p>}
                               <p>Détenteur: {getHolderName(eq.holderEmployeeId)}</p>
                               {eq.nextCheckDate && (
-                                <p>Prochain contrôle: {new Date(eq.nextCheckDate).toLocaleDateString()}</p>
+                                <p>
+                                  Prochain contrôle:{' '}
+                                  {new Date(eq.nextCheckDate).toLocaleDateString()}
+                                </p>
                               )}
                             </div>
                           </div>
                         </div>
-                        
+
                         <div className="flex items-center gap-2">
-                          <StatusBadge 
-                            status={statusInfo.label} 
-                            variant={statusInfo.variant}
-                          />
+                          <StatusBadge status={statusInfo.label} variant={statusInfo.variant} />
                           {eq.holderEmployeeId ? (
                             <Badge variant="outline" className="gap-1">
                               <User className="w-3 h-3" />
                               Affecté
                             </Badge>
                           ) : (
-                            <Badge variant="secondary">
-                              Disponible
-                            </Badge>
+                            <Badge variant="secondary">Disponible</Badge>
                           )}
                         </div>
                       </div>
                     </div>
-                  );
+                  )
                 })}
               </div>
 
@@ -244,12 +243,8 @@ export function EquipementsPage() {
                   <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
                     <HardHat className="w-8 h-8 text-primary" />
                   </div>
-                  <h3 className="font-semibold text-lg">
-                    {selectedEquipment.label}
-                  </h3>
-                  <p className="text-muted-foreground text-sm">
-                    {selectedEquipment.type}
-                  </p>
+                  <h3 className="font-semibold text-lg">{selectedEquipment.label}</h3>
+                  <p className="text-muted-foreground text-sm">{selectedEquipment.type}</p>
                 </div>
 
                 <div>
@@ -263,8 +258,8 @@ export function EquipementsPage() {
                     )}
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Statut:</span>
-                      <StatusBadge 
-                        status={statusVariants[selectedEquipment.status].label} 
+                      <StatusBadge
+                        status={statusVariants[selectedEquipment.status].label}
                         variant={statusVariants[selectedEquipment.status].variant}
                       />
                     </div>
@@ -299,7 +294,10 @@ export function EquipementsPage() {
                     <div className="text-sm">
                       <div className="flex items-center gap-2 p-2 bg-warning/10 rounded border border-warning/20">
                         <Calendar className="w-4 h-4 text-warning" />
-                        <span>Contrôle prévu: {new Date(selectedEquipment.nextCheckDate).toLocaleDateString()}</span>
+                        <span>
+                          Contrôle prévu:{' '}
+                          {new Date(selectedEquipment.nextCheckDate).toLocaleDateString()}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -308,17 +306,15 @@ export function EquipementsPage() {
                 {selectedEquipment.description && (
                   <div>
                     <h4 className="font-medium mb-2">Description</h4>
-                    <p className="text-sm text-muted-foreground">
-                      {selectedEquipment.description}
-                    </p>
+                    <p className="text-sm text-muted-foreground">{selectedEquipment.description}</p>
                   </div>
                 )}
 
                 {canManageEquipment && (
                   <div className="pt-4 border-t space-y-2">
                     {selectedEquipment.holderEmployeeId ? (
-                      <Button 
-                        className="w-full" 
+                      <Button
+                        className="w-full"
                         variant="outline"
                         onClick={() => unassignEquipment(selectedEquipment.id)}
                       >
@@ -349,5 +345,5 @@ export function EquipementsPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }

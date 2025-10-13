@@ -1,21 +1,21 @@
-import { useMemo } from 'react';
-import { useQuery, useMutation } from "convex/react";
-import { api } from "../../convex/_generated/api";
-import { Visit, Visitor, VisitStatus } from '@/types';
-import { toast } from '@/hooks/use-toast';
-import { Id } from "../../convex/_generated/dataModel";
+import { useMemo } from 'react'
+import { useQuery, useMutation } from 'convex/react'
+import { api } from '../../convex/_generated/api'
+import { Visit, Visitor, VisitStatus } from '@/types'
+import { toast } from '@/hooks/use-toast'
+import { Id } from '../../convex/_generated/dataModel'
 
 export function useVisits() {
   // Queries Convex
-  const visitsData = useQuery(api.visits.list);
-  const visitorsData = useQuery(api.visitors.list);
+  const visitsData = useQuery(api.visits.list)
+  const visitorsData = useQuery(api.visitors.list)
 
   // Mutations Convex
-  const createVisitMutation = useMutation(api.visits.create);
-  const createVisitorMutation = useMutation(api.visitors.create);
-  const checkInMutation = useMutation(api.visits.checkIn);
-  const checkOutMutation = useMutation(api.visits.checkOut);
-  const updateVisitMutation = useMutation(api.visits.update);
+  const createVisitMutation = useMutation(api.visits.create)
+  const createVisitorMutation = useMutation(api.visitors.create)
+  const checkInMutation = useMutation(api.visits.checkIn)
+  const checkOutMutation = useMutation(api.visits.checkOut)
+  const updateVisitMutation = useMutation(api.visits.update)
 
   // Mapper les données Convex
   const visits: Visit[] = (visitsData || []).map((v: any) => ({
@@ -31,7 +31,7 @@ export function useVisits() {
     notes: v.notes,
     createdAt: new Date(v._creationTime),
     updatedAt: new Date(v._creationTime),
-  }));
+  }))
 
   const visitors: Visitor[] = (visitorsData || []).map((v: any) => ({
     id: v._id,
@@ -44,7 +44,7 @@ export function useVisits() {
     email: v.email,
     photo: v.photo,
     createdAt: new Date(v._creationTime),
-  }));
+  }))
 
   const createVisitor = async (visitorData: Omit<Visitor, 'id' | 'createdAt'>) => {
     try {
@@ -59,62 +59,62 @@ export function useVisits() {
         photo: visitorData.photo,
         nationality: visitorData.nationality,
         birthDate: visitorData.birthDate,
-      });
+      })
 
       toast({
         title: 'Visiteur enregistré',
         description: `${visitorData.firstName} ${visitorData.lastName} a été ajouté.`,
-      });
+      })
 
-      return { success: true };
+      return { success: true }
     } catch (error: any) {
       toast({
         title: 'Erreur',
         description: error.message || 'Impossible de créer le visiteur.',
         variant: 'destructive',
-      });
-      return { success: false, error: error.message };
+      })
+      return { success: false, error: error.message }
     }
-  };
+  }
 
   const createVisit = async (visitData: Omit<Visit, 'id' | 'createdAt' | 'updatedAt'>) => {
     try {
       await createVisitMutation({
-        visitorId: visitData.visitorId as Id<"visitors">,
-        hostEmployeeId: visitData.hostEmployeeId as Id<"employees">,
+        visitorId: visitData.visitorId as Id<'visitors'>,
+        hostEmployeeId: visitData.hostEmployeeId as Id<'employees'>,
         scheduledAt: visitData.scheduledAt.getTime(),
         purpose: visitData.purpose,
         notes: visitData.notes,
         badgeNumber: visitData.badgeNumber,
-      });
+      })
 
       toast({
         title: 'Visite créée',
         description: 'La visite a été enregistrée avec succès.',
-      });
+      })
 
-      return { success: true };
+      return { success: true }
     } catch (error: any) {
       toast({
         title: 'Erreur',
         description: error.message || 'Impossible de créer la visite.',
         variant: 'destructive',
-      });
-      return { success: false, error: error.message };
+      })
+      return { success: false, error: error.message }
     }
-  };
+  }
 
   const updateVisitStatus = async (visitId: string, status: VisitStatus) => {
     try {
       if (status === 'in_progress') {
-        await checkInMutation({ id: visitId as Id<"visits"> });
+        await checkInMutation({ id: visitId as Id<'visits'> })
       } else if (status === 'checked_out') {
-        await checkOutMutation({ id: visitId as Id<"visits"> });
+        await checkOutMutation({ id: visitId as Id<'visits'> })
       } else {
         await updateVisitMutation({
-          id: visitId as Id<"visits">,
+          id: visitId as Id<'visits'>,
           status,
-        });
+        })
       }
 
       const statusMessages = {
@@ -122,55 +122,57 @@ export function useVisits() {
         in_progress: 'Le visiteur est arrivé',
         checked_out: 'Le visiteur est sorti',
         expected: 'Visite programmée',
-      };
+      }
 
       toast({
         title: 'Statut mis à jour',
         description: statusMessages[status],
-      });
+      })
 
-      return { success: true };
+      return { success: true }
     } catch (error: any) {
       toast({
         title: 'Erreur',
         description: error.message || 'Impossible de mettre à jour le statut.',
         variant: 'destructive',
-      });
-      return { success: false, error: error.message };
+      })
+      return { success: false, error: error.message }
     }
-  };
+  }
 
   const getTodaysVisits = () => {
-    const today = new Date().toDateString();
-    return visits.filter(visit => 
-      visit.scheduledAt.toDateString() === today
-    );
-  };
+    const today = new Date().toDateString()
+    return visits.filter(visit => visit.scheduledAt.toDateString() === today)
+  }
 
   const getVisitsByEmployee = (employeeId: string) => {
-    return visits.filter(visit => visit.hostEmployeeId === employeeId);
-  };
+    return visits.filter(visit => visit.hostEmployeeId === employeeId)
+  }
 
   const searchVisitors = (query: string) => {
-    const search = query.toLowerCase();
-    return visitors.filter(visitor =>
-      visitor.firstName.toLowerCase().includes(search) ||
-      visitor.lastName.toLowerCase().includes(search) ||
-      visitor.company.toLowerCase().includes(search)
-    );
-  };
+    const search = query.toLowerCase()
+    return visitors.filter(
+      visitor =>
+        visitor.firstName.toLowerCase().includes(search) ||
+        visitor.lastName.toLowerCase().includes(search) ||
+        visitor.company.toLowerCase().includes(search),
+    )
+  }
 
   const getVisitorById = (id: string) => {
-    return visitors.find(visitor => visitor.id === id);
-  };
+    return visitors.find(visitor => visitor.id === id)
+  }
 
   const visitsByStatus = useMemo(() => {
-    return visits.reduce<Record<VisitStatus, Visit[]>>((acc, visit) => {
-      acc[visit.status] ||= [];
-      acc[visit.status].push(visit);
-      return acc;
-    }, { expected: [], waiting: [], in_progress: [], checked_out: [] });
-  }, [visits]);
+    return visits.reduce<Record<VisitStatus, Visit[]>>(
+      (acc, visit) => {
+        acc[visit.status] ||= []
+        acc[visit.status].push(visit)
+        return acc
+      },
+      { expected: [], waiting: [], in_progress: [], checked_out: [] },
+    )
+  }, [visits])
 
   return {
     visits,
@@ -184,5 +186,5 @@ export function useVisits() {
     searchVisitors,
     getVisitorById,
     visitsByStatus,
-  };
+  }
 }

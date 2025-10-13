@@ -1,31 +1,37 @@
-import { useState } from 'react';
-import { Camera, Sparkles, User, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AIDocumentScanner } from './AIDocumentScanner';
-import { visitorService, VisitorExtended } from '@/services/visitor-management.service';
-import { ExtractionResult } from '@/services/ai-extraction.service';
-import { useEmployees } from '@/hooks/useEmployees';
-import { toast } from '@/hooks/use-toast';
+import { useState } from 'react'
+import { Camera, Sparkles, User, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Badge } from '@/components/ui/badge'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { AIDocumentScanner } from './AIDocumentScanner'
+import { visitorService, VisitorExtended } from '@/services/visitor-management.service'
+import { ExtractionResult } from '@/services/ai-extraction.service'
+import { useEmployees } from '@/hooks/useEmployees'
+import { toast } from '@/hooks/use-toast'
 
 interface RegisterVisitorWithAIProps {
-  onSuccess: (visitor: VisitorExtended) => void;
-  onCancel: () => void;
-  open: boolean;
+  onSuccess: (visitor: VisitorExtended) => void
+  onCancel: () => void
+  open: boolean
 }
 
 export function RegisterVisitorWithAI({ onSuccess, onCancel, open }: RegisterVisitorWithAIProps) {
-  const { employees } = useEmployees();
-  const [showScanner, setShowScanner] = useState(false);
-  const [extractedData, setExtractedData] = useState<any>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  
+  const { employees } = useEmployees()
+  const [showScanner, setShowScanner] = useState(false)
+  const [extractedData, setExtractedData] = useState<any>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -41,50 +47,54 @@ export function RegisterVisitorWithAI({ onSuccess, onCancel, open }: RegisterVis
     expectedDuration: '1h',
     urgencyLevel: 'normal' as const,
     accessMode: 'badge' as const,
-    securityLevel: 'standard' as const
-  });
+    securityLevel: 'standard' as const,
+  })
 
   const handleExtractionComplete = (result: ExtractionResult) => {
-    setShowScanner(false);
-    
+    setShowScanner(false)
+
     if (result.success) {
-      setExtractedData(result.data);
+      setExtractedData(result.data)
       setFormData(prev => ({
         ...prev,
         firstName: result.data.firstName || prev.firstName,
         lastName: result.data.lastName || prev.lastName,
-        idNumber: result.data.idNumber || result.data.passportNumber || result.data.licenseNumber || prev.idNumber,
+        idNumber:
+          result.data.idNumber ||
+          result.data.passportNumber ||
+          result.data.licenseNumber ||
+          prev.idNumber,
         idType: result.data.idType || prev.idType,
-        nationality: result.data.nationality || prev.nationality
-      }));
-      
+        nationality: result.data.nationality || prev.nationality,
+      }))
+
       toast({
         title: 'Extraction réussie',
         description: `Confiance: ${Math.round(result.confidence * 100)}%`,
-      });
+      })
     } else {
       toast({
-        title: 'Échec de l\'extraction',
+        title: "Échec de l'extraction",
         description: 'Veuillez saisir les informations manuellement',
-        variant: 'destructive'
-      });
+        variant: 'destructive',
+      })
     }
-  };
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+    e.preventDefault()
+
     if (!formData.firstName || !formData.lastName || !formData.phone) {
       toast({
         title: 'Champs requis manquants',
         description: 'Veuillez remplir tous les champs obligatoires',
-        variant: 'destructive'
-      });
-      return;
+        variant: 'destructive',
+      })
+      return
     }
-    
-    setIsSubmitting(true);
-    
+
+    setIsSubmitting(true)
+
     try {
       const visitor: VisitorExtended = {
         id: '',
@@ -102,25 +112,25 @@ export function RegisterVisitorWithAI({ onSuccess, onCancel, open }: RegisterVis
         serviceRequested: formData.department,
         aiExtracted: !!extractedData,
         aiConfidence: extractedData ? 0.92 : undefined,
-        requiresVerification: extractedData?.requiresVerification || false
-      };
-      
-      onSuccess(visitor);
-      
+        requiresVerification: extractedData?.requiresVerification || false,
+      }
+
+      onSuccess(visitor)
+
       toast({
         title: 'Visiteur enregistré',
         description: `${formData.firstName} ${formData.lastName} a été enregistré avec succès`,
-      });
+      })
     } catch (error) {
       toast({
         title: 'Erreur',
-        description: 'Impossible d\'enregistrer le visiteur',
-        variant: 'destructive'
-      });
+        description: "Impossible d'enregistrer le visiteur",
+        variant: 'destructive',
+      })
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
   return (
     <>
@@ -142,14 +152,12 @@ export function RegisterVisitorWithAI({ onSuccess, onCancel, open }: RegisterVis
                     <Sparkles className="w-8 h-8 text-blue-600" />
                     <div>
                       <h4 className="font-medium text-blue-900">Extraction IA Automatique</h4>
-                      <p className="text-sm text-blue-700">Scannez une pièce d'identité pour remplir automatiquement</p>
+                      <p className="text-sm text-blue-700">
+                        Scannez une pièce d'identité pour remplir automatiquement
+                      </p>
                     </div>
                   </div>
-                  <Button
-                    type="button"
-                    onClick={() => setShowScanner(true)}
-                    className="gap-2"
-                  >
+                  <Button type="button" onClick={() => setShowScanner(true)} className="gap-2">
                     <Camera className="w-4 h-4" />
                     Scanner document
                   </Button>
@@ -173,7 +181,7 @@ export function RegisterVisitorWithAI({ onSuccess, onCancel, open }: RegisterVis
                 <Input
                   id="firstName"
                   value={formData.firstName}
-                  onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
+                  onChange={e => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
                   required
                 />
               </div>
@@ -183,7 +191,7 @@ export function RegisterVisitorWithAI({ onSuccess, onCancel, open }: RegisterVis
                 <Input
                   id="lastName"
                   value={formData.lastName}
-                  onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
+                  onChange={e => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
                   required
                 />
               </div>
@@ -194,7 +202,7 @@ export function RegisterVisitorWithAI({ onSuccess, onCancel, open }: RegisterVis
                   id="phone"
                   type="tel"
                   value={formData.phone}
-                  onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                  onChange={e => setFormData(prev => ({ ...prev, phone: e.target.value }))}
                   required
                 />
               </div>
@@ -205,7 +213,7 @@ export function RegisterVisitorWithAI({ onSuccess, onCancel, open }: RegisterVis
                   id="email"
                   type="email"
                   value={formData.email}
-                  onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                  onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
                 />
               </div>
 
@@ -214,14 +222,14 @@ export function RegisterVisitorWithAI({ onSuccess, onCancel, open }: RegisterVis
                 <Input
                   id="company"
                   value={formData.company}
-                  onChange={(e) => setFormData(prev => ({ ...prev, company: e.target.value }))}
+                  onChange={e => setFormData(prev => ({ ...prev, company: e.target.value }))}
                 />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="idType">Type de pièce d'identité</Label>
-                <Select 
-                  value={formData.idType} 
+                <Select
+                  value={formData.idType}
                   onValueChange={(value: any) => setFormData(prev => ({ ...prev, idType: value }))}
                 >
                   <SelectTrigger>
@@ -241,7 +249,7 @@ export function RegisterVisitorWithAI({ onSuccess, onCancel, open }: RegisterVis
                 <Input
                   id="idNumber"
                   value={formData.idNumber}
-                  onChange={(e) => setFormData(prev => ({ ...prev, idNumber: e.target.value }))}
+                  onChange={e => setFormData(prev => ({ ...prev, idNumber: e.target.value }))}
                 />
               </div>
 
@@ -250,7 +258,7 @@ export function RegisterVisitorWithAI({ onSuccess, onCancel, open }: RegisterVis
                 <Input
                   id="nationality"
                   value={formData.nationality}
-                  onChange={(e) => setFormData(prev => ({ ...prev, nationality: e.target.value }))}
+                  onChange={e => setFormData(prev => ({ ...prev, nationality: e.target.value }))}
                 />
               </div>
 
@@ -259,7 +267,7 @@ export function RegisterVisitorWithAI({ onSuccess, onCancel, open }: RegisterVis
                 <Input
                   id="purposeOfVisit"
                   value={formData.purposeOfVisit}
-                  onChange={(e) => setFormData(prev => ({ ...prev, purposeOfVisit: e.target.value }))}
+                  onChange={e => setFormData(prev => ({ ...prev, purposeOfVisit: e.target.value }))}
                   required
                   placeholder="Ex: Réunion, Livraison, Entretien..."
                 />
@@ -267,9 +275,11 @@ export function RegisterVisitorWithAI({ onSuccess, onCancel, open }: RegisterVis
 
               <div className="space-y-2">
                 <Label htmlFor="employeeToVisit">Employé à rencontrer</Label>
-                <Select 
-                  value={formData.employeeToVisit} 
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, employeeToVisit: value }))}
+                <Select
+                  value={formData.employeeToVisit}
+                  onValueChange={value =>
+                    setFormData(prev => ({ ...prev, employeeToVisit: value }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Sélectionner un employé" />
@@ -289,15 +299,17 @@ export function RegisterVisitorWithAI({ onSuccess, onCancel, open }: RegisterVis
                 <Input
                   id="department"
                   value={formData.department}
-                  onChange={(e) => setFormData(prev => ({ ...prev, department: e.target.value }))}
+                  onChange={e => setFormData(prev => ({ ...prev, department: e.target.value }))}
                 />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="expectedDuration">Durée estimée</Label>
-                <Select 
-                  value={formData.expectedDuration} 
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, expectedDuration: value }))}
+                <Select
+                  value={formData.expectedDuration}
+                  onValueChange={value =>
+                    setFormData(prev => ({ ...prev, expectedDuration: value }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -314,9 +326,11 @@ export function RegisterVisitorWithAI({ onSuccess, onCancel, open }: RegisterVis
 
               <div className="space-y-2">
                 <Label htmlFor="urgencyLevel">Niveau d'urgence</Label>
-                <Select 
-                  value={formData.urgencyLevel} 
-                  onValueChange={(value: any) => setFormData(prev => ({ ...prev, urgencyLevel: value }))}
+                <Select
+                  value={formData.urgencyLevel}
+                  onValueChange={(value: any) =>
+                    setFormData(prev => ({ ...prev, urgencyLevel: value }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -362,6 +376,5 @@ export function RegisterVisitorWithAI({ onSuccess, onCancel, open }: RegisterVis
         />
       )}
     </>
-  );
+  )
 }
-

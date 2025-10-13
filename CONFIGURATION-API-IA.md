@@ -26,36 +26,44 @@ VITE_AI_PROVIDER=openai
 ## 🤖 Providers Disponibles
 
 ### 1. OpenAI (Par défaut)
+
 **Modèle**: GPT-4o (GPT-4 Optimized)
 **Forces**:
+
 - Excellente précision sur documents
 - Support images haute résolution
 - Extraction rapide (1-2s)
 - JSON structuré fiable
 
 **Utilisation**:
+
 ```
 VITE_AI_PROVIDER=openai
 VITE_OPENAI_API_KEY=sk-proj-...
 ```
 
 ### 2. Google Gemini (Alternative)
+
 **Modèle**: Gemini 1.5 Flash
 **Forces**:
+
 - Très rapide
 - Moins coûteux
 - Bonne précision
 - Support multi-langues
 
 **Utilisation**:
+
 ```
 VITE_AI_PROVIDER=google
 VITE_GEMINI_API_KEY=AIzaSy...
 ```
 
 ### 3. Mock (Démo)
+
 **Pour**: Tests sans API
 **Utilisation**:
+
 ```
 VITE_AI_PROVIDER=mock
 # Pas de clé API nécessaire
@@ -68,13 +76,15 @@ VITE_AI_PROVIDER=mock
 ### AIExtractionService Amélioré
 
 **1. Détection automatique provider:**
+
 ```typescript
 // Lit depuis .env.local
-const provider = import.meta.env.VITE_AI_PROVIDER || 'openai';
-const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+const provider = import.meta.env.VITE_AI_PROVIDER || 'openai'
+const apiKey = import.meta.env.VITE_OPENAI_API_KEY
 ```
 
 **2. Implémentation OpenAI réelle:**
+
 ```typescript
 private async callOpenAI(imageData, prompt) {
   // Appel API OpenAI Vision
@@ -85,6 +95,7 @@ private async callOpenAI(imageData, prompt) {
 ```
 
 **3. Implémentation Gemini réelle:**
+
 ```typescript
 private async callGemini(imageData, prompt) {
   // Appel API Gemini Vision
@@ -95,6 +106,7 @@ private async callGemini(imageData, prompt) {
 ```
 
 **4. Prompts optimisés:**
+
 ```typescript
 // Prompts spécifiques par type de document
 // Format JSON strict demandé
@@ -109,6 +121,7 @@ private async callGemini(imageData, prompt) {
 ### 1. Pièces d'Identité
 
 **CNI (Carte Nationale d'Identité):**
+
 - Prénom, Nom
 - Numéro CNI
 - Date de naissance
@@ -117,6 +130,7 @@ private async callGemini(imageData, prompt) {
 - Lieu de naissance
 
 **Passeport:**
+
 - Prénom, Nom
 - Numéro passeport
 - Date de naissance
@@ -125,6 +139,7 @@ private async callGemini(imageData, prompt) {
 - Lieu de naissance
 
 **Permis de Conduire:**
+
 - Prénom, Nom
 - Numéro permis
 - Date de naissance
@@ -134,6 +149,7 @@ private async callGemini(imageData, prompt) {
 ### 2. Étiquettes Colis
 
 **Extraction:**
+
 - Numéro de suivi
 - Code-barres
 - Expéditeur (nom, org, adresse, tél)
@@ -145,6 +161,7 @@ private async callGemini(imageData, prompt) {
 ### 3. Documents Courrier
 
 **Extraction:**
+
 - Expéditeur complet
 - Destinataire complet
 - Type de document
@@ -163,18 +180,21 @@ private async callGemini(imageData, prompt) {
 ### Changer de Provider
 
 **Passer à Gemini:**
+
 ```env
 VITE_AI_PROVIDER=google
 VITE_GEMINI_API_KEY=AIzaSy...
 ```
 
 **Passer à OpenAI:**
+
 ```env
 VITE_AI_PROVIDER=openai
 VITE_OPENAI_API_KEY=sk-proj-...
 ```
 
 **Revenir en Mock:**
+
 ```env
 VITE_AI_PROVIDER=mock
 # Retirer ou commenter les clés API
@@ -183,17 +203,19 @@ VITE_AI_PROVIDER=mock
 ### Changer de Modèle
 
 **OpenAI:**
+
 ```typescript
 // Dans ai-extraction.service.ts
-model: 'gpt-4o'          // Recommandé (rapide + précis)
-model: 'gpt-4-turbo'     // Alternative
+model: 'gpt-4o' // Recommandé (rapide + précis)
+model: 'gpt-4-turbo' // Alternative
 model: 'gpt-4-vision-preview' // Ancien
 ```
 
 **Gemini:**
+
 ```typescript
-model: 'gemini-1.5-flash'  // Recommandé (rapide)
-model: 'gemini-1.5-pro'    // Plus précis mais plus lent
+model: 'gemini-1.5-flash' // Recommandé (rapide)
+model: 'gemini-1.5-pro' // Plus précis mais plus lent
 ```
 
 ---
@@ -201,6 +223,7 @@ model: 'gemini-1.5-pro'    // Plus précis mais plus lent
 ## 🧪 Tester l'Extraction Réelle
 
 ### Test 1: CNI
+
 1. Préparez une photo de CNI
 2. Page Visites → "Enregistrer avec IA"
 3. "Scanner document" → Upload photo
@@ -208,6 +231,7 @@ model: 'gemini-1.5-pro'    // Plus précis mais plus lent
 5. Vérifiez données extraites
 
 **Résultat attendu:**
+
 ```json
 {
   "firstName": "Jean",
@@ -220,12 +244,14 @@ model: 'gemini-1.5-pro'    // Plus précis mais plus lent
 ```
 
 ### Test 2: Étiquette Colis
+
 1. Photo d'étiquette DHL/UPS/FedEx
 2. Page Colis → "Nouveau colis"
 3. "Scanner étiquette" → Upload
 4. Vérifiez extraction automatique
 
 **Résultat attendu:**
+
 ```json
 {
   "trackingNumber": "GA123456789",
@@ -236,12 +262,14 @@ model: 'gemini-1.5-pro'    // Plus précis mais plus lent
 ```
 
 ### Test 3: Courrier
+
 1. Photo/scan d'un courrier
 2. Page Colis → Onglet "Courriers"
 3. "Nouveau courrier" → "Scanner"
 4. Attendez OCR + résumé
 
 **Résultat attendu:**
+
 ```json
 {
   "sender": { ... },
@@ -259,6 +287,7 @@ model: 'gemini-1.5-pro'    // Plus précis mais plus lent
 ### Console Browser
 
 **Logs ajoutés:**
+
 ```
 🤖 AI Service initialisé - Provider: openai, Model: gpt-4o
 🔍 Extraction cni avec openai...
@@ -266,6 +295,7 @@ model: 'gemini-1.5-pro'    // Plus précis mais plus lent
 ```
 
 **En cas d'erreur:**
+
 ```
 ❌ Erreur extraction cni: OpenAI API error: ...
 ⚠️ Fallback sur mode Mock
@@ -274,12 +304,13 @@ model: 'gemini-1.5-pro'    // Plus précis mais plus lent
 ### Vérification État
 
 **Dans console:**
+
 ```javascript
 // Vérifier provider actif
-console.log(aiExtractionService.config.provider);
+console.log(aiExtractionService.config.provider)
 
 // Vérifier si clé API présente
-console.log(import.meta.env.VITE_OPENAI_API_KEY ? 'Clé OK' : 'Pas de clé');
+console.log(import.meta.env.VITE_OPENAI_API_KEY ? 'Clé OK' : 'Pas de clé')
 ```
 
 ---
@@ -287,11 +318,14 @@ console.log(import.meta.env.VITE_OPENAI_API_KEY ? 'Clé OK' : 'Pas de clé');
 ## 💰 Coûts API
 
 ### OpenAI GPT-4o
+
 **Tarification:**
+
 - Images: ~$0.01 par image
 - Tokens: Variable selon prompt
 
 **Estimation mensuelle:**
+
 - 100 visiteurs/mois: ~$1
 - 50 colis/mois: ~$0.50
 - 200 courriers/mois: ~$2
@@ -299,11 +333,14 @@ console.log(import.meta.env.VITE_OPENAI_API_KEY ? 'Clé OK' : 'Pas de clé');
 **Total estimé: ~$3.50/mois** 💰
 
 ### Google Gemini
+
 **Tarification:**
+
 - Gratuit jusqu'à 1500 requêtes/jour
 - Au-delà: ~$0.001 par requête
 
 **Estimation mensuelle:**
+
 - Usage SOGARA: **Gratuit** (sous limite)
 
 ---
@@ -313,16 +350,19 @@ console.log(import.meta.env.VITE_OPENAI_API_KEY ? 'Clé OK' : 'Pas de clé');
 ### Protection des Clés
 
 ✅ **Fichier `.env.local`:**
+
 - Jamais commité (dans .gitignore)
 - Stockage local uniquement
-- Variables préfixées VITE_
+- Variables préfixées VITE\_
 
 ✅ **Code:**
+
 - Aucune clé en dur
 - Lecture depuis environnement
 - Logs sans exposer clés
 
 ✅ **Transmission:**
+
 - HTTPS uniquement
 - Pas de stockage clés en localStorage
 - Pas d'exposition côté client
@@ -334,12 +374,14 @@ console.log(import.meta.env.VITE_OPENAI_API_KEY ? 'Clé OK' : 'Pas de clé');
 ### Gestion des Erreurs
 
 **Si API échoue:**
+
 1. Retry automatique (3 tentatives)
 2. Message d'erreur clair
 3. Option saisie manuelle
 4. Pas de blocage utilisateur
 
 **Si clé API invalide:**
+
 1. Warning dans console
 2. Passage automatique en mode Mock
 3. Système continue de fonctionner
@@ -351,23 +393,25 @@ console.log(import.meta.env.VITE_OPENAI_API_KEY ? 'Clé OK' : 'Pas de clé');
 
 ### vs Mode Mock
 
-| Aspect | Mock | OpenAI | Gemini |
-|--------|------|--------|--------|
-| Précision | Simulée (92%) | Réelle (90-95%) | Réelle (88-93%) |
-| Données | Fictives | Vraies | Vraies |
-| Vitesse | Instant | 1-3s | 1-2s |
-| Coût | Gratuit | ~$0.01/doc | Gratuit |
-| Production | ❌ Non | ✅ Oui | ✅ Oui |
+| Aspect     | Mock          | OpenAI          | Gemini          |
+| ---------- | ------------- | --------------- | --------------- |
+| Précision  | Simulée (92%) | Réelle (90-95%) | Réelle (88-93%) |
+| Données    | Fictives      | Vraies          | Vraies          |
+| Vitesse    | Instant       | 1-3s            | 1-2s            |
+| Coût       | Gratuit       | ~$0.01/doc      | Gratuit         |
+| Production | ❌ Non        | ✅ Oui          | ✅ Oui          |
 
 ### Cas d'Usage
 
 **Mock (Actuel):**
+
 - ✅ Développement
 - ✅ Démo clients
 - ✅ Tests automatisés
 - ✅ Formation
 
 **API Réelle:**
+
 - ✅ Production
 - ✅ Données réelles clients
 - ✅ Précision maximale
@@ -380,12 +424,14 @@ console.log(import.meta.env.VITE_OPENAI_API_KEY ? 'Clé OK' : 'Pas de clé');
 ### Étapes
 
 **1. Vérifier clés API:**
+
 ```bash
 cat .env.local
 # Doit afficher VITE_OPENAI_API_KEY=...
 ```
 
 **2. Redémarrer serveur:**
+
 ```bash
 # Arrêter serveur actuel (Ctrl+C)
 npm run dev
@@ -393,11 +439,13 @@ npm run dev
 ```
 
 **3. Tester extraction:**
+
 - Upload vraie photo CNI
 - Vérifier données extraites sont réelles
 - Confiance doit être entre 85-98%
 
 **4. Monitoring:**
+
 - Surveiller console pour logs
 - Vérifier temps de réponse (<3s)
 - Valider qualité extraction
@@ -407,12 +455,14 @@ npm run dev
 ## 📈 Optimisations Possibles
 
 ### Court Terme
+
 - [ ] Prétraitement images (contraste, rotation)
 - [ ] Cache résultats extraction
 - [ ] Retry intelligent selon erreur
 - [ ] Fallback entre providers
 
 ### Moyen Terme
+
 - [ ] Fine-tuning modèle sur docs gabonais
 - [ ] Batch processing pour volume
 - [ ] Analytics qualité extraction
@@ -439,6 +489,7 @@ npm run dev
 ## 📞 Support
 
 ### Si Problème API
+
 1. Vérifier clés dans .env.local
 2. Vérifier connexion internet
 3. Consulter logs console
@@ -447,15 +498,18 @@ npm run dev
 ### Erreurs Courantes
 
 **"Clé API manquante":**
+
 - Vérifier .env.local existe
 - Redémarrer serveur
-- Vérifier prefix VITE_
+- Vérifier prefix VITE\_
 
 **"API error: 401":**
+
 - Clé API invalide ou expirée
 - Vérifier sur platform.openai.com
 
 **"Timeout":**
+
 - Augmenter timeout dans config
 - Vérifier taille image (<5MB)
 
@@ -464,6 +518,7 @@ npm run dev
 ## 🎉 Conclusion
 
 Le système d'extraction IA est maintenant configuré pour:
+
 - ✅ Utiliser OpenAI GPT-4o par défaut
 - ✅ Fallback sur Gemini si configuré
 - ✅ Mode Mock toujours disponible
@@ -474,4 +529,3 @@ Le système d'extraction IA est maintenant configuré pour:
 ---
 
 _Configuration API IA - Version 1.0.0 - Octobre 2025_
-

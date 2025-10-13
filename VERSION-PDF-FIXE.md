@@ -5,11 +5,13 @@
 L'erreur "**The API version does not match the Worker version**" est maintenant **RÉSOLUE** !
 
 ### Problème:
+
 - ❌ API PDF.js: version 5.4.149
 - ❌ Worker PDF.js: version 3.11.174
 - ❌ Incompatibilité entre les versions
 
 ### Solution:
+
 - ✅ **Mise à jour** vers pdfjs-dist@5.4.149 (latest)
 - ✅ **Worker synchronisé** avec la même version 5.4.149
 - ✅ **Versions alignées** API ↔️ Worker
@@ -18,9 +20,9 @@ L'erreur "**The API version does not match the Worker version**" est maintenant 
 
 ## 📦 Versions Actuelles
 
-| Composant | Version | Status |
-|-----------|---------|--------|
-| **pdfjs-dist** | 5.4.149 | ✅ Latest |
+| Composant             | Version | Status           |
+| --------------------- | ------- | ---------------- |
+| **pdfjs-dist**        | 5.4.149 | ✅ Latest        |
 | **pdf.worker.min.js** | 5.4.149 | ✅ Correspondant |
 
 ---
@@ -32,13 +34,15 @@ L'erreur "**The API version does not match the Worker version**" est maintenant 
 Le cache du navigateur peut retenir l'ancienne version du worker.
 
 **Rechargement complet obligatoire:**
+
 - **Chrome/Edge**: Ctrl+Shift+R
-- **Firefox**: Ctrl+F5  
+- **Firefox**: Ctrl+F5
 - **Safari**: Cmd+Shift+R
 
 Ou via Console (F12):
+
 ```javascript
-location.reload(true);
+location.reload(true)
 ```
 
 ### Puis testez l'extraction PDF:
@@ -54,6 +58,7 @@ location.reload(true);
 ## 📊 Logs Console Attendus
 
 ### ✅ Succès:
+
 ```
 📄 PDF.js configuré avec worker local v5.4.149
 📄 PDF détecté, conversion en image...
@@ -66,6 +71,7 @@ location.reload(true);
 ```
 
 ### ❌ Plus d'erreurs:
+
 - ~~"The API version does not match the Worker version"~~
 - ~~"UnknownErrorException"~~
 
@@ -74,9 +80,10 @@ location.reload(true);
 ## 🔍 Diagnostic Rapide
 
 ### Vérifier la version dans la Console:
+
 ```javascript
 // Après rechargement, cherchez ce log:
-"📄 PDF.js configuré avec worker local v5.4.149"
+'📄 PDF.js configuré avec worker local v5.4.149'
 ```
 
 **Si vous voyez v3.11.174 = cache navigateur**
@@ -98,10 +105,12 @@ location.reload(true);
 ## 📄 Test Recommandé
 
 ### Avec Image (référence):
+
 1. Uploadez une **image JPG/PNG** de CNI
 2. Extraction devrait fonctionner → confiance: 90-95%
 
 ### Avec PDF (nouveau):
+
 1. Uploadez le **même document en PDF**
 2. Extraction devrait donner des résultats similaires
 3. Temps de traitement: +1-2s (conversion PDF→Image)

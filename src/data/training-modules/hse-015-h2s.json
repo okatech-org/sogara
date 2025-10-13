@@ -240,7 +240,7 @@
             "type": "multiple_choice",
             "options": [
               "Continuer le travail en surveillant",
-              "Évacuer immédiatement", 
+              "Évacuer immédiatement",
               "Mettre un masque à cartouche"
             ],
             "correctAnswer": "Évacuer immédiatement",

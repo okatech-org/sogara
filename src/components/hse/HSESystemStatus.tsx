@@ -1,24 +1,24 @@
-import { CheckCircle, AlertTriangle, Clock, Database, Users, BookOpen } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { useApp } from '@/contexts/AppContext';
-import { useHSEIncidents } from '@/hooks/useHSEIncidents';
-import { useHSETrainings } from '@/hooks/useHSETrainings';
-import { useHSECompliance } from '@/hooks/useHSECompliance';
-import { useHSETrainingImporter } from '@/hooks/useHSETrainingImporter';
+import { CheckCircle, AlertTriangle, Clock, Database, Users, BookOpen } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Progress } from '@/components/ui/progress'
+import { useApp } from '@/contexts/AppContext'
+import { useHSEIncidents } from '@/hooks/useHSEIncidents'
+import { useHSETrainings } from '@/hooks/useHSETrainings'
+import { useHSECompliance } from '@/hooks/useHSECompliance'
+import { useHSETrainingImporter } from '@/hooks/useHSETrainingImporter'
 
 interface HSESystemStatusProps {
-  onAction?: (action: string) => void;
+  onAction?: (action: string) => void
 }
 
 export function HSESystemStatus({ onAction }: HSESystemStatusProps) {
-  const { state } = useApp();
-  const { incidents, loading: incidentsLoading, initialized: incidentsInit } = useHSEIncidents();
-  const { trainings, loading: trainingsLoading, initialized: trainingsInit } = useHSETrainings();
-  const { getOverallCompliance } = useHSECompliance();
-  const { needsImport, getImportStats } = useHSETrainingImporter();
+  const { state } = useApp()
+  const { incidents, loading: incidentsLoading, initialized: incidentsInit } = useHSEIncidents()
+  const { trainings, loading: trainingsLoading, initialized: trainingsInit } = useHSETrainings()
+  const { getOverallCompliance } = useHSECompliance()
+  const { needsImport, getImportStats } = useHSETrainingImporter()
 
   const systemHealth = {
     employees: state.employees.length,
@@ -28,18 +28,20 @@ export function HSESystemStatus({ onAction }: HSESystemStatusProps) {
     compliance: getOverallCompliance(),
     dataInitialized: incidentsInit && trainingsInit,
     trainingSystemReady: !needsImport(),
-    importStats: getImportStats()
-  };
+    importStats: getImportStats(),
+  }
 
   const getStatusIcon = (status: boolean) => {
-    return status ? 
-      <CheckCircle className="w-4 h-4 text-green-500" /> : 
-      <AlertTriangle className="w-4 h-4 text-red-500" />;
-  };
+    return status ? (
+      <CheckCircle className="w-4 h-4 text-green-500" />
+    ) : (
+      <AlertTriangle className="w-4 h-4 text-red-500" />
+    )
+  }
 
   const getStatusVariant = (status: boolean) => {
-    return status ? 'success' : 'destructive';
-  };
+    return status ? 'success' : 'destructive'
+  }
 
   return (
     <Card className="industrial-card">
@@ -48,9 +50,7 @@ export function HSESystemStatus({ onAction }: HSESystemStatusProps) {
           <Database className="w-5 h-5" />
           État du Système HSE
         </CardTitle>
-        <p className="text-muted-foreground">
-          Diagnostic des composants et données du module HSE
-        </p>
+        <p className="text-muted-foreground">Diagnostic des composants et données du module HSE</p>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Statut général */}
@@ -116,7 +116,7 @@ export function HSESystemStatus({ onAction }: HSESystemStatusProps) {
         {/* Actions recommandées */}
         <div className="space-y-3">
           <h4 className="font-medium">Actions recommandées</h4>
-          
+
           {!systemHealth.trainingSystemReady && (
             <div className="flex items-center justify-between p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
               <div>
@@ -125,10 +125,7 @@ export function HSESystemStatus({ onAction }: HSESystemStatusProps) {
                   Importez les modules de formation pour activer toutes les fonctionnalités.
                 </p>
               </div>
-              <Button 
-                size="sm" 
-                onClick={() => onAction?.('init-training-system')}
-              >
+              <Button size="sm" onClick={() => onAction?.('init-training-system')}>
                 Initialiser
               </Button>
             </div>
@@ -142,11 +139,7 @@ export function HSESystemStatus({ onAction }: HSESystemStatusProps) {
                   Le taux de conformité est de {systemHealth.compliance}%. Objectif: ≥90%.
                 </p>
               </div>
-              <Button 
-                size="sm" 
-                variant="outline"
-                onClick={() => onAction?.('view-compliance')}
-              >
+              <Button size="sm" variant="outline" onClick={() => onAction?.('view-compliance')}>
                 Voir détails
               </Button>
             </div>
@@ -171,16 +164,20 @@ export function HSESystemStatus({ onAction }: HSESystemStatusProps) {
             <h4 className="font-medium mb-3">Dernière importation</h4>
             <div className="text-sm text-muted-foreground space-y-1">
               <p>
-                <span className="font-medium">Date:</span> {systemHealth.importStats.lastImport.toLocaleDateString('fr-FR')}
+                <span className="font-medium">Date:</span>{' '}
+                {systemHealth.importStats.lastImport.toLocaleDateString('fr-FR')}
               </p>
               <p>
-                <span className="font-medium">Modules:</span> {systemHealth.importStats.modulesImported}
+                <span className="font-medium">Modules:</span>{' '}
+                {systemHealth.importStats.modulesImported}
               </p>
               <p>
-                <span className="font-medium">Sessions:</span> {systemHealth.importStats.sessionsPlanned}
+                <span className="font-medium">Sessions:</span>{' '}
+                {systemHealth.importStats.sessionsPlanned}
               </p>
               <p>
-                <span className="font-medium">Conformité:</span> {systemHealth.importStats.overallCompliance}%
+                <span className="font-medium">Conformité:</span>{' '}
+                {systemHealth.importStats.overallCompliance}%
               </p>
             </div>
           </div>
@@ -195,5 +192,5 @@ export function HSESystemStatus({ onAction }: HSESystemStatusProps) {
         )}
       </CardContent>
     </Card>
-  );
+  )
 }
