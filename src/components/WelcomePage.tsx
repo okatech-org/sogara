@@ -97,7 +97,7 @@ export function WelcomePage({ onShowLogin }: WelcomePageProps) {
       image: ingenieurImage,
     },
     {
-      nom: 'Clarisse MBOUMBA',
+      nom: 'Éric AVARO',
       poste: 'Directeur Communication',
       temoignage:
         "SOGARA Connect simplifie la communication interne. Publication d'actualités en quelques clics !",

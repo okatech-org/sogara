@@ -80,28 +80,28 @@ export const seedDemoData = mutation({
     })
 
     const dgId = await ctx.db.insert('employees', {
-      firstName: 'Daniel',
-      lastName: 'MVOU',
+      firstName: 'Christian',
+      lastName: 'AVARO',
       matricule: 'DG001',
       service: 'Direction Générale',
       roles: ['DG', 'ADMIN'],
       competences: ['Direction générale', 'Stratégie', 'Management'],
       habilitations: ['Accès total', 'Décisions stratégiques'],
-      email: 'daniel.mvou@sogara.com',
+      email: 'christian.avaro@sogara.com',
       status: 'active',
       stats: { visitsReceived: 10, packagesReceived: 5, hseTrainingsCompleted: 10 },
       equipmentIds: [],
     })
 
     const drhId = await ctx.db.insert('employees', {
-      firstName: 'Brigitte',
-      lastName: 'NGUEMA',
+      firstName: 'Igride',
+      lastName: 'TCHEN',
       matricule: 'DRH001',
       service: 'Ressources Humaines',
       roles: ['DRH', 'ADMIN'],
       competences: ['Gestion RH', 'Recrutement', 'Formation'],
       habilitations: ['Gestion personnel', 'Validation formations'],
-      email: 'brigitte.nguema@sogara.com',
+      email: 'igride.tchen@sogara.com',
       status: 'active',
       stats: { visitsReceived: 7, packagesReceived: 4, hseTrainingsCompleted: 9 },
       equipmentIds: [],
