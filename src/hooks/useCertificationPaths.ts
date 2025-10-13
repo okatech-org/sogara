@@ -1,10 +1,13 @@
-import { useMemo, useCallback } from 'react'
+import { useMemo, useCallback, useEffect, useState } from 'react'
 import { useQuery, useMutation } from 'convex/react'
 import { api } from '../../convex/_generated/api'
 import { CertificationPath, CertificationPathProgress } from '@/types'
 import { toast } from './use-toast'
 import { Id } from '../../convex/_generated/dataModel'
 import { useAuth } from '@/contexts/AppContext'
+import evaluationsData from '@/data/evaluations-sogara.json'
+
+const PATHS_STORAGE_KEY = 'sogara_certification_paths'
 
 export function useCertificationPaths() {
   const { currentUser } = useAuth()
@@ -20,7 +23,45 @@ export function useCertificationPaths() {
   const completeTrainingMutation = useMutation(api.certificationPaths.completeTraining)
   const completeEvaluationMutation = useMutation(api.certificationPaths.completeEvaluation)
 
-  const paths: CertificationPath[] = useMemo(
+  const [localPaths, setLocalPaths] = useState<CertificationPath[]>(() => {
+    try {
+      const stored = localStorage.getItem(PATHS_STORAGE_KEY)
+      return stored ? JSON.parse(stored) : []
+    } catch {
+      return []
+    }
+  })
+
+  // Seed automatique des parcours depuis JSON si vide
+  useEffect(() => {
+    if (localPaths.length === 0 && evaluationsData.certificationPaths) {
+      const seededPaths: CertificationPath[] = evaluationsData.certificationPaths.map(p => ({
+        id: p.id,
+        title: p.title,
+        description: p.description,
+        trainingModuleId: p.trainingModuleId,
+        trainingTitle: p.trainingTitle,
+        trainingDuration: p.trainingDuration,
+        assessmentId: p.assessmentId,
+        assessmentTitle: p.assessmentTitle,
+        daysBeforeAssessment: p.daysBeforeAssessment,
+        assessmentDuration: p.assessmentDuration,
+        passingScore: p.passingScore,
+        habilitationName: p.habilitationName,
+        habilitationCode: p.habilitationCode,
+        habilitationValidity: p.habilitationValidity,
+        createdBy: '4',
+        isPublished: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }))
+      setLocalPaths(seededPaths)
+      localStorage.setItem(PATHS_STORAGE_KEY, JSON.stringify(seededPaths))
+      console.log(`🌱 Seed Parcours: ${seededPaths.length} parcours chargés depuis JSON`)
+    }
+  }, [localPaths.length])
+
+  const remotePaths: CertificationPath[] = useMemo(
     () =>
       (pathsData || []).map((p: any) => ({
         id: p._id,
@@ -43,6 +84,11 @@ export function useCertificationPaths() {
         updatedAt: new Date(p._creationTime),
       })),
     [pathsData],
+  )
+
+  const paths = useMemo(
+    () => (remotePaths.length > 0 ? remotePaths : localPaths),
+    [remotePaths, localPaths],
   )
 
   // Fallback localStorage pour usage hors-ligne / serveur Convex non démarré
