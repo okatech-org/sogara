@@ -112,14 +112,14 @@ const seedEmployees = async () => {
       },
       {
         id: '8',
-        firstName: 'Igride',
-        lastName: 'TCHEN',
+        firstName: 'Ingride',
+        lastName: 'TCHEN Ep...',
         matricule: 'DRH001',
         service: 'Ressources Humaines',
         roles: ['DRH', 'ADMIN'],
         competences: ['Gestion RH', 'Recrutement', 'Formation', 'Développement compétences', 'Relations sociales'],
         habilitations: ['Gestion personnel', 'Validation formations', 'Administration RH'],
-        email: 'igride.tchen@sogara.com',
+        email: 'ingride.tchen@sogara.com',
         password: 'DRH123!',
         status: 'active',
         stats: { visitsReceived: 7, packagesReceived: 4, hseTrainingsCompleted: 9 }

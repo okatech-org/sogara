@@ -94,14 +94,14 @@ export const seedDemoData = mutation({
     })
 
     const drhId = await ctx.db.insert('employees', {
-      firstName: 'Igride',
-      lastName: 'TCHEN',
+      firstName: 'Ingride',
+      lastName: 'TCHEN Ep...',
       matricule: 'DRH001',
       service: 'Ressources Humaines',
       roles: ['DRH', 'ADMIN'],
       competences: ['Gestion RH', 'Recrutement', 'Formation'],
       habilitations: ['Gestion personnel', 'Validation formations'],
-      email: 'igride.tchen@sogara.com',
+      email: 'ingride.tchen@sogara.com',
       status: 'active',
       stats: { visitsReceived: 7, packagesReceived: 4, hseTrainingsCompleted: 9 },
       equipmentIds: [],

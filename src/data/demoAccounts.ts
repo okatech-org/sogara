@@ -85,7 +85,7 @@ export const demoAccounts: DemoAccount[] = [
     id: '8',
     slug: 'drh001',
     matricule: 'DRH001',
-    fullName: 'Igride TCHEN',
+    fullName: 'Ingride TCHEN Ep...',
     jobTitle: 'Directrice des Ressources Humaines',
     roles: ['DRH', 'ADMIN'],
     featuredModule: 'Gestion des ressources humaines',
