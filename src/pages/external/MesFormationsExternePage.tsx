@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BookOpen, Play, CheckCircle, Clock, Award } from 'lucide-react'
+import { BookOpen, Play, CheckCircle, Clock, Award, Loader2, AlertCircle } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -10,10 +10,18 @@ import { useHSEContent } from '@/hooks/useHSEContent'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { HSETrainingModulePlayer } from '@/components/employee/HSETrainingModulePlayer'
 import { HSEAssignment } from '@/types'
+import { toast } from '@/hooks/use-toast'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 
 export function MesFormationsExternePage() {
   const { currentUser } = useAuth()
-  const { getMyProgress, startTraining, completeTraining, paths } = useCertificationPaths()
+  const {
+    getMyProgress,
+    startTraining,
+    completeTraining,
+    paths,
+    loading: pathsLoading,
+  } = useCertificationPaths()
   const { getAssignmentsByEmployee, getContentForAssignment, updateAssignmentStatus } =
     useHSEContent()
 
@@ -27,28 +35,130 @@ export function MesFormationsExternePage() {
   }
 
   const [activeTraining, setActiveTraining] = useState<HSEAssignment | null>(null)
+  const [loadingAction, setLoadingAction] = useState<string | null>(null)
 
   const handleStartDirectTraining = (assignment: HSEAssignment) => {
-    updateAssignmentStatus(assignment.id, 'in_progress', { startedAt: new Date() })
-    setActiveTraining(assignment)
+    try {
+      setLoadingAction(assignment.id)
+      updateAssignmentStatus(assignment.id, 'in_progress', { startedAt: new Date() })
+      setActiveTraining(assignment)
+
+      toast({
+        title: 'Formation démarrée',
+        description: 'Bonne formation !',
+      })
+    } catch (error) {
+      toast({
+        title: 'Erreur',
+        description: 'Impossible de démarrer la formation',
+        variant: 'destructive',
+      })
+    } finally {
+      setLoadingAction(null)
+    }
   }
 
   const handleCompleteDirectTraining = () => {
     if (activeTraining) {
-      updateAssignmentStatus(activeTraining.id, 'completed', {
-        completedAt: new Date(),
-        score: 90,
+      try {
+        updateAssignmentStatus(activeTraining.id, 'completed', {
+          completedAt: new Date(),
+          score: 90,
+        })
+        setActiveTraining(null)
+
+        toast({
+          title: '✅ Formation complétée',
+          description: 'Félicitations pour avoir terminé cette formation !',
+        })
+      } catch (error) {
+        toast({
+          title: 'Erreur',
+          description: 'Impossible de marquer la formation comme complétée',
+          variant: 'destructive',
+        })
+      }
+    }
+  }
+
+  const handleReviewTraining = (assignment: HSEAssignment) => {
+    try {
+      setActiveTraining(assignment)
+      toast({
+        title: 'Mode révision',
+        description: 'Vous pouvez revoir le contenu de cette formation',
       })
-      setActiveTraining(null)
+    } catch (error) {
+      toast({
+        title: 'Erreur',
+        description: 'Impossible de charger la formation',
+        variant: 'destructive',
+      })
     }
   }
 
   const handleStartCertifTraining = async (progress: any) => {
-    await startTraining(progress.id, `assign_${progress.pathId}_${currentUser?.id}`)
+    try {
+      setLoadingAction(progress.id)
+      await startTraining(progress.id, `assign_${progress.pathId}_${currentUser?.id}`)
+
+      toast({
+        title: 'Formation démarrée',
+        description: 'Vous pouvez maintenant suivre cette formation',
+      })
+    } catch (error) {
+      toast({
+        title: 'Erreur',
+        description: 'Impossible de démarrer la formation certifiante',
+        variant: 'destructive',
+      })
+    } finally {
+      setLoadingAction(null)
+    }
   }
 
   const handleCompleteCertifTraining = async (progress: any) => {
-    await completeTraining(progress.id, 90, 7)
+    try {
+      setLoadingAction(progress.id)
+      await completeTraining(progress.id, 90, 7)
+
+      toast({
+        title: '🎉 Formation complétée !',
+        description: "L'évaluation sera disponible dans 7 jours",
+      })
+    } catch (error) {
+      toast({
+        title: 'Erreur',
+        description: 'Impossible de marquer la formation comme complétée',
+        variant: 'destructive',
+      })
+    } finally {
+      setLoadingAction(null)
+    }
+  }
+
+  if (!currentUser) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Alert className="max-w-md">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            Vous devez être connecté pour accéder à vos formations.
+          </AlertDescription>
+        </Alert>
+      </div>
+    )
+  }
+
+  if (pathsLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center space-y-4">
+          <Loader2 className="w-12 h-12 animate-spin mx-auto text-primary" />
+          <p className="text-muted-foreground">Chargement de vos formations...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -62,7 +172,8 @@ export function MesFormationsExternePage() {
           Mes Formations
         </h1>
         <p className="text-muted-foreground mt-2">
-          Modules de formation requis pour vos habilitations
+          Modules de formation requis pour vos habilitations - Compte {currentUser.firstName}{' '}
+          {currentUser.lastName}
         </p>
       </div>
 
@@ -169,8 +280,13 @@ export function MesFormationsExternePage() {
                           <Button
                             className="gap-2"
                             onClick={() => handleStartDirectTraining(assignment)}
+                            disabled={loadingAction === assignment.id}
                           >
-                            <Play className="w-4 h-4" />
+                            {loadingAction === assignment.id ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <Play className="w-4 h-4" />
+                            )}
                             Commencer
                           </Button>
                         ) : assignment.status === 'in_progress' ? (
@@ -183,7 +299,13 @@ export function MesFormationsExternePage() {
                             Continuer
                           </Button>
                         ) : (
-                          <Button variant="ghost" size="sm">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="gap-2"
+                            onClick={() => handleReviewTraining(assignment)}
+                          >
+                            <BookOpen className="w-4 h-4" />
                             Revoir
                           </Button>
                         )}
@@ -253,13 +375,18 @@ export function MesFormationsExternePage() {
                         )}
                       </div>
 
-                      <div>
+                      <div className="flex gap-2">
                         {!progress.trainingStartedAt && (
                           <Button
                             className="gap-2"
                             onClick={() => handleStartCertifTraining(progress)}
+                            disabled={loadingAction === progress.id}
                           >
-                            <Play className="w-4 h-4" />
+                            {loadingAction === progress.id ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <Play className="w-4 h-4" />
+                            )}
                             Commencer
                           </Button>
                         )}
@@ -268,14 +395,31 @@ export function MesFormationsExternePage() {
                             variant="outline"
                             className="gap-2"
                             onClick={() => handleCompleteCertifTraining(progress)}
+                            disabled={loadingAction === progress.id}
                           >
-                            <CheckCircle className="w-4 h-4" />
+                            {loadingAction === progress.id ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <CheckCircle className="w-4 h-4" />
+                            )}
                             Terminer
                           </Button>
                         )}
                         {progress.trainingCompletedAt && (
-                          <Button variant="ghost" size="sm">
-                            Revoir
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="gap-2"
+                            onClick={() => {
+                              toast({
+                                title: 'Révision disponible',
+                                description:
+                                  'La formation a été complétée. Vous pouvez consulter le certificat dans la section Évaluations.',
+                              })
+                            }}
+                          >
+                            <Award className="w-4 h-4" />
+                            Certificat
                           </Button>
                         )}
                       </div>
