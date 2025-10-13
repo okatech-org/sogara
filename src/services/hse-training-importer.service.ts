@@ -442,13 +442,13 @@ class HSETrainingImporterService {
 
   private getInstructorName(module: TrainingModule): string {
     const instructors = {
-      'HSE-001': 'Marie-Claire NZIEGE',
+      'HSE-001': 'Lié Orphée BOURDES',
       'HSE-002': 'Jean-Pierre MOUKALA',
       'HSE-003': 'Commandant ESSONO',
       'HSE-004': 'Expert TOTAL E&P',
       'HSE-005': 'Formateur DEKRA',
       'HSE-006': 'Dr. NGOUA (Chimiste)',
-      'HSE-007': 'Marie-Claire NZIEGE',
+      'HSE-007': 'Lié Orphée BOURDES',
       'HSE-008': 'Dr. MBADINGA (Médecin)',
       'HSE-015': 'Expert SCHLUMBERGER',
     }

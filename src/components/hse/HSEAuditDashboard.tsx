@@ -53,7 +53,7 @@ export function HSEAuditDashboard() {
           type: 'internal',
           status: 'completed',
           scheduledDate: new Date('2025-03-15'),
-          auditor: 'Marie-Claire NZIEGE',
+          auditor: 'Lié Orphée BOURDES',
           scope: ['Formations', 'EPI', 'Incidents'],
           score: 87,
           findings: 12,

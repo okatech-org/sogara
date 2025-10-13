@@ -36,7 +36,7 @@ export function useHSEInit() {
             occurredAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
             status: 'resolved',
             reportedBy: 'Pierre BEKALE',
-            investigatedBy: 'Marie-Claire NZIEGE',
+            investigatedBy: 'Lié Orphée BOURDES',
             correctiveActions:
               "Casque remplacé, vérification de tous les EPI de l'équipe effectuée.",
           },
@@ -49,7 +49,7 @@ export function useHSEInit() {
             occurredAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
             status: 'investigating',
             reportedBy: 'Pierre BEKALE',
-            investigatedBy: 'Marie-Claire NZIEGE',
+            investigatedBy: 'Lié Orphée BOURDES',
           },
           {
             employeeId: '2',

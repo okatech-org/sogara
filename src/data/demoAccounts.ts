@@ -139,7 +139,7 @@ export const demoAccounts: DemoAccount[] = [
     id: '4',
     slug: 'hse001',
     matricule: 'HSE001',
-    fullName: 'Marie-Claire NZIEGE',
+    fullName: 'Lié Orphée BOURDES',
     jobTitle: 'Chef de Division HSE et Conformité',
     roles: ['HSE', 'COMPLIANCE', 'SECURITE'],
     featuredModule: 'Sécurité, Conformité et HSE',

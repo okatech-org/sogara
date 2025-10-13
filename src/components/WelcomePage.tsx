@@ -90,7 +90,7 @@ export function WelcomePage({ onShowLogin }: WelcomePageProps) {
       image: techniciensImage,
     },
     {
-      nom: 'Marie-Claire NZIEGE',
+      nom: 'Lié Orphée BOURDES',
       poste: 'Chef de Division HSE et Conformité',
       temoignage:
         "Enfin un système qui centralise tout ! Les rapports d'incidents et le suivi formation, tout y est.",

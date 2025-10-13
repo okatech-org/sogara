@@ -24,14 +24,14 @@ export const seedDemoData = mutation({
     })
 
     const hseId = await ctx.db.insert('employees', {
-      firstName: 'Marie-Claire',
-      lastName: 'NZIEGE',
+      firstName: 'Lié Orphée',
+      lastName: 'BOURDES',
       matricule: 'HSE001',
       service: 'HSE et Conformité',
       roles: ['HSE', 'COMPLIANCE', 'SECURITE'],
       competences: ['Sécurité industrielle', 'Formation HSE', 'Audit conformité'],
       habilitations: ['Inspection sécurité', 'Formation obligatoire', 'Incident management'],
-      email: 'marie-claire.nziege@sogara.com',
+      email: 'lie-orphee.bourdes@sogara.com',
       status: 'active',
       stats: { visitsReceived: 8, packagesReceived: 3, hseTrainingsCompleted: 12 },
       equipmentIds: [],

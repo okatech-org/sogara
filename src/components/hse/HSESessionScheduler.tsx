@@ -26,7 +26,7 @@ interface HSESessionSchedulerProps {
 }
 
 const instructors = [
-  'Marie-Claire NZIEGE (Responsable HSE)',
+  'Lié Orphée BOURDES (Responsable HSE)',
   'Dr. NGOUA (Expert Chimie)',
   'Commandant ESSONO (Pompier)',
   'Jean-Pierre MOUKALA (Technicien HSE)',

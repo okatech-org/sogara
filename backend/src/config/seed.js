@@ -70,14 +70,14 @@ const seedEmployees = async () => {
       },
       {
         id: '4',
-        firstName: 'Marie-Claire',
-        lastName: 'NZIEGE',
+        firstName: 'Lié Orphée',
+        lastName: 'BOURDES',
         matricule: 'HSE001',
         service: 'HSE et Conformité',
         roles: ['HSE', 'COMPLIANCE', 'SECURITE'],
         competences: ['Sécurité industrielle', 'Formation HSE', 'Audit conformité', 'Gestion sécurité', 'Conformité réglementaire'],
         habilitations: ['Inspection sécurité', 'Formation obligatoire', 'Incident management', 'Gestion réception'],
-        email: 'marie-claire.nziege@sogara.com',
+        email: 'lie-orphee.bourdes@sogara.com',
         password: 'HSE123!',
         status: 'active',
         stats: { visitsReceived: 8, packagesReceived: 3, hseTrainingsCompleted: 12 }
