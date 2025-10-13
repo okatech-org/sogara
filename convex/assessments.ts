@@ -131,9 +131,9 @@ export const correct = mutation({
             // Récupérer l'employé
             const employee = await ctx.db.get(submission.candidateId as any)
 
-            if (employee) {
+            if (employee && 'habilitations' in employee) {
               // Vérifier si l'habilitation existe déjà
-              const currentHabilitations = employee.habilitations || []
+              const currentHabilitations = (employee.habilitations as string[]) || []
 
               if (!currentHabilitations.includes(assessment.grantsHabilitation)) {
                 // Ajouter la nouvelle habilitation

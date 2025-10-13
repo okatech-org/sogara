@@ -61,8 +61,8 @@ export function LoginForm({ onBackToHome }: LoginFormProps) {
               { matricule, password },
               { skipAuth: true },
             )
-            if (response.success && response.data?.user) {
-              const user = response.data.user
+            if (response.success && response.data && 'user' in response.data) {
+              const user = (response.data as any).user
               login({
                 id: user.id,
                 firstName: user.firstName,

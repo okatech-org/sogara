@@ -134,8 +134,8 @@ export const completeEvaluation = mutation({
       if (progress.candidateType === 'employee') {
         try {
           const employee = await ctx.db.get(progress.candidateId as any)
-          if (employee) {
-            const currentHabilitations = employee.habilitations || []
+          if (employee && 'habilitations' in employee) {
+            const currentHabilitations = (employee.habilitations as string[]) || []
             if (!currentHabilitations.includes(path.habilitationName)) {
               await ctx.db.patch(progress.candidateId as any, {
                 habilitations: [...currentHabilitations, path.habilitationName],
