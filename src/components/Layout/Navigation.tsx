@@ -30,7 +30,73 @@ type NavigationItem = {
   badge?: number
   requiredRoles?: UserRole[]
   path: string
+  description?: string
 }
+
+// Menu spécifique pour HSE001 - Chef de Division HSSE et Conformité
+const hse001NavigationItems: NavigationItem[] = [
+  {
+    id: 'dashboard',
+    label: 'Tableau de bord',
+    icon: Home,
+    path: '/app/dashboard',
+  },
+  {
+    id: 'hsse-management',
+    label: 'Gestion HSSE',
+    icon: Shield,
+    path: '/app/hsse-management',
+    description: 'Statistiques et supervision HSSE',
+  },
+  {
+    id: 'hsse-accounts',
+    label: 'Comptes HSSE',
+    icon: Users,
+    path: '/app/hsse-accounts',
+    description: 'Gestion des comptes HSE/Sécurité',
+  },
+  {
+    id: 'hse001',
+    label: 'Administration HSSE',
+    icon: Shield,
+    path: '/app/hse001',
+    description: 'Administration complète HSSE',
+  },
+  {
+    id: 'visits-stats',
+    label: 'Statistiques Visites',
+    icon: Users,
+    path: '/app/visits-stats',
+    description: 'Statistiques et gestion des visites',
+  },
+  {
+    id: 'mail-stats',
+    label: 'Statistiques Colis',
+    icon: Package,
+    path: '/app/mail-stats',
+    description: 'Statistiques colis et courriers',
+  },
+  {
+    id: 'equipment-stats',
+    label: 'Statistiques Équipements',
+    icon: HardHat,
+    path: '/app/equipment-stats',
+    description: 'Statistiques équipements de sécurité',
+  },
+  {
+    id: 'connect',
+    label: 'SOGARA Connect',
+    icon: Newspaper,
+    path: '/app/connect',
+  },
+  {
+    id: 'mon-planning',
+    label: 'Mon Planning',
+    icon: CalendarDays,
+    path: '/app/mon-planning',
+    description: 'Planning personnel',
+  },
+]
 
 const navigationItems: NavigationItem[] = [
   { id: 'dashboard', label: 'Tableau de bord', icon: Home, path: '/app/dashboard' },
@@ -141,6 +207,20 @@ const navigationItems: NavigationItem[] = [
   },
   { id: 'hse', label: 'HSE', icon: Shield, requiredRoles: ['ADMIN', 'HSE'], path: '/app/hse' },
   {
+    id: 'hse001',
+    label: 'HSSE Admin',
+    icon: Shield,
+    requiredRoles: ['ADMIN', 'HSE', 'COMPLIANCE', 'SECURITE'],
+    path: '/app/hse001',
+  },
+  {
+    id: 'hse002',
+    label: 'HSSE Opérationnel',
+    icon: Shield,
+    requiredRoles: ['HSE', 'COMPLIANCE', 'SECURITE'],
+    path: '/app/hse002',
+  },
+  {
     id: 'projet',
     label: 'Documentation Projet',
     icon: FileText,
@@ -157,11 +237,24 @@ const navigationItems: NavigationItem[] = [
 ]
 
 export function Navigation() {
-  const { hasAnyRole, currentUser } = useAuth()
+  const { hasAnyRole, currentUser, user } = useAuth()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const { unreadCount } = useEmployeeHSEInbox(currentUser?.id || '')
 
+  // Vérifier si c'est le compte HSE001 - Chef de Division HSSE
+  const isHSSEDirector =
+    (user?.roles && user.roles.includes('HSSE_CHIEF')) ||
+    user?.matricule === 'HSE001' ||
+    (currentUser?.roles && currentUser.roles.includes('HSSE_CHIEF')) ||
+    currentUser?.matricule === 'HSE001'
+
   const getVisibleItems = () => {
+    // Menu spécifique pour HSE001
+    if (isHSSEDirector) {
+      return hse001NavigationItems
+    }
+
+    // Menu standard pour les autres utilisateurs
     return navigationItems.filter(item => {
       if (item.id === 'dashboard') return true
       if (!item.requiredRoles || item.requiredRoles.length === 0) return true
@@ -184,15 +277,27 @@ export function Navigation() {
             onClick={() => setIsMobileMenuOpen(false)}
             className={({ isActive }) =>
               cn(
-                'flex w-full items-center gap-3 h-11 px-3 rounded-md transition-colors relative',
+                'flex w-full flex-col items-start gap-1 px-3 py-2.5 rounded-md transition-colors relative',
                 isActive ? 'gradient-primary text-white shadow-md' : 'hover:bg-muted',
               )
             }
           >
-            <Icon className="w-5 h-5" />
-            <span className="flex-1">{item.label}</span>
-            {(item.badge || showHSEBadge) && (
-              <Badge className="text-xs">{showHSEBadge ? unreadCount : item.badge}</Badge>
+            <div className="flex items-center gap-3 w-full">
+              <Icon className="w-5 h-5 flex-shrink-0" />
+              <span className="flex-1 font-medium">{item.label}</span>
+              {(item.badge || showHSEBadge) && (
+                <Badge className="text-xs">{showHSEBadge ? unreadCount : item.badge}</Badge>
+              )}
+            </div>
+            {item.description && (
+              <span
+                className={cn(
+                  'text-xs ml-8 opacity-80',
+                  !item.description.includes('stat') && 'italic',
+                )}
+              >
+                {item.description}
+              </span>
             )}
           </NavLink>
         )
@@ -202,7 +307,7 @@ export function Navigation() {
 
   return (
     <>
-      {/* Mobile Menu Button */}
+      {/* Mobile Menu Button - Visible uniquement sur mobile */}
       <Button
         variant="ghost"
         size="sm"
@@ -214,6 +319,17 @@ export function Navigation() {
 
       {/* Desktop Navigation */}
       <nav className="hidden lg:block industrial-card border-r bg-white/50 backdrop-blur-sm w-64 min-h-[calc(100vh-4rem)]">
+        {isHSSEDirector && (
+          <div className="p-4 pb-3 border-b bg-secondary/20">
+            <div className="flex items-center gap-2 mb-1">
+              <Shield className="w-4 h-4 text-primary" />
+              <span className="text-sm font-semibold text-primary">HSSE et Conformité</span>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Administrateur, Responsable HSSE, COMPLIANCE, SECURITE
+            </p>
+          </div>
+        )}
         <div className="p-4 space-y-2">{renderNavItems()}</div>
       </nav>
 
@@ -226,7 +342,19 @@ export function Navigation() {
           />
           <nav className="lg:hidden fixed left-0 top-0 bottom-0 w-64 bg-white z-50 shadow-xl">
             <div className="p-4 border-b">
-              <h2 className="font-semibold">Navigation</h2>
+              {isHSSEDirector ? (
+                <>
+                  <div className="flex items-center gap-2 mb-1">
+                    <Shield className="w-4 h-4 text-primary" />
+                    <span className="text-sm font-semibold text-primary">HSSE et Conformité</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Administrateur, Responsable HSSE, COMPLIANCE, SECURITE
+                  </p>
+                </>
+              ) : (
+                <h2 className="font-semibold">Navigation</h2>
+              )}
             </div>
             <div className="p-4 space-y-2">{renderNavItems()}</div>
           </nav>

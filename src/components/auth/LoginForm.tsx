@@ -12,7 +12,7 @@ import { apiService } from '@/services/api.service'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { toast } from '@/hooks/use-toast'
 import { convex } from '@/lib/convexClient'
-import { demoAccounts } from '@/data/demoAccounts'
+import { demoAccounts, getAccountsByCategory } from '@/data/demoAccounts'
 
 interface LoginFormProps {
   onBackToHome: () => void
@@ -55,6 +55,7 @@ export function LoginForm({ onBackToHome }: LoginFormProps) {
           // Utiliser les mots de passe par défaut des comptes démo
           const defaultPasswords: Record<string, string> = {
             HSE001: 'HSE123!',
+            HSE002: 'HSE123!',
             REC001: 'Reception123!',
             COM001: 'Communication123!',
             EMP001: 'Employee123!',
@@ -289,41 +290,52 @@ export function LoginForm({ onBackToHome }: LoginFormProps) {
                 Testez l'application avec différents niveaux d'accès
               </p>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6">
               {employees.length === 0 && (
                 <div className="text-center text-xs text-muted-foreground py-2">
                   Chargement des comptes démo...
                 </div>
               )}
-              {demoAccounts.map(account => {
-                const Icon = account.icon
-                return (
-                  <div
-                    key={account.id}
-                    className={`p-4 rounded-lg border border-border bg-card transition-all group cursor-pointer hover:bg-muted/30`}
-                    onClick={() => handleDemoLogin(account.id)}
-                  >
-                    <div className="flex items-center gap-4">
-                      <div
-                        className={`w-12 h-12 ${account.colorClass} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform`}
-                      >
-                        <Icon className="w-6 h-6" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-medium text-foreground">{account.fullName}</h3>
-                          <Badge variant="outline" className="text-xs">
-                            {account.matricule}
-                          </Badge>
+              {getAccountsByCategory().map(({ category, accounts }) => (
+                <div key={category} className="space-y-3">
+                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider px-2">
+                    {category}
+                  </h3>
+                  <div className="space-y-2">
+                    {accounts.map(account => {
+                      const Icon = account.icon
+                      return (
+                        <div
+                          key={account.id}
+                          className={`p-4 rounded-lg border border-border bg-card transition-all group cursor-pointer hover:bg-muted/30`}
+                          onClick={() => handleDemoLogin(account.id)}
+                        >
+                          <div className="flex items-center gap-4">
+                            <div
+                              className={`w-12 h-12 ${account.colorClass} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform`}
+                            >
+                              <Icon className="w-6 h-6" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <h3 className="font-medium text-foreground">{account.fullName}</h3>
+                                <Badge variant="outline" className="text-xs">
+                                  {account.matricule}
+                                </Badge>
+                              </div>
+                              <p className="text-sm font-medium text-primary mb-1">
+                                {account.jobTitle}
+                              </p>
+                              <p className="text-xs text-muted-foreground">{account.description}</p>
+                            </div>
+                            <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                          </div>
                         </div>
-                        <p className="text-sm font-medium text-primary mb-1">{account.jobTitle}</p>
-                        <p className="text-xs text-muted-foreground">{account.description}</p>
-                      </div>
-                      <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
-                    </div>
+                      )
+                    })}
                   </div>
-                )
-              })}
+                </div>
+              ))}
             </CardContent>
           </Card>
         </div>

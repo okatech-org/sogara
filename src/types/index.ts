@@ -3,6 +3,7 @@ export type UserRole =
   | 'ADMIN'
   | 'RECEP'
   | 'HSE'
+  | 'HSSE_CHIEF' // ⭐ NOUVEAU : Chef de Division HSSE
   | 'SUPERVISEUR'
   | 'EMPLOYE'
   | 'COMMUNICATION'
@@ -11,6 +12,35 @@ export type UserRole =
   | 'COMPLIANCE'
   | 'SECURITE'
   | 'EXTERNE'
+
+// Permissions du rôle HSSE_CHIEF
+export const ROLE_PERMISSIONS = {
+  HSSE_CHIEF: {
+    // Vue d'ensemble et statistiques
+    viewDashboard: true,
+    viewAllStatistics: true,
+    exportReports: true,
+
+    // Gestion des comptes HSSE
+    createHSEAccount: true,
+    createSecurityAccount: true,
+    manageHSSEAccounts: true,
+    assignRoles: true,
+
+    // Accès en lecture aux modules (pas d'actions opérationnelles)
+    viewIncidents: true,
+    viewFormations: true,
+    viewVisits: true,
+    viewMail: true,
+    viewEquipment: true,
+
+    // Pas d'actions opérationnelles
+    createIncident: false,
+    validateFormation: false,
+    checkInVisitor: false,
+    registerMail: false,
+  },
+} as const
 
 export type VisitStatus = 'expected' | 'waiting' | 'in_progress' | 'checked_out'
 export type PackageStatus = 'received' | 'stored' | 'delivered'

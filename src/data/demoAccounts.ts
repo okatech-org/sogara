@@ -4,6 +4,7 @@ import type { UserRole } from '@/types'
 
 export type DemoAccountSlug =
   | 'hse001'
+  | 'hse002'
   | 'rec001'
   | 'emp001'
   | 'com001'
@@ -18,6 +19,7 @@ export interface DemoAccount {
   fullName: string
   jobTitle: string
   roles: UserRole[]
+  category: 'Direction' | 'HSSE' | 'Technicien'
   featuredModule: string
   description: string
   responsibilities: string[]
@@ -36,6 +38,7 @@ export const demoAccounts: DemoAccount[] = [
     fullName: 'Christian AVARO',
     jobTitle: 'Directeur Général',
     roles: ['DG', 'ADMIN'],
+    category: 'Direction',
     featuredModule: 'Vision stratégique et pilotage',
     description:
       'Direction générale de SOGARA, pilotage stratégique et supervision de tous les départements.',
@@ -63,6 +66,7 @@ export const demoAccounts: DemoAccount[] = [
     fullName: 'Ingride TCHEN Ep...',
     jobTitle: 'Directrice des Ressources Humaines',
     roles: ['DRH', 'ADMIN'],
+    category: 'Direction',
     featuredModule: 'Gestion des ressources humaines',
     description:
       'Direction des ressources humaines, gestion du personnel, formations et développement des compétences.',
@@ -90,6 +94,7 @@ export const demoAccounts: DemoAccount[] = [
     fullName: 'Éric AVARO',
     jobTitle: 'Directeur Communication',
     roles: ['COMMUNICATION'],
+    category: 'Direction',
     featuredModule: 'SOGARA Connect et contenus internes',
     description:
       'Direction de la communication, gestion complète de SOGARA Connect et animation de la communication interne.',
@@ -114,26 +119,61 @@ export const demoAccounts: DemoAccount[] = [
     id: '4',
     slug: 'hse001',
     matricule: 'HSE001',
-    fullName: 'Lié Orphée BOURDES',
-    jobTitle: 'Chef de Division HSE et Conformité',
-    roles: ['HSE', 'COMPLIANCE', 'SECURITE'],
-    featuredModule: 'Sécurité, Conformité et HSE',
+    fullName: 'Lié Orphé BOURDES',
+    jobTitle: 'Chef de Division HSSE et Conformité',
+    roles: ['HSSE_CHIEF', 'ADMIN', 'HSE', 'COMPLIANCE', 'SECURITE'],
+    category: 'Direction',
+    featuredModule: 'Sécurité, Conformité et HSSE',
     description:
-      'Direction de la division HSE, supervision de la conformité réglementaire et gestion de la sécurité incluant la réception.',
+      'Direction de la division HSSE, supervision de la conformité réglementaire et gestion de la sécurité incluant la réception.',
     responsibilities: [
-      'Direction de la division HSE et Conformité',
+      'Direction de la division HSSE et Conformité',
+      'Administration et gestion des équipes HSSE et Sécurité',
+      'Création et attribution de comptes Chef HSSE et Sécurité',
+      'Attribution et gestion des rôles et habilitations',
+      'Supervision globale des services HSSE',
       'Gestion des incidents de sécurité',
       'Supervision de la conformité réglementaire',
-      'Organisation des formations HSE',
+      'Organisation des formations HSSE',
       'Gestion de la sécurité et réception',
       'Suivi des habilitations et certifications',
       'Inspection des équipements de sécurité',
       'Validation des habilitations critiques',
       'Production des rapports sécurité et conformité',
-      'Coordination avec les responsables HSE, Conformité et Sécurité',
+      'Analyse des statistiques et tableaux de bord HSSE',
+      'Coordination avec les responsables HSSE, Conformité et Sécurité',
     ],
-    accessSummary: 'Accès : Personnel, Équipements, HSE, Conformité, Sécurité, Réception',
-    defaultRoute: '/app/hse',
+    accessSummary: 'Accès : Personnel, Équipements, HSSE, Conformité, Sécurité, Réception',
+    defaultRoute: '/app/dashboard',
+    loginHint: 'Mot de passe démo : HSE123!',
+    colorClass: 'bg-secondary text-secondary-foreground',
+    icon: Shield,
+  },
+  {
+    id: '11',
+    slug: 'hse002',
+    matricule: 'HSE002',
+    fullName: 'Lise Véronique DITSOUGOU',
+    jobTitle: 'Chef HSSE',
+    roles: ['HSE', 'COMPLIANCE', 'SECURITE'],
+    category: 'HSSE',
+    featuredModule: 'Sécurité, Conformité et HSSE',
+    description:
+      'Direction de la division HSSE, supervision de la conformité réglementaire et gestion de la sécurité incluant la réception.',
+    responsibilities: [
+      'Direction de la division HSSE et Conformité',
+      'Gestion des incidents de sécurité',
+      'Supervision de la conformité réglementaire',
+      'Organisation des formations HSSE',
+      'Gestion de la sécurité et réception',
+      'Suivi des habilitations et certifications',
+      'Inspection des équipements de sécurité',
+      'Validation des habilitations critiques',
+      'Production des rapports sécurité et conformité',
+      'Coordination avec les responsables HSSE, Conformité et Sécurité',
+    ],
+    accessSummary: 'Accès : Personnel, Équipements, HSSE, Conformité, Sécurité, Réception',
+    defaultRoute: '/app/hse002',
     loginHint: 'Mot de passe démo : HSE123!',
     colorClass: 'bg-secondary text-secondary-foreground',
     icon: Shield,
@@ -145,6 +185,7 @@ export const demoAccounts: DemoAccount[] = [
     fullName: 'Sylvie KOUMBA',
     jobTitle: 'Responsable Sécurité',
     roles: ['RECEP'],
+    category: 'HSSE',
     featuredModule: 'Gestion visiteurs et colis',
     description:
       "Gestion de la sécurité, de l'accueil physique, du contrôle badges et du courrier entrant.",
@@ -170,6 +211,7 @@ export const demoAccounts: DemoAccount[] = [
     fullName: 'Pierre BEKALE',
     jobTitle: 'Technicien Raffinage',
     roles: ['EMPLOYE'],
+    category: 'Technicien',
     featuredModule: 'Suivi individuel et formations',
     description: 'Consultation des informations personnelles et suivi des indicateurs individuels.',
     responsibilities: [
@@ -193,6 +235,7 @@ export const demoAccounts: DemoAccount[] = [
     fullName: 'Yoann ETENO',
     jobTitle: 'Technicien Maintenance - ONE.COM',
     roles: ['EXTERNE'],
+    category: 'Technicien',
     featuredModule: "Passage de tests d'habilitation",
     description:
       "Candidat externe ONE.COM. Passage de tests d'habilitation pour accès zones de production.",
@@ -212,3 +255,11 @@ export const demoAccounts: DemoAccount[] = [
 
 export const getAccountBySlug = (slug: string) =>
   demoAccounts.find(account => account.slug === slug.toLowerCase())
+
+export const getAccountsByCategory = () => {
+  const categories = ['Direction', 'HSSE', 'Technicien'] as const
+  return categories.map(category => ({
+    category,
+    accounts: demoAccounts.filter(account => account.category === category),
+  }))
+}

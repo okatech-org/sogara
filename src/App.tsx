@@ -24,6 +24,11 @@ import { VisitesPage } from '@/pages/VisitesPage'
 import { ColisCourrierPage } from '@/pages/ColisCourrierPage'
 import { EquipementsPage } from '@/pages/EquipementsPage'
 import { HSEPage } from '@/pages/HSEPage'
+import { HSSEManagementPage } from '@/pages/HSSEManagementPage'
+import { HSSEAccountsPage } from '@/pages/HSSEAccountsPage'
+import { VisitsStatsPage } from '@/pages/VisitsStatsPage'
+import { MailStatsPage } from '@/pages/MailStatsPage'
+import { EquipmentStatsPage } from '@/pages/EquipmentStatsPage'
 import { SOGARAConnectPage } from '@/pages/SOGARAConnectPage'
 import { ProjetPage } from '@/pages/ProjetPage'
 import NotFound from '@/pages/NotFound'
@@ -186,6 +191,62 @@ function AppRoutes() {
           element={
             <RoleProtected roles={['ADMIN', 'HSE']}>
               <HSEPage />
+            </RoleProtected>
+          }
+        />
+        <Route
+          path="hse001"
+          element={
+            <RoleProtected roles={['ADMIN', 'HSE', 'COMPLIANCE', 'SECURITE']}>
+              <HSEPage />
+            </RoleProtected>
+          }
+        />
+        <Route
+          path="hse002"
+          element={
+            <RoleProtected roles={['HSE', 'COMPLIANCE', 'SECURITE']}>
+              <HSEPage />
+            </RoleProtected>
+          }
+        />
+        <Route
+          path="hsse-management"
+          element={
+            <RoleProtected roles={['HSSE_CHIEF']}>
+              <HSSEManagementPage />
+            </RoleProtected>
+          }
+        />
+        <Route
+          path="hsse-accounts"
+          element={
+            <RoleProtected roles={['HSSE_CHIEF']}>
+              <HSSEAccountsPage />
+            </RoleProtected>
+          }
+        />
+        <Route
+          path="visits-stats"
+          element={
+            <RoleProtected roles={['HSSE_CHIEF']}>
+              <VisitsStatsPage />
+            </RoleProtected>
+          }
+        />
+        <Route
+          path="mail-stats"
+          element={
+            <RoleProtected roles={['HSSE_CHIEF']}>
+              <MailStatsPage />
+            </RoleProtected>
+          }
+        />
+        <Route
+          path="equipment-stats"
+          element={
+            <RoleProtected roles={['HSSE_CHIEF']}>
+              <EquipmentStatsPage />
             </RoleProtected>
           }
         />
