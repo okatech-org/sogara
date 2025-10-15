@@ -26,9 +26,7 @@ import { EquipementsPage } from '@/pages/EquipementsPage'
 import { HSEPage } from '@/pages/HSEPage'
 import { HSSEManagementPage } from '@/pages/HSSEManagementPage'
 import { HSSEAccountsPage } from '@/pages/HSSEAccountsPage'
-import { VisitsStatsPage } from '@/pages/VisitsStatsPage'
-import { MailStatsPage } from '@/pages/MailStatsPage'
-import { EquipmentStatsPage } from '@/pages/EquipmentStatsPage'
+import { StatistiquesFluxHSSEPage } from '@/pages/StatistiquesFluxHSSEPage'
 import { SOGARAConnectPage } from '@/pages/SOGARAConnectPage'
 import { ProjetPage } from '@/pages/ProjetPage'
 import NotFound from '@/pages/NotFound'
@@ -227,26 +225,10 @@ function AppRoutes() {
           }
         />
         <Route
-          path="visits-stats"
+          path="flux-hsse"
           element={
             <RoleProtected roles={['HSSE_CHIEF']}>
-              <VisitsStatsPage />
-            </RoleProtected>
-          }
-        />
-        <Route
-          path="mail-stats"
-          element={
-            <RoleProtected roles={['HSSE_CHIEF']}>
-              <MailStatsPage />
-            </RoleProtected>
-          }
-        />
-        <Route
-          path="equipment-stats"
-          element={
-            <RoleProtected roles={['HSSE_CHIEF']}>
-              <EquipmentStatsPage />
+              <StatistiquesFluxHSSEPage />
             </RoleProtected>
           }
         />

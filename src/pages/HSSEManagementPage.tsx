@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import {
   Shield,
   TrendingUp,
@@ -8,6 +8,9 @@ import {
   Package,
   HardHat,
   BarChart3,
+  Newspaper,
+  CalendarDays,
+  ArrowRight,
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -113,8 +116,10 @@ export const HSSEManagementPage = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Gestion HSSE</h1>
-          <p className="text-muted-foreground">Statistiques et supervision de la division HSSE</p>
+          <h1 className="text-3xl font-bold text-foreground">Tableau de Bord HSSE</h1>
+          <p className="text-muted-foreground">
+            Supervision centralisée de toutes les sections HSSE
+          </p>
           <div className="flex items-center gap-2 mt-2">
             <Shield className="h-4 w-4 text-primary" />
             <span className="text-sm font-medium text-primary">
@@ -122,16 +127,10 @@ export const HSSEManagementPage = () => {
             </span>
           </div>
         </div>
-        <div className="flex gap-2">
-          <Button onClick={() => navigate('/app/hsse-accounts')} variant="outline">
-            <Users className="mr-2 h-4 w-4" />
-            Gérer les Comptes HSSE
-          </Button>
-          <Button onClick={() => navigate('/app/hse001')}>
-            <Shield className="mr-2 h-4 w-4" />
-            Administration HSSE
-          </Button>
-        </div>
+        <Button onClick={() => navigate('/app/hse001')} size="lg">
+          <Shield className="mr-2 h-5 w-5" />
+          Administration HSSE
+        </Button>
       </div>
 
       {/* KPIs Grid */}
@@ -170,153 +169,247 @@ export const HSSEManagementPage = () => {
         />
       </div>
 
-      {/* Modules Overview */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
-              Visites
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm">Aujourd'hui</span>
-                <span className="font-semibold">{stats.visits.today}</span>
+      {/* Modules de Supervision HSSE */}
+      <div>
+        <h2 className="text-xl font-semibold mb-4">Modules de Supervision</h2>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {/* Administration HSSE */}
+          <Card
+            className="cursor-pointer hover:border-primary transition-all hover:shadow-lg"
+            onClick={() => navigate('/app/hse001')}
+          >
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Shield className="h-5 w-5 text-primary" />
+                  Administration HSSE
+                </div>
+                <ArrowRight className="h-4 w-4 text-muted-foreground" />
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-3">
+                Administration complète HSSE : incidents, formations, conformité
+              </p>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs">Incidents ouverts</span>
+                  <Badge variant="destructive">{stats.incidents.open}</Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs">Formations programmées</span>
+                  <Badge variant="outline">{stats.trainings.scheduled}</Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs">Conformité</span>
+                  <Badge variant="default" className="bg-green-100 text-green-800">
+                    {stats.trainings.compliance}%
+                  </Badge>
+                </div>
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm">En cours</span>
-                <Badge variant="outline">{stats.visits.inProgress}</Badge>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm">Terminées</span>
-                <span className="text-green-600 font-semibold">{stats.visits.completed}</span>
-              </div>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full mt-4"
-              onClick={() => navigate('/app/visits-stats')}
-            >
-              Voir les Statistiques
-            </Button>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Package className="h-5 w-5" />
-              Colis & Courriers
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm">En attente</span>
-                <Badge variant="warning">{stats.mail.pending}</Badge>
+          {/* Statistiques Flux HSSE */}
+          <Card
+            className="cursor-pointer hover:border-primary transition-all hover:shadow-lg"
+            onClick={() => navigate('/app/flux-hsse')}
+          >
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5 text-blue-600" />
+                  Statistiques Flux HSSE
+                </div>
+                <ArrowRight className="h-4 w-4 text-muted-foreground" />
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-3">
+                Statistiques visites, colis et équipements
+              </p>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs flex items-center gap-1">
+                    <Users className="h-3 w-3" /> Visites aujourd'hui
+                  </span>
+                  <span className="font-semibold">{stats.visits.today}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs flex items-center gap-1">
+                    <Package className="h-3 w-3" /> Colis en attente
+                  </span>
+                  <Badge variant="warning">{stats.mail.pending}</Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs flex items-center gap-1">
+                    <HardHat className="h-3 w-3" /> Équipements à inspecter
+                  </span>
+                  <Badge variant="outline">{stats.equipment.needsInspection}</Badge>
+                </div>
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm">Urgents</span>
-                <Badge variant="destructive">{stats.mail.urgent}</Badge>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm">Livrés</span>
-                <span className="text-green-600 font-semibold">{stats.mail.delivered}</span>
-              </div>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full mt-4"
-              onClick={() => navigate('/app/mail-stats')}
-            >
-              Voir les Statistiques
-            </Button>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <HardHat className="h-5 w-5" />
-              Équipements
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm">Opérationnels</span>
-                <span className="text-green-600 font-semibold">{stats.equipment.operational}</span>
+          {/* SOGARA Connect */}
+          <Card
+            className="cursor-pointer hover:border-primary transition-all hover:shadow-lg"
+            onClick={() => navigate('/app/connect')}
+          >
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Newspaper className="h-5 w-5 text-orange-600" />
+                  SOGARA Connect
+                </div>
+                <ArrowRight className="h-4 w-4 text-muted-foreground" />
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-3">
+                Communication interne et actualités de l'entreprise
+              </p>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs">Dernières actualités</span>
+                  <Badge variant="outline">5 nouvelles</Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs">Événements à venir</span>
+                  <Badge variant="outline">3</Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs">Annonces HSSE</span>
+                  <Badge variant="default" className="bg-blue-100 text-blue-800">
+                    2 importantes
+                  </Badge>
+                </div>
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm">En maintenance</span>
-                <Badge variant="warning">{stats.equipment.maintenance}</Badge>
+            </CardContent>
+          </Card>
+
+          {/* Mon Planning */}
+          <Card
+            className="cursor-pointer hover:border-primary transition-all hover:shadow-lg"
+            onClick={() => navigate('/app/mon-planning')}
+          >
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <CalendarDays className="h-5 w-5 text-purple-600" />
+                  Mon Planning
+                </div>
+                <ArrowRight className="h-4 w-4 text-muted-foreground" />
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-3">
+                Planning personnel et gestion des activités HSSE
+              </p>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs">Tâches aujourd'hui</span>
+                  <Badge variant="default">7</Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs">Réunions cette semaine</span>
+                  <Badge variant="outline">4</Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs">Inspections planifiées</span>
+                  <Badge variant="warning">3 urgentes</Badge>
+                </div>
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm">À inspecter</span>
-                <Badge variant="outline">{stats.equipment.needsInspection}</Badge>
+            </CardContent>
+          </Card>
+
+          {/* Vue d'ensemble Visites */}
+          <Card className="cursor-pointer hover:border-primary transition-all hover:shadow-lg">
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Users className="h-5 w-5 text-indigo-600" />
+                  Aperçu Visites
+                </div>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-3">
+                Supervision en temps réel des visites
+              </p>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs">En cours</span>
+                  <Badge variant="default" className="bg-blue-100 text-blue-800">
+                    {stats.visits.inProgress}
+                  </Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs">Terminées aujourd'hui</span>
+                  <span className="text-green-600 font-semibold">{stats.visits.completed}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs">Total aujourd'hui</span>
+                  <span className="font-semibold">{stats.visits.today}</span>
+                </div>
               </div>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full mt-4"
-              onClick={() => navigate('/app/equipment-stats')}
-            >
-              Voir les Statistiques
-            </Button>
-          </CardContent>
-        </Card>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full mt-3"
+                onClick={e => {
+                  e.stopPropagation()
+                  navigate('/app/flux-hsse')
+                }}
+              >
+                Voir détails <ArrowRight className="ml-2 h-3 w-3" />
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Vue d'ensemble Équipements */}
+          <Card className="cursor-pointer hover:border-primary transition-all hover:shadow-lg">
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <HardHat className="h-5 w-5 text-amber-600" />
+                  Aperçu Équipements
+                </div>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-3">État des équipements de sécurité</p>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs">Opérationnels</span>
+                  <span className="text-green-600 font-semibold">
+                    {stats.equipment.operational}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs">En maintenance</span>
+                  <Badge variant="warning">{stats.equipment.maintenance}</Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs">À inspecter</span>
+                  <Badge variant="outline">{stats.equipment.needsInspection}</Badge>
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full mt-3"
+                onClick={e => {
+                  e.stopPropagation()
+                  navigate('/app/flux-hsse')
+                }}
+              >
+                Voir détails <ArrowRight className="ml-2 h-3 w-3" />
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
       </div>
-
-      {/* Actions Rapides */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <BarChart3 className="h-5 w-5" />
-            Actions Rapides HSSE
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Button
-              variant="outline"
-              className="h-20 flex-col gap-2"
-              onClick={() => navigate('/app/hsse-accounts')}
-            >
-              <Users className="h-6 w-6" />
-              <span className="text-sm">Gérer Comptes HSSE</span>
-            </Button>
-            <Button
-              variant="outline"
-              className="h-20 flex-col gap-2"
-              onClick={() => navigate('/app/hse001')}
-            >
-              <Shield className="h-6 w-6" />
-              <span className="text-sm">Administration HSSE</span>
-            </Button>
-            <Button
-              variant="outline"
-              className="h-20 flex-col gap-2"
-              onClick={() => navigate('/app/visits-stats')}
-            >
-              <Users className="h-6 w-6" />
-              <span className="text-sm">Stats Visites</span>
-            </Button>
-            <Button
-              variant="outline"
-              className="h-20 flex-col gap-2"
-              onClick={() => navigate('/app/mail-stats')}
-            >
-              <Package className="h-6 w-6" />
-              <span className="text-sm">Stats Colis</span>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Alertes Critiques */}
       {incidentsOuverts > 0 && (

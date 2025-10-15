@@ -14,6 +14,7 @@ import {
   Award,
   DollarSign,
   CalendarDays,
+  BarChart3,
 } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 import { cn } from '@/lib/utils'
@@ -42,13 +43,6 @@ const hse001NavigationItems: NavigationItem[] = [
     path: '/app/dashboard',
   },
   {
-    id: 'hsse-management',
-    label: 'Gestion HSSE',
-    icon: Shield,
-    path: '/app/hsse-management',
-    description: 'Statistiques et supervision HSSE',
-  },
-  {
     id: 'hse001',
     label: 'Administration HSSE',
     icon: Shield,
@@ -56,25 +50,11 @@ const hse001NavigationItems: NavigationItem[] = [
     description: 'Administration complète HSSE',
   },
   {
-    id: 'visits-stats',
-    label: 'Statistiques Visites',
-    icon: Users,
-    path: '/app/visits-stats',
-    description: 'Statistiques et gestion des visites',
-  },
-  {
-    id: 'mail-stats',
-    label: 'Statistiques Colis',
-    icon: Package,
-    path: '/app/mail-stats',
-    description: 'Statistiques colis et courriers',
-  },
-  {
-    id: 'equipment-stats',
-    label: 'Statistiques Équipements',
-    icon: HardHat,
-    path: '/app/equipment-stats',
-    description: 'Statistiques équipements de sécurité',
+    id: 'flux-hsse',
+    label: 'Statistiques Flux HSSE',
+    icon: BarChart3,
+    path: '/app/flux-hsse',
+    description: 'Statistiques visites, colis et équipements',
   },
   {
     id: 'connect',
