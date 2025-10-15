@@ -49,13 +49,6 @@ const hse001NavigationItems: NavigationItem[] = [
     description: 'Statistiques et supervision HSSE',
   },
   {
-    id: 'hsse-accounts',
-    label: 'Comptes HSSE',
-    icon: Users,
-    path: '/app/hsse-accounts',
-    description: 'Gestion des comptes HSE/Sécurité',
-  },
-  {
     id: 'hse001',
     label: 'Administration HSSE',
     icon: Shield,

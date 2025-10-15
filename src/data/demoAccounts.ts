@@ -144,7 +144,7 @@ export const demoAccounts: DemoAccount[] = [
       'Coordination avec les responsables HSSE, Conformité et Sécurité',
     ],
     accessSummary: 'Accès : Personnel, Équipements, HSSE, Conformité, Sécurité, Réception',
-    defaultRoute: '/app/dashboard',
+    defaultRoute: '/app/hsse-management',
     loginHint: 'Mot de passe démo : HSE123!',
     colorClass: 'bg-secondary text-secondary-foreground',
     icon: Shield,
