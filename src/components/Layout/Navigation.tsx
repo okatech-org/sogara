@@ -165,7 +165,7 @@ const rec001NavigationItems: NavigationItem[] = [
     label: 'Logistique',
     icon: HardHat,
     path: '/app/logistique',
-    description: 'Magasin d\'équipement et distribution',
+    description: "Magasin d'équipement et distribution",
   },
   {
     id: 'formations-securite',
@@ -413,7 +413,6 @@ const navigationItems: NavigationItem[] = [
   },
 ]
 
-
 export function Navigation() {
   const { hasAnyRole, currentUser, user } = useAuth()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -475,17 +474,15 @@ export function Navigation() {
       return conf001NavigationItems
     }
 
-
-
     // Menu standard pour les autres utilisateurs
     return navigationItems.filter(item => {
       if (item.id === 'dashboard') return true
-      
+
       // Vérifier les rôles exclus
       if (item.excludeRoles && item.excludeRoles.length > 0) {
         if (hasAnyRole(item.excludeRoles)) return false
       }
-      
+
       // Vérifier les rôles requis
       if (!item.requiredRoles || item.requiredRoles.length === 0) return true
       return hasAnyRole(item.requiredRoles)
@@ -517,13 +514,15 @@ export function Navigation() {
               className={({ isActive }) =>
                 cn(
                   'flex w-full flex-col items-start gap-1 px-3 py-2.5 rounded-md transition-colors relative',
-                  isSectionHeader 
+                  isSectionHeader
                     ? cn(
                         'bg-gradient-to-r text-white font-bold border-l-4 border-l-blue-500 mb-2 mt-4',
-                        isPrioritySection ? 'from-blue-600 to-indigo-600' : 'from-gray-600 to-gray-700'
+                        isPrioritySection
+                          ? 'from-blue-600 to-indigo-600'
+                          : 'from-gray-600 to-gray-700',
                       )
-                    : isActive 
-                      ? 'gradient-primary text-white shadow-md' 
+                    : isActive
+                      ? 'gradient-primary text-white shadow-md'
                       : 'hover:bg-muted',
                 )
               }
@@ -532,10 +531,14 @@ export function Navigation() {
                 <Icon className="w-5 h-5 flex-shrink-0" />
                 <span className="flex-1 font-medium">{item.label}</span>
                 {(item.badge || showHSEBadge) && !isSectionHeader && (
-                  <Badge className={cn(
-                    'text-xs',
-                    item.badge === 'PRIORITÉ' ? 'bg-red-600 text-white' : 'bg-blue-600 text-white'
-                  )}>
+                  <Badge
+                    className={cn(
+                      'text-xs',
+                      item.badge === 'PRIORITÉ'
+                        ? 'bg-red-600 text-white'
+                        : 'bg-blue-600 text-white',
+                    )}
+                  >
                     {showHSEBadge ? unreadCount : item.badge}
                   </Badge>
                 )}
@@ -577,20 +580,16 @@ export function Navigation() {
               <Shield className="w-4 h-4 text-primary" />
               <span className="text-sm font-semibold text-primary">Direction HSSE</span>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Chef de Division HSSE et Conformité
-            </p>
+            <p className="text-xs text-muted-foreground">Chef de Division HSSE et Conformité</p>
           </div>
         )}
-        {isHSSEManager && (
+        {isHSEOperational && (
           <div className="p-4 pb-3 border-b bg-secondary/20">
             <div className="flex items-center gap-2 mb-1">
               <Shield className="w-4 h-4 text-primary" />
-              <span className="text-sm font-semibold text-primary">Opérations HSSE</span>
+              <span className="text-sm font-semibold text-primary">Opérations HSE</span>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Chef HSSE Opérationnel
-            </p>
+            <p className="text-xs text-muted-foreground">Gestion HSE - Incidents et Formations</p>
           </div>
         )}
         <div className="p-4 space-y-2">{renderNavItems()}</div>
@@ -615,14 +614,14 @@ export function Navigation() {
                     Chef de Division HSSE et Conformité
                   </p>
                 </>
-              ) : isHSSEManager ? (
+              ) : isHSEOperational ? (
                 <>
                   <div className="flex items-center gap-2 mb-1">
                     <Shield className="w-4 h-4 text-primary" />
-                    <span className="text-sm font-semibold text-primary">Opérations HSSE</span>
+                    <span className="text-sm font-semibold text-primary">Opérations HSE</span>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Chef HSSE Opérationnel
+                    Gestion HSE - Incidents et Formations
                   </p>
                 </>
               ) : (
@@ -636,4 +635,3 @@ export function Navigation() {
     </>
   )
 }
-
