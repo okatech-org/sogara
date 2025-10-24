@@ -42,6 +42,7 @@ import { VisitesPage } from '@/pages/VisitesPage'
 import { ColisCourrierPage } from '@/pages/ColisCourrierPage'
 import { EquipementsPage } from '@/pages/EquipementsPage'
 import { HSEPage } from '@/pages/HSEPage'
+import HSE002Dashboard from '@/pages/HSE002Dashboard'
 import { HSSEManagementPage } from '@/pages/HSSEManagementPage'
 import { HSSEAccountsPage } from '@/pages/HSSEAccountsPage'
 import { StatistiquesFluxHSSEPage } from '@/pages/StatistiquesFluxHSSEPage'
@@ -52,6 +53,11 @@ import NotFound from '@/pages/NotFound'
 import type { UserRole } from '@/types'
 import AccountHub from '@/pages/accounts/AccountHub'
 import AccountDetail from '@/pages/accounts/AccountDetail'
+import { HSEOperationsPage } from '@/pages/HSEOperationsPage'
+import { TrainingsPage } from '@/pages/TrainingsPage'
+import { HSEAnalyticsPage } from '@/pages/HSEAnalyticsPage'
+import { HSEReportsPage } from '@/pages/HSEReportsPage'
+import { ComplianceTrainingsPage } from '@/pages/ComplianceTrainingsPage'
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
   const { isAuthenticated } = useAuth()
@@ -373,10 +379,18 @@ function AppRoutes() {
             }
           />
           <Route
+            path="hse-operations"
+            element={
+              <RoleProtected roles={['ADMIN', 'HSE_MANAGER', 'COMPLIANCE']}>
+                <HSEOperationsPage />
+              </RoleProtected>
+            }
+          />
+          <Route
             path="formations-hse"
             element={
-              <RoleProtected roles={['ADMIN', 'HSE', 'COMPLIANCE']}>
-                <HSEPage />
+              <RoleProtected roles={['ADMIN', 'HSE_MANAGER', 'COMPLIANCE']}>
+                <TrainingsPage />
               </RoleProtected>
             }
           />
@@ -384,7 +398,7 @@ function AppRoutes() {
             path="donnees-hse"
             element={
               <RoleProtected roles={['ADMIN', 'HSE', 'COMPLIANCE']}>
-                <HSEPage />
+                <HSEAnalyticsPage />
               </RoleProtected>
             }
           />
@@ -392,7 +406,15 @@ function AppRoutes() {
             path="rapports-hse"
             element={
               <RoleProtected roles={['ADMIN', 'HSE', 'COMPLIANCE']}>
-                <HSEPage />
+                <HSEReportsPage />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="compliance-trainings"
+            element={
+              <RoleProtected roles={['ADMIN', 'COMPLIANCE']}>
+                <ComplianceTrainingsPage />
               </RoleProtected>
             }
           />
@@ -407,8 +429,8 @@ function AppRoutes() {
           <Route
             path="hse002"
             element={
-              <RoleProtected roles={['HSE', 'COMPLIANCE', 'SECURITE']}>
-                <HSEPage />
+              <RoleProtected roles={['HSE_MANAGER']}>
+                <HSE002Dashboard />
               </RoleProtected>
             }
           />
@@ -479,6 +501,87 @@ function AppRoutes() {
               <div className="p-6">
                 <h1 className="text-2xl font-bold">Paramètres</h1>
                 <p>Page de paramètres en cours de développement</p>
+              </div>
+            }
+          />
+          <Route
+            path="formations-conformite"
+            element={
+              <div className="p-6">
+                <h1 className="text-2xl font-bold">Formations Conformité</h1>
+                <p>Page de formations conformité en cours de développement</p>
+              </div>
+            }
+          />
+          <Route
+            path="donnees-conformite"
+            element={
+              <div className="p-6">
+                <h1 className="text-2xl font-bold">Données Conformité</h1>
+                <p>Page de données conformité en cours de développement</p>
+              </div>
+            }
+          />
+          <Route
+            path="rapports-conformite"
+            element={
+              <div className="p-6">
+                <h1 className="text-2xl font-bold">Rapports Conformité</h1>
+                <p>Page de rapports conformité en cours de développement</p>
+              </div>
+            }
+          />
+          <Route
+            path="securite"
+            element={
+              <div className="p-6">
+                <h1 className="text-2xl font-bold">Sécurité</h1>
+                <p>Page de sécurité en cours de développement</p>
+              </div>
+            }
+          />
+          <Route
+            path="visites-colis"
+            element={
+              <div className="p-6">
+                <h1 className="text-2xl font-bold">Visites & Colis</h1>
+                <p>Page de gestion des visites et colis en cours de développement</p>
+              </div>
+            }
+          />
+          <Route
+            path="logistique"
+            element={
+              <div className="p-6">
+                <h1 className="text-2xl font-bold">Logistique</h1>
+                <p>Page de logistique en cours de développement</p>
+              </div>
+            }
+          />
+          <Route
+            path="formations-securite"
+            element={
+              <div className="p-6">
+                <h1 className="text-2xl font-bold">Formations Sécurité</h1>
+                <p>Page de formations sécurité en cours de développement</p>
+              </div>
+            }
+          />
+          <Route
+            path="donnees-securite"
+            element={
+              <div className="p-6">
+                <h1 className="text-2xl font-bold">Données Sécurité</h1>
+                <p>Page de données sécurité en cours de développement</p>
+              </div>
+            }
+          />
+          <Route
+            path="rapports-securite"
+            element={
+              <div className="p-6">
+                <h1 className="text-2xl font-bold">Rapports Sécurité</h1>
+                <p>Page de rapports sécurité en cours de développement</p>
               </div>
             }
           />

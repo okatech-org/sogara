@@ -9,6 +9,7 @@ const Equipment = require('./Equipment.model');
 const EquipmentHistory = require('./EquipmentHistory.model');
 const HSEIncident = require('./HSEIncident.model');
 const HSETraining = require('./HSETraining.model');
+const HSEAudit = require('./HSEAudit.model');
 const Post = require('./Post.model');
 const PostComment = require('./PostComment.model');
 const PostLike = require('./PostLike.model');
@@ -26,6 +27,7 @@ const models = {
   EquipmentHistory,
   HSEIncident,
   HSETraining,
+  HSEAudit,
   Post,
   PostComment,
   PostLike,

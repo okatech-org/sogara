@@ -37,11 +37,36 @@ const HSETraining = sequelize.define('HSETraining', {
   
   employeeId: {
     type: DataTypes.UUID,
-    allowNull: false,
+    allowNull: true, // Made optional for coordination by HSE002
     references: {
       model: 'employees',
       key: 'id'
     }
+  },
+  
+  // HSE002 coordination fields
+  coordinatedBy: {
+    type: DataTypes.UUID,
+    allowNull: false,
+    references: {
+      model: 'employees',
+      key: 'id'
+    },
+    comment: 'HSE002 or HSE001 who coordinates this training'
+  },
+  
+  // Training schedule for coordination
+  schedule: {
+    type: DataTypes.JSON,
+    allowNull: true,
+    comment: 'Training schedule with sessions and participants'
+  },
+  
+  // Compliance tracking
+  compliance: {
+    type: DataTypes.JSON,
+    allowNull: true,
+    comment: 'Compliance requirements and regulations'
   },
   
   status: {

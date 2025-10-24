@@ -39,6 +39,45 @@ const HSEIncident = sequelize.define('HSEIncident', {
     defaultValue: 'medium'
   },
   
+  // Approval workflow for HSE002
+  approvalStatus: {
+    type: DataTypes.ENUM('pending', 'approved_hse002', 'requires_hse001', 'approved_hse001'),
+    allowNull: false,
+    defaultValue: 'pending'
+  },
+  
+  // Priority levels for HSE002 workflow
+  priority: {
+    type: DataTypes.ENUM('P1_CRITICAL', 'P2_HIGH', 'P3_MEDIUM', 'P4_LOW'),
+    allowNull: false,
+    defaultValue: 'P3_MEDIUM'
+  },
+  
+  approvedBy: {
+    type: DataTypes.UUID,
+    allowNull: true,
+    references: {
+      model: 'employees',
+      key: 'id'
+    },
+    comment: 'ID of HSE002 or HSE001 who approved'
+  },
+  
+  approvalDate: {
+    type: DataTypes.DATE,
+    allowNull: true
+  },
+  
+  assignedTo: {
+    type: DataTypes.UUID,
+    allowNull: true,
+    references: {
+      model: 'employees',
+      key: 'id'
+    },
+    comment: 'HSE002 or HSE001 assigned to handle this incident'
+  },
+  
   category: {
     type: DataTypes.ENUM('safety', 'health', 'environment', 'security', 'other'),
     allowNull: false,
@@ -46,7 +85,7 @@ const HSEIncident = sequelize.define('HSEIncident', {
   },
   
   status: {
-    type: DataTypes.ENUM('open', 'investigating', 'resolved', 'closed'),
+    type: DataTypes.ENUM('open', 'investigating', 'action_required', 'monitoring', 'resolved', 'closed'),
     allowNull: false,
     defaultValue: 'open'
   },
@@ -118,9 +157,9 @@ const HSEIncident = sequelize.define('HSEIncident', {
   },
   
   correctiveActions: {
-    type: DataTypes.TEXT,
+    type: DataTypes.JSON,
     allowNull: true,
-    comment: 'Actions correctives'
+    comment: 'Actions correctives avec statuts et assignations'
   },
   
   preventiveActions: {
@@ -140,6 +179,13 @@ const HSEIncident = sequelize.define('HSEIncident', {
     comment: 'URLs des fichiers joints'
   },
   
+  notifications: {
+    type: DataTypes.JSON,
+    allowNull: true,
+    defaultValue: { toHSE001: false, toDirector: false, toOthers: [] },
+    comment: 'Notifications envoyées pour cet incident'
+  },
+  
   closedDate: {
     type: DataTypes.DATE,
     allowNull: true
@@ -157,6 +203,25 @@ const HSEIncident = sequelize.define('HSEIncident', {
   notes: {
     type: DataTypes.TEXT,
     allowNull: true
+  },
+  
+  // Additional fields for HSE002 operations
+  affectedEmployees: {
+    type: DataTypes.ARRAY(DataTypes.UUID),
+    allowNull: true,
+    comment: 'Employee IDs affected by this incident'
+  },
+  
+  injuryLevel: {
+    type: DataTypes.ENUM('NONE', 'MINOR', 'SERIOUS', 'FATAL'),
+    allowNull: false,
+    defaultValue: 'NONE'
+  },
+  
+  environmentalImpact: {
+    type: DataTypes.ENUM('NONE', 'MINOR', 'MAJOR', 'CATASTROPHIC'),
+    allowNull: false,
+    defaultValue: 'NONE'
   }
 }, {
   tableName: 'hse_incidents',

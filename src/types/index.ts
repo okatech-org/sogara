@@ -3,6 +3,7 @@ export type UserRole =
   | 'ADMIN'
   | 'RECEP'
   | 'HSE'
+  | 'HSE_MANAGER' // Chef HSSE Opérationnel (HSE002) ⭐ NEW
   | 'HSSE_CHIEF' // Chef de Division HSSE (HSE001)
   | 'SUPERVISEUR'
   | 'EMPLOYE'
@@ -37,6 +38,31 @@ export const ROLE_PERMISSIONS = {
     // Pas d'actions opérationnelles
     createIncident: false,
     validateFormation: false,
+    checkInVisitor: false,
+    registerMail: false,
+  },
+  HSE_MANAGER: {
+    // Vue d'ensemble et statistiques
+    viewDashboard: true,
+    viewAllStatistics: true,
+    exportReports: true,
+
+    // Gestion opérationnelle HSE quotidienne
+    createIncident: true,
+    approveIncidents: true, // Peut approuver LOW/MEDIUM, doit escalader HIGH/CRITICAL
+    validateFormation: true,
+    manageHSEOperations: true,
+    coordinateTrainings: true,
+    conductAudits: true,
+
+    // Accès aux modules HSE uniquement
+    viewIncidents: true,
+    viewFormations: true,
+    viewEquipment: true,
+
+    // Pas d'accès aux modules sécurité
+    viewVisits: false,
+    viewMail: false,
     checkInVisitor: false,
     registerMail: false,
   },
@@ -138,6 +164,16 @@ export const HSSE_ROLE_HIERARCHY = {
     canApprove: ['incidents', 'trainings', 'audits', 'budgets'],
     canManage: ['hsse_team', 'compliance_team', 'security_team'],
     reportsTo: ['DG', 'ADMIN']
+  },
+  HSE_MANAGER: {
+    level: 1,
+    label: 'Chef HSSE Opérationnel',
+    canApprove: ['incidents_medium_low', 'routine_audits', 'operational_trainings'],
+    canManage: ['daily_incidents', 'field_audits', 'training_coordination'],
+    reportsTo: ['HSSE_CHIEF', 'DG', 'ADMIN'],
+    requiresApprovalFrom: ['HSSE_CHIEF'],
+    for: ['critical_incidents', 'major_audits'],
+    cannotManage: ['compliance_audits', 'strategic_decisions', 'budgets'],
   },
   HSE: {
     level: 1,
@@ -326,27 +362,171 @@ export interface HSEIncident {
   id: string
   employeeId: string
   type: string
-  severity: 'low' | 'medium' | 'high'
+  severity: 'low' | 'medium' | 'high' | 'critical'
   description: string
   location: string
   occurredAt: Date
-  status: 'reported' | 'investigating' | 'resolved'
+  status: 'reported' | 'investigating' | 'action_required' | 'monitoring' | 'resolved' | 'closed'
+  
+  // Approval workflow for HSE002
+  approvalStatus: 'pending' | 'approved_hse002' | 'requires_hse001' | 'approved_hse001'
+  approvedBy?: string // HSE002 or HSE001 ID
+  approvalDate?: Date
+  
+  // Investigation & Actions
+  rootCause?: string
+  correctiveActions: {
+    id?: string
+    action: string
+    assignedTo: string
+    dueDate: Date
+    status: 'pending' | 'in_progress' | 'completed'
+    completedDate?: Date
+  }[]
+  
+  // Audit trail
   attachments?: string[]
   reportedBy: string
   investigatedBy?: string
-  correctiveActions?: string
+  assignedTo?: string // HSE002 or HSE001
+  
+  // Notifications
+  notifications: {
+    toHSE001: boolean
+    toDirector: boolean
+    toOthers: string[] // Employee IDs
+  }
+  
   createdAt: Date
   updatedAt: Date
+  closedAt?: Date
 }
+
+// Approval Rules (Business Logic)
+export const incidentApprovalRules = {
+  'critical': { requiresHSE001: true, requiresDirector: false },
+  'high': { requiresHSE001: true, requiresDirector: false },
+  'medium': { requiresHSE001: false, requiresDirector: false }, // HSE002 can approve
+  'low': { requiresHSE001: false, requiresDirector: false },
+} as const
 
 export interface HSETraining {
   id: string
   title: string
   description: string
+  category: 'MANDATORY' | 'RECOMMENDED' | 'SPECIALIZED'
+  code?: string
   requiredForRoles: UserRole[]
-  duration: number
+  duration: number // minutes
   validityMonths: number
   sessions: HSETrainingSession[]
+  
+  // Coordination by HSE002
+  coordinatedBy: string // HSE002 or HSE001 ID
+  coordinatorName?: string
+  
+  // Training schedule
+  schedule: {
+    startDate: Date
+    endDate: Date
+    sessions: {
+      id?: string
+      date: Date
+      time: string // "09:00-11:00"
+      location: string
+      maxParticipants: number
+      enrolled: string[] // Employee IDs
+    }[]
+  }
+  
+  // Content
+  content?: {
+    modules: {
+      title: string
+      description: string
+      videoUrl?: string
+      materials?: string[]
+      quiz?: {
+        questions: {
+          id: string
+          text: string
+          answers: string[]
+          correct: number
+        }[]
+        passingScore: number
+      }
+    }[]
+  }
+  
+  // Compliance tracking
+  compliance: {
+    regulationReference: string // ISO 45001, OSHA, etc.
+    requiredFrequency: 'annual' | 'biennial' | 'triennial' | 'one_time'
+  }
+  
+  status: 'planned' | 'ongoing' | 'completed' | 'cancelled'
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface TrainingParticipant {
+  id: string
+  trainingId: string
+  employeeId: string
+  enrollmentDate: Date
+  attendedDate?: Date
+  attended: boolean
+  quizScore?: number // 0-100
+  certificateGenerated: boolean
+  certificateDate?: Date
+  certificateUrl?: string
+  status: 'ENROLLED' | 'ATTENDED' | 'CERTIFIED' | 'FAILED' | 'CANCELLED'
+}
+
+export interface HSEAudit {
+  id: string
+  code: string // e.g., 'AUDIT-2025-001'
+  title: string
+  description: string
+  type: 'internal' | 'scheduled' | 'emergency'
+  scope: string // e.g., "Production Unit A"
+  auditedBy: string // HSE002 usually, HSE001 for major audits
+  
+  schedule: {
+    plannedDate: Date
+    actualStartDate?: Date
+    actualEndDate?: Date
+    duration: number // hours
+  }
+  
+  standards: string[] // ['ISO 45001', 'OSHA', 'API']
+  
+  findings: {
+    id: string
+    category: string
+    severity: 'low' | 'medium' | 'high' | 'critical'
+    description: string
+    evidence: string[] // Photo/video URLs
+    nonconformity: boolean
+    requiredAction: string
+  }[]
+  
+  nonconformities: {
+    id: string
+    finding_id: string
+    description: string
+    assignedTo: string // Department manager
+    correctionDueDate: Date
+    status: 'open' | 'in_progress' | 'closed'
+    evidenceOfCorrection?: string[]
+    closedDate?: Date
+  }[]
+  
+  reportGenerated: boolean
+  reportUrl?: string
+  reportDate?: Date
+  
+  status: 'planned' | 'in_progress' | 'completed' | 'reported'
   createdAt: Date
   updatedAt: Date
 }
@@ -631,10 +811,11 @@ export interface HSEStats {
     compliance: number
     upcomingTrainings: number
   }
-  equipment: {
-    needsInspection: number
-    operational: number
-    maintenance: number
+  audits: {
+    planned: number
+    inProgress: number
+    findings: number
+    nonconformities: number
   }
 }
 
