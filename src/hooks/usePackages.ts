@@ -1,186 +1,174 @@
-import { useQuery, useMutation } from 'convex/react'
-import { api } from '../../convex/_generated/api'
-import { PackageMail, PackageStatus, Priority } from '@/types'
-import { toast } from '@/hooks/use-toast'
-import { Id } from '../../convex/_generated/dataModel'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { packagesAPI } from '@/services/api.service'
+import { useToast } from '@/hooks/use-toast'
 
-export function usePackages() {
-  // Queries Convex
-  const packagesData = useQuery(api.packages.list)
+export const usePackages = (filters?: {
+  status?: string
+  recipientId?: string
+  startDate?: string
+  endDate?: string
+}) => {
+  const queryClient = useQueryClient()
+  const { toast } = useToast()
 
-  // Mutations Convex
-  const createPackageMutation = useMutation(api.packages.create)
-  const updatePackageMutation = useMutation(api.packages.update)
-  const deliverMutation = useMutation(api.packages.deliver)
+  // Fetch des colis
+  const { data: packages = [], isLoading, error } = useQuery({
+    queryKey: ['packages', filters],
+    queryFn: () => packagesAPI.getAll(filters).then(res => res.data),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    placeholderData: []
+  })
 
-  // Mapper les données Convex
-  const packages: PackageMail[] = (packagesData || []).map((p: any) => ({
-    id: p._id,
-    type: p.type,
-    reference: p.reference,
-    sender: p.sender,
-    recipientEmployeeId: p.recipientEmployeeId,
-    recipientService: p.recipientService,
-    description: p.description,
-    photoUrl: p.photoUrl,
-    isConfidential: p.isConfidential,
-    scannedFileUrls: p.scannedFileUrls,
-    priority: p.priority,
-    status: p.status,
-    receivedAt: new Date(p.receivedAt),
-    deliveredAt: p.deliveredAt ? new Date(p.deliveredAt) : undefined,
-    deliveredBy: p.deliveredBy,
-    signature: p.signature,
-    createdAt: new Date(p._creationTime),
-    updatedAt: new Date(p._creationTime),
-  }))
-
-  const createPackage = async (
-    packageData: Omit<PackageMail, 'id' | 'createdAt' | 'updatedAt'>,
-  ) => {
-    try {
-      await createPackageMutation({
-        type: packageData.type,
-        reference: packageData.reference,
-        sender: packageData.sender,
-        recipientEmployeeId: packageData.recipientEmployeeId as Id<'employees'> | undefined,
-        recipientService: packageData.recipientService,
-        description: packageData.description,
-        photoUrl: packageData.photoUrl,
-        isConfidential: packageData.isConfidential || false,
-        priority: packageData.priority,
-        location: undefined,
-        trackingNumber: undefined,
-        weight: undefined,
-        category: undefined,
-      })
-
+  // Mutation pour créer un colis
+  const createMutation = useMutation({
+    mutationFn: (packageData: any) => packagesAPI.create(packageData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['packages'] })
       toast({
-        title: 'Enregistré',
-        description: `${packageData.type === 'package' ? 'Colis' : 'Courrier'} ajouté avec succès.`,
+        title: 'Colis enregistré',
+        description: 'Le colis a été enregistré avec succès'
       })
-
-      return { success: true }
-    } catch (error: any) {
+    },
+    onError: (error: Error) => {
       toast({
         title: 'Erreur',
-        description: error.message || "Impossible d'enregistrer.",
-        variant: 'destructive',
+        description: error.message,
+        variant: 'destructive'
       })
-      return { success: false, error: error.message }
     }
-  }
+  })
 
-  const createMail = async (input: {
-    reference: string
-    sender: string
-    recipientEmployeeId?: string
-    recipientService?: string
-    description: string
-    priority: Priority
-    isConfidential: boolean
-    scannedFileUrls?: string[]
-    photoUrl?: string
-  }) => {
-    try {
-      await createPackageMutation({
-        type: 'mail',
-        reference: input.reference,
-        sender: input.sender,
-        recipientEmployeeId: input.recipientEmployeeId as Id<'employees'> | undefined,
-        recipientService: input.recipientService,
-        description: input.description,
-        photoUrl: input.photoUrl,
-        isConfidential: input.isConfidential,
-        priority: input.priority,
-        location: undefined,
-        trackingNumber: undefined,
-        weight: undefined,
-        category: undefined,
-      })
-
+  // Mutation pour mettre à jour un colis
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: any }) => packagesAPI.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['packages'] })
       toast({
-        title: 'Enregistré',
-        description: 'Courrier ajouté avec succès.',
+        title: 'Colis mis à jour',
+        description: 'Le colis a été mis à jour avec succès'
       })
-
-      return { success: true }
-    } catch (error: any) {
+    },
+    onError: (error: Error) => {
       toast({
         title: 'Erreur',
-        description: error.message || "Impossible d'enregistrer le courrier.",
-        variant: 'destructive',
+        description: error.message,
+        variant: 'destructive'
       })
-      return { success: false, error: error.message }
     }
-  }
+  })
 
-  const updatePackageStatus = async (
-    packageId: string,
-    status: PackageStatus,
-    deliveredBy?: string,
-  ) => {
-    try {
-      if (status === 'delivered' && deliveredBy) {
-        await deliverMutation({
-          id: packageId as Id<'packages'>,
-          deliveredBy,
-        })
-      } else {
-        await updatePackageMutation({
-          id: packageId as Id<'packages'>,
-          status,
-        })
-      }
-
-      const statusMessages = {
-        received: 'Reçu',
-        stored: 'En stock',
-        delivered: 'Remis au destinataire',
-      }
-
-      const pkg = packages.find(p => p.id === packageId)
+  // Mutation pour récupérer un colis
+  const pickupMutation = useMutation({
+    mutationFn: ({ id, pickedUpBy }: { id: string; pickedUpBy?: string }) => 
+      packagesAPI.pickup(id, pickedUpBy),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['packages'] })
       toast({
-        title: 'Statut mis à jour',
-        description: `${pkg?.type === 'package' ? 'Colis' : 'Courrier'} ${statusMessages[status].toLowerCase()}`,
+        title: 'Colis récupéré',
+        description: 'Le colis a été marqué comme récupéré'
       })
-
-      return { success: true }
-    } catch (error: any) {
+    },
+    onError: (error: Error) => {
       toast({
         title: 'Erreur',
-        description: error.message || 'Impossible de mettre à jour le statut.',
-        variant: 'destructive',
+        description: error.message,
+        variant: 'destructive'
       })
-      return { success: false, error: error.message }
     }
-  }
+  })
 
-  const getPendingPackages = () => {
-    return packages.filter(pkg => pkg.status !== 'delivered')
-  }
+  // Mutation pour livrer un colis
+  const deliverMutation = useMutation({
+    mutationFn: ({ id, deliveredBy, notes }: { id: string; deliveredBy?: string; notes?: string }) => 
+      packagesAPI.deliver(id, deliveredBy, notes),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['packages'] })
+      toast({
+        title: 'Colis livré',
+        description: 'Le colis a été livré avec succès'
+      })
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Erreur',
+        description: error.message,
+        variant: 'destructive'
+      })
+    }
+  })
 
-  const getUrgentPackages = () => {
-    return packages.filter(pkg => pkg.priority === 'urgent' && pkg.status !== 'delivered')
-  }
-
-  const getPackagesByEmployee = (employeeId: string) => {
-    return packages.filter(pkg => pkg.recipientEmployeeId === employeeId)
-  }
-
-  const getPackageById = (id: string) => {
-    return packages.find(pkg => pkg.id === id)
-  }
+  // Mutation pour annuler un colis
+  const cancelMutation = useMutation({
+    mutationFn: ({ id, reason }: { id: string; reason?: string }) => 
+      packagesAPI.cancel(id, reason),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['packages'] })
+      toast({
+        title: 'Colis annulé',
+        description: 'Le colis a été annulé avec succès'
+      })
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Erreur',
+        description: error.message,
+        variant: 'destructive'
+      })
+    }
+  })
 
   return {
     packages,
-    isLoading: packagesData === undefined,
-    createPackage,
-    createMail,
-    updatePackageStatus,
-    getPendingPackages,
-    getUrgentPackages,
-    getPackagesByEmployee,
-    getPackageById,
+    isLoading,
+    error,
+    addPackage: createMutation.mutate,
+    isCreating: createMutation.isPending,
+    updatePackage: updateMutation.mutate,
+    isUpdating: updateMutation.isPending,
+    pickupPackage: pickupMutation.mutate,
+    isPickingUp: pickupMutation.isPending,
+    deliverPackage: deliverMutation.mutate,
+    isDelivering: deliverMutation.isPending,
+    cancelPackage: cancelMutation.mutate,
+    isCancelling: cancelMutation.isPending
   }
+}
+
+export const usePendingPackages = () => {
+  const { data: packages = [], isLoading, error } = useQuery({
+    queryKey: ['packages', 'pending'],
+    queryFn: () => packagesAPI.getPending().then(res => res.data),
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
+    placeholderData: []
+  })
+
+  return { packages, isLoading, error }
+}
+
+export const usePackagesByRecipient = (employeeId: string) => {
+  const { data: packages = [], isLoading, error } = useQuery({
+    queryKey: ['packages', 'by-recipient', employeeId],
+    queryFn: () => packagesAPI.getByRecipient(employeeId).then(res => res.data),
+    enabled: !!employeeId,
+    staleTime: 5 * 60 * 1000,
+    placeholderData: []
+  })
+
+  return { packages, isLoading, error }
+}
+
+export const usePackageStats = () => {
+  const { data: stats, isLoading, error } = useQuery({
+    queryKey: ['packages', 'stats'],
+    queryFn: () => packagesAPI.getStats().then(res => res.data),
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    placeholderData: {
+      totalPackages: 0,
+      pendingPackages: 0,
+      byStatus: []
+    }
+  })
+
+  return { stats, isLoading, error }
 }

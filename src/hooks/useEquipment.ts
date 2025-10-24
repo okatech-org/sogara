@@ -1,287 +1,194 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useQuery, useMutation } from 'convex/react'
-import { api } from '../../convex/_generated/api'
-import { Equipment, EquipmentStatus } from '@/types'
-import { toast } from '@/hooks/use-toast'
-import { Id } from '../../convex/_generated/dataModel'
-import { repositories } from '@/services/repositories'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { equipmentAPI } from '@/services/api.service'
+import { useToast } from '@/hooks/use-toast'
 
-export function useEquipment() {
-  // Queries Convex
-  const equipmentData = useQuery(api.equipment.list)
+export const useEquipment = (filters?: {
+  status?: string
+  type?: string
+  location?: string
+}) => {
+  const queryClient = useQueryClient()
+  const { toast } = useToast()
 
-  // Fallback local
-  const [fallbackEquipment, setFallbackEquipment] = useState<Equipment[] | null>(null)
-  const [fallbackReady, setFallbackReady] = useState(false)
+  // Fetch des équipements
+  const { data: equipment = [], isLoading, error } = useQuery({
+    queryKey: ['equipment', filters],
+    queryFn: () => equipmentAPI.getAll(filters).then(res => res.data),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    placeholderData: []
+  })
 
-  useEffect(() => {
-    if (equipmentData === undefined && !fallbackReady) {
-      const list = repositories.equipment.getAll()
-      setFallbackEquipment(list)
-      setFallbackReady(true)
-    }
-  }, [equipmentData, fallbackReady])
-
-  // Mutations Convex
-  const createMutation = useMutation(api.equipment.create)
-  const updateMutation = useMutation(api.equipment.update)
-  const assignMutation = useMutation(api.equipment.assignToEmployee)
-  const unassignMutation = useMutation(api.equipment.unassign)
-  const removeMutation = useMutation(api.equipment.remove)
-
-  // Mapper les données (Convex si dispo, sinon fallback)
-  const equipment: Equipment[] = useMemo(() => {
-    if (equipmentData) {
-      return (equipmentData as any[]).map((e: any) => ({
-        id: e._id,
-        type: e.type,
-        label: e.label,
-        serialNumber: e.serialNumber,
-        holderEmployeeId: e.holderEmployeeId,
-        status: e.status,
-        nextCheckDate: e.nextCheckDate ? new Date(e.nextCheckDate) : undefined,
-        description: e.description,
-        location: e.location,
-        history: [],
-        createdAt: new Date(e._creationTime),
-        updatedAt: new Date(e._creationTime),
-      }))
-    }
-    return fallbackEquipment || []
-  }, [equipmentData, fallbackEquipment])
-
-  const createEquipment = async (
-    equipmentData: Omit<Equipment, 'id' | 'createdAt' | 'updatedAt'>,
-  ) => {
-    try {
-      await createMutation({
-        type: equipmentData.type,
-        label: equipmentData.label,
-        serialNumber: equipmentData.serialNumber,
-        holderEmployeeId: equipmentData.holderEmployeeId as Id<'employees'> | undefined,
-        status: equipmentData.status,
-        nextCheckDate: equipmentData.nextCheckDate?.getTime(),
-        description: equipmentData.description,
-        location: equipmentData.location,
-      })
-
+  // Mutation pour créer un équipement
+  const createMutation = useMutation({
+    mutationFn: (equipmentData: any) => equipmentAPI.create(equipmentData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['equipment'] })
       toast({
         title: 'Équipement créé',
-        description: `${equipmentData.label} a été ajouté au catalogue.`,
+        description: 'L\'équipement a été créé avec succès'
       })
-
-      return { success: true }
-    } catch (error: any) {
-      try {
-        const created = repositories.equipment.create(equipmentData as any)
-        setFallbackEquipment(prev => (prev ? [created, ...prev] : [created]))
-        toast({ title: 'Équipement créé (local)', description: 'Ajout enregistré localement.' })
-        return { success: true, offline: true } as any
-      } catch (e: any) {
-        toast({
-          title: 'Erreur',
-          description: e?.message || "Impossible de créer l'équipement.",
-          variant: 'destructive',
-        })
-        return { success: false, error: e?.message }
-      }
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Erreur',
+        description: error.message,
+        variant: 'destructive'
+      })
     }
-  }
+  })
 
-  const updateEquipment = async (id: string, updates: Partial<Equipment>) => {
-    try {
-      await updateMutation({
-        id: id as Id<'equipment'>,
-        holderEmployeeId: updates.holderEmployeeId as Id<'employees'> | undefined,
-        status: updates.status,
-        nextCheckDate: updates.nextCheckDate?.getTime(),
-        location: updates.location,
-        description: updates.description,
-      })
-
+  // Mutation pour mettre à jour un équipement
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: any }) => equipmentAPI.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['equipment'] })
       toast({
         title: 'Équipement mis à jour',
-        description: 'Les modifications ont été sauvegardées.',
+        description: 'L\'équipement a été mis à jour avec succès'
       })
-
-      return { success: true }
-    } catch (error: any) {
-      try {
-        const updated = repositories.equipment.update(id, updates as any)
-        if (updated) {
-          setFallbackEquipment(prev =>
-            prev ? prev.map(e => (e.id === id ? updated : e)) : [updated],
-          )
-          toast({
-            title: 'Équipement mis à jour (local)',
-            description: 'Modifications sauvegardées localement.',
-          })
-          return { success: true, offline: true } as any
-        }
-        return { success: false }
-      } catch (e: any) {
-        toast({
-          title: 'Erreur',
-          description: e?.message || "Impossible de mettre à jour l'équipement.",
-          variant: 'destructive',
-        })
-        return { success: false, error: e?.message }
-      }
-    }
-  }
-
-  const assignEquipment = async (equipmentId: string, employeeId: string) => {
-    try {
-      await assignMutation({
-        equipmentId: equipmentId as Id<'equipment'>,
-        employeeId: employeeId as Id<'employees'>,
-      })
-
+    },
+    onError: (error: Error) => {
       toast({
-        title: 'Équipement affecté',
-        description: "L'affectation a été enregistrée.",
+        title: 'Erreur',
+        description: error.message,
+        variant: 'destructive'
       })
-
-      return { success: true }
-    } catch (error: any) {
-      const updated = repositories.equipment.update(equipmentId, {
-        holderEmployeeId: employeeId,
-      } as any)
-      if (updated) {
-        setFallbackEquipment(prev =>
-          prev ? prev.map(e => (e.id === equipmentId ? updated : e)) : [updated],
-        )
-        toast({
-          title: 'Équipement affecté (local)',
-          description: 'Affectation enregistrée localement.',
-        })
-        return { success: true, offline: true } as any
-      }
-      return { success: false }
     }
-  }
+  })
 
-  const unassignEquipment = async (equipmentId: string) => {
-    try {
-      await unassignMutation({
-        equipmentId: equipmentId as Id<'equipment'>,
-      })
-
+  // Mutation pour démarrer la maintenance
+  const startMaintenanceMutation = useMutation({
+    mutationFn: ({ id, reason, assignedTo }: { id: string; reason: string; assignedTo?: string }) => 
+      equipmentAPI.startMaintenance(id, reason, assignedTo),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['equipment'] })
       toast({
-        title: 'Équipement libéré',
-        description: "L'équipement est maintenant disponible.",
+        title: 'Maintenance démarrée',
+        description: 'La maintenance a été démarrée avec succès'
       })
-
-      return { success: true }
-    } catch (error: any) {
-      const updated = repositories.equipment.update(equipmentId, {
-        holderEmployeeId: undefined,
-      } as any)
-      if (updated) {
-        setFallbackEquipment(prev =>
-          prev ? prev.map(e => (e.id === equipmentId ? updated : e)) : [updated],
-        )
-        toast({
-          title: 'Équipement libéré (local)',
-          description: "L'équipement est maintenant disponible.",
-        })
-        return { success: true, offline: true } as any
-      }
-      return { success: false }
-    }
-  }
-
-  const getEquipmentByEmployee = (employeeId: string) => {
-    return equipment.filter(eq => eq.holderEmployeeId === employeeId)
-  }
-
-  const getAvailableEquipment = () => {
-    return equipment.filter(eq => !eq.holderEmployeeId && eq.status === 'operational')
-  }
-
-  const getEquipmentNeedingMaintenance = () => {
-    const now = new Date()
-    const nextWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
-
-    return equipment.filter(eq => eq.nextCheckDate && eq.nextCheckDate <= nextWeek)
-  }
-
-  const getEquipmentById = (id: string) => {
-    return equipment.find(eq => eq.id === id)
-  }
-
-  // Attribution automatique d'EPI par rôle (raffinerie)
-  const ensureRoleEquipment = async () => {
-    try {
-      const employees = repositories.employees.getAll()
-      const requiredByRole: Record<string, Array<{ type: string; label: string }>> = {
-        EMPLOYE: [
-          { type: 'EPI', label: 'Casque de sécurité' },
-          { type: 'EPI', label: 'Chaussures de sécurité' },
-          { type: 'EPI', label: 'Lunettes de protection' },
-          { type: 'EPI', label: 'Gants de protection' },
-        ],
-        SUPERVISEUR: [
-          { type: 'EPI', label: 'Casque de sécurité' },
-          { type: 'EPI', label: 'Chaussures de sécurité' },
-          { type: 'EPI', label: 'Gilet haute visibilité' },
-          { type: 'EPI', label: 'Radio de communication' },
-        ],
-        HSE: [
-          { type: 'EPI', label: 'Casque de sécurité' },
-          { type: 'EPI', label: 'Chaussures de sécurité' },
-          { type: 'EPI', label: 'Détecteur de gaz portable' },
-          { type: 'EPI', label: 'Gilet haute visibilité' },
-        ],
-        RECEP: [{ type: 'EPI', label: 'Gilet haute visibilité' }],
-        ADMIN: [{ type: 'EPI', label: 'Badge accès' }],
-      }
-
-      const list = repositories.equipment.getAll()
-      const createIfMissing = (holderEmployeeId: string, item: { type: string; label: string }) => {
-        const exists = list.some(
-          eq => eq.holderEmployeeId === holderEmployeeId && eq.label === item.label,
-        )
-        if (!exists) {
-          const created = repositories.equipment.create({
-            type: item.type,
-            label: item.label,
-            serialNumber: undefined,
-            holderEmployeeId,
-            status: 'operational' as EquipmentStatus,
-            description: undefined,
-            location: undefined,
-            nextCheckDate: undefined,
-          } as any)
-          list.push(created)
-        }
-      }
-
-      employees.forEach(emp => {
-        emp.roles.forEach(role => {
-          const required = requiredByRole[role]
-          if (required) required.forEach(item => createIfMissing(emp.id, item))
-        })
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Erreur',
+        description: error.message,
+        variant: 'destructive'
       })
-
-      setFallbackEquipment([...list])
-      return true
-    } catch (_) {
-      return false
     }
-  }
+  })
+
+  // Mutation pour terminer la maintenance
+  const completeMaintenanceMutation = useMutation({
+    mutationFn: ({ id, notes }: { id: string; notes?: string }) => 
+      equipmentAPI.completeMaintenance(id, notes),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['equipment'] })
+      toast({
+        title: 'Maintenance terminée',
+        description: 'La maintenance a été terminée avec succès'
+      })
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Erreur',
+        description: error.message,
+        variant: 'destructive'
+      })
+    }
+  })
+
+  // Mutation pour marquer comme hors service
+  const markOutOfServiceMutation = useMutation({
+    mutationFn: ({ id, reason }: { id: string; reason: string }) => 
+      equipmentAPI.markOutOfService(id, reason),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['equipment'] })
+      toast({
+        title: 'Équipement marqué hors service',
+        description: 'L\'équipement a été marqué comme hors service'
+      })
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Erreur',
+        description: error.message,
+        variant: 'destructive'
+      })
+    }
+  })
+
+  // Mutation pour supprimer un équipement
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => equipmentAPI.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['equipment'] })
+      toast({
+        title: 'Équipement supprimé',
+        description: 'L\'équipement a été supprimé avec succès'
+      })
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Erreur',
+        description: error.message,
+        variant: 'destructive'
+      })
+    }
+  })
 
   return {
     equipment,
-    isLoading: equipmentData === undefined && !fallbackReady,
-    createEquipment,
-    updateEquipment,
-    assignEquipment,
-    unassignEquipment,
-    getEquipmentByEmployee,
-    getAvailableEquipment,
-    getEquipmentNeedingMaintenance,
-    getEquipmentById,
-    ensureRoleEquipment,
+    isLoading,
+    error,
+    addEquipment: createMutation.mutate,
+    isCreating: createMutation.isPending,
+    updateEquipment: updateMutation.mutate,
+    isUpdating: updateMutation.isPending,
+    startMaintenance: startMaintenanceMutation.mutate,
+    isStartingMaintenance: startMaintenanceMutation.isPending,
+    completeMaintenance: completeMaintenanceMutation.mutate,
+    isCompletingMaintenance: completeMaintenanceMutation.isPending,
+    markOutOfService: markOutOfServiceMutation.mutate,
+    isMarkingOutOfService: markOutOfServiceMutation.isPending,
+    deleteEquipment: deleteMutation.mutate,
+    isDeleting: deleteMutation.isPending
   }
+}
+
+export const useMaintenanceEquipment = () => {
+  const { data: equipment = [], isLoading, error } = useQuery({
+    queryKey: ['equipment', 'maintenance'],
+    queryFn: () => equipmentAPI.getMaintenance().then(res => res.data),
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
+    placeholderData: []
+  })
+
+  return { equipment, isLoading, error }
+}
+
+export const useEquipmentByType = (type: string) => {
+  const { data: equipment = [], isLoading, error } = useQuery({
+    queryKey: ['equipment', 'by-type', type],
+    queryFn: () => equipmentAPI.getByType(type).then(res => res.data),
+    enabled: !!type,
+    staleTime: 5 * 60 * 1000,
+    placeholderData: []
+  })
+
+  return { equipment, isLoading, error }
+}
+
+export const useEquipmentStats = () => {
+  const { data: stats, isLoading, error } = useQuery({
+    queryKey: ['equipment', 'stats'],
+    queryFn: () => equipmentAPI.getStats().then(res => res.data),
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    placeholderData: {
+      totalEquipment: 0,
+      maintenanceEquipment: 0,
+      byStatus: []
+    }
+  })
+
+  return { stats, isLoading, error }
 }

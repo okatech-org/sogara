@@ -13,7 +13,12 @@ import {
   Filter,
   Search,
   Edit,
+  AlertTriangle,
 } from 'lucide-react'
+import { useFormState } from '@/hooks/useFormState'
+import { FormError } from '@/components/ui/FormError'
+import { FormSuccess } from '@/components/ui/FormSuccess'
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -34,8 +39,40 @@ export function SOGARAConnectPage() {
   const [selectedPost, setSelectedPost] = useState<Post | null>(null)
   const [showEditor, setShowEditor] = useState(false)
   const [editingPost, setEditingPost] = useState<Post | null>(null)
+  const { state: formState, executeWithState, clearAll } = useFormState()
 
   const canManagePosts = hasAnyRole(['ADMIN', 'COMMUNICATION'])
+
+  // Gestionnaire pour l'édition des posts
+  const handleEditPost = (post: Post) => {
+    setEditingPost(post)
+    setShowEditor(true)
+  }
+
+  // Gestionnaire pour la sauvegarde des posts
+  const handleSavePost = async (postData: Partial<Post>) => {
+    await executeWithState(
+      async () => {
+        if (editingPost) {
+          await updatePost(editingPost.id, postData)
+        } else {
+          await createPost(postData)
+        }
+        setShowEditor(false)
+        setEditingPost(null)
+      },
+      {
+        successMessage: editingPost ? 'Post mis à jour avec succès' : 'Post créé avec succès',
+      }
+    )
+  }
+
+  // Gestionnaire pour l'annulation de l'édition
+  const handleCancelEdit = () => {
+    setShowEditor(false)
+    setEditingPost(null)
+    clearAll()
+  }
 
   const filteredPosts = posts.filter(post => {
     if (post.status !== 'published' && !canManagePosts) return false
@@ -107,30 +144,6 @@ export function SOGARAConnectPage() {
   const handleCreatePost = () => {
     setEditingPost(null)
     setShowEditor(true)
-  }
-
-  const handleEditPost = (post: Post) => {
-    setEditingPost(post)
-    setShowEditor(true)
-  }
-
-  const handleSavePost = async (postData: Omit<Post, 'id' | 'createdAt' | 'updatedAt'>) => {
-    try {
-      if (editingPost) {
-        await updatePost(editingPost.id, postData)
-      } else {
-        await createPost(postData)
-      }
-      setShowEditor(false)
-      setEditingPost(null)
-    } catch (error) {
-      console.error('Error saving post:', error)
-    }
-  }
-
-  const handleCancelEdit = () => {
-    setShowEditor(false)
-    setEditingPost(null)
   }
 
   // Si on est en mode édition, afficher l'éditeur
@@ -242,6 +255,21 @@ export function SOGARAConnectPage() {
         </div>
       </div>
 
+      {/* Affichage des états de formulaire */}
+      {formState.error && (
+        <FormError 
+          message={formState.error} 
+          onDismiss={() => clearAll()}
+        />
+      )}
+      
+      {formState.success && (
+        <FormSuccess 
+          message={formState.success} 
+          onDismiss={() => clearAll()}
+        />
+      )}
+
       {/* Posts Feed */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
@@ -286,12 +314,17 @@ export function SOGARAConnectPage() {
                           <Button
                             variant="outline"
                             size="sm"
+                            disabled={formState.isLoading}
                             onClick={e => {
                               e.stopPropagation()
                               handleEditPost(post)
                             }}
                           >
-                            <Edit className="w-4 h-4" />
+                            {formState.isLoading ? (
+                              <LoadingSpinner size="sm" />
+                            ) : (
+                              <Edit className="w-4 h-4" />
+                            )}
                           </Button>
                         </div>
                       )}

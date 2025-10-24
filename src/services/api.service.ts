@@ -4,7 +4,7 @@ import { toast } from '@/hooks/use-toast'
 const API_CONFIG = {
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3001/api',
   timeout: 30000, // 30 secondes
-  retryAttempts: 3,
+  retryAttempts: 1, // Réduit à 1 tentative pour éviter le spam de logs
   retryDelay: 1000, // 1 seconde
   healthcheck: String(import.meta.env.VITE_API_HEALTHCHECK || 'true') !== 'false',
 }
@@ -451,19 +451,172 @@ export const visitsAPI = {
 
   create: (visitData: any) => apiService.post('/visits', visitData),
 
-  update: (id: string, visitData: any) => apiService.put(`/visits/${id}`, visitData),
+  update: (id: string, visitData: any) => apiService.patch(`/visits/${id}`, visitData),
 
-  updateStatus: (id: string, status: string, data?: any) =>
-    apiService.patch(`/visits/${id}/status`, { status, ...data }),
+  checkin: (id: string, badgeNumber?: string) =>
+    apiService.post(`/visits/${id}/checkin`, { badgeNumber }),
 
-  getTodaysVisits: () => apiService.get('/visits/today'),
+  checkout: (id: string, notes?: string) => 
+    apiService.post(`/visits/${id}/checkout`, { notes }),
+
+  cancel: (id: string, reason?: string) =>
+    apiService.post(`/visits/${id}/cancel`, { reason }),
+
+  delete: (id: string) => apiService.delete(`/visits/${id}`),
+
+  getTodaysVisits: () => apiService.get('/visits/today/list'),
 
   getByDate: (date: string) => apiService.get(`/visits/by-date/${date}`),
 
-  checkIn: (id: string, badgeNumber?: string) =>
-    apiService.post(`/visits/${id}/check-in`, { badgeNumber }),
+  getStats: () => apiService.get('/visits/stats/overview'),
+}
 
-  checkOut: (id: string, notes?: string) => apiService.post(`/visits/${id}/check-out`, { notes }),
+export const packagesAPI = {
+  getAll: (params?: Record<string, any>) => {
+    const queryString = params ? '?' + new URLSearchParams(params).toString() : ''
+    return apiService.get(`/packages${queryString}`)
+  },
+
+  getById: (id: string) => apiService.get(`/packages/${id}`),
+
+  create: (packageData: any) => apiService.post('/packages', packageData),
+
+  update: (id: string, packageData: any) => apiService.patch(`/packages/${id}`, packageData),
+
+  pickup: (id: string, pickedUpBy?: string) =>
+    apiService.post(`/packages/${id}/pickup`, { pickedUpBy }),
+
+  deliver: (id: string, deliveredBy?: string, notes?: string) =>
+    apiService.post(`/packages/${id}/deliver`, { deliveredBy, notes }),
+
+  cancel: (id: string, reason?: string) =>
+    apiService.post(`/packages/${id}/cancel`, { reason }),
+
+  delete: (id: string) => apiService.delete(`/packages/${id}`),
+
+  getPending: () => apiService.get('/packages/pending/list'),
+
+  getByRecipient: (employeeId: string) => apiService.get(`/packages/by-recipient/${employeeId}`),
+
+  getStats: () => apiService.get('/packages/stats/overview'),
+}
+
+export const equipmentAPI = {
+  getAll: (params?: Record<string, any>) => {
+    const queryString = params ? '?' + new URLSearchParams(params).toString() : ''
+    return apiService.get(`/equipment${queryString}`)
+  },
+
+  getById: (id: string) => apiService.get(`/equipment/${id}`),
+
+  create: (equipmentData: any) => apiService.post('/equipment', equipmentData),
+
+  update: (id: string, equipmentData: any) => apiService.patch(`/equipment/${id}`, equipmentData),
+
+  startMaintenance: (id: string, reason: string, assignedTo?: string) =>
+    apiService.post(`/equipment/${id}/maintenance`, { reason, assignedTo }),
+
+  completeMaintenance: (id: string, notes?: string) =>
+    apiService.post(`/equipment/${id}/maintenance/complete`, { notes }),
+
+  markOutOfService: (id: string, reason: string) =>
+    apiService.post(`/equipment/${id}/out-of-service`, { reason }),
+
+  delete: (id: string) => apiService.delete(`/equipment/${id}`),
+
+  getMaintenance: () => apiService.get('/equipment/maintenance/list'),
+
+  getByType: (type: string) => apiService.get(`/equipment/by-type/${type}`),
+
+  getStats: () => apiService.get('/equipment/stats/overview'),
+}
+
+export const hseAPI = {
+  // Incidents
+  getIncidents: (params?: Record<string, any>) => {
+    const queryString = params ? '?' + new URLSearchParams(params).toString() : ''
+    return apiService.get(`/hse/incidents${queryString}`)
+  },
+
+  createIncident: (incidentData: any) => apiService.post('/hse/incidents', incidentData),
+
+  getIncidentById: (id: string) => apiService.get(`/hse/incidents/${id}`),
+
+  updateIncident: (id: string, incidentData: any) => apiService.patch(`/hse/incidents/${id}`, incidentData),
+
+  closeIncident: (id: string, notes?: string) => apiService.post(`/hse/incidents/${id}/close`, { notes }),
+
+  // Trainings
+  getTrainings: (params?: Record<string, any>) => {
+    const queryString = params ? '?' + new URLSearchParams(params).toString() : ''
+    return apiService.get(`/hse/trainings${queryString}`)
+  },
+
+  createTraining: (trainingData: any) => apiService.post('/hse/trainings', trainingData),
+
+  getTrainingById: (id: string) => apiService.get(`/hse/trainings/${id}`),
+
+  updateTraining: (id: string, trainingData: any) => apiService.patch(`/hse/trainings/${id}`, trainingData),
+
+  enrollEmployee: (id: string, employeeData: any) => apiService.post(`/hse/trainings/${id}/enroll`, employeeData),
+
+  validateTraining: (id: string, notes?: string) => apiService.post(`/hse/trainings/${id}/validate`, { notes }),
+
+  // Compliance
+  getCompliance: (params?: Record<string, any>) => {
+    const queryString = params ? '?' + new URLSearchParams(params).toString() : ''
+    return apiService.get(`/hse/compliance${queryString}`)
+  },
+
+  createCompliance: (complianceData: any) => apiService.post('/hse/compliance', complianceData),
+
+  getComplianceById: (id: string) => apiService.get(`/hse/compliance/${id}`),
+
+  updateCompliance: (id: string, complianceData: any) => apiService.patch(`/hse/compliance/${id}`, complianceData),
+
+  validateCompliance: (id: string, notes?: string) => apiService.post(`/hse/compliance/${id}/validate`, { notes }),
+
+  // Statistics
+  getStats: () => apiService.get('/hse/stats/overview'),
+
+  getIncidentStats: () => apiService.get('/hse/stats/incidents'),
+
+  getTrainingStats: () => apiService.get('/hse/stats/trainings'),
+
+  getComplianceStats: () => apiService.get('/hse/stats/compliance'),
+}
+
+export const postsAPI = {
+  getAll: (params?: Record<string, any>) => {
+    const queryString = params ? '?' + new URLSearchParams(params).toString() : ''
+    return apiService.get(`/posts${queryString}`)
+  },
+
+  getById: (id: string) => apiService.get(`/posts/${id}`),
+
+  create: (postData: any) => apiService.post('/posts', postData),
+
+  update: (id: string, postData: any) => apiService.patch(`/posts/${id}`, postData),
+
+  delete: (id: string) => apiService.delete(`/posts/${id}`),
+
+  publish: (id: string) => apiService.post(`/posts/${id}/publish`),
+
+  unpublish: (id: string) => apiService.post(`/posts/${id}/unpublish`),
+
+  addComment: (id: string, content: string) => apiService.post(`/posts/${id}/comments`, { content }),
+
+  deleteComment: (id: string, commentId: string) => apiService.delete(`/posts/${id}/comments/${commentId}`),
+
+  like: (id: string) => apiService.post(`/posts/${id}/like`),
+
+  unlike: (id: string) => apiService.delete(`/posts/${id}/like`),
+
+  getByCategory: (category: string) => apiService.get(`/posts/category/${category}`),
+
+  getTrending: () => apiService.get('/posts/trending/list'),
+
+  getStats: () => apiService.get('/posts/stats/overview'),
 }
 
 // Export par défaut du service principal

@@ -32,51 +32,48 @@ const Visitor = sequelize.define('Visitor', {
     }
   },
   
-  company: {
-    type: DataTypes.STRING(100),
-    allowNull: false,
-    validate: {
-      notEmpty: { msg: 'La société est requise' }
-    }
-  },
-  
-  idDocument: {
-    type: DataTypes.STRING(50),
-    allowNull: false,
-    validate: {
-      notEmpty: { msg: 'Le numéro de document est requis' }
-    }
-  },
-  
-  documentType: {
-    type: DataTypes.ENUM('cin', 'passport', 'other'),
-    allowNull: false,
-    defaultValue: 'cin'
-  },
-  
-  phone: {
-    type: DataTypes.STRING(20),
-    allowNull: true,
-    validate: {
-      isPhoneFormat(value) {
-        if (value && !/^[0-9+\-() ]+$/.test(value)) {
-          throw new Error('Numéro de téléphone invalide');
-        }
-      }
-    }
-  },
-  
   email: {
     type: DataTypes.STRING(255),
     allowNull: true,
     validate: {
-      isEmail: {
-        msg: 'Adresse email invalide'
-      }
+      isEmail: { msg: 'Format email invalide' }
     }
   },
   
+  phone: {
+    type: DataTypes.STRING(20),
+    allowNull: true
+  },
+  
+  company: {
+    type: DataTypes.STRING(100),
+    allowNull: true
+  },
+  
+  idNumber: {
+    type: DataTypes.STRING(50),
+    allowNull: true,
+    comment: 'Numéro de pièce d\'identité'
+  },
+  
+  idType: {
+    type: DataTypes.ENUM('CNI', 'PASSPORT', 'PERMIS', 'AUTRE'),
+    allowNull: true
+  },
+  
   photo: {
+    type: DataTypes.STRING(500),
+    allowNull: true,
+    comment: 'URL de la photo'
+  },
+  
+  status: {
+    type: DataTypes.ENUM('active', 'blocked'),
+    allowNull: false,
+    defaultValue: 'active'
+  },
+  
+  notes: {
     type: DataTypes.TEXT,
     allowNull: true
   }
@@ -90,25 +87,5 @@ const Visitor = sequelize.define('Visitor', {
     }
   }
 });
-
-// Méthodes d'instance
-Visitor.prototype.getFullName = function() {
-  return `${this.firstName} ${this.lastName}`;
-};
-
-// Méthodes statiques
-Visitor.searchByName = function(searchTerm) {
-  const { Op } = require('sequelize');
-  return this.findAll({
-    where: {
-      [Op.or]: [
-        { firstName: { [Op.iLike]: `%${searchTerm}%` } },
-        { lastName: { [Op.iLike]: `%${searchTerm}%` } },
-        { company: { [Op.iLike]: `%${searchTerm}%` } }
-      ]
-    },
-    order: [['lastName', 'ASC'], ['firstName', 'ASC']]
-  });
-};
 
 module.exports = Visitor;

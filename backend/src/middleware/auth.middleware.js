@@ -223,14 +223,13 @@ const calculatePermissions = (roles) => {
         break;
         
       case 'HSE':
-        // Responsable HSE
+        // Chef HSSE Opérationnel - HSE uniquement
         permissions.add('read:employees');
-        permissions.add('write:employees');
         permissions.add('read:equipment');
-        permissions.add('write:equipment');
         permissions.add('read:hse');
         permissions.add('write:hse');
         permissions.add('read:posts');
+        // Pas d'accès aux visites et colis
         break;
         
       case 'SUPERVISEUR':
@@ -241,6 +240,18 @@ const calculatePermissions = (roles) => {
         permissions.add('read:equipment');
         permissions.add('write:equipment');
         permissions.add('read:posts');
+        break;
+        
+      case 'SECURITE':
+        // Responsable Sécurité - Sécurité uniquement
+        permissions.add('read:visits');
+        permissions.add('write:visits');
+        permissions.add('read:packages');
+        permissions.add('write:packages');
+        permissions.add('read:equipment');
+        permissions.add('write:equipment');
+        permissions.add('read:posts');
+        // Pas d'accès aux modules HSE
         break;
         
       case 'RECEP':
@@ -257,6 +268,18 @@ const calculatePermissions = (roles) => {
         permissions.add('read:posts');
         permissions.add('write:posts');
         permissions.add('delete:posts');
+        break;
+        
+      case 'COMPLIANCE':
+        // Responsable Conformité - Conformité uniquement
+        permissions.add('read:employees');
+        permissions.add('read:hse');
+        permissions.add('read:audits');
+        permissions.add('write:audits');
+        permissions.add('read:compliance');
+        permissions.add('write:compliance');
+        permissions.add('read:posts');
+        // Pas d'accès aux modules opérationnels (visites, colis, équipements)
         break;
         
       case 'EMPLOYE':

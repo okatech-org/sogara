@@ -3,7 +3,7 @@ export type UserRole =
   | 'ADMIN'
   | 'RECEP'
   | 'HSE'
-  | 'HSSE_CHIEF' // ⭐ NOUVEAU : Chef de Division HSSE
+  | 'HSSE_CHIEF' // Chef de Division HSSE (HSE001)
   | 'SUPERVISEUR'
   | 'EMPLOYE'
   | 'COMMUNICATION'
@@ -13,7 +13,7 @@ export type UserRole =
   | 'SECURITE'
   | 'EXTERNE'
 
-// Permissions du rôle HSSE_CHIEF
+// Hiérarchie des permissions HSSE
 export const ROLE_PERMISSIONS = {
   HSSE_CHIEF: {
     // Vue d'ensemble et statistiques
@@ -40,6 +40,127 @@ export const ROLE_PERMISSIONS = {
     checkInVisitor: false,
     registerMail: false,
   },
+  HSE: {
+    // Vue d'ensemble et statistiques
+    viewDashboard: true,
+    viewAllStatistics: true,
+    exportReports: true,
+
+    // Gestion opérationnelle HSE uniquement
+    createIncident: true,
+    validateFormation: true,
+    manageHSEOperations: true,
+
+    // Accès aux modules HSE uniquement
+    viewIncidents: true,
+    viewFormations: true,
+    viewEquipment: true,
+
+    // Pas d'accès aux modules sécurité
+    viewVisits: false,
+    viewMail: false,
+    checkInVisitor: false,
+    registerMail: false,
+  },
+  SECURITE: {
+    // Vue d'ensemble et statistiques
+    viewDashboard: true,
+    viewAllStatistics: true,
+    exportReports: true,
+
+    // Gestion sécurité uniquement
+    manageSecurityOperations: true,
+    checkInVisitor: true,
+    registerMail: true,
+    manageEquipment: true,
+
+    // Accès aux modules sécurité uniquement
+    viewVisits: true,
+    viewMail: true,
+    viewEquipment: true,
+
+    // Pas d'accès aux modules HSE
+    viewIncidents: false,
+    viewFormations: false,
+    createIncident: false,
+    validateFormation: false,
+  },
+  COMPLIANCE: {
+    // Vue d'ensemble et statistiques
+    viewDashboard: true,
+    viewAllStatistics: true,
+    exportReports: true,
+
+    // Gestion conformité uniquement
+    manageCompliance: true,
+    createAudits: true,
+    manageNonConformities: true,
+    generateComplianceReports: true,
+
+    // Accès aux modules conformité uniquement
+    viewIncidents: true,
+    viewFormations: true,
+
+    // Pas d'accès aux modules opérationnels
+    viewVisits: false,
+    viewMail: false,
+    viewEquipment: false,
+    createIncident: false,
+    validateFormation: false,
+    checkInVisitor: false,
+    registerMail: false,
+  },
+  EXTERNE: {
+    // Accès limité pour candidats externes
+    viewDashboard: true,
+    viewOwnTrainings: true,
+    viewOwnAssessments: true,
+    viewOwnCertificates: true,
+
+    // Pas d'accès aux modules internes
+    viewIncidents: false,
+    viewFormations: false,
+    viewVisits: false,
+    viewMail: false,
+    viewEquipment: false,
+    createIncident: false,
+    validateFormation: false,
+    checkInVisitor: false,
+    registerMail: false,
+  },
+} as const
+
+// Hiérarchie des rôles HSSE
+export const HSSE_ROLE_HIERARCHY = {
+  HSSE_CHIEF: {
+    level: 2,
+    label: 'Chef de Division HSSE',
+    canApprove: ['incidents', 'trainings', 'audits', 'budgets'],
+    canManage: ['hsse_team', 'compliance_team', 'security_team'],
+    reportsTo: ['DG', 'ADMIN']
+  },
+  HSE: {
+    level: 1,
+    label: 'Chef HSSE Opérationnel',
+    canApprove: ['daily_incidents', 'hse_trainings'],
+    canManage: ['hse_operations'],
+    reportsTo: ['HSSE_CHIEF', 'DG', 'ADMIN'],
+    requiresApproval: ['critical_incidents', 'major_trainings']
+  },
+  SECURITE: {
+    level: 1,
+    label: 'Responsable Sécurité',
+    canApprove: ['visits', 'security_incidents'],
+    canManage: ['security_operations', 'visits', 'mail', 'equipment'],
+    reportsTo: ['HSSE_CHIEF', 'DG', 'ADMIN']
+  },
+  COMPLIANCE: {
+    level: 1,
+    label: 'Responsable Conformité',
+    canApprove: ['non_conformities', 'audits'],
+    canManage: ['compliance_audits', 'regulatory_watch'],
+    reportsTo: ['HSSE_CHIEF', 'DG', 'ADMIN']
+  }
 } as const
 
 export type VisitStatus = 'expected' | 'waiting' | 'in_progress' | 'checked_out'
@@ -116,6 +237,63 @@ export interface PackageMail {
   deliveredAt?: Date
   deliveredBy?: string
   signature?: string
+  createdAt: Date
+  updatedAt: Date
+}
+
+// Interfaces pour les Analytics
+export interface AnalyticsData {
+  id: string
+  type: 'dashboard' | 'hse' | 'visits' | 'packages' | 'equipment' | 'training'
+  metric: string
+  value: number
+  period: 'daily' | 'weekly' | 'monthly' | 'yearly'
+  date: Date
+  metadata?: any
+  department?: string
+  createdBy?: string
+  createdAt: Date
+  updatedAt: Date
+}
+
+// Interfaces pour les Workflows d'Approbation
+export interface ApprovalWorkflow {
+  id: string
+  type: 'hse_incident' | 'training_approval' | 'equipment_purchase' | 'policy_change' | 'audit_plan'
+  title: string
+  description: string
+  status: 'pending' | 'in_progress' | 'approved' | 'rejected' | 'cancelled'
+  priority: 'low' | 'medium' | 'high' | 'urgent'
+  requesterId: string
+  approverId?: string
+  currentStep: number
+  totalSteps: number
+  workflowData?: any
+  approvalHistory?: Array<{
+    stepId: string
+    approverId: string
+    decision: 'approved' | 'rejected'
+    comments?: string
+    timestamp: Date
+  }>
+  dueDate?: Date
+  completedAt?: Date
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface ApprovalStep {
+  id: string
+  workflowId: string
+  stepNumber: number
+  stepName: string
+  approverId: string
+  status: 'pending' | 'approved' | 'rejected' | 'skipped'
+  comments?: string
+  approvedAt?: Date
+  dueDate?: Date
+  isRequired: boolean
+  canDelegate: boolean
   createdAt: Date
   updatedAt: Date
 }

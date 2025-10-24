@@ -1,237 +1,250 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useQuery, useMutation } from 'convex/react'
-import { api } from '../../convex/_generated/api'
-import { Post } from '@/types'
-import { toast } from '@/hooks/use-toast'
-import { Id } from '../../convex/_generated/dataModel'
-import { repositories } from '@/services/repositories'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { postsAPI } from '@/services/api.service'
+import { useToast } from '@/hooks/use-toast'
 
-export function usePosts() {
-  // Queries Convex
-  const postsData = useQuery(api.posts.list)
+export const usePosts = (filters?: {
+  category?: string
+  status?: string
+  authorId?: string
+}) => {
+  const queryClient = useQueryClient()
+  const { toast } = useToast()
 
-  // Fallback local si Convex indisponible
-  const [fallbackPosts, setFallbackPosts] = useState<Post[] | null>(null)
-  const [fallbackReady, setFallbackReady] = useState(false)
+  // Fetch des posts
+  const { data: posts = [], isLoading, error } = useQuery({
+    queryKey: ['posts', filters],
+    queryFn: () => postsAPI.getAll(filters).then(res => res.data),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    placeholderData: []
+  })
 
-  useEffect(() => {
-    let cancelled = false
-    if (postsData === undefined && !fallbackReady) {
-      const list = repositories.posts.getAll()
-      if (!cancelled) {
-        setFallbackPosts(list)
-        setFallbackReady(true)
-      }
-    }
-    return () => {
-      cancelled = true
-    }
-  }, [postsData, fallbackReady])
-
-  // Mutations Convex
-  const createMutation = useMutation(api.posts.create)
-  const updateMutation = useMutation(api.posts.update)
-  const publishMutation = useMutation(api.posts.publish)
-  const incrementViewsMutation = useMutation(api.posts.incrementViews)
-  const incrementLikesMutation = useMutation(api.posts.incrementLikes)
-  const removeMutation = useMutation(api.posts.remove)
-
-  // Mapper les données (Convex si dispo, sinon fallback locales)
-  const posts: Post[] = useMemo(
-    () =>
-      (postsData || fallbackPosts || []).map((p: any) => ({
-        id: p._id,
-        title: p.title,
-        content: p.content,
-        excerpt: p.excerpt,
-        authorId: p.authorId,
-        category: p.category,
-        status: p.status,
-        featuredImage: p.featuredImage,
-        images: p.images,
-        videoUrl: p.videoUrl,
-        tags: p.tags,
-        publishedAt: p.publishedAt ? new Date(p.publishedAt) : undefined,
-        createdAt: p.createdAt ? new Date(p.createdAt) : new Date(p._creationTime),
-        updatedAt: p.updatedAt ? new Date(p.updatedAt) : new Date(p._creationTime),
-      })),
-    [postsData, fallbackPosts],
-  )
-
-  const createPost = async (postData: Omit<Post, 'id' | 'createdAt' | 'updatedAt'>) => {
-    try {
-      await createMutation({
-        title: postData.title,
-        content: postData.content,
-        excerpt: postData.excerpt,
-        authorId: postData.authorId as Id<'employees'>,
-        category: postData.category,
-        status: postData.status,
-        featuredImage: postData.featuredImage,
-        images: postData.images,
-        videoUrl: postData.videoUrl,
-        tags: postData.tags,
-      })
-
+  // Mutation pour créer un post
+  const createMutation = useMutation({
+    mutationFn: (postData: any) => postsAPI.create(postData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] })
       toast({
-        title: 'Article créé',
-        description:
-          postData.status === 'published'
-            ? "L'article a été publié."
-            : "L'article a été enregistré en brouillon.",
+        title: 'Post créé',
+        description: 'Le post a été créé avec succès'
       })
-
-      return { success: true }
-    } catch (error: any) {
-      try {
-        const created = repositories.posts.create({
-          ...postData,
-          status: postData.status,
-        } as any)
-        setFallbackPosts(prev => (prev ? [created, ...prev] : [created]))
-        toast({
-          title: 'Article créé (local)',
-          description: 'Mode hors-ligne, enregistré localement.',
-        })
-        return { success: true, offline: true } as any
-      } catch (e: any) {
-        toast({
-          title: 'Erreur',
-          description: e?.message || "Impossible de créer l'article.",
-          variant: 'destructive',
-        })
-        return { success: false, error: e?.message }
-      }
-    }
-  }
-
-  const updatePost = async (id: string, updates: Partial<Post>) => {
-    try {
-      await updateMutation({
-        id: id as Id<'posts'>,
-        title: updates.title,
-        content: updates.content,
-        excerpt: updates.excerpt,
-        category: updates.category,
-        status: updates.status,
-        featuredImage: updates.featuredImage,
-        images: updates.images,
-        videoUrl: updates.videoUrl,
-        tags: updates.tags,
-      })
-
-      toast({
-        title: 'Article mis à jour',
-        description: 'Les modifications ont été sauvegardées.',
-      })
-
-      return { success: true }
-    } catch (error: any) {
-      try {
-        // Fallback mise à jour locale
-        const existing = (fallbackPosts || []).find(p => p.id === id)
-        if (existing) {
-          const updated: Post = { ...existing, ...updates, updatedAt: new Date() } as Post
-          setFallbackPosts(prev => (prev ? prev.map(p => (p.id === id ? updated : p)) : [updated]))
-          toast({
-            title: 'Article mis à jour (local)',
-            description: 'Modifications sauvegardées localement.',
-          })
-          return { success: true, offline: true } as any
-        }
-        return { success: false }
-      } catch (e: any) {
-        toast({
-          title: 'Erreur',
-          description: e?.message || "Impossible de mettre à jour l'article.",
-          variant: 'destructive',
-        })
-        return { success: false, error: e?.message }
-      }
-    }
-  }
-
-  const publishPost = async (id: string) => {
-    try {
-      await publishMutation({ id: id as Id<'posts'> })
-
-      toast({
-        title: 'Article publié',
-        description: "L'article est maintenant visible par tous.",
-      })
-
-      return { success: true }
-    } catch (error: any) {
+    },
+    onError: (error: Error) => {
       toast({
         title: 'Erreur',
-        description: error.message || "Impossible de publier l'article.",
-        variant: 'destructive',
+        description: error.message,
+        variant: 'destructive'
       })
-      return { success: false, error: error.message }
     }
-  }
+  })
 
-  const deletePost = async (id: string) => {
-    try {
-      await removeMutation({ id: id as Id<'posts'> })
-
+  // Mutation pour mettre à jour un post
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: any }) => postsAPI.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] })
       toast({
-        title: 'Article supprimé',
-        description: "L'article a été supprimé.",
+        title: 'Post mis à jour',
+        description: 'Le post a été mis à jour avec succès'
       })
-
-      return { success: true }
-    } catch (error: any) {
+    },
+    onError: (error: Error) => {
       toast({
         title: 'Erreur',
-        description: error.message || "Impossible de supprimer l'article.",
-        variant: 'destructive',
+        description: error.message,
+        variant: 'destructive'
       })
-      return { success: false, error: error.message }
     }
-  }
+  })
 
-  const incrementViews = async (id: string) => {
-    try {
-      await incrementViewsMutation({ id: id as Id<'posts'> })
-      return { success: true }
-    } catch (error) {
-      return { success: false }
+  // Mutation pour publier un post
+  const publishMutation = useMutation({
+    mutationFn: (id: string) => postsAPI.publish(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] })
+      toast({
+        title: 'Post publié',
+        description: 'Le post a été publié avec succès'
+      })
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Erreur',
+        description: error.message,
+        variant: 'destructive'
+      })
     }
-  }
+  })
 
-  const incrementLikes = async (id: string) => {
-    try {
-      await incrementLikesMutation({ id: id as Id<'posts'> })
-      return { success: true }
-    } catch (error) {
-      return { success: false }
+  // Mutation pour dépublier un post
+  const unpublishMutation = useMutation({
+    mutationFn: (id: string) => postsAPI.unpublish(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] })
+      toast({
+        title: 'Post dépublié',
+        description: 'Le post a été dépublié avec succès'
+      })
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Erreur',
+        description: error.message,
+        variant: 'destructive'
+      })
     }
-  }
+  })
 
-  const getPublishedPosts = () => {
-    return posts.filter(p => p.status === 'published')
-  }
+  // Mutation pour supprimer un post
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => postsAPI.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] })
+      toast({
+        title: 'Post supprimé',
+        description: 'Le post a été supprimé avec succès'
+      })
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Erreur',
+        description: error.message,
+        variant: 'destructive'
+      })
+    }
+  })
 
-  const getPostsByCategory = (category: Post['category']) => {
-    return posts.filter(p => p.category === category)
-  }
+  // Mutation pour ajouter un commentaire
+  const addCommentMutation = useMutation({
+    mutationFn: ({ id, content }: { id: string; content: string }) => 
+      postsAPI.addComment(id, content),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] })
+      toast({
+        title: 'Commentaire ajouté',
+        description: 'Votre commentaire a été ajouté'
+      })
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Erreur',
+        description: error.message,
+        variant: 'destructive'
+      })
+    }
+  })
 
-  const getPostById = (id: string) => {
-    return posts.find(p => p.id === id)
-  }
+  // Mutation pour supprimer un commentaire
+  const deleteCommentMutation = useMutation({
+    mutationFn: ({ id, commentId }: { id: string; commentId: string }) => 
+      postsAPI.deleteComment(id, commentId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] })
+      toast({
+        title: 'Commentaire supprimé',
+        description: 'Le commentaire a été supprimé'
+      })
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Erreur',
+        description: error.message,
+        variant: 'destructive'
+      })
+    }
+  })
+
+  // Mutation pour liker un post
+  const likeMutation = useMutation({
+    mutationFn: (id: string) => postsAPI.like(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] })
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Erreur',
+        description: error.message,
+        variant: 'destructive'
+      })
+    }
+  })
+
+  // Mutation pour unliker un post
+  const unlikeMutation = useMutation({
+    mutationFn: (id: string) => postsAPI.unlike(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] })
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Erreur',
+        description: error.message,
+        variant: 'destructive'
+      })
+    }
+  })
 
   return {
     posts,
-    isLoading: postsData === undefined && !fallbackReady,
-    createPost,
-    updatePost,
-    publishPost,
-    deletePost,
-    incrementViews,
-    incrementLikes,
-    getPublishedPosts,
-    getPostsByCategory,
-    getPostById,
+    isLoading,
+    error,
+    createPost: createMutation.mutate,
+    isCreating: createMutation.isPending,
+    updatePost: updateMutation.mutate,
+    isUpdating: updateMutation.isPending,
+    publishPost: publishMutation.mutate,
+    isPublishing: publishMutation.isPending,
+    unpublishPost: unpublishMutation.mutate,
+    isUnpublishing: unpublishMutation.isPending,
+    deletePost: deleteMutation.mutate,
+    isDeleting: deleteMutation.isPending,
+    addComment: addCommentMutation.mutate,
+    isAddingComment: addCommentMutation.isPending,
+    deleteComment: deleteCommentMutation.mutate,
+    isDeletingComment: deleteCommentMutation.isPending,
+    likePost: likeMutation.mutate,
+    isLiking: likeMutation.isPending,
+    unlikePost: unlikeMutation.mutate,
+    isUnliking: unlikeMutation.isPending
   }
+}
+
+export const usePostsByCategory = (category: string) => {
+  const { data: posts = [], isLoading, error } = useQuery({
+    queryKey: ['posts', 'by-category', category],
+    queryFn: () => postsAPI.getByCategory(category).then(res => res.data),
+    enabled: !!category,
+    staleTime: 5 * 60 * 1000,
+    placeholderData: []
+  })
+
+  return { posts, isLoading, error }
+}
+
+export const useTrendingPosts = () => {
+  const { data: posts = [], isLoading, error } = useQuery({
+    queryKey: ['posts', 'trending'],
+    queryFn: () => postsAPI.getTrending().then(res => res.data),
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    refetchInterval: 15 * 60 * 1000, // Refetch every 15 minutes
+    placeholderData: []
+  })
+
+  return { posts, isLoading, error }
+}
+
+export const usePostStats = () => {
+  const { data: stats, isLoading, error } = useQuery({
+    queryKey: ['posts', 'stats'],
+    queryFn: () => postsAPI.getStats().then(res => res.data),
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    placeholderData: {
+      totalPosts: 0,
+      publishedPosts: 0,
+      totalComments: 0,
+      totalLikes: 0,
+      byStatus: []
+    }
+  })
+
+  return { stats, isLoading, error }
 }

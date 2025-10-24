@@ -29,29 +29,35 @@ export function SuperAdminLoginDialog({ isOpen, onClose }: SuperAdminLoginProps)
 
     try {
       if (password === SUPER_ADMIN_PASSWORD) {
-        const superAdmin = repositories.employees
-          .getAll()
-          .find(emp => emp.email === SUPER_ADMIN_EMAIL)
-
-        if (superAdmin) {
-          login(superAdmin)
-
-          toast({
-            title: '🔐 Accès Super Admin',
-            description: `Bienvenue ${superAdmin.firstName} ${superAdmin.lastName}`,
-          })
-
-          onClose()
-          setTimeout(() => {
-            navigate('/app/admin')
-          }, 200)
-        } else {
-          toast({
-            title: 'Erreur',
-            description: 'Compte Super Admin introuvable.',
-            variant: 'destructive',
-          })
+        // Créer un compte Super Admin temporaire
+        const superAdmin = {
+          id: 'super-admin-system',
+          firstName: 'PA',
+          lastName: 'PELLEN',
+          matricule: 'ADM001',
+          service: 'Administrateur Systèmes & Informatique',
+          roles: ['ADMIN', 'SUPERADMIN'],
+          competences: ['Administration systèmes', 'Sécurité informatique', 'Supervision'],
+          habilitations: ['Accès total', 'Configuration système'],
+          email: 'superadmin@sogara.pro',
+          status: 'active',
+          stats: { visitsReceived: 0, packagesReceived: 0, hseTrainingsCompleted: 0 },
+          equipmentIds: [],
+          createdAt: new Date(),
+          updatedAt: new Date(),
         }
+
+        login(superAdmin)
+
+        toast({
+          title: '🔐 Accès Super Admin',
+          description: `Bienvenue ${superAdmin.firstName} ${superAdmin.lastName}`,
+        })
+
+        onClose()
+        setTimeout(() => {
+          navigate('/app/dashboard')
+        }, 200)
       } else {
         toast({
           title: 'Accès refusé',

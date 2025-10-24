@@ -1,5 +1,5 @@
 import type { LucideIcon } from 'lucide-react'
-import { Shield, Users, Package, HardHat, Megaphone, Crown, UserCog } from 'lucide-react'
+import { Shield, Users, Package, HardHat, Megaphone, Crown, UserCog, FileCheck } from 'lucide-react'
 import type { UserRole } from '@/types'
 
 export type DemoAccountSlug =
@@ -11,6 +11,7 @@ export type DemoAccountSlug =
   | 'dg001'
   | 'drh001'
   | 'ext001'
+  | 'conf001'
 
 export interface DemoAccount {
   id: string
@@ -63,7 +64,7 @@ export const demoAccounts: DemoAccount[] = [
     id: '8',
     slug: 'drh001',
     matricule: 'DRH001',
-    fullName: 'Ingride TCHEN Ep...',
+    fullName: 'Ingride TCHEN',
     jobTitle: 'Directrice des Ressources Humaines',
     roles: ['DRH', 'ADMIN'],
     category: 'Direction',
@@ -154,28 +155,27 @@ export const demoAccounts: DemoAccount[] = [
     slug: 'hse002',
     matricule: 'HSE002',
     fullName: 'Lise Véronique DITSOUGOU',
-    jobTitle: 'Chef HSSE',
-    roles: ['HSE', 'COMPLIANCE', 'SECURITE'],
+    jobTitle: 'Chef HSSE Opérationnel',
+    roles: ['HSE'],
     category: 'HSSE',
-    featuredModule: 'Sécurité, Conformité et HSSE',
+    featuredModule: 'Gestion HSE - Incidents et Formations',
     description:
-      'Direction de la division HSSE, supervision de la conformité réglementaire et gestion de la sécurité incluant la réception.',
+      'Chef HSSE Opérationnel, gestion quotidienne des opérations HSSE, incidents et formations. Rapporte au Chef de Division HSSE.',
     responsibilities: [
-      'Direction de la division HSSE et Conformité',
-      'Gestion des incidents de sécurité',
-      'Supervision de la conformité réglementaire',
-      'Organisation des formations HSSE',
-      'Gestion de la sécurité et réception',
-      'Suivi des habilitations et certifications',
-      'Inspection des équipements de sécurité',
-      'Validation des habilitations critiques',
-      'Production des rapports sécurité et conformité',
-      'Coordination avec les responsables HSSE, Conformité et Sécurité',
+      'Gestion quotidienne des opérations HSSE',
+      'Gestion des incidents HSSE',
+      'Organisation et suivi des formations HSSE',
+      'Gestion des données HSE',
+      'Production des rapports HSE',
+      'Suivi des habilitations HSSE',
+      'Inspection des équipements de sécurité HSE',
+      'Validation des habilitations HSSE',
+      'Coordination avec les équipes HSSE',
     ],
-    accessSummary: 'Accès : Personnel, Équipements, HSSE, Conformité, Sécurité, Réception',
-    defaultRoute: '/app/hse002',
+    accessSummary: 'Accès : Module HSE, Formations HSSE, Données HSE, Rapports HSE',
+    defaultRoute: '/app/hse',
     loginHint: 'Mot de passe démo : HSE123!',
-    colorClass: 'bg-secondary text-secondary-foreground',
+    colorClass: 'bg-green-600 text-white',
     icon: Shield,
   },
   {
@@ -184,25 +184,28 @@ export const demoAccounts: DemoAccount[] = [
     matricule: 'REC001',
     fullName: 'Sylvie KOUMBA',
     jobTitle: 'Responsable Sécurité',
-    roles: ['RECEP'],
+    roles: ['SECURITE'],
     category: 'HSSE',
-    featuredModule: 'Gestion visiteurs et colis',
+    featuredModule: 'Gestion Sécurité - Visites, Colis et Logistique',
     description:
       "Gestion de la sécurité, de l'accueil physique, du contrôle badges et du courrier entrant.",
     responsibilities: [
       'Gestion de la sécurité du site',
-      'Enregistrement des visiteurs',
-      'Gestion des badges et check-in/out',
-      'Réception des colis et courriers',
-      'Distribution aux destinataires',
-      "Gestion du registre d'entrées",
+      'Enregistrement et gestion des visiteurs',
+      'Gestion des badges et contrôle d\'accès',
+      'Réception et gestion des colis et courriers',
+      'Gestion du magasin d\'équipement',
+      'Distribution et logistique des équipements',
+      'Gestion du registre d\'entrées et sorties',
       'Premier contact sécuritaire',
+      'Formation sécurité du personnel',
+      'Production des rapports de sécurité',
     ],
-    accessSummary: 'Accès : Visites, Colis & Courriers',
-    defaultRoute: '/app/visites',
-    loginHint: 'Mot de passe démo : Reception123!',
-    colorClass: 'bg-accent text-accent-foreground',
-    icon: Package,
+    accessSummary: 'Accès : Module Sécurité, Visites/Colis/Courrier, Logistique, Formations Sécurité, Données Sécurité, Rapports Sécurité',
+    defaultRoute: '/app/securite',
+    loginHint: 'Mot de passe démo : Securite123!',
+    colorClass: 'bg-blue-600 text-white',
+    icon: Shield,
   },
   {
     id: '1',
@@ -250,6 +253,37 @@ export const demoAccounts: DemoAccount[] = [
     loginHint: 'Mot de passe démo : External123!',
     colorClass: 'bg-orange-500 text-white',
     icon: Users,
+  },
+  {
+    id: '12',
+    slug: 'conf001',
+    matricule: 'CONF001',
+    fullName: 'Pierrette NOMSI',
+    jobTitle: 'Responsable CONFORMITÉ',
+    roles: ['COMPLIANCE'],
+    category: 'HSSE',
+    featuredModule: 'Gestion Conformité - Audits et Réglementation',
+    description:
+      'Responsable de la conformité réglementaire, des audits et du respect des normes HSSE chez SOGARA.',
+    responsibilities: [
+      'Supervision de la conformité réglementaire',
+      'Coordination des audits internes et externes',
+      'Suivi des certifications et accréditations',
+      'Veille réglementaire et normative',
+      'Gestion de la documentation de conformité',
+      'Évaluation des risques de non-conformité',
+      'Formation du personnel aux exigences réglementaires',
+      'Production des rapports de conformité',
+      'Interface avec les organismes de réglementation',
+      'Mise en place des plans d\'action correctifs',
+      'Suivi des indicateurs de conformité',
+      'Gestion des non-conformités et des actions correctives',
+    ],
+    accessSummary: 'Accès : Module Conformité, Formations Conformité, Données Conformité, Rapports Conformité',
+    defaultRoute: '/app/conformite',
+    loginHint: 'Mot de passe démo : Conformite123!',
+    colorClass: 'bg-purple-600 text-white',
+    icon: FileCheck,
   },
 ]
 

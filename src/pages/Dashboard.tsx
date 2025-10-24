@@ -11,6 +11,8 @@ import {
   BookOpen,
   TrendingUp,
   BarChart3,
+  Target,
+  RefreshCw,
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -24,12 +26,18 @@ import { StatusBadge } from '@/components/ui/status-badge'
 import { EmployeeHSEInbox } from '@/components/employee/EmployeeHSEInbox'
 import { EmployeeDashboard } from './EmployeeDashboard'
 import { ExternalDashboard } from './external/ExternalDashboard'
+import { AdvancedAnalyticsDashboard } from '@/components/analytics/AdvancedAnalyticsDashboard'
+import { ApprovalWorkflowManager } from '@/components/approval/ApprovalWorkflowManager'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { LoadingSpinner, LoadingOverlay } from '@/components/ui/LoadingSpinner'
+import { useAsyncState } from '@/hooks/useAsyncState'
 import { useNavigate } from 'react-router-dom'
 
 // Composant HSSEDashboard pour le Chef de Division HSSE
 const HSSEDashboard = () => {
   const { user, currentUser } = useAuth()
   const navigate = useNavigate()
+  const [activeTab, setActiveTab] = useState('overview')
 
   // Mock data pour les statistiques
   const mockStats = {
@@ -363,11 +371,35 @@ export function Dashboard() {
   const { stats, recentNotifications, markNotificationAsRead } = useDashboard()
   const { currentUser, hasAnyRole, user } = useAuth()
   const [showHSEInbox, setShowHSEInbox] = useState(false)
+  const [activeTab, setActiveTab] = useState('overview')
   const navigate = useNavigate()
+  
+  // Gestion des états asynchrones
+  const dashboardState = useAsyncState()
+  const [isRefreshing, setIsRefreshing] = useState(false)
 
   const { unreadCount, complianceRate, pendingTrainings, completedTrainings } = useEmployeeHSEInbox(
     currentUser?.id || '',
   )
+
+  // Fonction de rafraîchissement avec gestion d'erreurs
+  const handleRefresh = async () => {
+    setIsRefreshing(true)
+    try {
+      await dashboardState.execute(async () => {
+        // Simuler un appel API de rafraîchissement
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        return { success: true }
+      })
+    } catch (error) {
+      console.error('Erreur lors du rafraîchissement:', error)
+    } finally {
+      setIsRefreshing(false)
+    }
+  }
+
+  // Vérifier si c'est un administrateur système
+  const isSystemAdmin = currentUser?.matricule === 'ADM001' || hasAnyRole(['SUPERADMIN'])
 
   // Si l'utilisateur est un candidat EXTERNE, afficher le dashboard externe
   if (currentUser?.roles.includes('EXTERNE')) {
@@ -431,284 +463,622 @@ export function Dashboard() {
     { label: 'Terminées', count: stats.visitsToday.completed, variant: 'success' as const },
   ]
 
+  // Affichage des erreurs
+  if (dashboardState.error) {
+    return (
+      <div className="space-y-6">
+        <div className="text-center py-12">
+          <AlertTriangle className="w-12 h-12 mx-auto mb-4 text-destructive" />
+          <h2 className="text-xl font-semibold mb-2">Erreur de chargement</h2>
+          <p className="text-muted-foreground mb-4">{dashboardState.error}</p>
+          <Button onClick={handleRefresh} variant="outline">
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Réessayer
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="space-y-6 animate-fade-in">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground mb-2">Tableau de bord</h1>
-        <p className="text-muted-foreground">
-          Bonjour {currentUser?.firstName}, voici l'aperçu de votre journée
-        </p>
+    <LoadingOverlay isLoading={dashboardState.loading} text="Chargement du tableau de bord...">
+      <div className="space-y-6 animate-fade-in">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground mb-2">
+            {isSystemAdmin ? 'Tableau de bord Administrateur Système' : 'Tableau de bord Direction HSSE'}
+          </h1>
+          <p className="text-muted-foreground">
+            Bonjour {currentUser?.firstName}, {isSystemAdmin ? 'voici l\'aperçu du système' : 'voici l\'aperçu de votre journée'}
+          </p>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleRefresh}
+          disabled={isRefreshing}
+          className="gap-2"
+        >
+          <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+          {isRefreshing ? 'Actualisation...' : 'Actualiser'}
+        </Button>
+      </div>
+        {isSystemAdmin && (
+          <div className="mt-2 space-y-2">
+            <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
+              <Shield className="w-4 h-4 mr-1" />
+              Administrateur Système
+            </Badge>
+            <div className="text-sm text-muted-foreground bg-blue-50 p-3 rounded-lg border border-blue-200">
+              <strong>Compte de maintenance :</strong> Vous avez accès à toutes les fonctionnalités du système 
+              pour la maintenance et l'administration. Ce compte n'est pas lié aux employés de l'entreprise.
+            </div>
+          </div>
+        )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {kpiCards.map((card, index) => {
-          const Icon = card.icon
-          return (
-            <Card
-              key={index}
-              className="industrial-card hover:shadow-[var(--shadow-elevated)] transition-shadow animate-slide-up"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  {card.title}
-                </CardTitle>
-                <div className={`p-2 rounded-lg ${card.bgColor}`}>
-                  <Icon className={`h-4 w-4 ${card.color}`} />
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
+          <TabsTrigger value="analytics">Analytics Avancés</TabsTrigger>
+          <TabsTrigger value="workflows">Workflows d'Approbation</TabsTrigger>
+          <TabsTrigger value="hse">Module HSE</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="space-y-6">
+          {/* KPIs Principaux */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {kpiCards.map((card, index) => {
+              const Icon = card.icon
+              return (
+                <Card
+                  key={index}
+                  className="industrial-card hover:shadow-[var(--shadow-elevated)] transition-shadow animate-slide-up"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium text-muted-foreground">
+                      {card.title}
+                    </CardTitle>
+                    <div className={`p-2 rounded-lg ${card.bgColor}`}>
+                      <Icon className={`h-4 w-4 ${card.color}`} />
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-foreground mb-1">{card.value}</div>
+                    <p className="text-xs text-muted-foreground">{card.change}</p>
+                  </CardContent>
+                </Card>
+              )
+            })}
+          </div>
+
+          {/* Section Actions Rapides */}
+          <Card className="industrial-card">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Target className="w-5 h-5" />
+                {isSystemAdmin ? 'Actions Administrateur' : 'Actions Rapides'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isSystemAdmin ? (
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <Button 
+                    className="h-20 flex flex-col gap-2" 
+                    variant="outline"
+                    onClick={() => navigate('/app/personnel')}
+                  >
+                    <Users className="w-6 h-6" />
+                    <span className="text-sm">Gestion Utilisateurs</span>
+                  </Button>
+                  <Button 
+                    className="h-20 flex flex-col gap-2" 
+                    variant="outline"
+                    onClick={() => navigate('/app/projet')}
+                  >
+                    <Shield className="w-6 h-6" />
+                    <span className="text-sm">Sécurité Système</span>
+                  </Button>
+                  <Button 
+                    className="h-20 flex flex-col gap-2" 
+                    variant="outline"
+                    onClick={() => navigate('/app/dg-analytics')}
+                  >
+                    <BarChart3 className="w-6 h-6" />
+                    <span className="text-sm">Monitoring</span>
+                  </Button>
+                  <Button 
+                    className="h-20 flex flex-col gap-2" 
+                    variant="outline"
+                    onClick={() => navigate('/app/equipements')}
+                  >
+                    <HardHat className="w-6 h-6" />
+                    <span className="text-sm">Maintenance</span>
+                  </Button>
                 </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Button 
+                    className="h-20 flex flex-col gap-2" 
+                    variant="outline"
+                    onClick={() => {
+                      navigate('/app/visites')
+                    }}
+                  >
+                    <Users className="w-6 h-6" />
+                    <span className="text-sm">Nouvelle Visite</span>
+                  </Button>
+                  <Button 
+                    className="h-20 flex flex-col gap-2" 
+                    variant="outline"
+                    onClick={() => {
+                      navigate('/app/colis')
+                    }}
+                  >
+                    <Package className="w-6 h-6" />
+                    <span className="text-sm">Enregistrer Colis</span>
+                  </Button>
+                  <Button 
+                    className="h-20 flex flex-col gap-2" 
+                    variant="outline"
+                    onClick={() => {
+                      navigate('/app/hse')
+                    }}
+                  >
+                    <Shield className="w-6 h-6" />
+                    <span className="text-sm">Déclarer Incident</span>
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Section spéciale pour les administrateurs système */}
+          {isSystemAdmin && (
+            <Card className="industrial-card border-red-200 bg-red-50/30">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-red-700">
+                  <Shield className="w-5 h-5" />
+                  Informations Système
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-foreground mb-1">{card.value}</div>
-                <p className="text-xs text-muted-foreground">{card.change}</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="text-center p-3 bg-white rounded-lg">
+                    <div className="text-2xl font-bold text-green-600">10</div>
+                    <div className="text-sm text-muted-foreground">Utilisateurs Actifs</div>
+                  </div>
+                  <div className="text-center p-3 bg-white rounded-lg">
+                    <div className="text-2xl font-bold text-blue-600">99.9%</div>
+                    <div className="text-sm text-muted-foreground">Uptime Système</div>
+                  </div>
+                  <div className="text-center p-3 bg-white rounded-lg">
+                    <div className="text-2xl font-bold text-orange-600">0</div>
+                    <div className="text-sm text-muted-foreground">Alertes Actives</div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
-          )
-        })}
-      </div>
+          )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="industrial-card">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Calendar className="w-5 h-5" />
-              Visites du jour
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {visitStatusData.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between p-3 rounded-lg bg-muted/30"
-                >
-                  <div className="flex items-center gap-3">
-                    <StatusBadge status={item.label} variant={item.variant} />
-                  </div>
-                  <span className="font-semibold text-lg">{item.count}</span>
-                </div>
-              ))}
-            </div>
-
-            {stats.visitsToday.total === 0 && (
-              <div className="text-center py-8 text-muted-foreground">
-                <Calendar className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                <p>Aucune visite programmée aujourd'hui</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="industrial-card">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5" />
-              Notifications récentes
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {recentNotifications.length > 0 ? (
-                recentNotifications.map(notification => (
-                  <div
-                    key={notification.id}
-                    className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer"
-                    onClick={() => markNotificationAsRead(notification.id)}
-                  >
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card className="industrial-card">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Calendar className="w-5 h-5" />
+                  Visites du jour
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {visitStatusData.map((item, index) => (
                     <div
-                      className={`p-1 rounded-full mt-1 ${
-                        notification.type === 'urgent'
-                          ? 'bg-destructive/10'
-                          : notification.type === 'warning'
-                            ? 'bg-warning/10'
-                            : notification.type === 'success'
-                              ? 'bg-success/10'
-                              : 'bg-primary/10'
+                      key={index}
+                      className="flex items-center justify-between p-3 rounded-lg bg-muted/30"
+                    >
+                      <div className="flex items-center gap-3">
+                        <StatusBadge status={item.label} variant={item.variant} />
+                      </div>
+                      <span className="font-semibold text-lg">{item.count}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {stats.visitsToday.total === 0 && (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Calendar className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                    <p>Aucune visite programmée aujourd'hui</p>
+                  </div>
+                )}
+              </CardContent>
+                </Card>
+
+            <Card className="industrial-card">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <AlertTriangle className="w-5 h-5" />
+                  Notifications récentes
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {recentNotifications.length > 0 ? (
+                    recentNotifications.map(notification => (
+                      <div
+                        key={notification.id}
+                        className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer"
+                        onClick={() => markNotificationAsRead(notification.id)}
+                      >
+                        <div
+                          className={`p-1 rounded-full mt-1 ${
+                            notification.type === 'urgent'
+                              ? 'bg-destructive/10'
+                              : notification.type === 'warning'
+                                ? 'bg-warning/10'
+                                : notification.type === 'success'
+                                  ? 'bg-success/10'
+                                  : 'bg-primary/10'
+                          }`}
+                        >
+                          <div
+                            className={`w-2 h-2 rounded-full ${
+                              notification.type === 'urgent'
+                                ? 'bg-destructive'
+                                : notification.type === 'warning'
+                                  ? 'bg-warning'
+                                  : notification.type === 'success'
+                                    ? 'bg-success'
+                                    : 'bg-primary'
+                            }`}
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-foreground truncate">
+                            {notification.title}
+                          </p>
+                          <p className="text-xs text-muted-foreground line-clamp-2">
+                            {notification.message}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {new Date(notification.timestamp).toLocaleTimeString()}
+                          </p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <CheckCircle className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                      <p>Aucune notification en attente</p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <Card className="industrial-card">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Package className="w-5 h-5" />
+                  Colis & Courriers
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">En attente de remise</span>
+                    <Badge variant={stats.packages.pending > 0 ? 'destructive' : 'secondary'}>
+                      {stats.packages.pending}
+                    </Badge>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Priorité urgente</span>
+                    <Badge variant={stats.packages.urgent > 0 ? 'destructive' : 'secondary'}>
+                      {stats.packages.urgent}
+                    </Badge>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Remis aujourd'hui</span>
+                    <Badge variant="outline">{stats.packages.delivered}</Badge>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="industrial-card">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <HardHat className="w-5 h-5" />
+                  Équipements
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Contrôles à venir</span>
+                    <Badge variant={stats.equipment.needsCheck > 0 ? 'destructive' : 'secondary'}>
+                      {stats.equipment.needsCheck}
+                    </Badge>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">En maintenance</span>
+                    <Badge variant="outline">{stats.equipment.inMaintenance}</Badge>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card
+              className={`industrial-card cursor-pointer hover:shadow-lg transition-all ${
+                unreadCount > 0 ? 'border-2 border-primary' : ''
+              }`}
+              onClick={() => setShowHSEInbox(true)}
+            >
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2">
+                    <div
+                      className={`p-2 rounded-lg ${
+                        complianceRate >= 90
+                          ? 'bg-green-100'
+                          : complianceRate >= 70
+                            ? 'bg-yellow-100'
+                            : 'bg-red-100'
                       }`}
                     >
-                      <div
-                        className={`w-2 h-2 rounded-full ${
-                          notification.type === 'urgent'
-                            ? 'bg-destructive'
-                            : notification.type === 'warning'
-                              ? 'bg-warning'
-                              : notification.type === 'success'
-                                ? 'bg-success'
-                                : 'bg-primary'
+                      <Shield
+                        className={`w-5 h-5 ${
+                          complianceRate >= 90
+                            ? 'text-green-600'
+                            : complianceRate >= 70
+                              ? 'text-yellow-600'
+                              : 'text-red-600'
                         }`}
                       />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-foreground truncate">
-                        {notification.title}
-                      </p>
-                      <p className="text-xs text-muted-foreground line-clamp-2">
-                        {notification.message}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {new Date(notification.timestamp).toLocaleTimeString()}
-                      </p>
+                    <span>Mon Espace HSE</span>
+                  </CardTitle>
+                  {unreadCount > 0 && (
+                    <div className="flex items-center gap-2">
+                      <Badge variant="destructive" className="animate-pulse">
+                        {unreadCount} nouveau{unreadCount > 1 ? 'x' : ''}
+                      </Badge>
+                      <div className="w-2 h-2 bg-red-500 rounded-full animate-ping" />
+                    </div>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div>
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm text-muted-foreground">Ma conformité HSE</span>
+                      <Badge
+                        variant={
+                          complianceRate >= 90
+                            ? 'default'
+                            : complianceRate >= 70
+                              ? 'secondary'
+                              : 'destructive'
+                        }
+                      >
+                        {complianceRate}%
+                      </Badge>
+                    </div>
+                    <Progress
+                      value={complianceRate}
+                      className={`h-2 ${
+                        complianceRate >= 90
+                          ? 'bg-green-100'
+                          : complianceRate >= 70
+                            ? 'bg-yellow-100'
+                            : 'bg-red-100'
+                      }`}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="text-center p-2 bg-yellow-50 rounded">
+                      <div className="font-bold text-lg text-yellow-600">{pendingTrainings.length}</div>
+                      <div className="text-muted-foreground">En attente</div>
+                    </div>
+                    <div className="text-center p-2 bg-green-50 rounded">
+                      <div className="font-bold text-lg text-green-600">
+                        {completedTrainings.length}
+                      </div>
+                      <div className="text-muted-foreground">Complétées</div>
                     </div>
                   </div>
-                ))
-              ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  <CheckCircle className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                  <p>Aucune notification en attente</p>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="industrial-card">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Package className="w-5 h-5" />
-              Colis & Courriers
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">En attente de remise</span>
-                <Badge variant={stats.packages.pending > 0 ? 'destructive' : 'secondary'}>
-                  {stats.packages.pending}
-                </Badge>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Priorité urgente</span>
-                <Badge variant={stats.packages.urgent > 0 ? 'destructive' : 'secondary'}>
-                  {stats.packages.urgent}
-                </Badge>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Remis aujourd'hui</span>
-                <Badge variant="outline">{stats.packages.delivered}</Badge>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="industrial-card">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <HardHat className="w-5 h-5" />
-              Équipements
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Contrôles à venir</span>
-                <Badge variant={stats.equipment.needsCheck > 0 ? 'destructive' : 'secondary'}>
-                  {stats.equipment.needsCheck}
-                </Badge>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">En maintenance</span>
-                <Badge variant="outline">{stats.equipment.inMaintenance}</Badge>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card
-          className={`industrial-card cursor-pointer hover:shadow-lg transition-all ${
-            unreadCount > 0 ? 'border-2 border-primary' : ''
-          }`}
-          onClick={() => setShowHSEInbox(true)}
-        >
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
-                <div
-                  className={`p-2 rounded-lg ${
-                    complianceRate >= 90
-                      ? 'bg-green-100'
-                      : complianceRate >= 70
-                        ? 'bg-yellow-100'
-                        : 'bg-red-100'
-                  }`}
-                >
-                  <Shield
-                    className={`w-5 h-5 ${
-                      complianceRate >= 90
-                        ? 'text-green-600'
-                        : complianceRate >= 70
-                          ? 'text-yellow-600'
-                          : 'text-red-600'
-                    }`}
-                  />
-                </div>
-                <span>Mon Espace HSE</span>
-              </CardTitle>
-              {unreadCount > 0 && (
-                <div className="flex items-center gap-2">
-                  <Badge variant="destructive" className="animate-pulse">
-                    {unreadCount} nouveau{unreadCount > 1 ? 'x' : ''}
-                  </Badge>
-                  <div className="w-2 h-2 bg-red-500 rounded-full animate-ping" />
-                </div>
-              )}
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-muted-foreground">Ma conformité HSE</span>
-                  <Badge
-                    variant={
-                      complianceRate >= 90
-                        ? 'default'
-                        : complianceRate >= 70
-                          ? 'secondary'
-                          : 'destructive'
-                    }
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="w-full gap-2 group-hover:bg-primary group-hover:text-primary-foreground"
                   >
-                    {complianceRate}%
-                  </Badge>
+                    <BookOpen className="w-4 h-4" />
+                    Accéder à mon espace HSE
+                    {unreadCount > 0 && <Badge className="ml-auto">{unreadCount}</Badge>}
+                  </Button>
                 </div>
-                <Progress
-                  value={complianceRate}
-                  className={`h-2 ${
-                    complianceRate >= 90
-                      ? 'bg-green-100'
-                      : complianceRate >= 70
-                        ? 'bg-yellow-100'
-                        : 'bg-red-100'
-                  }`}
-                />
-              </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
 
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="text-center p-2 bg-yellow-50 rounded">
-                  <div className="font-bold text-lg text-yellow-600">{pendingTrainings.length}</div>
-                  <div className="text-muted-foreground">En attente</div>
-                </div>
-                <div className="text-center p-2 bg-green-50 rounded">
-                  <div className="font-bold text-lg text-green-600">
-                    {completedTrainings.length}
-                  </div>
-                  <div className="text-muted-foreground">Complétées</div>
-                </div>
+        <TabsContent value="analytics" className="space-y-4">
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">Analytics Avancés</h2>
+                <p className="text-muted-foreground">Analyse approfondie des performances HSSE</p>
               </div>
-
-              <Button
-                size="sm"
-                variant="outline"
-                className="w-full gap-2 group-hover:bg-primary group-hover:text-primary-foreground"
-              >
-                <BookOpen className="w-4 h-4" />
-                Accéder à mon espace HSE
-                {unreadCount > 0 && <Badge className="ml-auto">{unreadCount}</Badge>}
-              </Button>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="flex items-center gap-1">
+                  <BarChart3 className="w-4 h-4" />
+                  Temps réel
+                </Badge>
+              </div>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+            <AdvancedAnalyticsDashboard />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="workflows" className="space-y-4">
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">Workflows d'Approbation</h2>
+                <p className="text-muted-foreground">Gestion des processus d'approbation et de validation</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="flex items-center gap-1">
+                  <Clock className="w-4 h-4" />
+                  Processus actifs
+                </Badge>
+              </div>
+            </div>
+            <ApprovalWorkflowManager />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="hse" className="space-y-4">
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">Module HSE</h2>
+                <p className="text-muted-foreground">Gestion complète de la sécurité, santé et environnement</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="flex items-center gap-1">
+                  <Shield className="w-4 h-4" />
+                  Conformité HSE
+                </Badge>
+              </div>
+            </div>
+
+            {/* Statistiques HSE */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <Card className="industrial-card">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Incidents HSE</p>
+                      <p className="text-2xl font-bold">0</p>
+                    </div>
+                    <AlertTriangle className="h-8 w-8 text-orange-500" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="industrial-card">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Formations</p>
+                      <p className="text-2xl font-bold">2</p>
+                    </div>
+                    <BookOpen className="h-8 w-8 text-blue-500" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="industrial-card">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Conformité</p>
+                      <p className="text-2xl font-bold">85%</p>
+                    </div>
+                    <CheckCircle className="h-8 w-8 text-green-500" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="industrial-card">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Équipements</p>
+                      <p className="text-2xl font-bold">1</p>
+                    </div>
+                    <HardHat className="h-8 w-8 text-purple-500" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Actions HSE */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <Card className="industrial-card cursor-pointer hover:shadow-lg transition-all">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <AlertTriangle className="w-5 h-5 text-red-500" />
+                    Déclarer un Incident
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Enregistrer un nouvel incident HSE
+                  </p>
+                  <Button className="w-full" variant="outline">
+                    Nouvel Incident
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="industrial-card cursor-pointer hover:shadow-lg transition-all">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BookOpen className="w-5 h-5 text-blue-500" />
+                    Formations HSE
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Gérer les formations et certifications
+                  </p>
+                  <Button className="w-full" variant="outline">
+                    Voir Formations
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="industrial-card cursor-pointer hover:shadow-lg transition-all">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Shield className="w-5 h-5 text-green-500" />
+                    Conformité
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Suivi de la conformité réglementaire
+                  </p>
+                  <Button className="w-full" variant="outline">
+                    Voir Conformité
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Accès au Module Complet */}
+            <Card className="industrial-card">
+              <CardContent className="p-6 text-center">
+                <Shield className="h-12 w-12 mx-auto mb-4 text-primary" />
+                <h3 className="text-lg font-semibold mb-2">Module HSE Complet</h3>
+                <p className="text-muted-foreground mb-4">
+                  Accédez au module HSE complet avec toutes les fonctionnalités avancées
+                </p>
+                <Button onClick={() => navigate('/app/hse')} size="lg">
+                  Accéder au Module HSE
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+      </Tabs>
 
       {/* Dialog Mon Espace HSE */}
       <Dialog open={showHSEInbox} onOpenChange={setShowHSEInbox}>
@@ -719,6 +1089,6 @@ export function Dashboard() {
           <EmployeeHSEInbox employeeId={currentUser?.id || ''} />
         </DialogContent>
       </Dialog>
-    </div>
+    </LoadingOverlay>
   )
 }

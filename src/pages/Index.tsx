@@ -10,7 +10,12 @@ const queryClient = new QueryClient()
 const Index = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <BrowserRouter>
+      <BrowserRouter
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true,
+        }}
+      >
         <Toaster />
         <Sonner />
         <App />

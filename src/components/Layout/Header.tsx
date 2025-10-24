@@ -32,7 +32,9 @@ export function Header() {
   }
 
   const showAccountHubShortcut =
-    hasAnyRole(['ADMIN']) && !location.pathname.startsWith('/app/accounts')
+    hasAnyRole(['ADMIN']) && 
+    !hasAnyRole(['DG']) && 
+    !location.pathname.startsWith('/app/accounts')
 
   const getRoleDisplayName = (roles: string[]) => {
     const roleNames = {

@@ -55,20 +55,6 @@ const seedEmployees = async () => {
         stats: { visitsReceived: 15, packagesReceived: 8, hseTrainingsCompleted: 4 }
       },
       {
-        id: '3',
-        firstName: 'PELLEN',
-        lastName: 'Asted',
-        matricule: 'ADM001',
-        service: 'Administrateur Systèmes & Informatique',
-        roles: ['ADMIN', 'SUPERADMIN'],
-        competences: ['Administration systèmes', 'Sécurité informatique', 'Supervision'],
-        habilitations: ['Accès total', 'Configuration système'],
-        email: 'superadmin@sogara.pro',
-        password: '011282*',
-        status: 'active',
-        stats: { visitsReceived: 3, packagesReceived: 1, hseTrainingsCompleted: 8 }
-      },
-      {
         id: '4',
         firstName: 'Lié Orphé',
         lastName: 'BOURDES',
@@ -137,6 +123,20 @@ const seedEmployees = async () => {
         password: 'DRH123!',
         status: 'active',
         stats: { visitsReceived: 7, packagesReceived: 4, hseTrainingsCompleted: 9 }
+      },
+      {
+        id: '12',
+        firstName: 'Pierrette',
+        lastName: 'NOMSI',
+        matricule: 'CONF001',
+        service: 'Conformité',
+        roles: ['COMPLIANCE'],
+        competences: ['Audits réglementaires', 'Conformité HSSE', 'Veille normative', 'Gestion documentation', 'Évaluation risques'],
+        habilitations: ['Audits internes', 'Audits externes', 'Certifications', 'Rapports conformité'],
+        email: 'pierrette.nomsi@sogara.com',
+        password: 'Conformite123!',
+        status: 'active',
+        stats: { visitsReceived: 2, packagesReceived: 3, hseTrainingsCompleted: 8 }
       },
       {
         id: '10',

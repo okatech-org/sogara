@@ -1,6 +1,9 @@
 import type { ReactNode } from 'react'
 import { Navigate, Route, Routes, useLocation, useNavigate, type Location } from 'react-router-dom'
+import { useEffect } from 'react'
 import { AppProvider, useAuth } from '@/contexts/AppContext'
+import { useSocket } from '@/services/socket.service'
+import { useToast } from '@/hooks/use-toast'
 import { Layout } from '@/components/Layout/Layout'
 import { WelcomePage } from '@/components/WelcomePage'
 import { LoginForm } from '@/components/auth/LoginForm'
@@ -8,6 +11,21 @@ import { Dashboard } from '@/pages/Dashboard'
 import { AdminDashboard } from '@/pages/AdminDashboard'
 import { DirectionDashboard } from '@/pages/DirectionDashboard'
 import { RHDashboard } from '@/pages/RHDashboard'
+import { DirectorGeneralDashboard } from '@/pages/DirectorGeneralDashboard'
+import { DGAnalyticsPage } from '@/pages/dg/DGAnalyticsPage'
+import { DGReportsPage } from '@/pages/dg/DGReportsPage'
+import { DGExportPage } from '@/pages/dg/DGExportPage'
+import { DirectionPage } from '@/pages/dg/DirectionPage'
+import { DGRHOverviewPage } from '@/pages/dg/DGRHOverviewPage'
+import { DGPlanningPage } from '@/pages/dg/DGPlanningPage'
+import { DGFormationsPage } from '@/pages/dg/DGFormationsPage'
+import { DGHSEOverviewPage } from '@/pages/dg/DGHSEOverviewPage'
+import { DGHSEIncidentsViewPage } from '@/pages/dg/DGHSEIncidentsViewPage'
+import { DGComplianceViewPage } from '@/pages/dg/DGComplianceViewPage'
+import { UserSpaceFinalization } from '@/components/UserSpaceFinalization'
+import { QuickTest } from '@/components/QuickTest'
+import { UserSpaceAnalysis } from '@/components/UserSpaceAnalysis'
+import { CompleteFinalization } from '@/components/CompleteFinalization'
 import { MesFormationsPage } from '@/pages/employee/MesFormationsPage'
 import { MesEquipementsPage } from '@/pages/employee/MesEquipementsPage'
 import { MesHabilitationsPage } from '@/pages/employee/MesHabilitationsPage'
@@ -27,6 +45,7 @@ import { HSEPage } from '@/pages/HSEPage'
 import { HSSEManagementPage } from '@/pages/HSSEManagementPage'
 import { HSSEAccountsPage } from '@/pages/HSSEAccountsPage'
 import { StatistiquesFluxHSSEPage } from '@/pages/StatistiquesFluxHSSEPage'
+import ConformitePage from '@/pages/ConformitePage'
 import { SOGARAConnectPage } from '@/pages/SOGARAConnectPage'
 import { ProjetPage } from '@/pages/ProjetPage'
 import NotFound from '@/pages/NotFound'
@@ -86,9 +105,74 @@ function LoginRoute() {
   return <LoginForm onBackToHome={() => navigate('/')} />
 }
 
+function SocketProvider({ children }: { children: ReactNode }) {
+  const { currentUser, isAuthenticated } = useAuth()
+  const { connect, disconnect, on, off } = useSocket()
+  const { toast } = useToast()
+
+  useEffect(() => {
+    if (isAuthenticated && currentUser) {
+      const token = localStorage.getItem('accessToken')
+      if (token) {
+        connect(token)
+
+        // Écouter les notifications
+        const handleNotification = (notification: any) => {
+          toast({
+            title: notification.title,
+            description: notification.message,
+            duration: 5000
+          })
+        }
+
+        const handleHseAlert = (alert: any) => {
+          toast({
+            title: '🚨 Alerte HSE',
+            description: alert.message,
+            variant: 'destructive',
+            duration: 8000
+          })
+        }
+
+        const handleVisitUpdate = (update: any) => {
+          toast({
+            title: '👥 Visite mise à jour',
+            description: update.message,
+            duration: 4000
+          })
+        }
+
+        const handlePackageUpdate = (update: any) => {
+          toast({
+            title: '📦 Colis mis à jour',
+            description: update.message,
+            duration: 4000
+          })
+        }
+
+        on('notification', handleNotification)
+        on('hse_alert', handleHseAlert)
+        on('visit_update', handleVisitUpdate)
+        on('package_update', handlePackageUpdate)
+
+        return () => {
+          off('notification', handleNotification)
+          off('hse_alert', handleHseAlert)
+          off('visit_update', handleVisitUpdate)
+          off('package_update', handlePackageUpdate)
+          disconnect()
+        }
+      }
+    }
+  }, [isAuthenticated, currentUser, connect, disconnect, on, off, toast])
+
+  return <>{children}</>
+}
+
 function AppRoutes() {
   return (
-    <Routes>
+    <SocketProvider>
+      <Routes>
       <Route path="/" element={<LandingRoute />} />
       <Route path="/login" element={<LoginRoute />} />
       <Route path="/comptes" element={<AccountHub />} />
@@ -103,6 +187,102 @@ function AppRoutes() {
       >
         <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="dashboard" element={<Dashboard />} />
+        <Route 
+          path="dg-strategic" 
+          element={
+            <RoleProtected roles={['DG']}>
+              <DirectorGeneralDashboard />
+            </RoleProtected>
+          } 
+        />
+        <Route 
+          path="dg-analytics" 
+          element={
+            <RoleProtected roles={['DG']}>
+              <DGAnalyticsPage />
+            </RoleProtected>
+          } 
+        />
+        <Route 
+          path="dg-rapports" 
+          element={
+            <RoleProtected roles={['DG']}>
+              <DGReportsPage />
+            </RoleProtected>
+          } 
+        />
+        <Route 
+          path="dg-export" 
+          element={
+            <RoleProtected roles={['DG']}>
+              <DGExportPage />
+            </RoleProtected>
+          } 
+        />
+        <Route 
+          path="direction" 
+          element={
+            <RoleProtected roles={['DG']}>
+              <DirectionPage />
+            </RoleProtected>
+          } 
+        />
+        <Route 
+          path="dg-rh-overview" 
+          element={
+            <RoleProtected roles={['DG']}>
+              <DGRHOverviewPage />
+            </RoleProtected>
+          } 
+        />
+        <Route 
+          path="planning" 
+          element={
+            <RoleProtected roles={['DG']}>
+              <DGPlanningPage />
+            </RoleProtected>
+          } 
+        />
+        <Route 
+          path="formations" 
+          element={
+            <RoleProtected roles={['DG']}>
+              <DGFormationsPage />
+            </RoleProtected>
+          } 
+        />
+        <Route 
+          path="dg-hse-overview" 
+          element={
+            <RoleProtected roles={['DG']}>
+              <DGHSEOverviewPage />
+            </RoleProtected>
+          } 
+        />
+        <Route 
+          path="hse-incidents-view" 
+          element={
+            <RoleProtected roles={['DG']}>
+              <DGHSEIncidentsViewPage />
+            </RoleProtected>
+          } 
+        />
+        <Route 
+          path="dg-compliance-view" 
+          element={
+            <RoleProtected roles={['DG']}>
+              <DGComplianceViewPage />
+            </RoleProtected>
+          } 
+        />
+        <Route 
+          path="dg-operations-view" 
+          element={
+            <RoleProtected roles={['DG']}>
+              <DGHSEOverviewPage />
+            </RoleProtected>
+          } 
+        />
         <Route
           path="admin"
           element={
@@ -155,7 +335,7 @@ function AppRoutes() {
         <Route
           path="personnel"
           element={
-            <RoleProtected roles={['ADMIN', 'HSE', 'SUPERVISEUR']}>
+            <RoleProtected roles={['ADMIN', 'HSE', 'SUPERVISEUR', 'COMPLIANCE', 'DRH']}>
               <PersonnelPage />
             </RoleProtected>
           }
@@ -179,7 +359,7 @@ function AppRoutes() {
         <Route
           path="equipements"
           element={
-            <RoleProtected roles={['ADMIN', 'HSE', 'SUPERVISEUR']}>
+            <RoleProtected roles={['ADMIN', 'HSE', 'SUPERVISEUR', 'COMPLIANCE']}>
               <EquipementsPage />
             </RoleProtected>
           }
@@ -187,7 +367,7 @@ function AppRoutes() {
         <Route
           path="hse"
           element={
-            <RoleProtected roles={['ADMIN', 'HSE']}>
+            <RoleProtected roles={['ADMIN', 'HSE', 'COMPLIANCE']}>
               <HSEPage />
             </RoleProtected>
           }
@@ -232,7 +412,19 @@ function AppRoutes() {
             </RoleProtected>
           }
         />
+        <Route
+          path="conformite"
+          element={
+            <RoleProtected roles={['COMPLIANCE']}>
+              <ConformitePage />
+            </RoleProtected>
+          }
+        />
         <Route path="connect" element={<SOGARAConnectPage />} />
+        <Route path="connect-analytics" element={<UserSpaceFinalization />} />
+        <Route path="quick-test" element={<QuickTest />} />
+        <Route path="user-space-analysis" element={<UserSpaceAnalysis />} />
+        <Route path="complete-finalization" element={<CompleteFinalization />} />
         <Route
           path="projet"
           element={
@@ -241,12 +433,27 @@ function AppRoutes() {
             </RoleProtected>
           }
         />
-        <Route path="accounts" element={<AccountHub />} />
-        <Route path="accounts/:slug" element={<AccountDetail />} />
+        <Route 
+          path="accounts" 
+          element={
+            <RoleProtected roles={['ADMIN']}>
+              <AccountHub />
+            </RoleProtected>
+          } 
+        />
+        <Route 
+          path="accounts/:slug" 
+          element={
+            <RoleProtected roles={['ADMIN']}>
+              <AccountDetail />
+            </RoleProtected>
+          } 
+        />
         <Route path="*" element={<NotFound />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>
+    </SocketProvider>
   )
 }
 

@@ -1,211 +1,174 @@
-import { useMemo } from 'react'
-import { useQuery, useMutation } from 'convex/react'
-import { api } from '../../convex/_generated/api'
-import { Visit, Visitor, VisitStatus } from '@/types'
-import { toast } from '@/hooks/use-toast'
-import { Id } from '../../convex/_generated/dataModel'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { visitsAPI } from '@/services/api.service'
+import { useToast } from '@/hooks/use-toast'
 
-export function useVisits() {
-  // Queries Convex
-  const visitsData = useQuery(api.visits.list)
-  const visitorsData = useQuery(api.visitors.list)
+export const useVisits = (filters?: {
+  status?: string
+  hostEmployeeId?: string
+  startDate?: string
+  endDate?: string
+}) => {
+  const queryClient = useQueryClient()
+  const { toast } = useToast()
 
-  // Mutations Convex
-  const createVisitMutation = useMutation(api.visits.create)
-  const createVisitorMutation = useMutation(api.visitors.create)
-  const checkInMutation = useMutation(api.visits.checkIn)
-  const checkOutMutation = useMutation(api.visits.checkOut)
-  const updateVisitMutation = useMutation(api.visits.update)
+  // Fetch des visites
+  const { data: visits = [], isLoading, error } = useQuery({
+    queryKey: ['visits', filters],
+    queryFn: () => visitsAPI.getAll(filters).then(res => res.data),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    placeholderData: []
+  })
 
-  // Mapper les données Convex
-  const visits: Visit[] = (visitsData || []).map((v: any) => ({
-    id: v._id,
-    visitorId: v.visitorId,
-    hostEmployeeId: v.hostEmployeeId,
-    scheduledAt: new Date(v.scheduledAt),
-    checkedInAt: v.checkedInAt ? new Date(v.checkedInAt) : undefined,
-    checkedOutAt: v.checkedOutAt ? new Date(v.checkedOutAt) : undefined,
-    status: v.status,
-    purpose: v.purpose,
-    badgeNumber: v.badgeNumber,
-    notes: v.notes,
-    createdAt: new Date(v._creationTime),
-    updatedAt: new Date(v._creationTime),
-  }))
-
-  const visitors: Visitor[] = (visitorsData || []).map((v: any) => ({
-    id: v._id,
-    firstName: v.firstName,
-    lastName: v.lastName,
-    company: v.company,
-    idDocument: v.idDocument,
-    documentType: v.documentType,
-    phone: v.phone,
-    email: v.email,
-    photo: v.photo,
-    createdAt: new Date(v._creationTime),
-  }))
-
-  const createVisitor = async (visitorData: Omit<Visitor, 'id' | 'createdAt'>) => {
-    try {
-      const newId = await createVisitorMutation({
-        firstName: visitorData.firstName,
-        lastName: visitorData.lastName,
-        company: visitorData.company,
-        idDocument: visitorData.idDocument,
-        documentType: visitorData.documentType,
-        phone: visitorData.phone,
-        email: visitorData.email,
-        photo: visitorData.photo,
-        nationality: visitorData.nationality,
-        birthDate: visitorData.birthDate,
-      })
-
-      toast({
-        title: 'Visiteur enregistré',
-        description: `${visitorData.firstName} ${visitorData.lastName} a été ajouté.`,
-      })
-
-      return { 
-        id: newId,
-        ...visitorData,
-        createdAt: new Date()
-      }
-    } catch (error: any) {
-      toast({
-        title: 'Erreur',
-        description: error.message || 'Impossible de créer le visiteur.',
-        variant: 'destructive',
-      })
-      throw error
-    }
-  }
-
-  const createVisit = async (visitData: Omit<Visit, 'id' | 'createdAt' | 'updatedAt'>) => {
-    try {
-      const newId = await createVisitMutation({
-        visitorId: visitData.visitorId as Id<'visitors'>,
-        hostEmployeeId: visitData.hostEmployeeId as Id<'employees'>,
-        scheduledAt: visitData.scheduledAt.getTime(),
-        purpose: visitData.purpose,
-        notes: visitData.notes,
-        badgeNumber: visitData.badgeNumber,
-      })
-
+  // Mutation pour créer une visite
+  const createMutation = useMutation({
+    mutationFn: (visitData: any) => visitsAPI.create(visitData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['visits'] })
       toast({
         title: 'Visite créée',
-        description: 'La visite a été enregistrée avec succès.',
+        description: 'La visite a été créée avec succès'
       })
-
-      return {
-        id: newId,
-        ...visitData,
-        status: 'expected' as VisitStatus,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }
-    } catch (error: any) {
+    },
+    onError: (error: Error) => {
       toast({
         title: 'Erreur',
-        description: error.message || 'Impossible de créer la visite.',
-        variant: 'destructive',
+        description: error.message,
+        variant: 'destructive'
       })
-      throw error
     }
-  }
+  })
 
-  const updateVisitStatus = async (visitId: string, status: VisitStatus, additionalData?: any) => {
-    try {
-      if (status === 'in_progress') {
-        await checkInMutation({ id: visitId as Id<'visits'>, badgeNumber: additionalData?.badgeNumber })
-      } else if (status === 'checked_out') {
-        await checkOutMutation({ id: visitId as Id<'visits'> })
-      } else {
-        await updateVisitMutation({
-          id: visitId as Id<'visits'>,
-          status,
-        })
-      }
-
-      const statusMessages = {
-        waiting: 'Le visiteur est en attente',
-        in_progress: 'Le visiteur est arrivé',
-        checked_out: 'Le visiteur est sorti',
-        expected: 'Visite programmée',
-      }
-
+  // Mutation pour mettre à jour une visite
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: any }) => visitsAPI.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['visits'] })
       toast({
-        title: 'Statut mis à jour',
-        description: statusMessages[status],
+        title: 'Visite mise à jour',
+        description: 'La visite a été mise à jour avec succès'
       })
-
-      // Return the updated visit
-      const visit = visits.find(v => v.id === visitId)
-      if (visit) {
-        return {
-          ...visit,
-          status,
-          ...(status === 'in_progress' && additionalData?.badgeNumber ? { badgeNumber: additionalData.badgeNumber, checkedInAt: new Date() } : {}),
-          ...(status === 'checked_out' ? { checkedOutAt: new Date() } : {}),
-          updatedAt: new Date()
-        }
-      }
-      throw new Error('Visit not found')
-    } catch (error: any) {
+    },
+    onError: (error: Error) => {
       toast({
         title: 'Erreur',
-        description: error.message || 'Impossible de mettre à jour le statut.',
-        variant: 'destructive',
+        description: error.message,
+        variant: 'destructive'
       })
-      throw error
     }
-  }
+  })
 
-  const getTodaysVisits = () => {
-    const today = new Date().toDateString()
-    return visits.filter(visit => visit.scheduledAt.toDateString() === today)
-  }
+  // Mutation pour check-in
+  const checkinMutation = useMutation({
+    mutationFn: ({ id, badgeNumber }: { id: string; badgeNumber?: string }) => 
+      visitsAPI.checkin(id, badgeNumber),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['visits'] })
+      toast({
+        title: 'Check-in effectué',
+        description: 'Le visiteur a été enregistré'
+      })
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Erreur',
+        description: error.message,
+        variant: 'destructive'
+      })
+    }
+  })
 
-  const getVisitsByEmployee = (employeeId: string) => {
-    return visits.filter(visit => visit.hostEmployeeId === employeeId)
-  }
+  // Mutation pour check-out
+  const checkoutMutation = useMutation({
+    mutationFn: ({ id, notes }: { id: string; notes?: string }) => 
+      visitsAPI.checkout(id, notes),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['visits'] })
+      toast({
+        title: 'Check-out effectué',
+        description: 'Le visiteur a été enregistré comme parti'
+      })
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Erreur',
+        description: error.message,
+        variant: 'destructive'
+      })
+    }
+  })
 
-  const searchVisitors = (query: string) => {
-    const search = query.toLowerCase()
-    return visitors.filter(
-      visitor =>
-        visitor.firstName.toLowerCase().includes(search) ||
-        visitor.lastName.toLowerCase().includes(search) ||
-        visitor.company.toLowerCase().includes(search),
-    )
-  }
-
-  const getVisitorById = (id: string) => {
-    return visitors.find(visitor => visitor.id === id)
-  }
-
-  const visitsByStatus = useMemo(() => {
-    return visits.reduce<Record<VisitStatus, Visit[]>>(
-      (acc, visit) => {
-        acc[visit.status] ||= []
-        acc[visit.status].push(visit)
-        return acc
-      },
-      { expected: [], waiting: [], in_progress: [], checked_out: [] },
-    )
-  }, [visits])
+  // Mutation pour annuler une visite
+  const cancelMutation = useMutation({
+    mutationFn: ({ id, reason }: { id: string; reason?: string }) => 
+      visitsAPI.cancel(id, reason),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['visits'] })
+      toast({
+        title: 'Visite annulée',
+        description: 'La visite a été annulée avec succès'
+      })
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Erreur',
+        description: error.message,
+        variant: 'destructive'
+      })
+    }
+  })
 
   return {
     visits,
-    visitors,
-    isLoading: visitsData === undefined || visitorsData === undefined,
-    createVisitor,
-    createVisit,
-    updateVisitStatus,
-    getTodaysVisits,
-    getVisitsByEmployee,
-    searchVisitors,
-    getVisitorById,
-    visitsByStatus,
+    isLoading,
+    error,
+    addVisit: createMutation.mutate,
+    isCreating: createMutation.isPending,
+    updateVisit: updateMutation.mutate,
+    isUpdating: updateMutation.isPending,
+    checkinVisit: checkinMutation.mutate,
+    isCheckingIn: checkinMutation.isPending,
+    checkoutVisit: checkoutMutation.mutate,
+    isCheckingOut: checkoutMutation.isPending,
+    cancelVisit: cancelMutation.mutate,
+    isCancelling: cancelMutation.isPending
   }
+}
+
+export const useTodaysVisits = () => {
+  const { data: visits = [], isLoading, error } = useQuery({
+    queryKey: ['visits', 'today'],
+    queryFn: () => visitsAPI.getTodaysVisits().then(res => res.data),
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
+    placeholderData: []
+  })
+
+  return { visits, isLoading, error }
+}
+
+export const useVisitsByDate = (date: string) => {
+  const { data: visits = [], isLoading, error } = useQuery({
+    queryKey: ['visits', 'by-date', date],
+    queryFn: () => visitsAPI.getByDate(date).then(res => res.data),
+    enabled: !!date,
+    staleTime: 5 * 60 * 1000,
+    placeholderData: []
+  })
+
+  return { visits, isLoading, error }
+}
+
+export const useVisitStats = () => {
+  const { data: stats, isLoading, error } = useQuery({
+    queryKey: ['visits', 'stats'],
+    queryFn: () => visitsAPI.getStats().then(res => res.data),
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    placeholderData: {
+      totalVisits: 0,
+      todayVisits: 0,
+      byStatus: []
+    }
+  })
+
+  return { stats, isLoading, error }
 }

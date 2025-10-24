@@ -70,6 +70,8 @@ export class EmployeeRepository {
       this.migrateEmployees()
       // If storage was partially seeded in previous versions, ensure all demo accounts exist
       this.ensureDemoEmployees()
+      // Nettoyer les comptes administrateurs système de la liste
+      this.cleanSystemAdmins()
     }
   }
 
@@ -103,22 +105,6 @@ export class EmployeeRepository {
         email: 'sylvie.koumba@sogara.com',
         status: 'active',
         stats: { visitsReceived: 15, packagesReceived: 8, hseTrainingsCompleted: 4 },
-        equipmentIds: [],
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        id: '3',
-        firstName: 'PELLEN',
-        lastName: 'Asted',
-        matricule: 'ADM001',
-        service: 'Administrateur Systèmes & Informatique',
-        roles: ['ADMIN', 'SUPERADMIN'],
-        competences: ['Administration systèmes', 'Sécurité informatique', 'Supervision'],
-        habilitations: ['Accès total', 'Configuration système'],
-        email: 'superadmin@sogara.pro',
-        status: 'active',
-        stats: { visitsReceived: 3, packagesReceived: 1, hseTrainingsCompleted: 8 },
         equipmentIds: [],
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -160,23 +146,30 @@ export class EmployeeRepository {
         lastName: 'DITSOUGOU',
         matricule: 'HSE002',
         service: 'HSSE et Conformité',
-        roles: ['HSE', 'COMPLIANCE', 'SECURITE'],
+        roles: ['HSSE_MANAGER', 'HSE', 'COMPLIANCE', 'SECURITE'],
         competences: [
           'Sécurité industrielle',
           'Formation HSSE',
           'Audit conformité',
           'Gestion sécurité',
           'Conformité réglementaire',
+          'Gestion incidents',
+          'Formations HSE',
+          'Audits terrain',
+          'Opérations quotidiennes',
         ],
         habilitations: [
           'Inspection sécurité',
           'Formation obligatoire',
           'Incident management',
           'Gestion réception',
+          'Responsable HSE Opérationnel',
+          'Formateur HSE',
+          'Auditeur interne',
         ],
         email: 'lise-veronique.ditsougou@sogara.com',
         status: 'active',
-        stats: { visitsReceived: 0, packagesReceived: 0, hseTrainingsCompleted: 0 },
+        stats: { visitsReceived: 0, packagesReceived: 0, hseTrainingsCompleted: 15 },
         equipmentIds: [],
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -248,6 +241,29 @@ export class EmployeeRepository {
         updatedAt: new Date(),
       },
       {
+        id: '12',
+        firstName: 'Pierrette',
+        lastName: 'NOMSI',
+        matricule: 'CONF001',
+        service: 'Conformité',
+        roles: ['COMPLIANCE'],
+        competences: [
+          'Audits réglementaires',
+          'Conformité HSSE',
+          'Veille normative',
+          'Gestion documentation',
+          'Évaluation risques',
+        ],
+        habilitations: ['Audits internes', 'Audits externes', 'Certifications', 'Rapports conformité'],
+        email: 'pierrette.nomsi@sogara.com',
+        phone: '+241 06 12 34 56',
+        status: 'active',
+        stats: { visitsReceived: 2, packagesReceived: 3, hseTrainingsCompleted: 8 },
+        equipmentIds: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
         id: '10',
         firstName: 'Yoann',
         lastName: 'ETENO',
@@ -259,7 +275,7 @@ export class EmployeeRepository {
         email: 'y.eteno@onecom.ga',
         phone: '+241 06 23 45 67',
         status: 'active',
-        stats: { visitsReceived: 0, packagesReceived: 0, hseTrainingsCompleted: 0 },
+        stats: { visitsReceived: 0, packagesReceived: 0, hseTrainingsCompleted: 15 },
         equipmentIds: [],
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -316,15 +332,8 @@ export class EmployeeRepository {
         firstName: 'Lise Véronique',
         lastName: 'DITSOUGOU',
         service: 'HSSE et Conformité',
-        roles: ['HSE', 'COMPLIANCE', 'SECURITE'],
+        roles: ['HSSE_MANAGER', 'HSE', 'COMPLIANCE', 'SECURITE'],
         email: 'lise-veronique.ditsougou@sogara.com',
-      },
-      ADM001: {
-        firstName: 'PELLEN',
-        lastName: 'Asted',
-        service: 'Administrateur Systèmes & Informatique',
-        roles: ['ADMIN', 'SUPERADMIN'],
-        email: 'superadmin@sogara.pro',
       },
       EMP001: {
         firstName: 'Pierre',
@@ -354,6 +363,21 @@ export class EmployeeRepository {
         roles: ['DRH', 'ADMIN'],
         email: 'ingride.tchen@sogara.com',
       },
+      CONF001: {
+        firstName: 'Pierrette',
+        lastName: 'NOMSI',
+        service: 'Conformité',
+        roles: ['COMPLIANCE'],
+        competences: [
+          'Audits réglementaires',
+          'Conformité HSSE',
+          'Veille normative',
+          'Gestion documentation',
+          'Évaluation risques',
+        ],
+        habilitations: ['Audits internes', 'Audits externes', 'Certifications', 'Rapports conformité'],
+        email: 'pierrette.nomsi@sogara.com',
+      },
     }
 
     this.employees = this.employees.map(e => {
@@ -380,6 +404,20 @@ export class EmployeeRepository {
   }
 
   // Ensure demo employees exist even if storage was partially seeded
+  private cleanSystemAdmins(): void {
+    // Supprimer les comptes administrateurs système de la liste des employés
+    const originalLength = this.employees.length
+    this.employees = this.employees.filter(emp => 
+      emp.matricule !== 'ADM001' && 
+      !emp.roles.includes('SUPERADMIN')
+    )
+    
+    if (this.employees.length !== originalLength) {
+      this.save()
+      console.log('🧹 Comptes administrateurs système supprimés de la liste des employés')
+    }
+  }
+
   private ensureDemoEmployees(): void {
     const sampleEmployees: Employee[] = [
       {
@@ -410,22 +448,6 @@ export class EmployeeRepository {
         email: 'sylvie.koumba@sogara.com',
         status: 'active',
         stats: { visitsReceived: 15, packagesReceived: 8, hseTrainingsCompleted: 4 },
-        equipmentIds: [],
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        id: '3',
-        firstName: 'PELLEN',
-        lastName: 'Asted',
-        matricule: 'ADM001',
-        service: 'ORGANEUS Gabon',
-        roles: ['ADMIN'],
-        competences: ['Administration systèmes', 'Sécurité informatique', 'Supervision'],
-        habilitations: ['Accès total', 'Configuration système'],
-        email: 'pellen.asted@organeus.ga',
-        status: 'active',
-        stats: { visitsReceived: 3, packagesReceived: 1, hseTrainingsCompleted: 8 },
         equipmentIds: [],
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -467,23 +489,30 @@ export class EmployeeRepository {
         lastName: 'DITSOUGOU',
         matricule: 'HSE002',
         service: 'HSSE et Conformité',
-        roles: ['HSE', 'COMPLIANCE', 'SECURITE'],
+        roles: ['HSSE_MANAGER', 'HSE', 'COMPLIANCE', 'SECURITE'],
         competences: [
           'Sécurité industrielle',
           'Formation HSSE',
           'Audit conformité',
           'Gestion sécurité',
           'Conformité réglementaire',
+          'Gestion incidents',
+          'Formations HSE',
+          'Audits terrain',
+          'Opérations quotidiennes',
         ],
         habilitations: [
           'Inspection sécurité',
           'Formation obligatoire',
           'Incident management',
           'Gestion réception',
+          'Responsable HSE Opérationnel',
+          'Formateur HSE',
+          'Auditeur interne',
         ],
         email: 'lise-veronique.ditsougou@sogara.com',
         status: 'active',
-        stats: { visitsReceived: 0, packagesReceived: 0, hseTrainingsCompleted: 0 },
+        stats: { visitsReceived: 0, packagesReceived: 0, hseTrainingsCompleted: 15 },
         equipmentIds: [],
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -555,6 +584,29 @@ export class EmployeeRepository {
         updatedAt: new Date(),
       },
       {
+        id: '12',
+        firstName: 'Pierrette',
+        lastName: 'NOMSI',
+        matricule: 'CONF001',
+        service: 'Conformité',
+        roles: ['COMPLIANCE'],
+        competences: [
+          'Audits réglementaires',
+          'Conformité HSSE',
+          'Veille normative',
+          'Gestion documentation',
+          'Évaluation risques',
+        ],
+        habilitations: ['Audits internes', 'Audits externes', 'Certifications', 'Rapports conformité'],
+        email: 'pierrette.nomsi@sogara.com',
+        phone: '+241 06 12 34 56',
+        status: 'active',
+        stats: { visitsReceived: 2, packagesReceived: 3, hseTrainingsCompleted: 8 },
+        equipmentIds: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
         id: '10',
         firstName: 'Yoann',
         lastName: 'ETENO',
@@ -566,7 +618,7 @@ export class EmployeeRepository {
         email: 'y.eteno@onecom.ga',
         phone: '+241 06 23 45 67',
         status: 'active',
-        stats: { visitsReceived: 0, packagesReceived: 0, hseTrainingsCompleted: 0 },
+        stats: { visitsReceived: 0, packagesReceived: 0, hseTrainingsCompleted: 15 },
         equipmentIds: [],
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -589,6 +641,21 @@ export class EmployeeRepository {
 
   getAll(): Employee[] {
     return this.employees
+  }
+
+  // Méthode publique pour forcer le nettoyage des comptes administrateurs système
+  forceCleanSystemAdmins(): void {
+    this.cleanSystemAdmins()
+  }
+
+  // Méthode pour forcer le rechargement complet des données
+  forceReload(): void {
+    console.log('🔄 Rechargement forcé des données employés...')
+    localStorage.removeItem(STORAGE_KEYS.EMPLOYEES)
+    this.employees = []
+    this.seedData()
+    this.save()
+    console.log('✅ Données employés rechargées !')
   }
 
   getById(id: string): Employee | undefined {

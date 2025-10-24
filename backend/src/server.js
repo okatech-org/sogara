@@ -26,6 +26,8 @@ const packageRoutes = require('./routes/package.routes');
 const equipmentRoutes = require('./routes/equipment.routes');
 const hseRoutes = require('./routes/hse.routes');
 const postRoutes = require('./routes/post.routes');
+const analyticsRoutes = require('./routes/analytics.routes');
+const approvalRoutes = require('./routes/approval.routes');
 
 // Initialisation de l'application Express
 const app = express();
@@ -162,6 +164,11 @@ app.use('/api/packages', authMiddleware, packageRoutes);
 app.use('/api/equipment', authMiddleware, equipmentRoutes);
 app.use('/api/hse', authMiddleware, hseRoutes);
 app.use('/api/posts', authMiddleware, postRoutes);
+app.use('/api/analytics', analyticsRoutes);
+app.use('/api/approval', approvalRoutes);
+
+// Stocker l'instance Socket.IO dans l'app pour les contrôleurs
+app.set('io', io);
 
 // Route pour les uploads
 app.use('/api/upload', authMiddleware, uploadMiddleware);

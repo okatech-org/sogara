@@ -192,19 +192,6 @@ export function WelcomePage({ onShowLogin }: WelcomePageProps) {
                     Découvrir tous les accès et modules proposés
                   </span>
                 </Button>
-                <Button
-                  variant="ghost"
-                  className="h-24 flex flex-col items-center justify-center gap-3"
-                  onClick={() => navigate('/app/accounts')}
-                >
-                  <div className="flex items-center gap-3">
-                    <ArrowRight className="w-6 h-6" />
-                    <span className="font-medium">Vue interne des comptes</span>
-                  </div>
-                  <span className="text-xs text-muted-foreground">
-                    Accéder aux responsabilités et permissions détaillées
-                  </span>
-                </Button>
               </div>
             </CardContent>
           </Card>
