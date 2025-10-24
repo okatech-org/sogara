@@ -121,7 +121,7 @@ function SocketProvider({ children }: { children: ReactNode }) {
           toast({
             title: notification.title,
             description: notification.message,
-            duration: 5000
+            duration: 5000,
           })
         }
 
@@ -130,7 +130,7 @@ function SocketProvider({ children }: { children: ReactNode }) {
             title: '🚨 Alerte HSE',
             description: alert.message,
             variant: 'destructive',
-            duration: 8000
+            duration: 8000,
           })
         }
 
@@ -138,7 +138,7 @@ function SocketProvider({ children }: { children: ReactNode }) {
           toast({
             title: '👥 Visite mise à jour',
             description: update.message,
-            duration: 4000
+            duration: 4000,
           })
         }
 
@@ -146,7 +146,7 @@ function SocketProvider({ children }: { children: ReactNode }) {
           toast({
             title: '📦 Colis mis à jour',
             description: update.message,
-            duration: 4000
+            duration: 4000,
           })
         }
 
@@ -173,286 +173,319 @@ function AppRoutes() {
   return (
     <SocketProvider>
       <Routes>
-      <Route path="/" element={<LandingRoute />} />
-      <Route path="/login" element={<LoginRoute />} />
-      <Route path="/comptes" element={<AccountHub />} />
-      <Route path="/comptes/:slug" element={<AccountDetail />} />
-      <Route
-        path="/app"
-        element={
-          <ProtectedRoute>
-            <Layout />
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<Navigate to="dashboard" replace />} />
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route 
-          path="dg-strategic" 
-          element={
-            <RoleProtected roles={['DG']}>
-              <DirectorGeneralDashboard />
-            </RoleProtected>
-          } 
-        />
-        <Route 
-          path="dg-analytics" 
-          element={
-            <RoleProtected roles={['DG']}>
-              <DGAnalyticsPage />
-            </RoleProtected>
-          } 
-        />
-        <Route 
-          path="dg-rapports" 
-          element={
-            <RoleProtected roles={['DG']}>
-              <DGReportsPage />
-            </RoleProtected>
-          } 
-        />
-        <Route 
-          path="dg-export" 
-          element={
-            <RoleProtected roles={['DG']}>
-              <DGExportPage />
-            </RoleProtected>
-          } 
-        />
-        <Route 
-          path="direction" 
-          element={
-            <RoleProtected roles={['DG']}>
-              <DirectionPage />
-            </RoleProtected>
-          } 
-        />
-        <Route 
-          path="dg-rh-overview" 
-          element={
-            <RoleProtected roles={['DG']}>
-              <DGRHOverviewPage />
-            </RoleProtected>
-          } 
-        />
-        <Route 
-          path="planning" 
-          element={
-            <RoleProtected roles={['DG']}>
-              <DGPlanningPage />
-            </RoleProtected>
-          } 
-        />
-        <Route 
-          path="formations" 
-          element={
-            <RoleProtected roles={['DG']}>
-              <DGFormationsPage />
-            </RoleProtected>
-          } 
-        />
-        <Route 
-          path="dg-hse-overview" 
-          element={
-            <RoleProtected roles={['DG']}>
-              <DGHSEOverviewPage />
-            </RoleProtected>
-          } 
-        />
-        <Route 
-          path="hse-incidents-view" 
-          element={
-            <RoleProtected roles={['DG']}>
-              <DGHSEIncidentsViewPage />
-            </RoleProtected>
-          } 
-        />
-        <Route 
-          path="dg-compliance-view" 
-          element={
-            <RoleProtected roles={['DG']}>
-              <DGComplianceViewPage />
-            </RoleProtected>
-          } 
-        />
-        <Route 
-          path="dg-operations-view" 
-          element={
-            <RoleProtected roles={['DG']}>
-              <DGHSEOverviewPage />
-            </RoleProtected>
-          } 
-        />
+        <Route path="/" element={<LandingRoute />} />
+        <Route path="/login" element={<LoginRoute />} />
+        <Route path="/comptes" element={<AccountHub />} />
+        <Route path="/comptes/:slug" element={<AccountDetail />} />
         <Route
-          path="admin"
+          path="/app"
           element={
-            <RoleProtected roles={['ADMIN']}>
-              <AdminDashboard />
-            </RoleProtected>
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
           }
-        />
-        <Route
-          path="direction"
-          element={
-            <RoleProtected roles={['DG', 'ADMIN']}>
-              <DirectionDashboard />
-            </RoleProtected>
-          }
-        />
-        <Route
-          path="rh"
-          element={
-            <RoleProtected roles={['DRH', 'ADMIN']}>
-              <RHDashboard />
-            </RoleProtected>
-          }
-        />
-        <Route path="mes-evaluations" element={<MesEvaluationsPage />} />
-        <Route path="formations-externes" element={<MesFormationsExternePage />} />
-        <Route path="evaluations-externes" element={<MesEvaluationsExternePage />} />
-        <Route path="habilitations-externes" element={<MesHabilitationsExternePage />} />
-        <Route path="mon-planning" element={<MonPlanningPage />} />
-        <Route path="ma-paie" element={<MaPaiePage />} />
-        <Route path="mes-formations" element={<MesFormationsPage />} />
-        <Route path="mes-equipements" element={<MesEquipementsPage />} />
-        <Route path="mes-habilitations" element={<MesHabilitationsPage />} />
-        <Route
-          path="planning"
-          element={
-            <RoleProtected roles={['ADMIN', 'DRH', 'DG']}>
-              <PlanningPage />
-            </RoleProtected>
-          }
-        />
-        <Route
-          path="paie"
-          element={
-            <RoleProtected roles={['ADMIN', 'DRH', 'DG']}>
-              <PaiePage />
-            </RoleProtected>
-          }
-        />
-        <Route
-          path="personnel"
-          element={
-            <RoleProtected roles={['ADMIN', 'HSE', 'SUPERVISEUR', 'COMPLIANCE', 'DRH']}>
-              <PersonnelPage />
-            </RoleProtected>
-          }
-        />
-        <Route
-          path="visites"
-          element={
-            <RoleProtected roles={['ADMIN', 'RECEP', 'SUPERVISEUR']}>
-              <VisitesPage />
-            </RoleProtected>
-          }
-        />
-        <Route
-          path="colis"
-          element={
-            <RoleProtected roles={['ADMIN', 'RECEP']}>
-              <ColisCourrierPage />
-            </RoleProtected>
-          }
-        />
-        <Route
-          path="equipements"
-          element={
-            <RoleProtected roles={['ADMIN', 'HSE', 'SUPERVISEUR', 'COMPLIANCE']}>
-              <EquipementsPage />
-            </RoleProtected>
-          }
-        />
-        <Route
-          path="hse"
-          element={
-            <RoleProtected roles={['ADMIN', 'HSE', 'COMPLIANCE']}>
-              <HSEPage />
-            </RoleProtected>
-          }
-        />
-        <Route
-          path="hse001"
-          element={
-            <RoleProtected roles={['ADMIN', 'HSE', 'COMPLIANCE', 'SECURITE']}>
-              <HSEPage />
-            </RoleProtected>
-          }
-        />
-        <Route
-          path="hse002"
-          element={
-            <RoleProtected roles={['HSE', 'COMPLIANCE', 'SECURITE']}>
-              <HSEPage />
-            </RoleProtected>
-          }
-        />
-        <Route
-          path="hsse-management"
-          element={
-            <RoleProtected roles={['HSSE_CHIEF']}>
-              <HSSEManagementPage />
-            </RoleProtected>
-          }
-        />
-        <Route
-          path="hsse-accounts"
-          element={
-            <RoleProtected roles={['HSSE_CHIEF']}>
-              <HSSEAccountsPage />
-            </RoleProtected>
-          }
-        />
-        <Route
-          path="flux-hsse"
-          element={
-            <RoleProtected roles={['HSSE_CHIEF']}>
-              <StatistiquesFluxHSSEPage />
-            </RoleProtected>
-          }
-        />
-        <Route
-          path="conformite"
-          element={
-            <RoleProtected roles={['COMPLIANCE']}>
-              <ConformitePage />
-            </RoleProtected>
-          }
-        />
-        <Route path="connect" element={<SOGARAConnectPage />} />
-        <Route path="connect-analytics" element={<UserSpaceFinalization />} />
-        <Route path="quick-test" element={<QuickTest />} />
-        <Route path="user-space-analysis" element={<UserSpaceAnalysis />} />
-        <Route path="complete-finalization" element={<CompleteFinalization />} />
-        <Route
-          path="projet"
-          element={
-            <RoleProtected roles={['ADMIN']}>
-              <ProjetPage />
-            </RoleProtected>
-          }
-        />
-        <Route 
-          path="accounts" 
-          element={
-            <RoleProtected roles={['ADMIN']}>
-              <AccountHub />
-            </RoleProtected>
-          } 
-        />
-        <Route 
-          path="accounts/:slug" 
-          element={
-            <RoleProtected roles={['ADMIN']}>
-              <AccountDetail />
-            </RoleProtected>
-          } 
-        />
+        >
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route
+            path="dg-strategic"
+            element={
+              <RoleProtected roles={['DG']}>
+                <DirectorGeneralDashboard />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="dg-analytics"
+            element={
+              <RoleProtected roles={['DG']}>
+                <DGAnalyticsPage />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="dg-rapports"
+            element={
+              <RoleProtected roles={['DG']}>
+                <DGReportsPage />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="dg-export"
+            element={
+              <RoleProtected roles={['DG']}>
+                <DGExportPage />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="direction"
+            element={
+              <RoleProtected roles={['DG']}>
+                <DirectionPage />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="dg-rh-overview"
+            element={
+              <RoleProtected roles={['DG']}>
+                <DGRHOverviewPage />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="planning"
+            element={
+              <RoleProtected roles={['DG']}>
+                <DGPlanningPage />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="formations"
+            element={
+              <RoleProtected roles={['DG']}>
+                <DGFormationsPage />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="dg-hse-overview"
+            element={
+              <RoleProtected roles={['DG']}>
+                <DGHSEOverviewPage />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="hse-incidents-view"
+            element={
+              <RoleProtected roles={['DG']}>
+                <DGHSEIncidentsViewPage />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="dg-compliance-view"
+            element={
+              <RoleProtected roles={['DG']}>
+                <DGComplianceViewPage />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="dg-operations-view"
+            element={
+              <RoleProtected roles={['DG']}>
+                <DGHSEOverviewPage />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="admin"
+            element={
+              <RoleProtected roles={['ADMIN']}>
+                <AdminDashboard />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="direction"
+            element={
+              <RoleProtected roles={['DG', 'ADMIN']}>
+                <DirectionDashboard />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="rh"
+            element={
+              <RoleProtected roles={['DRH', 'ADMIN']}>
+                <RHDashboard />
+              </RoleProtected>
+            }
+          />
+          <Route path="mes-evaluations" element={<MesEvaluationsPage />} />
+          <Route path="formations-externes" element={<MesFormationsExternePage />} />
+          <Route path="evaluations-externes" element={<MesEvaluationsExternePage />} />
+          <Route path="habilitations-externes" element={<MesHabilitationsExternePage />} />
+          <Route path="mon-planning" element={<MonPlanningPage />} />
+          <Route path="ma-paie" element={<MaPaiePage />} />
+          <Route path="mes-formations" element={<MesFormationsPage />} />
+          <Route path="mes-equipements" element={<MesEquipementsPage />} />
+          <Route path="mes-habilitations" element={<MesHabilitationsPage />} />
+          <Route
+            path="planning"
+            element={
+              <RoleProtected roles={['ADMIN', 'DRH', 'DG']}>
+                <PlanningPage />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="paie"
+            element={
+              <RoleProtected roles={['ADMIN', 'DRH', 'DG']}>
+                <PaiePage />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="personnel"
+            element={
+              <RoleProtected roles={['ADMIN', 'HSE', 'SUPERVISEUR', 'COMPLIANCE', 'DRH']}>
+                <PersonnelPage />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="visites"
+            element={
+              <RoleProtected roles={['ADMIN', 'RECEP', 'SUPERVISEUR']}>
+                <VisitesPage />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="colis"
+            element={
+              <RoleProtected roles={['ADMIN', 'RECEP']}>
+                <ColisCourrierPage />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="equipements"
+            element={
+              <RoleProtected roles={['ADMIN', 'HSE', 'SUPERVISEUR', 'COMPLIANCE']}>
+                <EquipementsPage />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="hse"
+            element={
+              <RoleProtected roles={['ADMIN', 'HSE', 'COMPLIANCE']}>
+                <HSEPage />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="formations-hse"
+            element={
+              <RoleProtected roles={['ADMIN', 'HSE', 'COMPLIANCE']}>
+                <HSEPage />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="donnees-hse"
+            element={
+              <RoleProtected roles={['ADMIN', 'HSE', 'COMPLIANCE']}>
+                <HSEPage />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="rapports-hse"
+            element={
+              <RoleProtected roles={['ADMIN', 'HSE', 'COMPLIANCE']}>
+                <HSEPage />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="hse001"
+            element={
+              <RoleProtected roles={['ADMIN', 'HSE', 'COMPLIANCE', 'SECURITE']}>
+                <HSEPage />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="hse002"
+            element={
+              <RoleProtected roles={['HSE', 'COMPLIANCE', 'SECURITE']}>
+                <HSEPage />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="hsse-management"
+            element={
+              <RoleProtected roles={['HSSE_CHIEF']}>
+                <HSSEManagementPage />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="hsse-accounts"
+            element={
+              <RoleProtected roles={['HSSE_CHIEF']}>
+                <HSSEAccountsPage />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="flux-hsse"
+            element={
+              <RoleProtected roles={['HSSE_CHIEF']}>
+                <StatistiquesFluxHSSEPage />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="conformite"
+            element={
+              <RoleProtected roles={['COMPLIANCE']}>
+                <ConformitePage />
+              </RoleProtected>
+            }
+          />
+          <Route path="connect" element={<SOGARAConnectPage />} />
+          <Route path="connect-analytics" element={<UserSpaceFinalization />} />
+          <Route path="quick-test" element={<QuickTest />} />
+          <Route path="user-space-analysis" element={<UserSpaceAnalysis />} />
+          <Route path="complete-finalization" element={<CompleteFinalization />} />
+          <Route
+            path="projet"
+            element={
+              <RoleProtected roles={['ADMIN']}>
+                <ProjetPage />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="accounts"
+            element={
+              <RoleProtected roles={['ADMIN']}>
+                <AccountHub />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="accounts/:slug"
+            element={
+              <RoleProtected roles={['ADMIN']}>
+                <AccountDetail />
+              </RoleProtected>
+            }
+          />
+          <Route
+            path="parametres"
+            element={
+              <div className="p-6">
+                <h1 className="text-2xl font-bold">Paramètres</h1>
+                <p>Page de paramètres en cours de développement</p>
+              </div>
+            }
+          />
+          <Route path="*" element={<NotFound />} />
+        </Route>
         <Route path="*" element={<NotFound />} />
-      </Route>
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+      </Routes>
     </SocketProvider>
   )
 }

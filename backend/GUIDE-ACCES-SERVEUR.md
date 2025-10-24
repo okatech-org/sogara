@@ -1,549 +1,365 @@
-# 🚀 Guide Complet d'Accès au Serveur Backend SOGARA
+# 🚀 Guide Complet - Accès Serveur SOGARA
 
 ## 📋 Table des Matières
 1. [Configuration Initiale](#configuration-initiale)
-2. [Variables d'Environnement](#variables-denvironnement)
-3. [Démarrage du Serveur](#démarrage-du-serveur)
-4. [Endpoints API Disponibles](#endpoints-api-disponibles)
-5. [Tests avec Cursor/cURL](#tests-avec-cursorcurl)
-6. [Base de Données PostgreSQL](#base-de-données-postgresql)
-
----
+2. [Endpoints API](#endpoints-api)
+3. [Configuration PostgreSQL](#configuration-postgresql)
+4. [Variables d'Environnement](#variables-denvironnement)
+5. [WebSocket/Socket.IO](#websocketsocketio)
+6. [Permissions par Rôle](#permissions-par-rôle)
+7. [Exemples cURL](#exemples-curl)
+8. [Dépannage](#dépannage)
 
 ## 🔧 Configuration Initiale
 
-### 1. Installation des Dépendances
+### Prérequis
+- Node.js >= 18.0.0
+- PostgreSQL >= 12 (optionnel pour le mode simple)
+- npm ou yarn
 
+### Installation
 ```bash
 cd backend
 npm install
+cp .env.example .env
 ```
 
-### 2. Configuration de la Base de Données PostgreSQL
+## 🌐 Endpoints API
 
-```bash
-# Installer PostgreSQL (si pas déjà fait)
-# macOS
-brew install postgresql@15
-brew services start postgresql@15
-
-# Ubuntu/Debian
-sudo apt update
-sudo apt install postgresql postgresql-contrib
-
-# Créer la base de données
-psql postgres
-CREATE DATABASE sogara_db;
-CREATE USER sogara_user WITH ENCRYPTED PASSWORD 'sogara_password';
-GRANT ALL PRIVILEGES ON DATABASE sogara_db TO sogara_user;
-\q
+### Health Check
+```http
+GET /health
 ```
-
----
-
-## 🔐 Variables d'Environnement
-
-Créez un fichier `backend/.env` avec le contenu suivant :
-
-```env
-# ======================
-# CONFIGURATION SERVEUR
-# ======================
-NODE_ENV=development
-PORT=3001
-
-# ======================
-# BASE DE DONNÉES
-# ======================
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=sogara_db
-DB_USER=sogara_user
-DB_PASSWORD=sogara_password
-
-# Production (optionnel)
-DATABASE_URL=postgresql://user:password@host:5432/database
-
-# ======================
-# JWT SECRETS (CRITIQUES)
-# ======================
-# Générez des secrets forts avec: openssl rand -base64 32
-JWT_ACCESS_SECRET=votre_secret_access_token_minimum_32_caracteres_aleatoires
-JWT_REFRESH_SECRET=votre_secret_refresh_token_minimum_32_caracteres_differents
-JWT_ACCESS_EXPIRES_IN=15m
-JWT_REFRESH_EXPIRES_IN=7d
-
-# ======================
-# CORS
-# ======================
-CORS_ORIGIN=http://localhost:5173,http://localhost:3000
-
-# ======================
-# RATE LIMITING
-# ======================
-RATE_LIMIT_WINDOW_MS=900000
-RATE_LIMIT_MAX_REQUESTS=100
-
-# ======================
-# UPLOADS
-# ======================
-MAX_FILE_SIZE=10485760
-UPLOAD_PATH=./uploads
-
-# ======================
-# EMAIL (optionnel)
-# ======================
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=votre-email@gmail.com
-SMTP_PASSWORD=votre-mot-de-passe-app
-```
-
-### ⚠️ Génération de Secrets JWT Sécurisés
-
-```bash
-# Générer deux secrets différents
-openssl rand -base64 32  # Pour JWT_ACCESS_SECRET
-openssl rand -base64 32  # Pour JWT_REFRESH_SECRET
-```
-
----
-
-## 🚀 Démarrage du Serveur
-
-### Mode Développement (avec auto-reload)
-```bash
-cd backend
-npm run dev
-```
-
-### Mode Production
-```bash
-cd backend
-npm start
-```
-
-### Migration et Seed de la Base de Données
-```bash
-# Créer les tables
-npm run migrate
-
-# Insérer des données de test
-npm run seed
-```
-
-Le serveur démarre sur : **http://localhost:3001**
-
----
-
-## 📡 Endpoints API Disponibles
-
-### 🔓 Endpoints Publics (sans authentification)
-
-#### 1. Health Check
-```bash
-GET http://localhost:3001/health
-```
-
-**Réponse :**
+**Description**: Vérification de l'état du serveur
+**Réponse**:
 ```json
 {
-  "success": true,
-  "status": "healthy",
-  "services": {
-    "database": "connected",
-    "server": "running"
-  },
-  "uptime": 12345,
-  "memory": {...}
+  "status": "OK",
+  "timestamp": "2025-10-24T09:55:14.296Z",
+  "version": "1.0.0",
+  "environment": "development"
 }
 ```
 
-#### 2. Info API
-```bash
-GET http://localhost:3001/
+### Analytics Dashboard
+```http
+GET /api/analytics/dashboard?period=week&department=all
 ```
+**Description**: Données analytiques du tableau de bord
+**Paramètres**:
+- `period`: week, month, quarter, year
+- `department`: all, hse, rh, admin
 
----
-
-### 🔐 Authentification (`/api/auth`)
-
-#### Connexion
-```bash
-POST http://localhost:3001/api/auth/login
-Content-Type: application/json
-
-{
-  "matricule": "HSE001",
-  "password": "password123"
-}
-```
-
-**Réponse :**
+**Réponse**:
 ```json
 {
   "success": true,
-  "message": "Connexion réussie",
   "data": {
-    "user": {
-      "id": "uuid",
-      "matricule": "HSE001",
-      "firstName": "Aminata",
-      "lastName": "Diallo",
-      "roles": ["HSE", "ADMIN"]
-    },
-    "tokens": {
-      "accessToken": "eyJhbGc...",
-      "refreshToken": "eyJhbGc..."
+    "kpis": [
+      {
+        "label": "Visiteurs aujourd'hui",
+        "value": 12,
+        "trend": { "changePercent": 8.5 }
+      }
+    ],
+    "charts": {
+      "visitors": {
+        "labels": ["Lun", "Mar", "Mer", "Jeu", "Ven"],
+        "data": [8, 12, 15, 10, 14]
+      }
     }
   }
 }
 ```
 
-#### Enregistrement (Admin seulement)
-```bash
-POST http://localhost:3001/api/auth/register
-Authorization: Bearer <access_token>
-Content-Type: application/json
+### Workflows d'Approbation
+```http
+GET /api/approval/workflows
+```
+**Description**: Liste des workflows d'approbation
 
-{
-  "matricule": "EMP999",
-  "firstName": "Jean",
-  "lastName": "Dupont",
-  "email": "jean.dupont@sogara.ga",
-  "password": "password123",
-  "service": "PRODUCTION",
-  "roles": ["EMPLOYE"]
-}
+```http
+GET /api/approval/pending
+```
+**Description**: Étapes d'approbation en attente
+
+### Posts/Actualités
+```http
+GET /api/posts
+```
+**Description**: Liste des posts/actualités
+
+## 🗄️ Configuration PostgreSQL
+
+### Installation PostgreSQL
+```bash
+# macOS
+brew install postgresql
+brew services start postgresql
+
+# Ubuntu/Debian
+sudo apt update
+sudo apt install postgresql postgresql-contrib
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
 ```
 
-#### Refresh Token
-```bash
-POST http://localhost:3001/api/auth/refresh
-Content-Type: application/json
+### Configuration Base de Données
+```sql
+-- Connexion en tant que superutilisateur
+psql postgres
 
-{
-  "refreshToken": "eyJhbGc..."
-}
+-- Création de la base de données
+CREATE DATABASE sogara_db;
+
+-- Création de l'utilisateur
+CREATE USER sogara_user WITH PASSWORD 'sogara_password';
+
+-- Attribution des privilèges
+GRANT ALL PRIVILEGES ON DATABASE sogara_db TO sogara_user;
+
+-- Connexion à la base
+\c sogara_db
+
+-- Attribution des privilèges sur le schéma
+GRANT ALL ON SCHEMA public TO sogara_user;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO sogara_user;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO sogara_user;
 ```
 
-#### Déconnexion
+## 🔐 Variables d'Environnement
+
+### Configuration Serveur
 ```bash
-POST http://localhost:3001/api/auth/logout
-Authorization: Bearer <access_token>
+NODE_ENV=development
+PORT=3001
 ```
 
-#### Changer le Mot de Passe
+### Base de Données PostgreSQL
 ```bash
-POST http://localhost:3001/api/auth/change-password
-Authorization: Bearer <access_token>
-Content-Type: application/json
-
-{
-  "currentPassword": "password123",
-  "newPassword": "newPassword456"
-}
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=sogara_db
+DB_USER=sogara_user
+DB_PASSWORD=sogara_password
 ```
 
-#### Valider Token
+### JWT Secrets
 ```bash
-GET http://localhost:3001/api/auth/validate
-Authorization: Bearer <access_token>
+JWT_SECRET=votre_secret_access_jwt_32_caracteres_minimum
+JWT_REFRESH_SECRET=votre_secret_refresh_jwt_32_caracteres_minimum
+JWT_ACCESS_EXPIRES_IN=15m
+JWT_REFRESH_EXPIRES_IN=7d
 ```
 
-#### Obtenir le Profil
+### CORS
 ```bash
-GET http://localhost:3001/api/auth/profile
-Authorization: Bearer <access_token>
+CORS_ORIGIN=http://localhost:5173,http://localhost:3000
 ```
 
----
-
-### 👥 Employés (`/api/employees`)
-
-**Toutes les routes nécessitent authentification**
-
-#### Lister les Employés
+### Rate Limiting
 ```bash
-GET http://localhost:3001/api/employees
-Authorization: Bearer <access_token>
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX_REQUESTS=100
 ```
 
-#### Obtenir un Employé
+### Uploads
 ```bash
-GET http://localhost:3001/api/employees/:id
-Authorization: Bearer <access_token>
+MAX_FILE_SIZE=10485760
+UPLOAD_PATH=./uploads
 ```
 
-#### Créer un Employé (Admin)
-```bash
-POST http://localhost:3001/api/employees
-Authorization: Bearer <access_token>
-Content-Type: application/json
+## 🔌 WebSocket/Socket.IO
 
-{
-  "matricule": "EMP100",
-  "firstName": "Marie",
-  "lastName": "Martin",
-  "email": "marie.martin@sogara.ga",
-  "service": "RH",
-  "roles": ["EMPLOYE"],
-  "status": "active"
-}
-```
+### Configuration
+Le serveur utilise Socket.IO pour les notifications temps réel.
 
-#### Mettre à Jour un Employé
-```bash
-PUT http://localhost:3001/api/employees/:id
-Authorization: Bearer <access_token>
-Content-Type: application/json
-
-{
-  "firstName": "Marie Updated",
-  "status": "inactive"
-}
-```
-
-#### Supprimer un Employé (Admin)
-```bash
-DELETE http://localhost:3001/api/employees/:id
-Authorization: Bearer <access_token>
-```
-
----
-
-### 🚪 Visites (`/api/visits`)
-
-**Routes à créer - voir server.js ligne 160**
-
----
-
-### 📦 Colis/Courrier (`/api/packages`)
-
-**Routes à créer - voir server.js ligne 161**
-
----
-
-### 🔧 Équipements (`/api/equipment`)
-
-**Routes à créer - voir server.js ligne 162**
-
----
-
-### 🦺 HSE (`/api/hse`)
-
-**Routes à créer - voir server.js ligne 163**
-
----
-
-### 📰 Publications (`/api/posts`)
-
-**Routes à créer - voir server.js ligne 164**
-
----
-
-### 📤 Upload de Fichiers (`/api/upload`)
-
-```bash
-POST http://localhost:3001/api/upload
-Authorization: Bearer <access_token>
-Content-Type: multipart/form-data
-
-file: [fichier]
-```
-
----
-
-## 🧪 Tests avec Cursor/cURL
-
-### Exemple Complet : Workflow d'Authentification
-
-```bash
-# 1. Connexion
-curl -X POST http://localhost:3001/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "matricule": "HSE001",
-    "password": "password123"
-  }'
-
-# Sauvegardez le accessToken de la réponse
-export TOKEN="eyJhbGc..."
-
-# 2. Obtenir le profil
-curl -X GET http://localhost:3001/api/auth/profile \
-  -H "Authorization: Bearer $TOKEN"
-
-# 3. Lister les employés
-curl -X GET http://localhost:3001/api/employees \
-  -H "Authorization: Bearer $TOKEN"
-
-# 4. Créer un employé (Admin)
-curl -X POST http://localhost:3001/api/employees \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "matricule": "TEST001",
-    "firstName": "Test",
-    "lastName": "User",
-    "email": "test@sogara.ga",
-    "service": "IT",
-    "roles": ["EMPLOYE"]
-  }'
-
-# 5. Déconnexion
-curl -X POST http://localhost:3001/api/auth/logout \
-  -H "Authorization: Bearer $TOKEN"
-```
-
----
-
-## 💾 Base de Données PostgreSQL
-
-### Accès Direct à la Base
-
-```bash
-# Connexion
-psql -U sogara_user -d sogara_db -h localhost
-
-# Lister les tables
-\dt
-
-# Voir les employés
-SELECT * FROM employees;
-
-# Voir les rôles d'un employé
-SELECT * FROM employees WHERE matricule = 'HSE001';
-
-# Sortir
-\q
-```
-
-### Tables Principales
-
-- **employees** : Tous les employés avec leurs informations
-- **visits** : Gestion des visites (à créer)
-- **packages** : Colis et courrier (à créer)
-- **equipment** : Équipements HSE (à créer)
-- **hse_trainings** : Formations HSE (à créer)
-- **hse_incidents** : Incidents HSE (à créer)
-
----
-
-## 🔌 WebSocket (Socket.IO)
-
-Le serveur supporte Socket.IO pour les notifications temps réel.
-
-### Connexion depuis le Frontend
-
+**Connexion**:
 ```javascript
-import { io } from 'socket.io-client';
-
 const socket = io('http://localhost:3001', {
-  transports: ['websocket'],
-  withCredentials: true
-});
-
-// Authentification
-socket.emit('authenticate', {
-  userId: 'user-id',
-  token: 'access-token'
-});
-
-// Écouter les notifications
-socket.on('notification', (data) => {
-  console.log('Notification reçue:', data);
+  auth: {
+    token: 'your-jwt-token'
+  }
 });
 ```
 
----
+### Événements Écoutés
+- `notification`: Notifications générales
+- `hse_alert`: Alertes HSE
+- `visit_update`: Mises à jour de visites
+- `package_update`: Mises à jour de colis
 
-## 📊 Logs et Débogage
+### Événements Émis
+- `join_room`: Rejoindre une salle
+- `leave_room`: Quitter une salle
+- `send_notification`: Envoyer une notification
 
-Les logs sont gérés par Winston et s'affichent dans la console :
+## 👥 Permissions par Rôle
 
+### Rôles Disponibles
+- `ADMIN`: Accès complet
+- `DG`: Directeur Général
+- `HSE`: Responsable HSE
+- `DRH`: Directeur RH
+- `SUPERVISEUR`: Superviseur
+- `COMPLIANCE`: Conformité
+- `RECEP`: Réception
+- `EMPLOYEE`: Employé
+
+### Matrice de Permissions
+
+| Endpoint | ADMIN | DG | HSE | DRH | SUPERVISEUR | COMPLIANCE | RECEP | EMPLOYEE |
+|----------|-------|----|----|----|------------|------------|-------|----------|
+| `/api/analytics/*` | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| `/api/approval/*` | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| `/api/posts` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+## 📡 Exemples cURL
+
+### Health Check
 ```bash
-# Logs en temps réel
+curl -X GET http://localhost:3001/health
+```
+
+### Analytics Dashboard
+```bash
+curl -X GET "http://localhost:3001/api/analytics/dashboard?period=week&department=all"
+```
+
+### Workflows d'Approbation
+```bash
+curl -X GET http://localhost:3001/api/approval/workflows
+```
+
+### Étapes en Attente
+```bash
+curl -X GET http://localhost:3001/api/approval/pending
+```
+
+### Posts
+```bash
+curl -X GET http://localhost:3001/api/posts
+```
+
+### Avec Authentification
+```bash
+curl -X GET http://localhost:3001/api/analytics/dashboard \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+## 🚀 Démarrage du Serveur
+
+### Mode Simple (Sans Base de Données)
+```bash
+cd backend
+node simple-server.js
+```
+
+### Mode Complet (Avec PostgreSQL)
+```bash
+cd backend
+npm run migrate
+npm run seed
 npm run dev
-
-# Voir uniquement les erreurs
-npm run dev | grep ERROR
-
-# Voir uniquement les requêtes
-npm run dev | grep HTTP
 ```
 
----
+## 🔍 Dépannage
 
-## 🔒 Permissions par Rôle
+### Erreurs Courantes
 
-| Rôle | Permissions |
-|------|------------|
-| **ADMIN** | Toutes les permissions système |
-| **HSE** | Gestion HSE, employés, équipements |
-| **SUPERVISEUR** | Gestion visites, équipements, consultation employés |
-| **RECEP** | Gestion visites, colis, courrier |
-| **COMMUNICATION** | Gestion publications |
-| **EMPLOYE** | Consultation propres données uniquement |
-
-Voir `backend/src/middleware/auth.middleware.js` pour les détails.
-
----
-
-## 🆘 Résolution de Problèmes
-
-### Erreur : "Cannot connect to database"
+#### 1. Port déjà utilisé
 ```bash
-# Vérifier que PostgreSQL tourne
-brew services list  # macOS
-sudo systemctl status postgresql  # Linux
-
-# Tester la connexion
-psql -U sogara_user -d sogara_db -h localhost
-```
-
-### Erreur : "Token invalide"
-```bash
-# Vérifiez que JWT_ACCESS_SECRET est défini dans .env
-# Régénérez un token en vous reconnectant
-```
-
-### Erreur : "Port 3001 already in use"
-```bash
-# Trouver le processus
+# Vérifier les processus utilisant le port 3001
 lsof -i :3001
 
 # Tuer le processus
-kill -9 <PID>
-
-# Ou changer le port dans .env
-PORT=3002
+kill -9 PID
 ```
 
+#### 2. Erreur de connexion PostgreSQL
+```bash
+# Vérifier que PostgreSQL est démarré
+brew services list | grep postgresql
+
+# Redémarrer PostgreSQL
+brew services restart postgresql
+```
+
+#### 3. Erreurs JWT
+```bash
+# Vérifier les variables d'environnement
+cat .env | grep JWT
+
+# Régénérer les secrets
+openssl rand -base64 32
+```
+
+#### 4. Erreurs CORS
+```bash
+# Vérifier la configuration CORS
+echo $CORS_ORIGIN
+
+# Ajouter l'origine frontend
+CORS_ORIGIN=http://localhost:5173,http://localhost:3000
+```
+
+### Logs de Débogage
+```bash
+# Activer les logs détaillés
+LOG_LEVEL=debug
+
+# Vérifier les logs
+tail -f logs/sogara.log
+```
+
+### Test de Connectivité
+```bash
+# Test de base
+curl -I http://localhost:3001/health
+
+# Test avec timeout
+curl --connect-timeout 5 http://localhost:3001/health
+
+# Test des endpoints
+curl -X GET http://localhost:3001/api/analytics/dashboard
+```
+
+## 📊 Monitoring
+
+### Métriques Disponibles
+- Temps de réponse des API
+- Nombre de connexions WebSocket
+- Utilisation mémoire
+- Erreurs par endpoint
+
+### Health Check Avancé
+```bash
+curl -X GET http://localhost:3001/health | jq
+```
+
+## 🔒 Sécurité
+
+### Recommandations
+1. **JWT Secrets**: Utilisez des secrets forts (32+ caractères)
+2. **HTTPS**: Activez HTTPS en production
+3. **Rate Limiting**: Configurez les limites appropriées
+4. **CORS**: Limitez les origines autorisées
+5. **Validation**: Validez toutes les entrées
+
+### Variables de Production
+```bash
+NODE_ENV=production
+JWT_SECRET=secret_production_ultra_securise_32_caracteres_minimum
+CORS_ORIGIN=https://votre-domaine.com
+```
+
+## 📚 Ressources Supplémentaires
+
+- [Documentation Express.js](https://expressjs.com/)
+- [Documentation Socket.IO](https://socket.io/docs/)
+- [Documentation PostgreSQL](https://www.postgresql.org/docs/)
+- [Documentation JWT](https://jwt.io/)
+
 ---
 
-## 📚 Ressources Utiles
-
-- **Documentation Express** : https://expressjs.com/
-- **Sequelize ORM** : https://sequelize.org/
-- **JWT** : https://jwt.io/
-- **Socket.IO** : https://socket.io/docs/
-
----
-
-## ✅ Checklist de Démarrage
-
-- [ ] PostgreSQL installé et démarré
-- [ ] Base de données `sogara_db` créée
-- [ ] Fichier `.env` configuré avec secrets JWT
-- [ ] Dépendances installées (`npm install`)
-- [ ] Migrations exécutées (`npm run migrate`)
-- [ ] Serveur démarré (`npm run dev`)
-- [ ] Test du endpoint `/health` réussi
-- [ ] Connexion avec un compte test réussie
-
----
-
-**Version:** 1.0.0  
-**Dernière mise à jour:** 2025-10-23  
-**Contact:** SOGARA Team
+**Note**: Ce guide couvre le mode simple du serveur. Pour le mode complet avec base de données, consultez la documentation PostgreSQL et les migrations.

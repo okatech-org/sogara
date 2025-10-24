@@ -1,511 +1,505 @@
-# 🔌 Intégration Backend SOGARA avec Cursor
+# 🎯 Intégration Cursor - SOGARA Backend
 
-## 📋 Guide pour Développer avec Cursor
+## 📋 Table des Matières
+1. [Configuration Cursor](#configuration-cursor)
+2. [Fichiers .http](#fichiers-http)
+3. [Scripts de Test](#scripts-de-test)
+4. [Configuration Debugger](#configuration-debugger)
+5. [Extensions Recommandées](#extensions-recommandées)
+6. [Snippets de Code](#snippets-de-code)
+7. [Tasks VSCode](#tasks-vscode)
 
-### 🎯 Configuration Cursor pour API Backend
+## 🔧 Configuration Cursor
 
-#### 1. Extension REST Client (Recommandée)
+### Workspace Settings
+Créez `.vscode/settings.json` :
+```json
+{
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "files.associations": {
+    "*.http": "http",
+    "*.rest": "http"
+  },
+  "http.proxy": "",
+  "http.proxyStrictSSL": false,
+  "rest-client.environmentVariables": {
+    "local": {
+      "baseUrl": "http://localhost:3001",
+      "apiUrl": "http://localhost:3001/api"
+    },
+    "production": {
+      "baseUrl": "https://api.sogara.ga",
+      "apiUrl": "https://api.sogara.ga/api"
+    }
+  }
+}
+```
 
-Installez l'extension **REST Client** dans Cursor/VSCode :
-- Appuyez sur `Cmd+Shift+X` (macOS) ou `Ctrl+Shift+X` (Windows/Linux)
-- Recherchez "REST Client"
-- Installez l'extension de Huachao Mao
+## 📡 Fichiers .http
 
-#### 2. Créer un Fichier de Requêtes
-
-Créez `backend/api-tests.http` :
-
+### tests/api-tests.http
 ```http
 ### Variables
 @baseUrl = http://localhost:3001
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+@apiUrl = {{baseUrl}}/api
 
 ### Health Check
 GET {{baseUrl}}/health
 
-### Login - Obtenir un token
-# @name login
-POST {{baseUrl}}/api/auth/login
+### Analytics Dashboard
+GET {{apiUrl}}/analytics/dashboard?period=week&department=all
+
+### Workflows d'Approbation
+GET {{apiUrl}}/approval/workflows
+
+### Étapes en Attente
+GET {{apiUrl}}/approval/pending
+
+### Posts
+GET {{apiUrl}}/posts
+
+### Test avec Authentification
+GET {{apiUrl}}/analytics/dashboard
+Authorization: Bearer YOUR_JWT_TOKEN
+
+### Test CORS
+OPTIONS {{apiUrl}}/analytics/dashboard
+Origin: http://localhost:5173
+```
+
+### tests/auth-tests.http
+```http
+### Variables
+@baseUrl = http://localhost:3001
+@apiUrl = {{baseUrl}}/api
+
+### Login
+POST {{apiUrl}}/auth/login
 Content-Type: application/json
 
 {
   "matricule": "HSE001",
-  "password": "password123"
+  "password": "HSE123!"
 }
 
-### Sauvegarder le token (après login)
-@authToken = {{login.response.body.$.data.tokens.accessToken}}
-
-### Get Profile
-GET {{baseUrl}}/api/auth/profile
-Authorization: Bearer {{authToken}}
-
-### List Employees
-GET {{baseUrl}}/api/employees
-Authorization: Bearer {{authToken}}
-
-### Create Employee (Admin only)
-POST {{baseUrl}}/api/employees
-Authorization: Bearer {{authToken}}
+### Register
+POST {{apiUrl}}/auth/register
 Content-Type: application/json
 
 {
-  "matricule": "TEST999",
   "firstName": "Test",
-  "lastName": "Cursor",
-  "email": "test.cursor@sogara.ga",
-  "service": "IT",
-  "roles": ["EMPLOYE"]
-}
-
-### Get Specific Employee
-GET {{baseUrl}}/api/employees/{{employeeId}}
-Authorization: Bearer {{authToken}}
-
-### Update Employee
-PUT {{baseUrl}}/api/employees/{{employeeId}}
-Authorization: Bearer {{authToken}}
-Content-Type: application/json
-
-{
-  "firstName": "Updated Name"
-}
-
-### Delete Employee (Admin only)
-DELETE {{baseUrl}}/api/employees/{{employeeId}}
-Authorization: Bearer {{authToken}}
-
-### Change Password
-POST {{baseUrl}}/api/auth/change-password
-Authorization: Bearer {{authToken}}
-Content-Type: application/json
-
-{
-  "currentPassword": "password123",
-  "newPassword": "newPassword456"
+  "lastName": "User",
+  "matricule": "TEST001",
+  "email": "test@sogara.ga",
+  "password": "Test123!",
+  "roles": ["EMPLOYEE"]
 }
 
 ### Refresh Token
-POST {{baseUrl}}/api/auth/refresh
+POST {{apiUrl}}/auth/refresh
 Content-Type: application/json
 
 {
-  "refreshToken": "{{refreshToken}}"
+  "refreshToken": "your_refresh_token"
 }
 
-### Logout
-POST {{baseUrl}}/api/auth/logout
-Authorization: Bearer {{authToken}}
+### Validate Token
+GET {{apiUrl}}/auth/validate
+Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
-**Utilisation :**
-- Cliquez sur "Send Request" au-dessus de chaque bloc
-- Les réponses s'affichent dans un panel à droite
-- Les variables `@token` sont automatiquement extraites des réponses
+## 🧪 Scripts de Test
 
----
-
-## 🛠️ Scripts Cursor pour Automatisation
-
-### Script de Test Complet
-
-Créez `backend/scripts/test-api.sh` :
-
+### test-api.sh
 ```bash
 #!/bin/bash
+# Script de test automatisé pour les API SOGARA
 
-# Couleurs pour la sortie
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+echo "🧪 Test des API SOGARA Backend"
+echo "================================"
 
 BASE_URL="http://localhost:3001"
+API_URL="$BASE_URL/api"
 
-echo -e "${YELLOW}🧪 Tests API SOGARA Backend${NC}\n"
+# Fonction de test
+test_endpoint() {
+    local endpoint=$1
+    local description=$2
+    local expected_status=${3:-200}
+    
+    echo "Testing: $description"
+    response=$(curl -s -w "%{http_code}" -o /tmp/response.json "$endpoint")
+    
+    if [ "$response" = "$expected_status" ]; then
+        echo "✅ $description - Status: $response"
+        cat /tmp/response.json | jq . 2>/dev/null || cat /tmp/response.json
+    else
+        echo "❌ $description - Status: $response (Expected: $expected_status)"
+    fi
+    echo ""
+}
 
-# 1. Health Check
-echo -e "${YELLOW}1. Health Check...${NC}"
-HEALTH=$(curl -s ${BASE_URL}/health)
-if echo "$HEALTH" | grep -q '"status":"healthy"'; then
-  echo -e "${GREEN}✅ Health check OK${NC}\n"
-else
-  echo -e "${RED}❌ Health check failed${NC}\n"
-  exit 1
-fi
+# Tests
+test_endpoint "$BASE_URL/health" "Health Check"
+test_endpoint "$API_URL/analytics/dashboard" "Analytics Dashboard"
+test_endpoint "$API_URL/approval/workflows" "Approval Workflows"
+test_endpoint "$API_URL/approval/pending" "Pending Steps"
+test_endpoint "$API_URL/posts" "Posts"
 
-# 2. Login
-echo -e "${YELLOW}2. Login (HSE001)...${NC}"
-LOGIN_RESPONSE=$(curl -s -X POST ${BASE_URL}/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"matricule":"HSE001","password":"password123"}')
-
-TOKEN=$(echo $LOGIN_RESPONSE | grep -o '"accessToken":"[^"]*' | cut -d'"' -f4)
-
-if [ -z "$TOKEN" ]; then
-  echo -e "${RED}❌ Login failed${NC}\n"
-  echo "$LOGIN_RESPONSE"
-  exit 1
-fi
-
-echo -e "${GREEN}✅ Login successful${NC}"
-echo -e "Token: ${TOKEN:0:20}...\n"
-
-# 3. Get Profile
-echo -e "${YELLOW}3. Get Profile...${NC}"
-PROFILE=$(curl -s ${BASE_URL}/api/auth/profile \
-  -H "Authorization: Bearer $TOKEN")
-
-if echo "$PROFILE" | grep -q '"matricule"'; then
-  echo -e "${GREEN}✅ Profile retrieved${NC}"
-  echo "$PROFILE" | grep -o '"firstName":"[^"]*"' | cut -d'"' -f4
-  echo ""
-else
-  echo -e "${RED}❌ Failed to get profile${NC}\n"
-  exit 1
-fi
-
-# 4. List Employees
-echo -e "${YELLOW}4. List Employees...${NC}"
-EMPLOYEES=$(curl -s ${BASE_URL}/api/employees \
-  -H "Authorization: Bearer $TOKEN")
-
-if echo "$EMPLOYEES" | grep -q '"matricule"'; then
-  EMPLOYEE_COUNT=$(echo "$EMPLOYEES" | grep -o '"matricule"' | wc -l)
-  echo -e "${GREEN}✅ Employees listed: $EMPLOYEE_COUNT employees${NC}\n"
-else
-  echo -e "${RED}❌ Failed to list employees${NC}\n"
-  exit 1
-fi
-
-# 5. Validate Token
-echo -e "${YELLOW}5. Validate Token...${NC}"
-VALIDATE=$(curl -s ${BASE_URL}/api/auth/validate \
-  -H "Authorization: Bearer $TOKEN")
-
-if echo "$VALIDATE" | grep -q '"valid":true'; then
-  echo -e "${GREEN}✅ Token is valid${NC}\n"
-else
-  echo -e "${RED}❌ Token validation failed${NC}\n"
-  exit 1
-fi
-
-echo -e "${GREEN}🎉 All tests passed!${NC}"
+echo "🎉 Tests terminés!"
 ```
 
-**Rendre le script exécutable :**
-```bash
-chmod +x backend/scripts/test-api.sh
-./backend/scripts/test-api.sh
+### test-websocket.js
+```javascript
+// Test WebSocket avec Socket.IO
+const io = require('socket.io-client');
+
+const socket = io('http://localhost:3001', {
+  auth: {
+    token: 'test-token'
+  }
+});
+
+socket.on('connect', () => {
+  console.log('✅ WebSocket connecté');
+  
+  // Test des événements
+  socket.emit('join_room', 'test-room');
+  
+  setTimeout(() => {
+    socket.emit('send_notification', {
+      title: 'Test',
+      message: 'Notification de test'
+    });
+  }, 1000);
+});
+
+socket.on('notification', (data) => {
+  console.log('📢 Notification reçue:', data);
+});
+
+socket.on('disconnect', () => {
+  console.log('❌ WebSocket déconnecté');
+});
+
+// Fermer après 5 secondes
+setTimeout(() => {
+  socket.disconnect();
+  process.exit(0);
+}, 5000);
 ```
 
----
+## 🐛 Configuration Debugger
 
-## 🔍 Débogage dans Cursor
-
-### Configuration VSCode/Cursor Debugger
-
-Créez `.vscode/launch.json` :
-
+### .vscode/launch.json
 ```json
 {
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Debug Backend Server",
       "type": "node",
       "request": "launch",
-      "name": "Debug Backend Server",
-      "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}/backend/src/server.js",
-      "cwd": "${workspaceFolder}/backend",
-      "envFile": "${workspaceFolder}/backend/.env",
+      "program": "${workspaceFolder}/backend/simple-server.js",
+      "env": {
+        "NODE_ENV": "development",
+        "PORT": "3001"
+      },
       "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen",
       "restart": true,
-      "runtimeExecutable": "nodemon",
-      "runtimeArgs": ["--inspect"],
-      "sourceMaps": true
+      "protocol": "inspector"
     },
     {
+      "name": "Debug Full Server",
       "type": "node",
-      "request": "attach",
-      "name": "Attach to Backend",
-      "port": 9229,
+      "request": "launch",
+      "program": "${workspaceFolder}/backend/src/server.js",
+      "env": {
+        "NODE_ENV": "development",
+        "PORT": "3001"
+      },
+      "console": "integratedTerminal",
       "restart": true,
-      "skipFiles": ["<node_internals>/**"]
+      "protocol": "inspector"
+    },
+    {
+      "name": "Debug Tests",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/backend/tests/test-api.js",
+      "console": "integratedTerminal"
     }
   ]
 }
 ```
 
-**Utilisation :**
-1. Appuyez sur `F5` pour démarrer le débogueur
-2. Placez des breakpoints dans le code (clic gauche sur la marge)
-3. Le serveur se relance automatiquement à chaque modification
-
----
-
-## 🔧 Extensions Cursor Recommandées
-
-1. **REST Client** - Tester les API directement dans l'éditeur
-2. **Thunder Client** - Alternative graphique à Postman
-3. **Database Client** - Visualiser PostgreSQL
-4. **Error Lens** - Voir les erreurs inline
-5. **Pretty TypeScript Errors** - Erreurs TypeScript lisibles
-
----
-
-## 📝 Snippets Cursor Utiles
-
-Créez `.vscode/snippets.code-snippets` :
-
-```json
-{
-  "Express Route": {
-    "prefix": "exp-route",
-    "body": [
-      "/**",
-      " * @route   ${1|GET,POST,PUT,DELETE,PATCH|} /api/${2:resource}",
-      " * @desc    ${3:Description}",
-      " * @access  ${4|Public,Private,Admin|}",
-      " */",
-      "router.${1:get}('/${2:resource}', ${5:authMiddleware}, async (req, res) => {",
-      "  try {",
-      "    $0",
-      "    res.json({ success: true, data: {} });",
-      "  } catch (error) {",
-      "    logger.error('Error:', error);",
-      "    res.status(500).json({ success: false, message: error.message });",
-      "  }",
-      "});"
-    ],
-    "description": "Create Express route"
-  },
-  "Sequelize Model": {
-    "prefix": "seq-model",
-    "body": [
-      "const { Model, DataTypes } = require('sequelize');",
-      "const { sequelize } = require('../config/database');",
-      "",
-      "class ${1:ModelName} extends Model {}",
-      "",
-      "${1:ModelName}.init(",
-      "  {",
-      "    id: {",
-      "      type: DataTypes.UUID,",
-      "      defaultValue: DataTypes.UUIDV4,",
-      "      primaryKey: true",
-      "    },",
-      "    ${2:fieldName}: {",
-      "      type: DataTypes.${3|STRING,INTEGER,BOOLEAN,DATE|},",
-      "      allowNull: ${4|false,true|}",
-      "    }",
-      "  },",
-      "  {",
-      "    sequelize,",
-      "    modelName: '${1:ModelName}',",
-      "    tableName: '${5:table_name}',",
-      "    timestamps: true",
-      "  }",
-      ");",
-      "",
-      "module.exports = { ${1:ModelName} };"
-    ],
-    "description": "Create Sequelize model"
-  },
-  "API Test Block": {
-    "prefix": "api-test",
-    "body": [
-      "### ${1:Test Name}",
-      "${2|GET,POST,PUT,DELETE,PATCH|} {{baseUrl}}/api/${3:endpoint}",
-      "Authorization: Bearer {{authToken}}",
-      "Content-Type: application/json",
-      "",
-      "{",
-      "  \"${4:key}\": \"${5:value}\"",
-      "}",
-      ""
-    ],
-    "description": "Create API test block"
-  }
-}
-```
-
-**Utilisation :** Tapez `exp-route` puis `Tab` pour générer une route Express complète.
-
----
-
-## 🧪 Tests Automatisés avec Jest
-
-### Exemple de Test API
-
-Créez `backend/tests/auth.test.js` :
-
-```javascript
-const request = require('supertest');
-const { app } = require('../src/server');
-
-describe('Authentication API', () => {
-  let accessToken;
-
-  test('POST /api/auth/login - Should login successfully', async () => {
-    const response = await request(app)
-      .post('/api/auth/login')
-      .send({
-        matricule: 'HSE001',
-        password: 'password123'
-      });
-
-    expect(response.status).toBe(200);
-    expect(response.body.success).toBe(true);
-    expect(response.body.data.tokens.accessToken).toBeDefined();
-
-    accessToken = response.body.data.tokens.accessToken;
-  });
-
-  test('GET /api/auth/profile - Should get profile with valid token', async () => {
-    const response = await request(app)
-      .get('/api/auth/profile')
-      .set('Authorization', `Bearer ${accessToken}`);
-
-    expect(response.status).toBe(200);
-    expect(response.body.data.matricule).toBe('HSE001');
-  });
-
-  test('GET /api/auth/profile - Should fail without token', async () => {
-    const response = await request(app)
-      .get('/api/auth/profile');
-
-    expect(response.status).toBe(401);
-  });
-});
-```
-
-**Lancer les tests :**
-```bash
-npm test
-npm test -- --watch  # Mode watch
-npm test -- --coverage  # Avec couverture
-```
-
----
-
-## 🚀 Workflow de Développement dans Cursor
-
-### 1. Terminal Intégré (Recommandé)
-
-Ouvrez 3 terminaux dans Cursor (`Ctrl+Shift+` \`):
-
-**Terminal 1 - Backend:**
-```bash
-cd backend
-npm run dev
-```
-
-**Terminal 2 - Frontend:**
-```bash
-npm run dev
-```
-
-**Terminal 3 - Tests/Commandes:**
-```bash
-# Tests API
-./backend/scripts/test-api.sh
-
-# Accès PostgreSQL
-psql -U sogara_user -d sogara_db
-
-# Logs en temps réel
-tail -f backend/logs/sogara.log
-```
-
-### 2. Tasks Cursor
-
-Créez `.vscode/tasks.json` :
-
+### .vscode/tasks.json
 ```json
 {
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Start Backend",
+      "label": "Start Backend Server",
       "type": "shell",
-      "command": "cd backend && npm run dev",
-      "problemMatcher": [],
+      "command": "node",
+      "args": ["simple-server.js"],
+      "options": {
+        "cwd": "${workspaceFolder}/backend"
+      },
+      "group": "build",
       "presentation": {
+        "echo": true,
         "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Test API Endpoints",
+      "type": "shell",
+      "command": "bash",
+      "args": ["test-api.sh"],
+      "options": {
+        "cwd": "${workspaceFolder}/backend"
+      },
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
         "panel": "new"
       }
     },
     {
-      "label": "Test API",
+      "label": "Install Dependencies",
       "type": "shell",
-      "command": "./backend/scripts/test-api.sh",
-      "problemMatcher": [],
-      "group": {
-        "kind": "test",
-        "isDefault": true
-      }
-    },
-    {
-      "label": "Reset Database",
-      "type": "shell",
-      "command": "cd backend && npm run migrate && npm run seed",
-      "problemMatcher": []
+      "command": "npm",
+      "args": ["install"],
+      "options": {
+        "cwd": "${workspaceFolder}/backend"
+      },
+      "group": "build"
     }
   ]
 }
 ```
 
-**Utilisation :** `Cmd+Shift+P` → "Tasks: Run Task"
+## 🔌 Extensions Recommandées
 
----
-
-## 📊 Monitoring avec Cursor
-
-### Extension Database Client
-
-1. Installer "Database Client" dans Cursor
-2. Connecter PostgreSQL :
-   - Host: `localhost`
-   - Port: `5432`
-   - Database: `sogara_db`
-   - User: `sogara_user`
-   - Password: `sogara_password`
-
-3. Visualiser les tables en temps réel
-4. Exécuter des requêtes SQL directement
-
----
-
-## 🔐 Gestion des Secrets
-
-### Fichier .env local (non commité)
-
-```bash
-# Ne JAMAIS commiter le .env
-echo ".env" >> backend/.gitignore
-
-# Utiliser .env.example comme template
-cp backend/.env.example backend/.env
-
-# Générer des secrets uniques
-openssl rand -base64 32 > backend/.secrets/jwt_access
-openssl rand -base64 32 > backend/.secrets/jwt_refresh
+### Extensions Essentielles
+```json
+{
+  "recommendations": [
+    "humao.rest-client",
+    "ms-vscode.vscode-json",
+    "bradlc.vscode-tailwindcss",
+    "esbenp.prettier-vscode",
+    "ms-vscode.vscode-eslint",
+    "ms-vscode.vscode-typescript-next",
+    "formulahendry.auto-rename-tag",
+    "christian-kohler.path-intellisense",
+    "ms-vscode.vscode-node-debug2"
+  ]
+}
 ```
 
+### Configuration des Extensions
+
+#### REST Client
+```json
+{
+  "rest-client.environmentVariables": {
+    "local": {
+      "baseUrl": "http://localhost:3001",
+      "apiUrl": "http://localhost:3001/api",
+      "token": "your-jwt-token"
+    }
+  }
+}
+```
+
+#### Prettier
+```json
+{
+  "prettier.semi": true,
+  "prettier.singleQuote": true,
+  "prettier.trailingComma": "es5",
+  "prettier.tabWidth": 2
+}
+```
+
+## 📝 Snippets de Code
+
+### .vscode/snippets.json
+```json
+{
+  "API Route": {
+    "prefix": "api-route",
+    "body": [
+      "app.${1|get,post,put,patch,delete|}('${2:/api/endpoint}', ${3:middleware}, (req, res) => {",
+      "  try {",
+      "    // ${4:Route logic}",
+      "    res.json({",
+      "      success: true,",
+      "      data: ${5:result}",
+      "      message: '${6:Success message}'",
+      "    });",
+      "  } catch (error) {",
+      "    console.error('Error:', error);",
+      "    res.status(500).json({",
+      "      success: false,",
+      "      message: 'Internal server error'",
+      "    });",
+      "  }",
+      "});"
+    ],
+    "description": "Create API route"
+  },
+  "Middleware": {
+    "prefix": "middleware",
+    "body": [
+      "const ${1:middlewareName} = (req, res, next) => {",
+      "  try {",
+      "    // ${2:Middleware logic}",
+      "    next();",
+      "  } catch (error) {",
+      "    res.status(400).json({",
+      "      success: false,",
+      "      message: error.message",
+      "    });",
+      "  }",
+      "};"
+    ],
+    "description": "Create middleware function"
+  },
+  "Error Handler": {
+    "prefix": "error-handler",
+    "body": [
+      "app.use((err, req, res, next) => {",
+      "  console.error('Error:', err);",
+      "  res.status(${1:500}).json({",
+      "    success: false,",
+      "    message: '${2:Error message}',",
+      "    error: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'",
+      "  });",
+      "});"
+    ],
+    "description": "Error handling middleware"
+  }
+}
+```
+
+## 🎯 Tasks VSCode
+
+### Commandes Disponibles
+- `Ctrl+Shift+P` → "Tasks: Run Task"
+- `Ctrl+Shift+P` → "Tasks: Run Build Task"
+
+### Raccourcis Clavier
+```json
+{
+  "key": "ctrl+shift+b",
+  "command": "workbench.action.tasks.build"
+},
+{
+  "key": "ctrl+shift+t",
+  "command": "workbench.action.tasks.test"
+}
+```
+
+## 🔍 Debugging Avancé
+
+### Breakpoints Conditionnels
+```javascript
+// Dans votre code
+if (req.user.role === 'ADMIN') {
+  debugger; // Breakpoint conditionnel
+}
+```
+
+### Variables de Debug
+```javascript
+// Ajouter à votre code pour le debugging
+console.log('Debug - User:', req.user);
+console.log('Debug - Body:', req.body);
+console.log('Debug - Headers:', req.headers);
+```
+
+### Profiling
+```javascript
+// Mesurer les performances
+const start = Date.now();
+// ... votre code ...
+console.log(`Execution time: ${Date.now() - start}ms`);
+```
+
+## 📊 Monitoring en Temps Réel
+
+### Logs en Direct
+```bash
+# Terminal 1: Serveur
+npm run backend:start
+
+# Terminal 2: Logs
+tail -f logs/sogara.log
+
+# Terminal 3: Monitoring
+watch -n 1 'curl -s http://localhost:3001/health | jq'
+```
+
+### Métriques de Performance
+```javascript
+// Ajouter à votre serveur
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    console.log(`${req.method} ${req.path} - ${res.statusCode} - ${duration}ms`);
+  });
+  next();
+});
+```
+
+## 🚀 Workflow de Développement
+
+### 1. Démarrage
+```bash
+# Terminal 1: Backend
+npm run backend:start
+
+# Terminal 2: Frontend
+npm run dev
+
+# Terminal 3: Convex
+npm run dev:convex
+```
+
+### 2. Test
+```bash
+# Tests API
+bash test-api.sh
+
+# Tests WebSocket
+node test-websocket.js
+```
+
+### 3. Debug
+- F9: Toggle breakpoint
+- F5: Start debugging
+- F10: Step over
+- F11: Step into
+- Shift+F11: Step out
+
+## 📚 Ressources
+
+- [Documentation REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client)
+- [Documentation Node.js Debugging](https://code.visualstudio.com/docs/nodejs/nodejs-debugging)
+- [Documentation Tasks](https://code.visualstudio.com/docs/editor/tasks)
+
 ---
 
-## 📚 Commandes Cursor Rapides
-
-| Commande | Raccourci | Description |
-|----------|-----------|-------------|
-| Palette de commandes | `Cmd+Shift+P` | Accès à toutes les commandes |
-| Terminal intégré | `Ctrl+` \` | Ouvrir/fermer terminal |
-| Recherche globale | `Cmd+Shift+F` | Chercher dans tous les fichiers |
-| Débogage | `F5` | Démarrer le débogueur |
-| Tester API | Clic "Send Request" | Dans fichiers `.http` |
-
----
-
-**✅ Votre environnement Cursor est maintenant configuré pour le développement backend SOGARA !**
+**Note**: Cette configuration optimise le développement avec Cursor pour le backend SOGARA.

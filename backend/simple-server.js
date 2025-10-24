@@ -5,26 +5,59 @@ const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
+const http = require('http');
+const socketIo = require('socket.io');
 const path = require('path');
 
+// Initialisation de l'application Express
 const app = express();
-const PORT = process.env.PORT || 3001;
+const server = http.createServer(app);
 
-// Middleware de sécurité
-app.use(helmet());
+// Configuration Socket.IO pour les notifications temps réel
+const io = socketIo(server, {
+  cors: {
+    origin: process.env.CORS_ORIGIN?.split(',') || ["http://localhost:5173"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
+  }
+});
+
+// Stockage des connexions Socket.IO
+global.socketConnections = new Map();
+
+// Configuration des middlewares de sécurité
+app.use(helmet({
+  crossOriginEmbedderPolicy: false,
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "https:"],
+      connectSrc: ["'self'"],
+      fontSrc: ["'self'"],
+      objectSrc: ["'none'"],
+      mediaSrc: ["'self'"],
+      frameSrc: ["'none'"]
+    }
+  }
+}));
+
 app.use(compression());
-
-// Configuration CORS
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:8080',
+  origin: process.env.CORS_ORIGIN?.split(',') || ["http://localhost:5173"],
   credentials: true
 }));
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limite chaque IP à 100 requêtes par windowMs
+  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
+  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100, // limite par IP
+  message: {
+    error: 'Trop de requêtes depuis cette IP, veuillez réessayer plus tard.'
+  }
 });
+
 app.use(limiter);
 
 // Middleware pour parser JSON
@@ -35,89 +68,65 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.get('/health', (req, res) => {
   res.json({
     status: 'OK',
-    message: 'Serveur SOGARA opérationnel',
     timestamp: new Date().toISOString(),
-    version: '1.0.0'
-  });
-});
-
-// Route racine
-app.get('/', (req, res) => {
-  res.json({
-    message: 'API SOGARA - Serveur de développement',
-    endpoints: {
-      health: '/health',
-      api: '/api'
-    }
+    version: '1.0.0',
+    environment: process.env.NODE_ENV || 'development'
   });
 });
 
 // Routes API mockées
-app.get('/api/health', (req, res) => {
+app.get('/api/analytics/dashboard', (req, res) => {
   res.json({
     success: true,
-    message: 'API accessible',
     data: {
-      status: 'OK',
-      timestamp: new Date().toISOString()
+      kpis: [
+        { label: 'Visiteurs aujourd\'hui', value: 12, trend: { changePercent: 8.5 } },
+        { label: 'Colis en attente', value: 5, trend: { changePercent: -12.3 } },
+        { label: 'Incidents HSE', value: 2, trend: { changePercent: -25.0 } },
+        { label: 'Formations complétées', value: 18, trend: { changePercent: 15.2 } }
+      ],
+      charts: {
+        visitors: { labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven'], data: [8, 12, 15, 10, 14] },
+        incidents: { labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai'], data: [3, 2, 4, 1, 2] }
+      }
     }
   });
 });
 
-// Route pour les employés (mock)
-app.get('/api/employees', (req, res) => {
+app.get('/api/approval/workflows', (req, res) => {
   res.json({
     success: true,
-    message: 'Liste des employés',
     data: [
-      { id: 1, firstName: 'Jean', lastName: 'Dupont', email: 'jean.dupont@sogara.com' },
-      { id: 2, firstName: 'Marie', lastName: 'Martin', email: 'marie.martin@sogara.com' }
+      {
+        id: '1',
+        name: 'Validation HSE',
+        description: 'Workflow de validation des incidents HSE',
+        steps: [
+          { id: '1', name: 'Signalement', status: 'completed', assignee: 'HSE001' },
+          { id: '2', name: 'Analyse', status: 'in_progress', assignee: 'HSE001' },
+          { id: '3', name: 'Validation', status: 'pending', assignee: 'DG001' }
+        ],
+        status: 'in_progress',
+        createdAt: new Date().toISOString()
+      }
     ]
   });
 });
 
-// Route pour les visites (mock)
-app.get('/api/visits', (req, res) => {
+app.get('/api/approval/pending', (req, res) => {
   res.json({
     success: true,
-    message: 'Liste des visites',
-    data: []
-  });
-});
-
-// Route pour les colis (mock)
-app.get('/api/packages', (req, res) => {
-  res.json({
-    success: true,
-    message: 'Liste des colis',
-    data: []
-  });
-});
-
-// Route pour les équipements (mock)
-app.get('/api/equipment', (req, res) => {
-  res.json({
-    success: true,
-    message: 'Liste des équipements',
-    data: []
-  });
-});
-
-// Route pour les incidents HSE (mock)
-app.get('/api/hse/incidents', (req, res) => {
-  res.json({
-    success: true,
-    message: 'Liste des incidents HSE',
-    data: []
-  });
-});
-
-// Route pour les formations HSE (mock)
-app.get('/api/hse/trainings', (req, res) => {
-  res.json({
-    success: true,
-    message: 'Liste des formations HSE',
-    data: []
+    data: [
+      {
+        id: '1',
+        workflowId: '1',
+        stepName: 'Analyse HSE',
+        assignee: 'HSE001',
+        dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        priority: 'high',
+        description: 'Analyser l\'incident HSE signalé'
+      }
+    ]
   });
 });
 
@@ -125,36 +134,51 @@ app.get('/api/hse/trainings', (req, res) => {
 app.get('/api/posts', (req, res) => {
   res.json({
     success: true,
-    message: 'Liste des posts',
-    data: []
+    data: [
+      {
+        id: '1',
+        title: 'Bienvenue sur SOGARA Connect',
+        content: 'Système de gestion intégré pour la raffinerie',
+        author: 'Admin',
+        createdAt: new Date().toISOString()
+      }
+    ]
   });
 });
 
-// Gestion des erreurs 404
+// Gestion des erreurs
+app.use((err, req, res, next) => {
+  console.error('Erreur serveur:', err);
+  res.status(500).json({
+    success: false,
+    message: 'Erreur interne du serveur'
+  });
+});
+
+// Route 404
 app.use('*', (req, res) => {
   res.status(404).json({
     success: false,
-    message: 'Route non trouvée',
-    path: req.originalUrl
-  });
-});
-
-// Gestion des erreurs globales
-app.use((error, req, res, next) => {
-  console.error('Erreur serveur:', error);
-  res.status(500).json({
-    success: false,
-    message: 'Erreur interne du serveur',
-    error: process.env.NODE_ENV === 'development' ? error.message : 'Erreur interne'
+    message: 'Route non trouvée'
   });
 });
 
 // Démarrage du serveur
-app.listen(PORT, () => {
+const PORT = process.env.PORT || 3001;
+
+server.listen(PORT, () => {
   console.log(`🚀 Serveur SOGARA démarré sur le port ${PORT}`);
-  console.log(`📡 Health check: http://localhost:${PORT}/health`);
-  console.log(`🔗 API: http://localhost:${PORT}/api`);
-  console.log(`🌐 CORS autorisé depuis: ${process.env.CORS_ORIGIN || 'http://localhost:8080'}`);
+  console.log(`📊 Health check: http://localhost:${PORT}/health`);
+  console.log(`🌐 CORS autorisé pour: ${process.env.CORS_ORIGIN || 'http://localhost:5173'}`);
 });
 
-module.exports = app;
+// Gestion des erreurs non capturées
+process.on('uncaughtException', (err) => {
+  console.error('Erreur non capturée:', err);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Promesse rejetée non gérée:', reason);
+  process.exit(1);
+});

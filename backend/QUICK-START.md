@@ -1,150 +1,195 @@
-# ⚡ Quick Start - Serveur Backend SOGARA
+# 🚀 Démarrage Rapide SOGARA Backend
 
-## 🚀 Démarrage Rapide en 5 Minutes
+## ⚡ Démarrage en 5 Minutes
 
-### 1️⃣ Installation PostgreSQL
-
-**macOS:**
+### 1. Configuration Initiale
 ```bash
-brew install postgresql@15
-brew services start postgresql@15
+# Cloner et naviguer vers le backend
+cd backend
+
+# Installer les dépendances
+npm install
+
+# Copier la configuration
+cp .env.example .env
 ```
 
-**Ubuntu/Debian:**
+### 2. Configuration PostgreSQL (Optionnel)
 ```bash
-sudo apt update
-sudo apt install postgresql postgresql-contrib
-sudo systemctl start postgresql
-```
+# Démarrer PostgreSQL
+brew services start postgresql  # macOS
+# ou
+sudo systemctl start postgresql  # Linux
 
-### 2️⃣ Création de la Base de Données
-
-```bash
-# Connexion à PostgreSQL
+# Créer la base de données
 psql postgres
-
-# Dans psql, exécutez:
 CREATE DATABASE sogara_db;
-CREATE USER sogara_user WITH ENCRYPTED PASSWORD 'sogara_password';
+CREATE USER sogara_user WITH PASSWORD 'sogara_password';
 GRANT ALL PRIVILEGES ON DATABASE sogara_db TO sogara_user;
 \q
 ```
 
-### 3️⃣ Configuration
+### 3. Lancement du Serveur
 
+#### Mode Simple (Recommandé pour le développement)
 ```bash
-cd backend
-
-# Copier le fichier .env d'exemple
-cp .env.example .env
-
-# Générer des secrets JWT sécurisés
-echo "JWT_ACCESS_SECRET=$(openssl rand -base64 32)" >> .env
-echo "JWT_REFRESH_SECRET=$(openssl rand -base64 32)" >> .env
-
-# Installer les dépendances
-npm install
+# Démarrer le serveur simple
+npm run backend:start
 ```
 
-### 4️⃣ Lancement
-
+#### Mode Complet (Avec base de données)
 ```bash
-# Créer les tables
+# Migrations et données de test
 npm run migrate
-
-# Insérer des données de test
 npm run seed
 
-# Démarrer le serveur
-npm run dev
+# Démarrer en mode développement
+npm run backend:dev
 ```
 
-✅ **Le serveur tourne sur http://localhost:3001**
-
----
-
-## 🧪 Premier Test
-
+### 4. Vérification
 ```bash
 # Test de santé
 curl http://localhost:3001/health
 
-# Connexion avec un compte test
-curl -X POST http://localhost:3001/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "matricule": "HSE001",
-    "password": "password123"
-  }'
+# Test des API
+curl http://localhost:3001/api/analytics/dashboard
 ```
 
----
+## 🎯 Endpoints Principaux
 
-## 📝 Comptes de Test (après seed)
+| Endpoint | Description | Méthode |
+|----------|-------------|---------|
+| `/health` | État du serveur | GET |
+| `/api/analytics/dashboard` | Données analytiques | GET |
+| `/api/approval/workflows` | Workflows d'approbation | GET |
+| `/api/approval/pending` | Étapes en attente | GET |
+| `/api/posts` | Posts/Actualités | GET |
 
-| Matricule | Mot de passe | Rôle | Nom |
-|-----------|--------------|------|-----|
-| HSE001 | password123 | HSE, ADMIN | Aminata Diallo |
-| SUP001 | password123 | SUPERVISEUR | Pierre Bekale |
-| REC001 | password123 | RECEP | Jean-Luc Bernard |
-| EMP001 | password123 | EMPLOYE | Aïcha Ndiaye |
+## 🔧 Configuration Rapide
 
----
-
-## 🔧 Commandes Utiles
-
+### Variables d'Environnement Essentielles
 ```bash
-# Mode développement (auto-reload)
-npm run dev
-
-# Mode production
-npm start
-
-# Tests
-npm test
-
-# Linting
-npm run lint
-npm run lint:fix
+# .env
+NODE_ENV=development
+PORT=3001
+CORS_ORIGIN=http://localhost:5173,http://localhost:3000
 ```
+
+### JWT Secrets (Génération automatique)
+```bash
+# Générer des secrets sécurisés
+JWT_SECRET=$(openssl rand -base64 32)
+JWT_REFRESH_SECRET=$(openssl rand -base64 32)
+```
+
+## 🚨 Dépannage Express
+
+### Port déjà utilisé
+```bash
+# Trouver le processus
+lsof -i :3001
+
+# Tuer le processus
+kill -9 PID
+```
+
+### Erreur de base de données
+```bash
+# Mode simple (sans DB)
+node simple-server.js
+```
+
+### Erreurs CORS
+```bash
+# Vérifier l'origine frontend
+echo $CORS_ORIGIN
+```
+
+## 📊 Test des API
+
+### Script de Test Automatique
+```bash
+#!/bin/bash
+echo "🧪 Test des API SOGARA..."
+
+# Health Check
+echo "1. Health Check..."
+curl -s http://localhost:3001/health | jq
+
+# Analytics
+echo "2. Analytics Dashboard..."
+curl -s http://localhost:3001/api/analytics/dashboard | jq
+
+# Workflows
+echo "3. Workflows..."
+curl -s http://localhost:3001/api/approval/workflows | jq
+
+# Pending
+echo "4. Pending Steps..."
+curl -s http://localhost:3001/api/approval/pending | jq
+
+# Posts
+echo "5. Posts..."
+curl -s http://localhost:3001/api/posts | jq
+
+echo "✅ Tests terminés!"
+```
+
+## 🔌 WebSocket Test
+
+### Connexion WebSocket
+```javascript
+// Test dans la console du navigateur
+const socket = io('http://localhost:3001');
+socket.on('connect', () => console.log('✅ Connecté'));
+socket.on('disconnect', () => console.log('❌ Déconnecté'));
+```
+
+## 📱 Intégration Frontend
+
+### Configuration Frontend
+```javascript
+// src/services/api.service.ts
+const API_CONFIG = {
+  baseURL: 'http://localhost:3001/api',
+  timeout: 30000
+};
+```
+
+### Test de Connexion
+```javascript
+// Test de connectivité
+fetch('http://localhost:3001/health')
+  .then(res => res.json())
+  .then(data => console.log('Backend:', data));
+```
+
+## 🎉 Succès!
+
+Si vous voyez ce message, le serveur fonctionne :
+```json
+{
+  "status": "OK",
+  "timestamp": "2025-10-24T09:55:14.296Z",
+  "version": "1.0.0",
+  "environment": "development"
+}
+```
+
+## 📚 Prochaines Étapes
+
+1. **Frontend**: Démarrer le frontend avec `npm run dev`
+2. **Convex**: Démarrer Convex avec `npm run dev:convex`
+3. **Tests**: Exécuter les tests avec `npm test`
+4. **Documentation**: Consulter `GUIDE-ACCES-SERVEUR.md`
+
+## 🆘 Support
+
+- **Logs**: `tail -f logs/sogara.log`
+- **Debug**: `LOG_LEVEL=debug npm run backend:start`
+- **Documentation**: Voir `GUIDE-ACCES-SERVEUR.md`
 
 ---
 
-## 📚 Documentation Complète
-
-Voir **GUIDE-ACCES-SERVEUR.md** pour :
-- Tous les endpoints API
-- Exemples cURL complets
-- Permissions par rôle
-- WebSocket/Socket.IO
-- Troubleshooting
-
----
-
-## 🆘 Problèmes Courants
-
-**Port déjà utilisé?**
-```bash
-# Changer le port dans .env
-PORT=3002
-```
-
-**PostgreSQL ne démarre pas?**
-```bash
-# macOS
-brew services restart postgresql@15
-
-# Linux
-sudo systemctl restart postgresql
-```
-
-**Erreur "Cannot find module"?**
-```bash
-# Réinstaller les dépendances
-rm -rf node_modules package-lock.json
-npm install
-```
-
----
-
-**🎯 Prêt à coder!** Le serveur backend SOGARA est maintenant opérationnel.
+**Note**: Le serveur simple fonctionne sans base de données et fournit des données de démonstration pour le développement.
