@@ -73,7 +73,7 @@ curl http://localhost:3001/api/analytics/dashboard
 # .env
 NODE_ENV=development
 PORT=3001
-CORS_ORIGIN=http://localhost:5173,http://localhost:3000
+CORS_ORIGIN=http://localhost:5173,http://localhost:8080,http://localhost:3000
 ```
 
 ### JWT Secrets (Génération automatique)

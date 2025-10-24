@@ -154,7 +154,7 @@ JWT_REFRESH_EXPIRES_IN=7d
 
 ### CORS
 ```bash
-CORS_ORIGIN=http://localhost:5173,http://localhost:3000
+CORS_ORIGIN=http://localhost:5173,http://localhost:8080,http://localhost:3000
 ```
 
 ### Rate Limiting

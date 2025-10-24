@@ -16,7 +16,7 @@ const server = http.createServer(app);
 // Configuration Socket.IO pour les notifications temps réel
 const io = socketIo(server, {
   cors: {
-    origin: process.env.CORS_ORIGIN?.split(',') || ["http://localhost:5173"],
+    origin: process.env.CORS_ORIGIN?.split(',') || ["http://localhost:5173", "http://localhost:8080", "http://localhost:3000"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
   }
@@ -45,7 +45,7 @@ app.use(helmet({
 
 app.use(compression());
 app.use(cors({
-  origin: process.env.CORS_ORIGIN?.split(',') || ["http://localhost:5173"],
+  origin: process.env.CORS_ORIGIN?.split(',') || ["http://localhost:5173", "http://localhost:8080", "http://localhost:3000"],
   credentials: true
 }));
 
